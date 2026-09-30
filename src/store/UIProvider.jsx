@@ -1,0 +1,58 @@
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { UIContext } from './context';
+
+const THEME_KEY = 'autoshop-pro:theme';
+
+function readTheme() {
+  try {
+    return localStorage.getItem(THEME_KEY) || 'system';
+  } catch {
+    return 'system';
+  }
+}
+
+export default function UIProvider({ children }) {
+  const [toasts, setToasts] = useState([]);
+  const [theme, setTheme] = useState(readTheme);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [navOpen, setNavOpen] = useState(false);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'system') root.removeAttribute('data-theme');
+    else root.setAttribute('data-theme', theme);
+    try {
+      localStorage.setItem(THEME_KEY, theme);
+    } catch {
+      // Theme still applies for this session.
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen((o) => !o);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  const dismiss = useCallback((id) => setToasts((t) => t.filter((x) => x.id !== id)), []);
+
+  const toast = useCallback(
+    (message, { tone = 'default', action } = {}) => {
+      const id = Math.random().toString(36).slice(2);
+      setToasts((t) => [...t.slice(-2), { id, message, tone, action }]);
+      setTimeout(() => dismiss(id), 3600);
+    },
+    [dismiss],
+  );
+
+  const value = useMemo(
+    () => ({ toasts, toast, dismiss, theme, setTheme, paletteOpen, setPaletteOpen, navOpen, setNavOpen }),
+    [toasts, toast, dismiss, theme, paletteOpen, navOpen],
+  );
+  return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
+}
