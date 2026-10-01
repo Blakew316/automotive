@@ -256,6 +256,27 @@ export default function ShopProvider({ children }) {
       addNote: (orderId, text, internal = true) =>
         update((s) => void findOrder(s, orderId).notes.unshift({ id: uid('note'), at: now(), text, internal })),
 
+      addMedia: (orderId, records) =>
+        update((s) => {
+          const o = findOrder(s, orderId);
+          o.media = [...(o.media || []), ...records];
+          o.updatedAt = now();
+        }),
+      updateMedia: (orderId, mediaId, patch) =>
+        update((s) => {
+          const m = (findOrder(s, orderId).media || []).find((x) => x.id === mediaId);
+          if (m) Object.assign(m, patch);
+        }),
+      removeMedia: (orderId, mediaIds) =>
+        update((s) => {
+          const o = findOrder(s, orderId);
+          o.media = (o.media || []).filter((m) => !mediaIds.includes(m.id));
+        }),
+      setShare: (orderId, share) =>
+        update((s) => {
+          findOrder(s, orderId).share = share;
+        }),
+
       setInspection: (orderId, key, patch) =>
         update((s) => {
           const o = findOrder(s, orderId);

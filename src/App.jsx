@@ -22,6 +22,8 @@ const Library = lazy(() => import('./pages/Library'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Settings = lazy(() => import('./pages/Settings'));
 const PrintOrder = lazy(() => import('./pages/PrintOrder'));
+const CustomerReport = lazy(() => import('./pages/CustomerReport'));
+const SharedReport = lazy(() => import('./pages/SharedReport'));
 const CatalogHome = lazy(() => import('./pages/catalog/CatalogHome'));
 const CatalogMake = lazy(() => import('./pages/catalog/CatalogMake'));
 const CatalogModel = lazy(() => import('./pages/catalog/CatalogModel'));
@@ -36,34 +38,46 @@ export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <UIProvider>
-        <ShopProvider>
-          <Suspense fallback={<Loading />}>
-            <Routes>
-              <Route path="/orders/:id/print" element={<PrintOrder />} />
-              <Route element={<Layout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/workflow" element={<Workflow />} />
-                <Route path="/orders" element={<Orders />} />
-                <Route path="/orders/new" element={<NewOrder />} />
-                <Route path="/orders/:id" element={<OrderDetail />} />
-                <Route path="/calendar" element={<Calendar />} />
-                <Route path="/customers" element={<Customers />} />
-                <Route path="/customers/:id" element={<CustomerDetail />} />
-                <Route path="/vehicles" element={<Vehicles />} />
-                <Route path="/vehicles/:id" element={<VehicleDetail />} />
-                <Route path="/vin" element={<VinDecoder />} />
-                <Route path="/catalog" element={<CatalogHome />} />
-                <Route path="/catalog/:make" element={<CatalogMake />} />
-                <Route path="/catalog/:make/:model" element={<CatalogModel />} />
-                <Route path="/parts" element={<Parts />} />
-                <Route path="/library" element={<Library />} />
-                <Route path="/reports" element={<Reports />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="*" element={<NotFound />} />
-              </Route>
-            </Routes>
-          </Suspense>
-        </ShopProvider>
+        <Suspense fallback={<Loading />}>
+          <Routes>
+            {/* Public report links open on customers' devices, so they never load shop data. */}
+            <Route path="/share/:id" element={<SharedReport />} />
+            <Route
+              path="*"
+              element={
+                <ShopProvider>
+                  <Suspense fallback={<Loading />}>
+                    <Routes>
+                      <Route path="/orders/:id/print" element={<PrintOrder />} />
+                      <Route path="/orders/:id/report" element={<CustomerReport />} />
+                      <Route element={<Layout />}>
+                        <Route path="/" element={<Dashboard />} />
+                        <Route path="/workflow" element={<Workflow />} />
+                        <Route path="/orders" element={<Orders />} />
+                        <Route path="/orders/new" element={<NewOrder />} />
+                        <Route path="/orders/:id" element={<OrderDetail />} />
+                        <Route path="/calendar" element={<Calendar />} />
+                        <Route path="/customers" element={<Customers />} />
+                        <Route path="/customers/:id" element={<CustomerDetail />} />
+                        <Route path="/vehicles" element={<Vehicles />} />
+                        <Route path="/vehicles/:id" element={<VehicleDetail />} />
+                        <Route path="/vin" element={<VinDecoder />} />
+                        <Route path="/catalog" element={<CatalogHome />} />
+                        <Route path="/catalog/:make" element={<CatalogMake />} />
+                        <Route path="/catalog/:make/:model" element={<CatalogModel />} />
+                        <Route path="/parts" element={<Parts />} />
+                        <Route path="/library" element={<Library />} />
+                        <Route path="/reports" element={<Reports />} />
+                        <Route path="/settings" element={<Settings />} />
+                        <Route path="*" element={<NotFound />} />
+                      </Route>
+                    </Routes>
+                  </Suspense>
+                </ShopProvider>
+              }
+            />
+          </Routes>
+        </Suspense>
       </UIProvider>
     </BrowserRouter>
   );

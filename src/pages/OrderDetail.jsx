@@ -1,17 +1,22 @@
-import { useMemo, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Printer, Send, MoreHorizontal, Plus, Trash2, MessageSquare, Mail, Check, ClipboardCheck, Wrench, StickyNote,
-  CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search,
+  CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2,
 } from 'lucide-react';
 import { useShop, useUI, useLookup, useTotals } from '../store/hooks';
 import { PageHeader, Card, Tabs, Menu, EmptyState, Modal, SearchInput, InlineText, Toggle } from '../components/ui';
 import ServiceBlock from './order/ServiceBlock';
 import InspectionPanel from './order/InspectionPanel';
 import OrderSidebar, { PaymentModal } from './order/OrderSidebar';
+import MediaPanel, { MediaViewer } from './order/MediaPanel';
+import { useMediaViewer } from '../lib/useMedia';
+import { removeFiles, forgetUrls } from '../lib/media';
 import { STATUSES, STATUS } from '../lib/workflow';
 import { money, fullName, vehicleName, dateTime, smsHref, mailHref, relTime } from '../lib/format';
 import { serviceTotal } from '../lib/pricing';
+
+const ShareModal = lazy(() => import('./order/ShareModal'));
 
 const NEXT = {
   estimate: { to: 'approved', label: 'Mark approved', icon: CircleCheck },
@@ -31,8 +36,10 @@ export default function OrderDetail() {
   const [addingService, setAddingService] = useState(false);
   const [paying, setPaying] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [sharing, setSharing] = useState(false);
 
   const order = state.orders.find((o) => o.id === id);
+  const viewer = useMediaViewer();
   if (!order) {
     return <EmptyState icon={FileText} title="Repair order not found" body="It may have been deleted." action={<Link to="/orders" className="btn-secondary">All repair orders</Link>} />;
   }
@@ -83,6 +90,8 @@ export default function OrderDetail() {
                 { label: `Text ${docName.toLowerCase()}`, icon: MessageSquare, disabled: !customer?.phone, onClick: () => (window.location.href = smsHref(customer.phone, message)) },
                 { label: `Email ${docName.toLowerCase()}`, icon: Mail, disabled: !customer?.email, onClick: () => (window.location.href = mailHref(customer.email, `${docName} #${order.number} — ${shop.name}`, emailBody)) },
                 '-',
+                { label: 'Share vehicle report & photos', icon: Share2, onClick: () => setSharing(true) },
+                { label: 'Show customer view', icon: MonitorSmartphone, onClick: () => navigate(`/orders/${order.id}/report`) },
                 { label: 'Print or save PDF', icon: Printer, onClick: () => navigate(`/orders/${order.id}/print`) },
               ]}
             />
@@ -133,6 +142,7 @@ export default function OrderDetail() {
             tabs={[
               { value: 'services', label: 'Services', icon: Wrench, count: order.services.length },
               { value: 'inspection', label: 'Inspection', icon: ClipboardCheck, count: flagged || null },
+              { value: 'media', label: 'Photos & video', icon: Camera, count: order.media?.length || null },
               { value: 'notes', label: 'Notes', icon: StickyNote, count: order.notes.length || null },
             ]}
           />
@@ -153,7 +163,7 @@ export default function OrderDetail() {
               </Card>
 
               {order.services.map((s, i) => (
-                <ServiceBlock key={s.id} order={order} service={s} vehicle={vehicle} index={i} editable={editable} />
+                <ServiceBlock key={s.id} order={order} service={s} vehicle={vehicle} index={i} editable={editable} onOpenMedia={viewer.open} />
               ))}
 
               {order.services.length === 0 && (
@@ -176,7 +186,9 @@ export default function OrderDetail() {
             </div>
           )}
 
-          {tab === 'inspection' && <InspectionPanel order={order} editable={editable} />}
+          {tab === 'inspection' && <InspectionPanel order={order} editable={editable} onOpenMedia={viewer.open} />}
+
+          {tab === 'media' && <MediaPanel order={order} editable viewer={viewer} />}
 
           {tab === 'notes' && <NotesPanel order={order} onAdd={(text, internal) => addNote(order.id, text, internal)} />}
         </div>
@@ -186,6 +198,13 @@ export default function OrderDetail() {
 
       {addingService && <AddServiceModal order={order} onClose={() => setAddingService(false)} />}
       {paying && <PaymentModal order={order} onClose={() => setPaying(false)} />}
+      {sharing && (
+        <Suspense fallback={null}>
+          <ShareModal order={order} customer={customer} vehicle={vehicle} onClose={() => setSharing(false)} />
+        </Suspense>
+      )}
+      {/* Photos can be added and edited at any stage, including after the RO is closed. */}
+      {viewer.id && <MediaViewer order={order} mediaId={viewer.id} editable onNavigate={viewer.setId} onClose={viewer.close} />}
       <Modal
         open={confirmDelete}
         onClose={() => setConfirmDelete(false)}
@@ -197,7 +216,10 @@ export default function OrderDetail() {
             <button
               className="btn-primary !bg-bad"
               onClick={() => {
+                const mediaIds = (order.media || []).map((m) => m.id);
                 deleteOrder(order.id);
+                forgetUrls(mediaIds);
+                removeFiles(mediaIds).catch(() => {});
                 toast(`RO #${order.number} deleted`);
                 navigate('/orders', { replace: true });
               }}
@@ -207,7 +229,7 @@ export default function OrderDetail() {
           </>
         }
       >
-        <p className="text-sm text-ink-2">This removes the repair order, its inspection and payment history. This can’t be undone.</p>
+        <p className="text-sm text-ink-2">This removes the repair order, its inspection, photos and video, and payment history. This can’t be undone.</p>
       </Modal>
     </>
   );

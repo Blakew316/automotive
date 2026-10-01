@@ -10,6 +10,8 @@ Built with React, Vite and Tailwind. It runs entirely in the browser: shop data 
 - **Today** — car count, billed today, estimates awaiting approval, ready for pickup, receivables, what’s in the shop, today’s appointments, and a “needs attention” list (late promises, parts on order, stale estimates, unpaid invoices, low stock).
 - **Workflow board** — Estimate → Approved → In Progress → Waiting on Parts → Ready for Pickup, with drag-and-drop, per-tech filtering and undo.
 - **Repair orders** — one record from estimate to invoice: canned jobs, labor/part/fee/sublet lines, parts markup matrix, shop supplies, discounts, tax, per-service approve/decline, tech assignment, complaint/cause/correction, digital vehicle inspection with recommendations, notes, and payments. Send by text or email (`sms:`/`mailto:`) and print or save a PDF estimate, work order or invoice.
+- **Photos & video on every RO** — take pictures or video from a phone/tablet camera or drag files in; attach them to the whole vehicle, a service line or an inspection point; add captions; mark any as internal. Photos are resized and stripped of location data before they’re stored.
+- **Customer vehicle report** — a clean, mobile-friendly page with the inspection results, recommendations, work performed, photos and video, and totals. Show it on a counter tablet (customers can approve or decline work there), text/email a **share link** that opens on any phone, or download a single self-contained **report file** (.html) with everything embedded.
 - **Calendar** — day/week scheduling with click-to-book and check-in to a new RO.
 - **Customers & vehicles** — history, lifetime value, declined-work follow-ups, and per-vehicle service timeline.
 - **Reports** — revenue, car count, ARO, gross profit, hours sold, effective labor rate, sales mix, estimate close rate, technician hours, top services, receivables aging.
@@ -32,6 +34,22 @@ Built with React, Vite and Tailwind. It runs entirely in the browser: shop data 
   - 725 generic OBD-II trouble codes (SAE J2012) with causes and diagnostic checks for the most common 65.
   - Calculators: voltage drop / wire sizing, Ohm’s law, tire size comparison, unit conversions.
 
+## Photo & video sharing
+
+Photos and video are stored in the browser on the device that took them (IndexedDB), so they work offline and cost nothing. A share link has to point at files hosted online, so links use the shop’s own [Supabase](https://supabase.com) project:
+
+1. Create a project; copy the Project URL and anon (publishable) key into **Settings → Photo & video sharing**.
+2. Create a **public** Storage bucket (default name `shop-media`) and set its file size limit for your videos (50 MB per file on the free plan).
+3. Add a staff user under Authentication → Users and turn off public sign-ups.
+4. Run the storage policies shown in Settings (SQL Editor) so only signed-in staff can upload, replace or delete files.
+5. Sign in on each device that publishes reports and press **Test**.
+
+Only items marked “Customer can see” are uploaded. Links use random 22-character IDs and can be updated or turned off from the RO (turning one off deletes its files). Without Supabase, shops can still show the report on screen or send the downloadable report file.
+
+## Getting service records onto CARFAX
+
+CARFAX doesn’t accept uploads from individual shops. Records reach CARFAX Reports through a data connection set up when a shop enrolls in the free CARFAX Car Care service-shop program ([carfaxserviceshops.com](https://www.carfaxserviceshops.com/)); integrated shop systems then send each closed RO automatically. **Settings → Vehicle history reporting** explains the steps and exports a service-history CSV (VIN, year/make/model, date, odometer, RO number, service performed, shop name/address/phone) for any date range to hand to CARFAX’s onboarding team. ROs without a 17-character VIN are skipped and counted so they can be fixed.
+
 ## Design
 
 Apple-style UI: San Francisco on Apple devices (system font stack) with Inter as the fallback elsewhere, neutral surfaces with hairline separators, one accent color, status shown as small dots rather than colored blocks, light and dark appearance, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
@@ -42,6 +60,7 @@ Apple-style UI: San Francisco on Apple devices (system font stack) with Inter as
 | --- | --- |
 | Vehicle database & VIN decode | NHTSA vPIC (public domain), stored in `public/data` |
 | Recalls, complaints, NCAP ratings | api.nhtsa.gov (optional, live) |
+| Shared reports, photos & video | The shop’s own Supabase Storage bucket (optional) |
 | Firing orders & cylinder numbering | Manufacturer-published data for the engine families in `src/data/engines.js` |
 | OEM service portals & free documents | Manufacturer and government sites, verified Sept 2026 |
 | Trouble codes | SAE J2012 generic definitions |

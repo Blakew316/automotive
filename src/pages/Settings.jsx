@@ -1,14 +1,20 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Field, Toggle, Modal, NumInput, InlineText } from '../components/ui';
 import { priceFromMatrix, DEFAULT_MATRIX } from '../lib/pricing';
 import { money } from '../lib/format';
+import { SharingSection, HistorySection } from './settings/IntegrationSections';
 
 export default function Settings() {
   const { state, updateShop } = useShop();
   const shop = state.shop;
   const text = (k) => ({ value: shop[k] || '', onCommit: (v) => updateShop({ [k]: v }) });
+  const { hash } = useLocation();
+  useEffect(() => {
+    if (hash) document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' });
+  }, [hash]);
 
   return (
     <>
@@ -52,6 +58,8 @@ export default function Settings() {
           </div>
         </Section>
 
+        <SharingSection />
+        <HistorySection />
         <TechSection />
         <MenuSection />
         <DataSection />
@@ -240,7 +248,7 @@ function DataSection() {
     <Section title="Data & backup" subtitle="Everything is stored privately in this browser">
       <div className="mb-4 flex items-center gap-3 rounded-[10px] bg-fill/[0.06] px-3 py-2.5 text-sm text-ink-2">
         <HardDrive size={16} className="shrink-0 text-ink-3" />
-        {state.customers.length} customers · {state.vehicles.length} vehicles · {state.orders.length} repair orders · {(size / 1024).toFixed(0)} KB. Export a backup regularly — clearing browser data erases it.
+        {state.customers.length} customers · {state.vehicles.length} vehicles · {state.orders.length} repair orders · {(size / 1024).toFixed(0)} KB. Export a backup regularly — clearing browser data erases it. Photos and video stay on this device and aren’t included in the backup file.
       </div>
       <div className="flex flex-wrap gap-2">
         <button className="btn-secondary" onClick={exportData}><Download size={14} /> Export backup</button>

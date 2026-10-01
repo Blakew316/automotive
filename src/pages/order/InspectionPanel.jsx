@@ -2,10 +2,11 @@ import { Plus } from 'lucide-react';
 import { useShop, useUI } from '../../store/hooks';
 import { Card, CardHeader, Dot, InlineText } from '../../components/ui';
 import { INSPECTION_TEMPLATE, INSPECTION_RATINGS } from '../../lib/workflow';
+import { MediaStrip } from './MediaPanel';
 
 const RATING_ORDER = ['good', 'soon', 'now'];
 
-export default function InspectionPanel({ order, editable }) {
+export default function InspectionPanel({ order, editable, onOpenMedia }) {
   const { setInspection, addService } = useShop();
   const { toast } = useUI();
   const all = INSPECTION_TEMPLATE.flatMap((s) => s.items.map((label) => ({ key: `${s.section}::${label}`, section: s.section, label })));
@@ -89,6 +90,7 @@ export default function InspectionPanel({ order, editable }) {
                     disabled={!editable}
                     className="h-7 w-full rounded-[6px] border border-transparent bg-transparent px-2 text-sm text-ink-2 outline-none hover:border-line focus:border-accent/60 focus:bg-surface sm:w-48"
                   />
+                  <MediaStrip order={order} filter={(m) => m.inspectionKey === key} extra={{ inspectionKey: key }} editable onOpen={onOpenMedia} label="" />
                 </li>
               );
             })}

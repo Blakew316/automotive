@@ -1,21 +1,25 @@
 import { useState } from 'react';
-import { Trash2, MoreHorizontal, Wrench, Package, Receipt, Truck, Boxes, ArrowUpRight, Check, MessageSquareText } from 'lucide-react';
+import { Trash2, MoreHorizontal, Wrench, Package, Receipt, Truck, Boxes, ArrowUpRight, Check, MessageSquareText, Camera } from 'lucide-react';
 import { useShop, useUI } from '../../store/hooks';
-import { Menu, NumInput, InlineText, Segmented } from '../../components/ui';
+import { Menu, NumInput, InlineText, Segmented, Spinner } from '../../components/ui';
 import { itemTotal, serviceTotal, serviceHours } from '../../lib/pricing';
 import { money } from '../../lib/format';
 import { SUPPLIERS } from '../../lib/suppliers';
 import InventoryPicker from './InventoryPicker';
+import { MediaThumb, PickButton } from './MediaPanel';
+import { useIngest } from '../../lib/useMedia';
 
 const TYPE_ICON = { labor: Wrench, part: Package, fee: Receipt, sublet: Truck };
 const PART_STATUS = { needed: 'Needed', ordered: 'Ordered', received: 'In stock' };
 const cell = 'h-7 w-full rounded-[6px] border border-transparent bg-transparent px-1.5 text-sm outline-none transition hover:border-line focus:border-accent/60 focus:bg-surface focus:ring-[3px] focus:ring-accent/15';
 
-export default function ServiceBlock({ order, service, vehicle, index, editable }) {
+export default function ServiceBlock({ order, service, vehicle, index, editable, onOpenMedia }) {
   const { state, updateService, removeService, addItem, updateItem, removeItem, adjustInventory } = useShop();
   const { toast } = useUI();
   const [picking, setPicking] = useState(false);
   const [story, setStory] = useState(Boolean(service.cause || service.correction));
+  const { ingest, busy } = useIngest(order);
+  const linked = (order.media || []).filter((m) => m.serviceId === service.id);
   const total = serviceTotal(service);
   const hours = serviceHours(service);
   const declined = service.status === 'declined';
@@ -206,6 +210,14 @@ export default function ServiceBlock({ order, service, vehicle, index, editable 
         </div>
       )}
 
+      {linked.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 border-t border-line/70 px-4 py-2.5">
+          {linked.map((m) => (
+            <MediaThumb key={m.id} media={m} showMeta={false} onClick={() => onOpenMedia?.(m.id)} className="h-14 w-14" />
+          ))}
+        </div>
+      )}
+
       <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-line/70 px-3 py-2">
         {editable ? (
           <div className="flex flex-wrap gap-0.5">
@@ -214,9 +226,14 @@ export default function ServiceBlock({ order, service, vehicle, index, editable 
             <button className="btn-ghost btn-sm" onClick={() => setPicking(true)}><Boxes size={13} /> From inventory</button>
             <button className="btn-ghost btn-sm" onClick={() => add('fee')}><Receipt size={13} /> Fee</button>
             <button className="btn-ghost btn-sm" onClick={() => add('sublet')}><Truck size={13} /> Sublet</button>
+            <PickButton capture onFiles={(f) => ingest(f, { serviceId: service.id })} className="btn-ghost btn-sm" title="Take or attach photos/video for this service">
+              {busy ? <Spinner size={13} /> : <Camera size={13} />} Photo
+            </PickButton>
           </div>
         ) : (
-          <span />
+          <PickButton capture onFiles={(f) => ingest(f, { serviceId: service.id })} className="btn-ghost btn-sm" title="Take or attach photos/video for this service">
+            {busy ? <Spinner size={13} /> : <Camera size={13} />} Photo
+          </PickButton>
         )}
         <div className="flex items-baseline gap-3 pr-1 text-sm">
           {hours > 0 && <span className="text-xs text-ink-3">{hours.toFixed(1)} hr</span>}
