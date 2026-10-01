@@ -22,6 +22,9 @@ const Library = lazy(() => import('./pages/Library'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Settings = lazy(() => import('./pages/Settings'));
 const PrintOrder = lazy(() => import('./pages/PrintOrder'));
+const CatalogHome = lazy(() => import('./pages/catalog/CatalogHome'));
+const CatalogMake = lazy(() => import('./pages/catalog/CatalogMake'));
+const CatalogModel = lazy(() => import('./pages/catalog/CatalogModel'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -49,6 +52,9 @@ export default function App() {
                 <Route path="/vehicles" element={<Vehicles />} />
                 <Route path="/vehicles/:id" element={<VehicleDetail />} />
                 <Route path="/vin" element={<VinDecoder />} />
+                <Route path="/catalog" element={<CatalogHome />} />
+                <Route path="/catalog/:make" element={<CatalogMake />} />
+                <Route path="/catalog/:make/:model" element={<CatalogModel />} />
                 <Route path="/parts" element={<Parts />} />
                 <Route path="/library" element={<Library />} />
                 <Route path="/reports" element={<Reports />} />

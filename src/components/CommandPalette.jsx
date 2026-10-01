@@ -3,11 +3,12 @@ import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, ClipboardList, UserPlus, ScanLine, CalendarPlus, Users, Car, LayoutGrid, SquareKanban,
-  CalendarDays, Package, BookOpen, ChartColumn, Settings, CircleAlert, CornerDownLeft, FileText,
+  CalendarDays, Package, BookOpen, ChartColumn, Settings, CircleAlert, CornerDownLeft, FileText, Database,
 } from 'lucide-react';
 import { useShop, useUI, useLookup } from '../store/hooks';
 import { fullName, vehicleName } from '../lib/format';
 import { cleanVin } from '../lib/vin';
+import { loadIndex, searchIndex } from '../lib/catalog';
 import { StatusLabel } from './ui';
 
 const PAGES = [
@@ -17,6 +18,7 @@ const PAGES = [
   { label: 'Calendar', to: '/calendar', icon: CalendarDays },
   { label: 'Customers', to: '/customers', icon: Users },
   { label: 'Vehicles', to: '/vehicles', icon: Car },
+  { label: 'Vehicle database — makes, models, diagrams, parts', to: '/catalog', icon: Database },
   { label: 'VIN decoder', to: '/vin', icon: ScanLine },
   { label: 'Parts & inventory', to: '/parts', icon: Package },
   { label: 'Service library — OEM service info', to: '/library', icon: BookOpen },
@@ -46,10 +48,12 @@ function Palette({ onClose }) {
   const [q, setQ] = useState('');
   const [active, setActive] = useState(0);
   const [dtc, setDtc] = useState(null);
+  const [catalog, setCatalog] = useState(null);
   const listRef = useRef(null);
 
   useEffect(() => {
     import('../data/dtcCodes').then((m) => setDtc(m.dtcCodes));
+    loadIndex().then(setCatalog, () => {});
   }, []);
 
   const groups = useMemo(() => {
@@ -103,10 +107,21 @@ function Palette({ onClose }) {
       .map((v) => ({ key: v.id, label: vehicleName(v, { trim: true }), sub: `${v.plate || ''} · ${v.vin}`, icon: Car, to: `/vehicles/${v.id}` }));
     if (vehicles.length) out.push({ title: 'Vehicles', items: vehicles });
 
+    if (catalog && query.length >= 2) {
+      const hits = searchIndex(catalog, q, 5).map((r) => ({
+        key: `cat:${r.makeSlug}/${r.modelSlug}`,
+        label: `${r.year ? `${r.year} ` : ''}${r.make} ${r.model}`,
+        sub: `Vehicle database · ${r.yf === r.yt ? r.yf : `${r.yf}–${r.yt}`}`,
+        icon: Database,
+        to: `/catalog/${r.makeSlug}/${r.modelSlug}${r.year ? `?year=${r.year}` : ''}`,
+      }));
+      if (hits.length) out.push({ title: 'Vehicle database', items: hits });
+    }
+
     const pages = [...ACTIONS, ...PAGES].filter((p) => match(`${p.label} ${p.keywords || ''}`)).map((p) => ({ ...p, key: p.to + p.label }));
     if (pages.length) out.push({ title: 'Go to', items: pages });
     return out;
-  }, [q, state, lookup, dtc]);
+  }, [q, state, lookup, dtc, catalog]);
 
   const flat = groups.flatMap((g) => g.items);
   const current = Math.min(active, Math.max(0, flat.length - 1));
