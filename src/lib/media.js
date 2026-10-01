@@ -268,6 +268,19 @@ export async function ingestFiles(files, extra = {}) {
   return { added, skipped };
 }
 
+/** Store an edited photo (e.g. marked up) as a new media item; returns its metadata record. */
+export async function saveImageBlob(blob, extra = {}) {
+  const img = await loadImage(blob);
+  const w = img.width || img.naturalWidth;
+  const h = img.height || img.naturalHeight;
+  const thumb = drawScaled(img, w, h, THUMB_EDGE);
+  img.close?.();
+  const id = uid('med');
+  await putFile(id, { blob, thumb: await canvasBlob(thumb.canvas, 'image/jpeg', 0.78) });
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('autoshop:media'));
+  return { id, kind: 'image', name: 'marked-up.jpg', type: 'image/jpeg', size: blob.size, width: w, height: h, duration: null, hasThumb: true, caption: '', serviceId: null, inspectionKey: null, customer: true, createdAt: new Date().toISOString(), ...extra };
+}
+
 export const formatBytes = (n = 0) => (n >= 1e9 ? `${(n / 1e9).toFixed(1)} GB` : n >= 1e6 ? `${(n / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(n / 1e3))} KB`);
 export const formatDuration = (s) => (s == null ? '' : `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`);
 

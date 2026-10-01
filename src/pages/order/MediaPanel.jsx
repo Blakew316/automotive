@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Camera, ImagePlus, Play, EyeOff, Eye, Trash2, Download, ChevronLeft, ChevronRight, X, Images, Film, Info } from 'lucide-react';
+import { Camera, ImagePlus, Play, EyeOff, Eye, Trash2, Download, ChevronLeft, ChevronRight, X, Images, Film, Info, PenLine } from 'lucide-react';
 import { useShop, useUI } from '../../store/hooks';
 import { useIngest } from '../../lib/useMedia';
 import { Card, Segmented, Spinner, EmptyState, Toggle } from '../../components/ui';
-import { removeFiles, forgetUrls, useMediaUrl, formatBytes, formatDuration, storageEstimate, MAX_VIDEO_MB } from '../../lib/media';
+import { removeFiles, forgetUrls, useMediaUrl, formatBytes, formatDuration, storageEstimate, saveImageBlob, MAX_VIDEO_MB } from '../../lib/media';
+import MarkupEditor from '../../components/MarkupEditor';
 import { inspectionTemplateFor, inspectionPoints } from '../../lib/inspection';
 import { dateTime } from '../../lib/format';
 
@@ -189,8 +190,9 @@ export default function MediaPanel({ order, editable, viewer }) {
 
 /** Lightbox with caption, links and visibility controls (open it with `useMediaViewer`). */
 export function MediaViewer({ order, mediaId, editable, onNavigate, onClose }) {
-  const { state, updateMedia, removeMedia } = useShop();
+  const { state, addMedia, updateMedia, removeMedia } = useShop();
   const { toast } = useUI();
+  const [marking, setMarking] = useState(false);
   const list = order.media || [];
   const idx = list.findIndex((m) => m.id === mediaId);
   const m = list[idx];
@@ -199,6 +201,7 @@ export function MediaViewer({ order, mediaId, editable, onNavigate, onClose }) {
   const next = list[idx + 1];
 
   useEffect(() => {
+    if (marking) return undefined;
     const onKey = (e) => {
       if (e.target.closest?.('input, textarea, select')) return;
       if (e.key === 'Escape') onClose();
@@ -212,12 +215,26 @@ export function MediaViewer({ order, mediaId, editable, onNavigate, onClose }) {
       window.removeEventListener('keydown', onKey);
       document.body.style.overflow = overflow;
     };
-  }, [prev, next, onClose, onNavigate]);
+  }, [prev, next, onClose, onNavigate, marking]);
 
   if (!m) return null;
   const up = (patch) => updateMedia(order.id, m.id, patch);
   const inspectionKeys = inspectionPoints(inspectionTemplateFor(state, order)).map((p) => p.key);
   const link = m.serviceId ? `svc:${m.serviceId}` : m.inspectionKey ? `insp:${m.inspectionKey}` : '';
+
+  const saveMarkup = async (blob, { replaceForCustomer }) => {
+    try {
+      const base = (m.name || 'photo').replace(/\.[^.]+$/, '');
+      const rec = await saveImageBlob(blob, { caption: m.caption, serviceId: m.serviceId, inspectionKey: m.inspectionKey, markupOf: m.id, name: `${base}-marked.jpg`, customer: true });
+      addMedia(order.id, [rec], m.id);
+      if (replaceForCustomer && m.customer) up({ customer: false });
+      setMarking(false);
+      onNavigate(rec.id);
+      toast(replaceForCustomer ? 'Saved — the customer sees the marked-up photo' : 'Marked-up copy saved', { tone: 'success' });
+    } catch (e) {
+      toast(e?.name === 'QuotaExceededError' ? 'Device storage is full' : 'Couldn’t save the marked-up photo', { tone: 'error' });
+    }
+  };
 
   const remove = async () => {
     removeMedia(order.id, [m.id]);
@@ -307,7 +324,17 @@ export function MediaViewer({ order, mediaId, editable, onNavigate, onClose }) {
           <div className="flex justify-between gap-3"><dt>Size</dt><dd className="text-ink-2">{formatBytes(m.size)}{m.width ? ` · ${m.width}×${m.height}` : ''}{m.duration != null ? ` · ${formatDuration(m.duration)}` : ''}</dd></div>
           <div className="flex justify-between gap-3"><dt>Added</dt><dd className="text-ink-2">{dateTime(m.createdAt)}</dd></div>
         </dl>
-        <div className="mt-4 flex gap-2">
+        {m.markupOf && list.some((x) => x.id === m.markupOf) && (
+          <button className="mt-2 text-xs text-accent hover:underline" onClick={() => onNavigate(m.markupOf)}>
+            View the original photo
+          </button>
+        )}
+        {editable && url && m.kind === 'image' && (
+          <button className="btn-primary mt-4 w-full" onClick={() => setMarking(true)}>
+            <PenLine size={14} /> Mark up photo
+          </button>
+        )}
+        <div className="mt-2 flex gap-2">
           {url && (
             <a href={url} download={m.kind === 'image' ? `RO${order.number}-${m.id}.jpg` : m.name} className="btn-secondary flex-1">
               <Download size={14} /> Download
@@ -320,6 +347,7 @@ export function MediaViewer({ order, mediaId, editable, onNavigate, onClose }) {
           )}
         </div>
       </aside>
+      {marking && url && <MarkupEditor src={url} onSave={saveMarkup} onClose={() => setMarking(false)} />}
     </div>,
     document.body,
   );

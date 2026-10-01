@@ -7,6 +7,7 @@ import { SHOP_CLOUD } from '../lib/cloudDefaults';
 export const MESSAGE_TEMPLATES = [
   { id: 'estimate', label: 'Estimate ready', body: 'Hi {first}, it’s {shop}. Your estimate for the {vehicle} is {total}. Reply YES to approve or call {phone} with questions. Photos and online approval: {link}' },
   { id: 'update', label: 'Status update', body: 'Hi {first}, quick update on your {vehicle} from {shop}: ' },
+  { id: 'track', label: 'Live status link', body: 'Hi {first}, it’s {shop}. Follow your {vehicle} live — this page updates as we go: {trackLink}' },
   { id: 'ready', label: 'Vehicle ready', body: 'Hi {first}, your {vehicle} is ready for pickup at {shop}. Balance due {balance}. Pay ahead here: {payLink}' },
   { id: 'pay', label: 'Payment request', body: 'Hi {first}, your invoice from {shop} for RO #{ro} is {balance}. Pay securely here: {payLink}' },
   { id: 'receipt', label: 'Payment receipt', body: 'Thank you, {first}! We received your payment of {amount} for RO #{ro}. — {shop}' },

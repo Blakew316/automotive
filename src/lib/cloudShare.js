@@ -192,6 +192,19 @@ export async function revokeReport(cfg, share) {
   return { ...share, revoked: true, uploaded: [] };
 }
 
+/** Publish a small public JSON file (e.g. a live status page) to the shop's public bucket. */
+export async function publishPublicJson(cfg, path, data, cacheSeconds = 30) {
+  const token = await accessToken(cfg);
+  await upload(cfg, token, path, new Blob([JSON.stringify(data)], { type: 'application/json' }), 'application/json', cacheSeconds);
+}
+export const publicFolder = (cfg, folder) => `${cfg.url}/storage/v1/object/public/${encodeURIComponent(cfg.bucket)}/${folder}`;
+
+/** Customer link for a repair order's live status page. */
+export function trackLink(cfg, id) {
+  const base = `${window.location.origin}${import.meta.env.BASE_URL}`;
+  return `${base}track/${id}?from=${encodeURIComponent(publicFolder(cfg, 'track'))}`;
+}
+
 /** Publish the online-booking configuration (hours, services, busy times) for the public page. */
 export async function publishBooking(cfg, config) {
   const token = await accessToken(cfg);

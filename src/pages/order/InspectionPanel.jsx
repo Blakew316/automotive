@@ -4,6 +4,8 @@ import { Card, CardHeader, Dot, InlineText } from '../../components/ui';
 import { INSPECTION_RATINGS } from '../../lib/workflow';
 import { inspectionTemplateFor, inspectionPoints, measurementKind, ratingForMeasurement } from '../../lib/inspection';
 import { MediaStrip } from './MediaPanel';
+import { MeasureGauge, TiresBrakes } from '../../components/Gauges';
+import DictateButton from '../../components/Dictate';
 
 const RATING_ORDER = ['good', 'soon', 'now'];
 
@@ -47,6 +49,8 @@ export default function InspectionPanel({ order, editable, onOpenMedia }) {
           </div>
         ))}
       </Card>
+
+      <TiresBrakesCard items={all.map((i) => ({ label: i.label, measure: order.inspection[i.key]?.measure }))} />
 
       {flagged.length > 0 && (
         <Card>
@@ -115,6 +119,7 @@ export default function InspectionPanel({ order, editable, onOpenMedia }) {
                         aria-label={`${label} measurement`}
                       />
                       <span className="text-xs text-ink-3">{kind === 'mm' ? 'mm' : '/32'}</span>
+                      <MeasureGauge kind={kind} value={entry.measure} className="ml-1 w-20" />
                     </span>
                   )}
                   <InlineText
@@ -124,6 +129,7 @@ export default function InspectionPanel({ order, editable, onOpenMedia }) {
                     disabled={!editable}
                     className="h-7 w-full rounded-[6px] border border-transparent bg-transparent px-2 text-sm text-ink-2 outline-none hover:border-line focus:border-accent/60 focus:bg-surface sm:w-48"
                   />
+                  {editable && <DictateButton onText={(text) => setInspection(order.id, key, { note: [entry.note, text].filter(Boolean).join(' ') })} label={`Dictate a note for ${label}`} />}
                   <MediaStrip order={order} filter={(m) => m.inspectionKey === key} extra={{ inspectionKey: key }} editable onOpen={onOpenMedia} label="" />
                 </li>
               );
@@ -132,5 +138,14 @@ export default function InspectionPanel({ order, editable, onOpenMedia }) {
         </Card>
       ))}
     </div>
+  );
+}
+
+function TiresBrakesCard({ items }) {
+  if (!items.some((i) => i.measure != null && i.measure !== '')) return null;
+  return (
+    <Card className="p-4">
+      <TiresBrakes items={items} />
+    </Card>
   );
 }

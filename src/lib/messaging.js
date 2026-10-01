@@ -2,6 +2,7 @@
 import { orderTotals } from './pricing';
 import { money, vehicleName, smsHref, mailHref, date, time, phone as fmtPhone } from './format';
 import { bookingLink } from './booking';
+import { cloudConfig, trackLink } from './cloudShare';
 
 /** Payment link through the shop's own processor, with the amount filled in where supported. */
 export function payLink(shop, amount, memo = '') {
@@ -50,6 +51,7 @@ export function messageContext(state, { customer, vehicle, order, appointment, e
     balance: t ? money(balance) : '',
     amount: extra.amount != null ? money(extra.amount) : '',
     link: order?.share && !order.share.revoked ? order.share.url : '',
+    trackLink: order?.track?.id && !order.track.off && cloudConfig(shop) ? trackLink(cloudConfig(shop), order.track.id) : '',
     payLink: t ? payLink(shop, balance, `RO ${order.number}`) : '',
     reviewLink: shop.marketing?.reviewUrl || '',
     bookLink: bookingLink(state),
@@ -60,7 +62,7 @@ export function messageContext(state, { customer, vehicle, order, appointment, e
   };
 }
 
-const LINK_FIELDS = ['link', 'payLink', 'bookLink', 'reviewLink'];
+const LINK_FIELDS = ['link', 'payLink', 'bookLink', 'reviewLink', 'trackLink'];
 
 /** Fill {fields}. A sentence that carries a link the shop hasn't set up is dropped, not left dangling. */
 export function fillTemplate(body, ctx) {
