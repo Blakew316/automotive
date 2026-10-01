@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react';
-import { ShopContext, UIContext, SyncContext, PhoneContext } from './context';
+import { ShopContext, UIContext, SyncContext, PhoneContext, PayContext } from './context';
 import { totalsCalculator } from '../lib/pricing';
 import { canAccess } from '../lib/access';
 import { isMulti, siteList, scopeState } from '../lib/locations';
@@ -19,6 +19,12 @@ const NO_LINE = { status: null, connected: false, ready: false, optedOut: () => 
 /** The business phone line: texting & calls from the shop's number (components/PhoneLine.jsx). */
 export function usePhone() {
   return useContext(PhoneContext) || NO_LINE;
+}
+
+const NO_PAY = { status: null, ready: false, refresh: () => {}, ensureLink: null, refund: null };
+/** Online card payments through the shop's Stripe account (components/PayLine.jsx). */
+export function usePay() {
+  return useContext(PayContext) || NO_PAY;
 }
 
 export function useUI() {

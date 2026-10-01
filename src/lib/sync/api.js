@@ -120,7 +120,10 @@ export const phoneEvents = (cfg) => call(cfg, '/rest/v1/shop_phone_events?select
 export const clearPhoneEvents = (cfg, ids) => (ids.length ? call(cfg, `/rest/v1/shop_phone_events?id=in.(${ids.map(Number).join(',')})`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }) : null);
 
 /** Live phone events (a call ringing, a text arriving); polling covers anything missed. */
-export function subscribePhoneEvents(cfg, onRow, onLive) {
+export const subscribePhoneEvents = (cfg, onRow, onLive) => subscribeTable(cfg, 'shop_phone_events', onRow, onLive);
+
+/** New and changed rows in one table, live over Realtime (for staff, as RLS allows). */
+export function subscribeTable(cfg, table, onRow, onLive) {
   let alive = true;
   let client = null;
   let refresh = null;
@@ -133,8 +136,8 @@ export function subscribePhoneEvents(cfg, onRow, onLive) {
       await auth();
       refresh = setInterval(() => auth().catch(() => {}), 4 * 60_000);
       client
-        .channel('shop-phone')
-        .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_phone_events' }, (p) => p.new?.id && onRow(p.new))
+        .channel(`live-${table}`)
+        .on('postgres_changes', { event: '*', schema: 'public', table }, (p) => p.new?.id && onRow(p.new))
         .subscribe((status) => onLive(status === 'SUBSCRIBED'));
     } catch {
       onLive(false);
@@ -163,3 +166,8 @@ export async function downloadPath(cfg, path) {
 /** Save a small private JSON file (e.g. phone/profile.json for the phone server). */
 export const uploadPrivateJson = (cfg, path, data) =>
   call(cfg, `/storage/v1/object/${FILES_BUCKET}/${path}`, { body: new Blob([JSON.stringify(data)], { type: 'application/json' }), headers: { 'Content-Type': 'application/json', 'x-upsert': 'true', 'cache-control': 'no-cache' } });
+
+// ---------------------------------------------------------------- Online payments (Stripe through shop-pay)
+export const shopPay = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-pay', { body: { action, ...args } });
+export const payEvents = (cfg) => call(cfg, '/rest/v1/shop_pay_events?select=id,kind,ref,payload,created_at&order=id.asc&limit=200', { method: 'GET' });
+export const clearPayEvents = (cfg, ids) => (ids.length ? call(cfg, `/rest/v1/shop_pay_events?id=in.(${ids.map(Number).join(',')})`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }) : null);

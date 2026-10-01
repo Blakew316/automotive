@@ -40,6 +40,12 @@ The repo also holds the shop's public website (`website/`), published alongside 
   - An **AI receptionist** (Claude) that answers after hours, when nobody picks up, or every call. It greets known callers by name, tells them where their vehicle is (when the caller ID matches), answers from your hours and notes, takes messages, files appointment requests in Calendar → Requests, texts the booking link or directions, and transfers to a person on request. Each call is summarized in Messages with its transcript.
   - **Automatic texts**: appointment confirmations, day-before reminders (sent by the server even when no device is open, never 9 PM–8 AM) and an optional after-hours auto-reply.
 - **Payments** — record card, cash, check, ACH, financing, warranty and fleet payments with tips and an optional card surcharge; text-to-pay links through the shop’s own Stripe, Square, PayPal, Venmo or Cash App account; receipts by text or email.
+- **Online card payments (Stripe)** — connect the shop's own Stripe account (Settings → Payments & financing):
+  - Payment requests and ready-for-pickup texts carry a secure pay link for the exact balance, made on the spot; the RO's payment card can copy or send one too.
+  - The customer's pay page shows the shop, the RO and the amount, then hands off to Stripe Checkout: cards, Apple Pay and Google Pay, Link, ACH, and pay-over-time with Affirm, Klarna or Afterpay when they're turned on in Stripe.
+  - Live status pages show a Pay button that always matches the current balance.
+  - Payments land on the repair order by themselves, with the card, last four digits and Stripe's fee. The RO closes when it's paid in full, staff get a "payment received" notice, and fees show in the P&L.
+  - The owner or a manager can refund part or all of a payment from the RO.
 - **Financing** — “as low as $/mo” on estimates and the customer report, with a link to the shop’s financing partner.
 - **Customers & vehicles** — history, lifetime value, recent messages, declined-work follow-ups, and per-vehicle service timeline.
 - **Fleet & business accounts** — turn a commercial customer into an account (customer menu → *Set up business account*, or **Fleet & Accounts → Business account**) with payment terms (due on receipt to Net 60), a credit limit, a pre-approved (not-to-exceed) amount per visit, required PO numbers, tax exemption with the certificate number, a billing email and a note printed on every invoice.
@@ -73,7 +79,7 @@ The repo also holds the shop's public website (`website/`), published alongside 
 - **AI assistant** — an *Assistant* button on repair orders, *Suggest reply* in Messages and *Summarize with AI* on customers. It drafts a plain-English explanation of the estimate grouped by urgency, a status text, a reply to the customer's latest message, the cause & correction for a service (from the tech's notes and the inspection), diagnostic ideas and a test plan for the tech, a customer summary for the advisor, or answers any question about the record on screen. Answers go into the message composer, onto the service, or into an internal note; staff review everything before it reaches a customer. It runs on Claude through the shop's own Anthropic API key (see [Integration keys & the AI assistant](#integration-keys--the-ai-assistant)).
 - **Shop website** — the shop's public site ([Public website](#public-website)). Its *Book a service* form drops requests into **Calendar → Requests** with the customer's preferred day and time of day, and its contact and fleet forms arrive in **Messages** (new people are added as customers).
 - **Roles & access** — staff profiles for owner, shop manager, service advisor and technician with optional 4-digit PINs; each role sees only the pages it needs (switch people from the sidebar).
-- **Integrations** — Shop Cloud, the AI assistant (Claude), business texting & calls (Twilio), online booking, Google reviews, QuickBooks exports, payment links, financing, PartsTech / Nexpart / WORLDPAC ordering with POs, NHTSA, calendar (.ics) export for Google/Apple/Outlook, CARFAX service history, and data import.
+- **Integrations** — Shop Cloud, the AI assistant (Claude), business texting & calls (Twilio), online card payments (Stripe), online booking, Google reviews, QuickBooks exports, payment links, financing, PartsTech / Nexpart / WORLDPAC ordering with POs, NHTSA, calendar (.ics) export for Google/Apple/Outlook, CARFAX service history, and data import.
 - **Data migration** — import customers & vehicles or parts inventory from CSV (or paste from a spreadsheet) exported from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks or Excel: columns are matched automatically, previewed, and de-duplicated by phone, email, VIN and part number.
 - **Mobile app** — installable on iPhone, iPad, Android, Mac and PC (Settings → General → Mobile & desktop app); opens full-screen, works offline, with home-screen shortcuts to a new RO, the tech clock, the board and messages.
 
@@ -124,7 +130,7 @@ Settings → Shop Cloud → **Shared shop data** puts the whole shop in the clou
 
 ### Integration keys & the AI assistant
 
-**Settings → Keys & AI** (owner; managers can view) stores the shop's integration keys on the Shop Cloud server, encrypted in [Supabase Vault](https://supabase.com/docs/guides/database/vault). After saving, a key is never sent back to any device — the screen shows only that it's set, its last four characters and when it changed. The same screen holds the Twilio keys for business texting & calls, and keys for card payments (Stripe), QuickBooks Online and connected cars (Smartcar) can be stored ahead of those integrations being turned on.
+**Settings → Keys & AI** (owner; managers can view) stores the shop's integration keys on the Shop Cloud server, encrypted in [Supabase Vault](https://supabase.com/docs/guides/database/vault). After saving, a key is never sent back to any device — the screen shows only that it's set, its last four characters and when it changed. The same screen holds the Twilio keys for business texting & calls and the Stripe key for online payments; keys for QuickBooks Online and connected cars (Smartcar) can be stored ahead of those integrations being turned on.
 
 - `shop_secret_set` / `shop_secret_get` / `shop_secret_list` (`supabase/migrations/20261003120000_secrets_and_ai.sql`) wrap Vault and can only be called by the service role — the browser can't read a key even with a staff login.
 - The `shop-secrets` Edge Function lets the owner set or remove keys from an allowlist and returns status only; the AI model and monthly limit are plain settings.
@@ -156,6 +162,17 @@ How it fits together (`supabase/migrations/20261004120000_business_phone.sql`):
   - skips numbers that replied STOP (`shop_sms_optouts`)
   - moves anything due between 9 PM and 8 AM to 8 AM
   - drops anything more than six hours late
+
+### Online payments (Stripe)
+
+Payments go straight to the shop's own Stripe account at Stripe's rates. Setup: paste the secret key (`sk_test_…` to try it, `sk_live_…` for real) in **Settings → Keys & AI**, then choose **Connect Stripe** under **Settings → Payments & financing**. The `shop-pay` Edge Function checks the key, registers the `stripe-webhook` endpoint in the shop's Stripe account and saves its signing secret to Vault, so there's nothing to copy from the Stripe dashboard.
+
+How it fits together (`supabase/migrations/20261005120000_online_payments.sql`):
+- **Pay links** (`shop_pay_links`) are random 12-character ids for one repair order's balance, opened at `/app/pay/<id>`. Making a new link for an RO voids the old one, so a customer can't pay a stale amount.
+- **`pay-link`** (public) tells the pay page what the link is for and starts Stripe Checkout, or resumes the open one. It uses the payment methods enabled in the shop's Stripe dashboard.
+- **`stripe-webhook`** verifies Stripe's signature (with a five-minute replay window) and records each payment in `shop_pay_events`, with the card brand, last four digits and Stripe's fee. Bank payments are recorded once they clear; refunds are recorded as cumulative totals.
+- **Devices** pick up payment events over Realtime (with polling as a fallback) and add them to the repair order. Stripe's payment id is the payment's reference, so nothing is recorded twice.
+- **Card-present payments** aren't part of this: use your terminal and record the payment, or Stripe's Tap to Pay.
 
 **Using a different Supabase project** (e.g. one per shop): open *Connection details* in **Settings → Shop Cloud**, paste the Project URL and anon key, create the bucket, and run the setup SQL shown there — it creates the same staff function, storage policies and inbox table.
 

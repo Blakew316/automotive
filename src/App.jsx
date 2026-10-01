@@ -37,6 +37,7 @@ const Import = lazy(() => import('./pages/Import'));
 const Book = lazy(() => import('./pages/Book'));
 const SignIn = lazy(() => import('./pages/SignIn'));
 const Track = lazy(() => import('./pages/Track'));
+const Pay = lazy(() => import('./pages/Pay'));
 const FleetPortal = lazy(() => import('./pages/FleetPortal'));
 const Accounts = lazy(() => import('./pages/Accounts'));
 const Statement = lazy(() => import('./pages/Statement'));
@@ -62,6 +63,7 @@ export default function App() {
             <Route path="/share/:id" element={<SharedReport />} />
             <Route path="/book" element={<Book />} />
             <Route path="/track/:id" element={<Track />} />
+            <Route path="/pay/:id" element={<Pay />} />
             <Route path="/fleet/:id" element={<FleetPortal />} />
             <Route path="/checkin" element={<CheckIn />} />
             <Route

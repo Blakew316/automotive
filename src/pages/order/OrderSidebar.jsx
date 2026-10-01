@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, MessageSquare, Mail, Plus, Trash2, ShieldAlert, ScanLine, ChevronRight, PenLine, HandCoins, Receipt, Building2, CalendarClock } from 'lucide-react';
+import { Phone, MessageSquare, Mail, Plus, Trash2, ShieldAlert, ScanLine, ChevronRight, PenLine, HandCoins, Receipt, Building2, CalendarClock, CreditCard, Copy, Undo2, Check } from 'lucide-react';
 import { orderProfit, profitTone, TONE_TEXT, TONE_BG } from '../../lib/profit';
-import { useShop, useUI, useTotals, useSite } from '../../store/hooks';
-import { Card, CardHeader, Avatar, CopyButton, NumInput, Modal, Field, Mono, ExternalLink, Toggle, InlineText } from '../../components/ui';
+import { useShop, useUI, useTotals, useSite, usePay, useAccess } from '../../store/hooks';
+import { Card, CardHeader, Avatar, CopyButton, NumInput, Modal, Field, Mono, ExternalLink, Toggle, InlineText, Spinner } from '../../components/ui';
 import { accountSummary, dueDate, hasTerms, termsLabel } from '../../lib/accounts';
 import TransportCard from './TransportCard';
 import { AuthorizationLog } from './AuthorizeModal';
@@ -12,6 +12,7 @@ import { money, fullName, vehicleName, phone, dateShort, time, number, round2 } 
 import { PAYMENT_METHODS } from '../../lib/workflow';
 import { nhtsaVinRecallUrl } from '../../lib/nhtsa';
 import CallButton from '../../components/CallButton';
+import { openPayLink } from '../../lib/payments';
 
 const toLocalInput = (iso) => {
   if (!iso) return '';
@@ -257,6 +258,7 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
             </div>
           </div>
         )}
+        <OnlinePay order={order} customer={customer} balance={t.balance} onCompose={onCompose} />
         {order.payments.length === 0 ? (
           <p className="px-4 py-3 text-sm text-ink-3">{order.status === 'estimate' ? 'Payments open once the estimate is approved.' : order.charge ? 'No payments yet — on the account’s statement.' : 'No payments yet.'}</p>
         ) : (
@@ -269,12 +271,17 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
                     {dateShort(p.at)}, {time(p.at)}
                     {p.tip > 0 ? ` · tip ${money(p.tip)}` : ''}
                     {p.surcharge > 0 ? ` · surcharge ${money(p.surcharge)}` : ''}
+                    {p.stripe?.fee > 0 ? ` · Stripe fee ${money(p.stripe.fee)}` : ''}
                   </div>
                 </div>
-                <span className="tabular font-medium">{money(p.amount)}</span>
-                <button onClick={() => removePayment(order.id, p.id)} className="btn-ghost btn-icon h-6 w-6 opacity-0 group-hover:opacity-100" aria-label="Remove payment">
-                  <Trash2 size={13} />
-                </button>
+                <span className={`tabular font-medium ${p.amount < 0 ? 'text-bad' : ''}`}>{money(p.amount)}</span>
+                {p.stripe?.pi && !p.stripe.refund ? (
+                  <RefundButton order={order} payment={p} />
+                ) : (
+                  <button onClick={() => removePayment(order.id, p.id)} className="btn-ghost btn-icon h-6 w-6 opacity-0 group-hover:opacity-100" aria-label="Remove payment">
+                    <Trash2 size={13} />
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -517,5 +524,106 @@ function ProfitMeter({ order }) {
         <span className="absolute -top-0.5 h-2.5 w-[2px] rounded-full bg-ink-2" style={{ left: `${target}%` }} title={`Target ${target}%`} />
       </div>
     </div>
+  );
+}
+
+/** Stripe pay link for the balance: status, copy and text it. */
+function OnlinePay({ order, customer, balance, onCompose }) {
+  const pay = usePay();
+  const { toast } = useUI();
+  const [busy, setBusy] = useState(false);
+  if (!pay.ready) return null;
+  const link = openPayLink(order, Math.max(0, balance));
+  const paidOnline = order.payLink?.status === 'paid';
+  if (balance < 0.5 && !paidOnline) return null;
+  if (order.status === 'estimate') return null;
+  const copy = async () => {
+    setBusy(true);
+    try {
+      const l = link || (await pay.ensureLink(order));
+      await navigator.clipboard.writeText(l.url).catch(() => {});
+      toast('Pay link copied', { tone: 'success' });
+    } catch (e) {
+      toast(e.message || 'Couldn’t make a pay link', { tone: 'error' });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <div className="flex items-center gap-2.5 border-b border-line/70 bg-fill/[0.02] px-4 py-2.5 text-sm" data-testid="online-pay">
+      <CreditCard size={15} className="shrink-0 text-accent" />
+      <div className="min-w-0 flex-1">
+        <div className="font-medium">{balance < 0.5 ? 'Paid online' : 'Online payment'}</div>
+        <div className="truncate text-xs text-ink-3">
+          {balance < 0.5 ? `Paid ${dateShort(order.payLink.paidAt)} through Stripe` : link ? `Pay link for ${money(link.amount)} ready${link.test ? ' (test mode)' : ''}` : 'Card, Apple Pay, Google Pay or pay over time'}
+        </div>
+      </div>
+      {balance >= 0.5 && (
+        <>
+          <button className="btn-ghost btn-icon h-7 w-7" onClick={copy} disabled={busy} aria-label="Copy pay link" title="Copy pay link">
+            {busy ? <Spinner size={13} /> : <Copy size={13} />}
+          </button>
+          {customer && (
+            <button className="btn-secondary btn-sm" onClick={() => onCompose({ templateId: 'pay' })}>
+              Send link
+            </button>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+/** Refund an online payment, in full or part (owner or manager). */
+function RefundButton({ order, payment }) {
+  const pay = usePay();
+  const { role } = useAccess();
+  const { toast } = useUI();
+  const refunded = -order.payments.filter((x) => x.stripe?.pi === payment.stripe.pi && x.stripe.refund).reduce((t, x) => t + Number(x.amount), 0);
+  const left = Math.round((Number(payment.amount) - refunded) * 100) / 100;
+  const [open, setOpen] = useState(false);
+  const [amount, setAmount] = useState(left);
+  const [busy, setBusy] = useState(false);
+  if (!pay.refund || !['owner', 'manager'].includes(role)) return <span className="h-6 w-6" title="Paid online — refund from the owner’s login" />;
+  if (left < 0.01) return <span className="flex h-6 w-6 items-center justify-center text-ink-4" title="Fully refunded"><Check size={13} /></span>;
+  const go = async () => {
+    setBusy(true);
+    try {
+      const r = await pay.refund({ order, payment, amount });
+      toast(`Refunded ${money(r.amount)} to the customer’s ${payment.method === 'Card' ? 'card' : 'account'}`, { tone: 'success' });
+      setOpen(false);
+    } catch (e) {
+      toast(e.message || 'The refund didn’t go through', { tone: 'error' });
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <>
+      <button onClick={() => setOpen(true)} className="btn-ghost btn-icon h-6 w-6 opacity-0 group-hover:opacity-100 focus:opacity-100" aria-label="Refund payment" title="Refund">
+        <Undo2 size={13} />
+      </button>
+      {open && (
+        <Modal
+          open
+          onClose={() => setOpen(false)}
+          title="Refund online payment"
+          subtitle={`${payment.ref || payment.method} · ${money(payment.amount)}${refunded ? ` · ${money(refunded)} already refunded` : ''}`}
+          size="sm"
+          footer={
+            <>
+              <button className="btn-secondary" onClick={() => setOpen(false)}>Cancel</button>
+              <button className="btn-primary" onClick={go} disabled={busy || !(amount >= 0.5 && amount <= left)}>
+                {busy ? <Spinner size={14} /> : <Undo2 size={14} />} Refund {money(amount || 0)}
+              </button>
+            </>
+          }
+        >
+          <Field label="Amount to refund" hint={`Up to ${money(left)}. Stripe returns it to the customer in 5–10 business days; its processing fee isn’t returned.`}>
+            {(id) => <NumInput id={id} align="left" className="input" value={amount} onCommit={(v) => setAmount(Math.max(0, Math.min(left, Number(v) || 0)))} />}
+          </Field>
+        </Modal>
+      )}
+    </>
   );
 }
