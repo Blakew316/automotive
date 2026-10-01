@@ -5,7 +5,7 @@ import { useShop, useUI } from '../../store/hooks';
 import { useIngest } from '../../lib/useMedia';
 import { Card, Segmented, Spinner, EmptyState, Toggle } from '../../components/ui';
 import { removeFiles, forgetUrls, useMediaUrl, formatBytes, formatDuration, storageEstimate, MAX_VIDEO_MB } from '../../lib/media';
-import { INSPECTION_TEMPLATE } from '../../lib/workflow';
+import { inspectionTemplateFor, inspectionPoints } from '../../lib/inspection';
 import { dateTime } from '../../lib/format';
 
 const ACCEPT = 'image/*,video/*,.heic,.heif,.mov';
@@ -189,7 +189,7 @@ export default function MediaPanel({ order, editable, viewer }) {
 
 /** Lightbox with caption, links and visibility controls (open it with `useMediaViewer`). */
 export function MediaViewer({ order, mediaId, editable, onNavigate, onClose }) {
-  const { updateMedia, removeMedia } = useShop();
+  const { state, updateMedia, removeMedia } = useShop();
   const { toast } = useUI();
   const list = order.media || [];
   const idx = list.findIndex((m) => m.id === mediaId);
@@ -216,7 +216,7 @@ export function MediaViewer({ order, mediaId, editable, onNavigate, onClose }) {
 
   if (!m) return null;
   const up = (patch) => updateMedia(order.id, m.id, patch);
-  const inspectionKeys = INSPECTION_TEMPLATE.flatMap((s) => s.items.map((label) => `${s.section}::${label}`));
+  const inspectionKeys = inspectionPoints(inspectionTemplateFor(state, order)).map((p) => p.key);
   const link = m.serviceId ? `svc:${m.serviceId}` : m.inspectionKey ? `insp:${m.inspectionKey}` : '';
 
   const remove = async () => {

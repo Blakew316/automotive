@@ -1,8 +1,8 @@
 # AutoShop Pro
 
-Shop management for independent auto repair — repair orders from estimate to paid invoice, a drag-and-drop workflow board, a built-in vehicle database (every make and model NHTSA has VIN data for, with system diagrams, parts lists and repair guides), on-device VIN decoding, parts lookup across suppliers, and a technical library with OEM service information, wiring references and trouble codes.
+Shop management for independent auto repair — estimates with fast customer authorization, repair orders through to paid invoice, a drag-and-drop workflow board, digital inspections, two-way customer messaging, online booking, a tech time clock with team pay and productivity, purchase orders, payments, accounting with QuickBooks exports, marketing, a built-in vehicle database (every make and model NHTSA has VIN data for, with system diagrams, parts lists and repair guides), on-device VIN decoding, parts lookup across suppliers, and a technical library with OEM service information, wiring references and trouble codes.
 
-Built with React, Vite and Tailwind. It runs entirely in the browser: shop data is stored locally (localStorage) and can be exported/imported as a JSON backup from **Settings → Data & backup**.
+Built with React, Vite and Tailwind. It runs entirely in the browser: shop data is stored locally (localStorage) and can be exported/imported as a JSON backup from **Settings → Data**. It installs to phones, tablets and computers as an app and works offline. Features that need to reach customers' phones (share links, online approvals, customer replies and the online booking inbox) use the shop's own free Supabase project — see [Shop Cloud](#shop-cloud).
 
 ## Features
 
@@ -12,9 +12,28 @@ Built with React, Vite and Tailwind. It runs entirely in the browser: shop data 
 - **Repair orders** — one record from estimate to invoice: canned jobs, labor/part/fee/sublet lines, parts markup matrix, shop supplies, discounts, tax, per-service approve/decline, tech assignment, complaint/cause/correction, digital vehicle inspection with recommendations, notes, and payments. Send by text or email (`sms:`/`mailto:`) and print or save a PDF estimate, work order or invoice.
 - **Photos & video on every RO** — take pictures or video from a phone/tablet camera or drag files in; attach them to the whole vehicle, a service line or an inspection point; add captions; mark any as internal. Photos are resized and stripped of location data before they’re stored.
 - **Customer vehicle report** — a clean, mobile-friendly page with the inspection results, recommendations, work performed, photos and video, and totals. Show it on a counter tablet (customers can approve or decline work there), text/email a **share link** that opens on any phone, or download a single self-contained **report file** (.html) with everything embedded.
-- **Calendar** — day/week scheduling with click-to-book and check-in to a new RO.
-- **Customers & vehicles** — history, lifetime value, declined-work follow-ups, and per-vehicle service timeline.
-- **Reports** — revenue, car count, ARO, gross profit, hours sold, effective labor rate, sales mix, estimate close rate, technician hours, top services, receivables aging.
+- **Estimates & authorization** — record approval per service in person (with on-screen signature), by phone, text or email; customers can also approve or decline each item from their report link with a typed name and signature. Every authorization is logged with who, how, when, what and the amount.
+- **Digital inspections** — editable inspection templates, good / needs attention soon / needs attention now ratings, measurements (tread depth, pad thickness), notes and photos per point, with recommendations carried to the customer report.
+- **Calendar & online booking** — day/week scheduling, plus a public booking page customers open from your website, Google profile or a text: they choose services, see open times based on your hours and capacity, and send a request that lands in **Calendar → Requests** to confirm (customer and vehicle are created automatically, with a confirmation text ready to send).
+- **Messages** — one inbox for texts, emails and portal replies per customer, with templates and merge fields (estimate ready, status update, ready for pickup, pay request, receipt, appointment reminder, service reminder, declined-work follow-up, review request, win-back). Texts and emails open in the shop phone’s Messages / Mail app so they come from the shop’s own number and address; customer replies are logged with **Log reply** or arrive automatically from report links.
+- **Payments** — record card, cash, check, ACH, financing, warranty and fleet payments with tips and an optional card surcharge; text-to-pay links through the shop’s own Stripe, Square, PayPal, Venmo or Cash App account; receipts by text or email.
+- **Financing** — “as low as $/mo” on estimates and the customer report, with a link to the shop’s financing partner.
+- **Customers & vehicles** — history, lifetime value, recent messages, declined-work follow-ups, and per-vehicle service timeline.
+
+**Team & techs**
+- **Tech Time Clock** — a phone-friendly view for each technician: clock in/out, their assigned jobs, one-tap job timers (starting a job clocks them in and moves the RO to In Progress), mark jobs done, and the inspection checklist.
+- **Team** — live board of who’s on what, timesheets with editable entries, efficiency (flagged ÷ clocked) and productivity (on jobs ÷ on the clock), and gross pay for hourly or flat-rate techs with labor/parts commission — exportable for payroll.
+
+**Parts & purchasing**
+- **Purchase orders** — create POs by vendor (from low stock or parts needed on ROs), mark ordered with an expected date, receive in full or partially into inventory (updating cost) and onto the RO, and see what’s on order.
+
+**Business**
+- **Reports** — sales & profit (revenue, car count, ARO, gross profit, hours sold, effective labor rate, sales mix, close rate, top services, receivables aging), technicians (efficiency, productivity, labor sales, commission), estimates & approvals (quoted vs approved vs declined, time to approve, approval methods, most-declined services) and customers (returning rate, new customers, online bookings, messages, top customers).
+- **Accounting** — profit & loss (income by type, parts and sublet cost, tech pay from the time clock, operating expenses by category, net income), an expense ledger, deposits by day and payment method (tips and surcharges separated), sales tax by month, and CSV exports in QuickBooks Online’s import layouts (invoices, payments, expenses, a balanced daily sales journal, customers).
+- **Marketing** — vehicles due for an oil service (by time or projected mileage), declined work to follow up, lapsed customers to win back, review requests after closed visits, and custom campaigns by tag, make or last visit. Send personalized texts one tap at a time from the shop phone, one BCC email, or export the list for a bulk texting/email service.
+- **Integrations** — Shop Cloud, online booking, Google reviews, QuickBooks exports, payment links, financing, PartsTech / Nexpart / WORLDPAC ordering with POs, NHTSA, calendar (.ics) export for Google/Apple/Outlook, CARFAX service history, and data import.
+- **Data migration** — import customers & vehicles or parts inventory from CSV (or paste from a spreadsheet) exported from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks or Excel: columns are matched automatically, previewed, and de-duplicated by phone, email, VIN and part number.
+- **Mobile app** — installable on iPhone, iPad, Android, Mac and PC (Settings → General → Mobile & desktop app); opens full-screen, works offline, with home-screen shortcuts to a new RO, the tech clock, the board and messages.
 
 **Vehicle database (stored on the site, works offline)**
 - **435 makes · 4,073 models · 1981–2027** — passenger cars, SUVs/MPVs, trucks and incomplete chassis from NHTSA’s vPIC database, browsable by make, model and model year, with search from the page or the ⌘K palette.
@@ -34,21 +53,26 @@ Built with React, Vite and Tailwind. It runs entirely in the browser: shop data 
   - 725 generic OBD-II trouble codes (SAE J2012) with causes and diagnostic checks for the most common 65.
   - Calculators: voltage drop / wire sizing, Ohm’s law, tire size comparison, unit conversions.
 
-## Photo & video sharing
+## Shop Cloud
 
-Photos and video are stored in the browser on the device that took them (IndexedDB), so they work offline and cost nothing. A share link has to point at files hosted online, so links use the shop’s own [Supabase](https://supabase.com) project:
+Shop data and photos live on the device (localStorage and IndexedDB), so everything works offline and costs nothing. Anything that has to open on a customer’s phone needs to be online, so it uses the shop’s own [Supabase](https://supabase.com) project:
 
-1. Create a project; copy the Project URL and anon (publishable) key into **Settings → Photo & video sharing**.
+1. Create a project; copy the Project URL and anon (publishable) key into **Settings → Shop Cloud**.
 2. Create a **public** Storage bucket (default name `shop-media`) and set its file size limit for your videos (50 MB per file on the free plan).
 3. Add a staff user under Authentication → Users and turn off public sign-ups.
-4. Run the storage policies shown in Settings (SQL Editor) so only signed-in staff can upload, replace or delete files.
+4. Run the SQL shown in Settings (SQL Editor): storage policies so only signed-in staff can upload, replace or delete files, and the `shop_inbox` table customers can only *add* to.
 5. Sign in on each device that publishes reports and press **Test**.
 
-Only items marked “Customer can see” are uploaded. Links use random 22-character IDs and can be updated or turned off from the RO (turning one off deletes its files). Without Supabase, shops can still show the report on screen or send the downloadable report file.
+With it connected:
+- **Share links** for vehicle reports with photos and video. Only items marked “Customer can see” are uploaded; links use random 22-character IDs and can be updated or turned off (which deletes the files).
+- **Online approvals & replies** — customers approve or decline work with a signature, or send a message, from the report; it arrives in the shop’s inbox and is applied to the RO automatically while a staff member is signed in.
+- **Online booking** shows real open times (business hours minus booked appointments, up to the capacity you set) and requests arrive in Calendar without the customer texting. The booking page republishes itself when the calendar changes.
+
+Without Shop Cloud, shops can still show reports on a counter tablet, send the downloadable report file, and take booking requests by text or email from the booking page.
 
 ## Getting service records onto CARFAX
 
-CARFAX doesn’t accept uploads from individual shops. Records reach CARFAX Reports through a data connection set up when a shop enrolls in the free CARFAX Car Care service-shop program ([carfaxserviceshops.com](https://www.carfaxserviceshops.com/)); integrated shop systems then send each closed RO automatically. **Settings → Vehicle history reporting** explains the steps and exports a service-history CSV (VIN, year/make/model, date, odometer, RO number, service performed, shop name/address/phone) for any date range to hand to CARFAX’s onboarding team. ROs without a 17-character VIN are skipped and counted so they can be fixed.
+CARFAX doesn’t accept uploads from individual shops. Records reach CARFAX Reports through a data connection set up when a shop enrolls in the free CARFAX Car Care service-shop program ([carfaxserviceshops.com](https://www.carfaxserviceshops.com/)); integrated shop systems then send each closed RO automatically. **Integrations → Vehicle history** explains the steps and exports a service-history CSV (VIN, year/make/model, date, odometer, RO number, service performed, shop name/address/phone) for any date range to hand to CARFAX’s onboarding team. ROs without a 17-character VIN are skipped and counted so they can be fixed.
 
 ## Design
 
@@ -60,7 +84,7 @@ Apple-style UI: San Francisco on Apple devices (system font stack) with Inter as
 | --- | --- |
 | Vehicle database & VIN decode | NHTSA vPIC (public domain), stored in `public/data` |
 | Recalls, complaints, NCAP ratings | api.nhtsa.gov (optional, live) |
-| Shared reports, photos & video | The shop’s own Supabase Storage bucket (optional) |
+| Shared reports, photos & video, online approvals, customer replies, booking requests | The shop’s own Supabase project — Storage bucket and `shop_inbox` table (optional) |
 | Firing orders & cylinder numbering | Manufacturer-published data for the engine families in `src/data/engines.js` |
 | OEM service portals & free documents | Manufacturer and government sites, verified Sept 2026 |
 | Trouble codes | SAE J2012 generic definitions |

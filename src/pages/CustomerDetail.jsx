@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Phone, MessageSquare, Mail, Pencil, Plus, Car, Trash2, MoreHorizontal, CalendarPlus, Users } from 'lucide-react';
+import { Phone, MessageSquare, Mail, Pencil, Plus, Car, Trash2, MoreHorizontal, CalendarPlus, Users, ChevronRight } from 'lucide-react';
+import ComposeModal from '../components/Compose';
 import { useShop, useUI, useTotals } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Avatar, StatusLabel, EmptyState, Menu, Modal, ListRow, KV } from '../components/ui';
 import { CustomerForm, VehicleForm, AppointmentForm } from '../components/forms';
-import { money, money0, fullName, vehicleName, phone, telHref, smsHref, mailHref, dateShort, date, number, time } from '../lib/format';
+import { money, money0, fullName, vehicleName, phone, telHref, mailHref, dateShort, date, number, time, relTime } from '../lib/format';
 
 export default function CustomerDetail() {
   const { id } = useParams();
@@ -16,6 +17,7 @@ export default function CustomerDetail() {
   const [addingVehicle, setAddingVehicle] = useState(false);
   const [booking, setBooking] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [composing, setComposing] = useState(null);
   const c = state.customers.find((x) => x.id === id);
 
   const data = useMemo(() => {
@@ -55,8 +57,8 @@ export default function CustomerDetail() {
         actions={
           <>
             <a href={telHref(c.phone)} className="btn-secondary btn-icon" aria-label="Call"><Phone size={15} /></a>
-            <a href={smsHref(c.phone)} className="btn-secondary btn-icon" aria-label="Text"><MessageSquare size={15} /></a>
-            <a href={mailHref(c.email)} className="btn-secondary btn-icon" aria-label="Email"><Mail size={15} /></a>
+            <button onClick={() => setComposing({ channel: 'sms' })} disabled={!c.phone} className="btn-secondary btn-icon" aria-label="Text"><MessageSquare size={15} /></button>
+            <button onClick={() => setComposing({ channel: 'email' })} disabled={!c.email} className="btn-secondary btn-icon" aria-label="Email"><Mail size={15} /></button>
             <button className="btn-secondary" onClick={() => setBooking(true)}><CalendarPlus size={15} /> Book</button>
             <Link to={`/orders/new?customer=${c.id}`} className="btn-primary"><Plus size={16} strokeWidth={2.2} /> Repair order</Link>
             <Menu
@@ -181,6 +183,7 @@ export default function CustomerDetail() {
               {c.tags?.length > 0 && <KV label="Tags">{c.tags.join(', ')}</KV>}
             </dl>
           </Card>
+          <RecentMessages customerId={c.id} />
           {c.notes && (
             <Card className="px-4 py-3">
               <div className="section-label mb-1">Notes</div>
@@ -206,6 +209,7 @@ export default function CustomerDetail() {
       </div>
 
       {editing && <CustomerForm open initial={c} onClose={() => setEditing(false)} />}
+      {composing && <ComposeModal customer={c} templateId="update" {...composing} onClose={() => setComposing(null)} />}
       {addingVehicle && <VehicleForm open initial={{ customerId: c.id }} onClose={() => setAddingVehicle(false)} />}
       {booking && <AppointmentForm open initial={{ customerId: c.id, vehicleId: data.vehicles[0]?.id }} onClose={() => setBooking(false)} />}
       <Modal
@@ -241,5 +245,39 @@ function Metric({ label, value }) {
       <div className="text-sm text-ink-2">{label}</div>
       <div className="mt-1 text-2xl font-semibold tracking-tight">{value}</div>
     </div>
+  );
+}
+
+function RecentMessages({ customerId }) {
+  const { state } = useShop();
+  const list = state.messages.filter((m) => m.customerId === customerId).sort((a, b) => b.at.localeCompare(a.at));
+  const unread = list.filter((m) => m.dir === 'in' && !m.read).length;
+  return (
+    <Card>
+      <CardHeader
+        title="Messages"
+        subtitle={unread ? `${unread} unread` : `${list.length} in conversation`}
+        actions={
+          <Link to={`/messages/${customerId}`} className="btn-plain btn-sm">
+            Open <ChevronRight size={14} />
+          </Link>
+        }
+      />
+      {list.length === 0 ? (
+        <p className="px-4 py-3 text-sm text-ink-3">No messages yet.</p>
+      ) : (
+        <ul className="divide-y divide-line/70">
+          {list.slice(0, 3).map((m) => (
+            <li key={m.id} className="px-4 py-2.5 text-sm">
+              <div className="mb-0.5 flex justify-between text-xs text-ink-3">
+                <span>{m.dir === 'out' ? 'You' : 'Customer'}</span>
+                <span>{relTime(m.at)}</span>
+              </div>
+              <p className={`line-clamp-2 ${m.dir === 'in' && !m.read ? 'font-medium text-ink' : 'text-ink-2'}`}>{m.body}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </Card>
   );
 }

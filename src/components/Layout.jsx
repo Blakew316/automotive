@@ -3,9 +3,11 @@ import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package,
   BookOpen, ChartColumn, Settings, Search, Menu as MenuIcon, Sun, Moon, Monitor, Wrench, X, Database,
+  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks,
 } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
+import { useCloudSync } from '../lib/useCloudSync';
 import CommandPalette from './CommandPalette';
 import Toasts from './Toasts';
 
@@ -16,6 +18,8 @@ function useNavCounts() {
     workflow: open.filter((o) => WIP_STATUSES.includes(o.status)).length,
     orders: open.length,
     lowStock: state.inventory.filter((p) => Number(p.qty) <= Number(p.min)).length,
+    unread: state.messages.filter((m) => m.dir === 'in' && !m.read).length,
+    requests: state.bookingRequests.filter((b) => b.status === 'new').length,
   };
 }
 
@@ -25,7 +29,8 @@ const NAV = [
       { to: '/', label: 'Today', icon: LayoutGrid, end: true },
       { to: '/workflow', label: 'Workflow', icon: SquareKanban, count: 'workflow' },
       { to: '/orders', label: 'Repair Orders', icon: ClipboardList, count: 'orders' },
-      { to: '/calendar', label: 'Calendar', icon: CalendarDays },
+      { to: '/calendar', label: 'Calendar', icon: CalendarDays, count: 'requests', badge: true },
+      { to: '/messages', label: 'Messages', icon: MessageSquare, count: 'unread', badge: true },
     ],
   },
   {
@@ -33,11 +38,13 @@ const NAV = [
     items: [
       { to: '/customers', label: 'Customers', icon: Users },
       { to: '/vehicles', label: 'Vehicles', icon: Car },
+      { to: '/marketing', label: 'Marketing', icon: Megaphone },
     ],
   },
   {
     title: 'Technical',
     items: [
+      { to: '/tech', label: 'Tech Time Clock', icon: Timer },
       { to: '/catalog', label: 'Vehicle Database', icon: Database },
       { to: '/vin', label: 'VIN Decoder', icon: ScanLine },
       { to: '/parts', label: 'Parts & Inventory', icon: Package, count: 'lowStock' },
@@ -45,9 +52,12 @@ const NAV = [
     ],
   },
   {
-    title: 'Shop',
+    title: 'Business',
     items: [
+      { to: '/team', label: 'Team', icon: UsersRound },
       { to: '/reports', label: 'Reports', icon: ChartColumn },
+      { to: '/accounting', label: 'Accounting', icon: Landmark },
+      { to: '/integrations', label: 'Integrations', icon: Blocks },
       { to: '/settings', label: 'Settings', icon: Settings },
     ],
   },
@@ -114,7 +124,12 @@ function Sidebar({ onNavigate }) {
                     <>
                       <item.icon size={17} strokeWidth={1.75} className={isActive ? 'text-accent' : 'text-ink-2'} />
                       <span className="flex-1 truncate">{item.label}</span>
-                      {item.count && counts[item.count] > 0 && <span className="tabular text-xs text-ink-3">{counts[item.count]}</span>}
+                      {item.count && counts[item.count] > 0 &&
+                        (item.badge ? (
+                          <span className="tabular flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1.5 text-2xs font-semibold text-white">{counts[item.count]}</span>
+                        ) : (
+                          <span className="tabular text-xs text-ink-3">{counts[item.count]}</span>
+                        ))}
                     </>
                   )}
                 </NavLink>
@@ -154,6 +169,7 @@ function Sidebar({ onNavigate }) {
 export default function Layout() {
   const { navOpen, setNavOpen, setPaletteOpen } = useUI();
   const location = useLocation();
+  useCloudSync();
 
   useEffect(() => {
     document.getElementById('main-scroll')?.scrollTo(0, 0);

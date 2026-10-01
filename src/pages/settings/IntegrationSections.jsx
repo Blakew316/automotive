@@ -6,8 +6,9 @@ import { cloudConfig, cloudSession, signIn, signOut, testConnection } from '../.
 import { serviceHistory, toCsv, HISTORY_COLUMNS } from '../../lib/serviceHistory';
 import { isoDate, addDays, number } from '../../lib/format';
 
-const policySql = (bucket) => `-- Run once in Supabase → SQL Editor. Lets signed-in shop staff manage files in the
--- "${bucket}" bucket; customers read them through public links only.
+const policySql = (bucket) => `-- Run once in Supabase → SQL Editor.
+-- 1) Storage: signed-in shop staff manage files in the "${bucket}" bucket;
+--    customers only read them through public links.
 create policy "Shop staff can upload" on storage.objects
   for insert to authenticated with check (bucket_id = '${bucket}');
 create policy "Shop staff can replace" on storage.objects
@@ -15,7 +16,24 @@ create policy "Shop staff can replace" on storage.objects
 create policy "Shop staff can read" on storage.objects
   for select to authenticated using (bucket_id = '${bucket}');
 create policy "Shop staff can delete" on storage.objects
-  for delete to authenticated using (bucket_id = '${bucket}');`;
+  for delete to authenticated using (bucket_id = '${bucket}');
+
+-- 2) Inbox: customers can drop booking requests, approvals and messages in;
+--    only signed-in staff can read or clear them.
+create table if not exists public.shop_inbox (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  kind text not null check (kind in ('booking', 'approval', 'message')),
+  ref text,
+  payload jsonb not null check (octet_length(payload::text) < 20000)
+);
+alter table public.shop_inbox enable row level security;
+create policy "Customers can submit" on public.shop_inbox
+  for insert to anon, authenticated with check (true);
+create policy "Staff can read" on public.shop_inbox
+  for select to authenticated using (true);
+create policy "Staff can clear" on public.shop_inbox
+  for delete to authenticated using (true);`;
 
 export function SharingSection() {
   const { state, updateShop } = useShop();
@@ -46,11 +64,11 @@ export function SharingSection() {
 
   return (
     <Card id="sharing" className="scroll-mt-6">
-      <CardHeader icon={Cloud} title="Photo & video sharing" subtitle="Text customers a link to their vehicle report, photos and video" />
+      <CardHeader icon={Cloud} title="Shop Cloud" subtitle="Share links, online booking, online approvals and customer messages — powered by your own Supabase project" />
       <div className="space-y-4 p-4">
         <p className="text-sm text-ink-2">
-          Photos are always kept on this device. To send links that open on a customer’s phone, connect your shop’s own{' '}
-          <ExternalLink href="https://supabase.com/dashboard">Supabase</ExternalLink> storage (free tier available). Reports are published to unguessable links that you can update or turn off.
+          Everything works on this device without it. Connecting your shop’s own <ExternalLink href="https://supabase.com/dashboard">Supabase</ExternalLink> project (free tier available) adds:
+          share links customers open on their phone, live availability on your booking page, and booking requests, approvals and messages from customers arriving in your inbox automatically.
         </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Project URL" className="sm:col-span-2" hint="Supabase → Project Settings → API, e.g. https://abcd1234.supabase.co">
@@ -145,11 +163,11 @@ export function SharingSection() {
                 </button>
               </div>
             </li>
-            <li>Sign in above on each computer or tablet that publishes reports, then press Test.</li>
+            <li>Sign in above on each computer or tablet the shop uses, then press Test. While signed in, the app checks the inbox every minute.</li>
           </ol>
           <p className="mt-3 text-xs text-ink-3">
             Only photos and video marked “Customer can see” are uploaded. Links use random 22-character IDs; anyone who has a link can view that report, so treat links like a
-            photo you text to the customer.
+            photo you text to the customer. The anon key is public by design — the policies above are what protect your data.
           </p>
         </details>
       </div>

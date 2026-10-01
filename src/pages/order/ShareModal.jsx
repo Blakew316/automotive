@@ -10,7 +10,7 @@ import { formatBytes } from '../../lib/media';
 import { smsHref, mailHref, vehicleName, relTime } from '../../lib/format';
 
 export default function ShareModal({ order, customer, vehicle, showPrices: initialPrices = true, onClose }) {
-  const { state, setShare } = useShop();
+  const { state, setShare, addMessage } = useShop();
   const { toast } = useUI();
   const [showPrices, setShowPrices] = useState(initialPrices);
   const [includeVideo, setIncludeVideo] = useState(true);
@@ -121,10 +121,20 @@ export default function ShareModal({ order, customer, vehicle, showPrices: initi
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <a href={customer?.phone ? smsHref(customer.phone, message(share.url)) : undefined} aria-disabled={!customer?.phone} className={`btn-primary ${customer?.phone ? '' : 'pointer-events-none opacity-50'}`}>
+                  <a
+                    href={customer?.phone ? smsHref(customer.phone, message(share.url)) : undefined}
+                    onClick={() => customer && addMessage({ customerId: customer.id, orderId: order.id, channel: 'sms', body: message(share.url) })}
+                    aria-disabled={!customer?.phone}
+                    className={`btn-primary ${customer?.phone ? '' : 'pointer-events-none opacity-50'}`}
+                  >
                     <MessageSquare size={14} /> Text to customer
                   </a>
-                  <a href={customer?.email ? mailHref(customer.email, `Your ${vName} — ${shop.name}`, `${message(share.url)}\n\n${shop.name}\n${shop.phone}`) : undefined} aria-disabled={!customer?.email} className={`btn-secondary ${customer?.email ? '' : 'pointer-events-none opacity-50'}`}>
+                  <a
+                    href={customer?.email ? mailHref(customer.email, `Your ${vName} — ${shop.name}`, `${message(share.url)}\n\n${shop.name}\n${shop.phone}`) : undefined}
+                    onClick={() => customer && addMessage({ customerId: customer.id, orderId: order.id, channel: 'email', body: message(share.url) })}
+                    aria-disabled={!customer?.email}
+                    className={`btn-secondary ${customer?.email ? '' : 'pointer-events-none opacity-50'}`}
+                  >
                     <Mail size={14} /> Email
                   </a>
                   <a href={share.url} target="_blank" rel="noopener noreferrer" className="btn-secondary">

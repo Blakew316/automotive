@@ -1,17 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive } from 'lucide-react';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive, Store, Wrench, CreditCard, MessageSquareText, CalendarCheck, Cloud, ChevronRight } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
-import { PageHeader, Card, CardHeader, Field, Toggle, Modal, NumInput, InlineText } from '../components/ui';
+import { PageHeader, Card, CardHeader, Field, Toggle, Modal, NumInput, InlineText, Tabs } from '../components/ui';
 import { priceFromMatrix, DEFAULT_MATRIX } from '../lib/pricing';
 import { money } from '../lib/format';
-import { SharingSection, HistorySection } from './settings/IntegrationSections';
+import { SharingSection } from './settings/IntegrationSections';
+import HoursSection from './settings/HoursSection';
+import { PaymentsSection, FinancingSection } from './settings/PaymentSettings';
+import { TemplatesSection, MarketingSettings } from './settings/CommsSettings';
+import BookingSettings from './settings/BookingSettings';
+import InspectionTemplates from './settings/InspectionTemplates';
+import InstallSection from './settings/InstallSection';
+
+const TABS = [
+  { value: 'general', label: 'General', icon: Store },
+  { value: 'menu', label: 'Services & inspections', icon: Wrench },
+  { value: 'payments', label: 'Payments & financing', icon: CreditCard },
+  { value: 'messaging', label: 'Messaging', icon: MessageSquareText },
+  { value: 'booking', label: 'Online booking', icon: CalendarCheck },
+  { value: 'cloud', label: 'Shop Cloud', icon: Cloud },
+  { value: 'data', label: 'Data', icon: HardDrive },
+];
 
 export default function Settings() {
   const { state, updateShop } = useShop();
   const shop = state.shop;
   const text = (k) => ({ value: shop[k] || '', onCommit: (v) => updateShop({ [k]: v }) });
   const { hash } = useLocation();
+  const [params, setParams] = useSearchParams();
+  const tab = TABS.some((t) => t.value === params.get('tab')) ? params.get('tab') : hash === '#sharing' ? 'cloud' : 'general';
   useEffect(() => {
     if (hash) document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' });
   }, [hash]);
@@ -19,50 +37,81 @@ export default function Settings() {
   return (
     <>
       <PageHeader title="Settings" subtitle="Changes save automatically." />
+      <Tabs tabs={TABS} value={tab} onChange={(t) => setParams({ tab: t }, { replace: true })} className="mb-6" />
       <div className="mx-auto max-w-4xl space-y-6">
-        <Section title="Shop profile" subtitle="Appears on estimates, invoices and customer messages">
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Shop name" className="sm:col-span-2">{(id) => <InlineText id={id} className="input" {...text('name')} />}</Field>
-            <Field label="Phone">{(id) => <InlineText id={id} className="input" {...text('phone')} />}</Field>
-            <Field label="Email">{(id) => <InlineText id={id} className="input" {...text('email')} />}</Field>
-            <Field label="Street address" className="sm:col-span-2">{(id) => <InlineText id={id} className="input" {...text('address')} />}</Field>
-            <div className="grid grid-cols-[1fr_80px_110px] gap-3 sm:col-span-2">
-              <Field label="City">{(id) => <InlineText id={id} className="input" {...text('city')} />}</Field>
-              <Field label="State">{(id) => <InlineText id={id} className="input" maxLength={2} {...text('state')} />}</Field>
-              <Field label="ZIP">{(id) => <InlineText id={id} className="input" {...text('zip')} />}</Field>
-            </div>
-          </div>
-        </Section>
-
-        <Section title="Rates & taxes">
-          <div className="grid gap-3 sm:grid-cols-3">
-            <Field label="Labor rate ($/hr)" hint="Default for new labor lines">{(id) => <NumInput id={id} align="left" className="input" value={shop.laborRate} onCommit={(v) => updateShop({ laborRate: v })} />}</Field>
-            <Field label="Tech pay ($/hr)" hint="Used for gross-profit reporting">{(id) => <NumInput id={id} align="left" className="input" value={shop.techPayRate} onCommit={(v) => updateShop({ techPayRate: v })} />}</Field>
-            <Field label="Sales tax (%)">{(id) => <NumInput id={id} align="left" className="input" value={shop.taxRate} onCommit={(v) => updateShop({ taxRate: v })} />}</Field>
-            <Field label="Shop supplies (% of labor)">{(id) => <NumInput id={id} align="left" className="input" value={shop.shopSuppliesPct} onCommit={(v) => updateShop({ shopSuppliesPct: v })} />}</Field>
-            <Field label="Shop supplies cap ($)">{(id) => <NumInput id={id} align="left" className="input" value={shop.shopSuppliesCap} onCommit={(v) => updateShop({ shopSuppliesCap: v })} />}</Field>
-            <div className="flex items-center justify-between gap-3 rounded-[8px] border border-line px-3 py-2 sm:mt-5 sm:h-8 sm:py-0">
-              <span className="text-sm">Tax labor</span>
-              <Toggle checked={Boolean(shop.taxLabor)} onChange={(v) => updateShop({ taxLabor: v })} label="Tax labor" />
-            </div>
-          </div>
-        </Section>
-
-        <MatrixSection />
-
-        <Section title="Documents" subtitle="Printed at the bottom of estimates and invoices">
-          <div className="space-y-3">
-            <Field label="Warranty">{(id) => <InlineText id={id} className="input" {...text('warranty')} />}</Field>
-            <Field label="Estimate terms">{(id) => <InlineText id={id} multiline rows={2} className="input" {...text('estimateTerms')} />}</Field>
-            <Field label="Invoice terms">{(id) => <InlineText id={id} multiline rows={2} className="input" {...text('invoiceTerms')} />}</Field>
-          </div>
-        </Section>
-
-        <SharingSection />
-        <HistorySection />
-        <TechSection />
-        <MenuSection />
-        <DataSection />
+        {tab === 'general' && (
+          <>
+            <Section title="Shop profile" subtitle="Appears on estimates, invoices, customer messages and your booking page">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <Field label="Shop name" className="sm:col-span-2">{(id) => <InlineText id={id} className="input" {...text('name')} />}</Field>
+                <Field label="Phone">{(id) => <InlineText id={id} className="input" {...text('phone')} />}</Field>
+                <Field label="Email">{(id) => <InlineText id={id} className="input" {...text('email')} />}</Field>
+                <Field label="Street address" className="sm:col-span-2">{(id) => <InlineText id={id} className="input" {...text('address')} />}</Field>
+                <div className="grid grid-cols-[1fr_80px_110px] gap-3 sm:col-span-2">
+                  <Field label="City">{(id) => <InlineText id={id} className="input" {...text('city')} />}</Field>
+                  <Field label="State">{(id) => <InlineText id={id} className="input" maxLength={2} {...text('state')} />}</Field>
+                  <Field label="ZIP">{(id) => <InlineText id={id} className="input" {...text('zip')} />}</Field>
+                </div>
+              </div>
+            </Section>
+            <HoursSection />
+            <Section title="Rates & taxes">
+              <div className="grid gap-3 sm:grid-cols-3">
+                <Field label="Labor rate ($/hr)" hint="Default for new labor lines">{(id) => <NumInput id={id} align="left" className="input" value={shop.laborRate} onCommit={(v) => updateShop({ laborRate: v })} />}</Field>
+                <Field label="Default tech cost ($/hr)" hint="Used for gross profit when a tech has no pay rate">{(id) => <NumInput id={id} align="left" className="input" value={shop.techPayRate} onCommit={(v) => updateShop({ techPayRate: v })} />}</Field>
+                <Field label="Sales tax (%)">{(id) => <NumInput id={id} align="left" className="input" value={shop.taxRate} onCommit={(v) => updateShop({ taxRate: v })} />}</Field>
+                <Field label="Shop supplies (% of labor)">{(id) => <NumInput id={id} align="left" className="input" value={shop.shopSuppliesPct} onCommit={(v) => updateShop({ shopSuppliesPct: v })} />}</Field>
+                <Field label="Shop supplies cap ($)">{(id) => <NumInput id={id} align="left" className="input" value={shop.shopSuppliesCap} onCommit={(v) => updateShop({ shopSuppliesCap: v })} />}</Field>
+                <div className="flex items-center justify-between gap-3 rounded-[8px] border border-line px-3 py-2 sm:mt-5 sm:h-8 sm:py-0">
+                  <span className="text-sm">Tax labor</span>
+                  <Toggle checked={Boolean(shop.taxLabor)} onChange={(v) => updateShop({ taxLabor: v })} label="Tax labor" />
+                </div>
+              </div>
+            </Section>
+            <MatrixSection />
+            <Section title="Documents" subtitle="Printed at the bottom of estimates and invoices">
+              <div className="space-y-3">
+                <Field label="Warranty">{(id) => <InlineText id={id} className="input" {...text('warranty')} />}</Field>
+                <Field label="Estimate terms">{(id) => <InlineText id={id} multiline rows={2} className="input" {...text('estimateTerms')} />}</Field>
+                <Field label="Invoice terms">{(id) => <InlineText id={id} multiline rows={2} className="input" {...text('invoiceTerms')} />}</Field>
+              </div>
+            </Section>
+            <InstallSection />
+          </>
+        )}
+        {tab === 'menu' && (
+          <>
+            <MenuSection />
+            <InspectionTemplates />
+          </>
+        )}
+        {tab === 'payments' && (
+          <>
+            <PaymentsSection />
+            <FinancingSection />
+          </>
+        )}
+        {tab === 'messaging' && (
+          <>
+            <TemplatesSection />
+            <MarketingSettings />
+          </>
+        )}
+        {tab === 'booking' && <BookingSettings />}
+        {tab === 'cloud' && <SharingSection />}
+        {tab === 'data' && (
+          <>
+            <Link to="/import" className="card flex items-center gap-3 px-4 py-3.5 hover:bg-fill/[0.03]">
+              <Upload size={18} className="shrink-0 text-ink-3" />
+              <span className="flex-1">
+                <span className="block text-sm font-semibold">Import from another shop system</span>
+                <span className="block text-xs text-ink-3">Customers, vehicles, inventory and service history from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA or any CSV export</span>
+              </span>
+              <ChevronRight size={16} className="text-ink-4" />
+            </Link>
+            <DataSection />
+          </>
+        )}
       </div>
     </>
   );
@@ -124,39 +173,6 @@ function MatrixSection() {
         </tbody>
       </table>
       </div>
-    </Section>
-  );
-}
-
-function TechSection() {
-  const { state, saveTechnician } = useShop();
-  const [editing, setEditing] = useState(null);
-  return (
-    <Section title="Technicians" actions={<button className="btn-plain btn-sm" onClick={() => setEditing({ name: '', role: '', certs: '', payRate: 30 })}><Plus size={14} /> Add</button>}>
-      <ul className="-my-2 divide-y divide-line/70">
-        {state.technicians.map((t) => (
-          <li key={t.id} className="flex items-center gap-3 py-2.5">
-            <div className="min-w-0 flex-1">
-              <div className="text-sm font-medium">{t.name}</div>
-              <div className="text-xs text-ink-3">{[t.role, t.certs].filter(Boolean).join(' · ')}</div>
-            </div>
-            <span className="tabular text-sm text-ink-2">{money(t.payRate)}/hr</span>
-            <button className="btn-ghost btn-icon h-7 w-7" onClick={() => setEditing(t)} aria-label={`Edit ${t.name}`}><Pencil size={13} /></button>
-          </li>
-        ))}
-      </ul>
-      {editing && (
-        <SimpleForm
-          title={editing.id ? 'Edit technician' : 'Add technician'}
-          initial={editing}
-          fields={[['name', 'Name'], ['role', 'Role'], ['certs', 'Certifications'], ['payRate', 'Pay rate ($/hr)', 'number']]}
-          onClose={() => setEditing(null)}
-          onSave={(t) => {
-            saveTechnician(t);
-            setEditing(null);
-          }}
-        />
-      )}
     </Section>
   );
 }

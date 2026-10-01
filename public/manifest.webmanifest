@@ -1,0 +1,24 @@
+{
+  "name": "AutoShop Pro",
+  "short_name": "AutoShop",
+  "description": "Shop management for independent auto repair — repair orders, workflow, inspections, time clock, parts and customer messaging.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f5f5f7",
+  "theme_color": "#1d1d1f",
+  "categories": ["business", "productivity"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "New repair order", "url": "./orders/new", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Tech time clock", "url": "./tech", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Workflow board", "url": "./workflow", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Messages", "url": "./messages", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

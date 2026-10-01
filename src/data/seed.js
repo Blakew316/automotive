@@ -3,6 +3,7 @@
 import { withCheckDigit } from '../lib/vin';
 import { DEFAULT_MATRIX, priceFromMatrix, orderTotals } from '../lib/pricing';
 import { INSPECTION_TEMPLATE } from '../lib/workflow';
+import { seedExtras } from './seedExtras';
 
 export const DEFAULT_SHOP = {
   name: 'Main Street Auto Service',
@@ -27,9 +28,9 @@ export const DEFAULT_SHOP = {
 
 export const TECHNICIANS = [
   { id: 't1', name: 'Marcus Reed', role: 'Master Technician', certs: 'ASE Master · L1', payRate: 42 },
-  { id: 't2', name: 'Luis Ortega', role: 'Drivability & Electrical', certs: 'ASE A6 · A8 · L1', payRate: 40 },
-  { id: 't3', name: 'Dana Whitfield', role: 'A-Technician', certs: 'ASE A1–A5', payRate: 34 },
-  { id: 't4', name: 'Kim Park', role: 'Lube & Maintenance', certs: 'ASE G1', payRate: 24 },
+  { id: 't2', name: 'Luis Ortega', role: 'Drivability & Electrical', certs: 'ASE A6 · A8 · L1', payRate: 38 },
+  { id: 't3', name: 'Dana Whitfield', role: 'A-Technician', certs: 'ASE A1–A5', payRate: 30 },
+  { id: 't4', name: 'Kim Park', role: 'Lube & Maintenance', certs: 'ASE G1', payRate: 22 },
 ];
 
 const L = (description, hours) => ({ type: 'labor', description, hours });
@@ -61,6 +62,10 @@ export const CANNED_JOBS = [
   { id: 'cj-hub', title: 'Wheel hub bearing assembly', category: 'Suspension', items: [L('Replace wheel hub bearing assembly', 1.3), P('Wheel hub bearing assembly', 1, 112.0)] },
   { id: 'cj-waterpump', title: 'Water pump replacement', category: 'Engine', items: [L('Replace water pump & gasket, refill & bleed coolant', 3.2), P('Water pump with gasket', 1, 92.0), P('OE-spec coolant, 1 gal', 2, 21.0)] },
   { id: 'cj-inspect', title: 'Pre-purchase inspection', category: 'Diagnostics', items: [L('Road test, scan, 60-point inspection with photos', 1.0)] },
+  { id: 'cj-timing', title: 'Timing belt & water pump kit', category: 'Engine', items: [L('Replace timing belt, tensioner, idlers & water pump; refill & bleed coolant', 4.6), P('Timing belt kit with water pump', 1, 238.0), P('OE-spec coolant, 1 gal', 2, 21.0)] },
+  { id: 'cj-valvecover', title: 'Valve cover gasket replacement', category: 'Engine', items: [L('Replace valve cover gasket & spark plug tube seals, clean & inspect', 2.1), P('Valve cover gasket set', 1, 46.0)] },
+  { id: 'cj-cv', title: 'CV axle replacement', category: 'Suspension', items: [L('Replace front CV axle shaft, check fluid level', 1.4), P('CV axle shaft assembly', 1, 96.0)] },
+  { id: 'cj-arms', title: 'Front lower control arms (pair)', category: 'Suspension', items: [L('Replace front lower control arms with ball joints & bushings', 2.2), P('Lower control arm with ball joint', 2, 82.0)] },
 ];
 
 export const INVENTORY = [
@@ -275,32 +280,147 @@ export function createSeed(now = new Date()) {
     return o;
   };
 
-  // History: closed repair orders over the last ~150 days (feeds reports and service history).
-  const historyJobs = ['cj-oil', 'cj-oil', 'cj-oil', 'cj-rotate', 'cj-fbrakes', 'cj-rbrakes', 'cj-filters', 'cj-battery', 'cj-diag', 'cj-align', 'cj-bfluid', 'cj-coolant', 'cj-trans', 'cj-plugs', 'cj-wipers', 'cj-ac', 'cj-tpms', 'cj-belt', 'cj-struts', 'cj-hub', 'cj-balance'];
-  for (let i = 0; i < 74; i++) {
-    const daysAgo = Math.floor(3 + rand() * 150);
-    const vi = Math.floor(rand() * vehicles.length);
-    const jobs = [pick(historyJobs)];
-    if (rand() < 0.55) jobs.push(pick(historyJobs));
-    if (rand() < 0.2) jobs.push(pick(historyJobs));
-    const uniq = [...new Set(jobs)];
-    const t = pick(TECHNICIANS).id;
-    const services = uniq.map((j) => ({ ...svc(j, 'approved'), techId: t, done: true }));
-    if (rand() < 0.3) services.push({ ...svc(pick(['cj-fbrakes', 'cj-struts', 'cj-coolant', 'cj-trans', 'cj-align']), 'declined') });
-    const mileageIn = Math.max(1000, V(vi).mileage - Math.round(daysAgo * 38));
-    const o = order(vi, 'closed', {
-      techId: t,
-      services,
-      mileageIn,
-      mileageOut: mileageIn + 4,
-      createdAt: at(daysAgo + (rand() < 0.3 ? 1 : 0), 8, Math.floor(rand() * 50)),
-      authorizedAt: at(daysAgo, 9, 30),
-      invoicedAt: at(daysAgo, 16, 10),
-      closedAt: at(daysAgo, 17, 5),
-      updatedAt: at(daysAgo, 17, 5),
-      concern: '',
-    });
-    o.pendingPayment = true; // filled below once totals are known
+  // The rest of the customer base: regulars from Springfield and nearby towns. Phone numbers use
+  // the 555-0100–0199 range reserved for fiction in each area code.
+  const FIRST = ['James', 'Mary', 'Robert', 'Linda', 'Michael', 'Susan', 'David', 'Karen', 'Chris', 'Nancy', 'Daniel', 'Lisa', 'Matthew', 'Angela', 'Anthony', 'Megan', 'Mark', 'Rachel', 'Steven', 'Laura', 'Paul', 'Emily', 'Andrew', 'Kayla', 'Joshua', 'Brianna', 'Kevin', 'Olivia', 'Brian', 'Hailey', 'Eric', 'Morgan', 'Ryan', 'Alyssa', 'Jacob', 'Lauren', 'Nathan', 'Destiny', 'Aaron', 'Jasmine', 'Luke', 'Gabriela', 'Dylan', 'Tanya', 'Derek', 'Monica', 'Travis', 'Renee'];
+  const LAST = ['Anderson', 'Baker', 'Carter', 'Diaz', 'Evans', 'Foster', 'Garcia', 'Hughes', 'Jensen', 'Keller', 'Lopez', 'Morgan', 'Nelson', 'Ortiz', 'Patel', 'Quinn', 'Reyes', 'Schultz', 'Turner', 'Underwood', 'Vasquez', 'Walsh', 'Young', 'Zimmerman', 'Brennan', 'Coleman', 'Dawson', 'Fleming', 'Harmon', 'Ingram', 'Lambert', 'McCoy', 'Novak', 'Parsons', 'Russo', 'Sutton', 'Tran', 'Whitaker'];
+  // Only 100 fictional numbers per area code, so the base is split across 217, 309 and 618.
+  const TOWNS = [
+    ['Springfield', '217', ['62702', '62703', '62704', '62711']],
+    ['Chatham', '217', ['62629']],
+    ['Pekin', '309', ['61554']],
+    ['Bloomington', '309', ['61701', '61704']],
+    ['Peoria', '309', ['61604', '61614']],
+    ['Alton', '618', ['62002']],
+    ['Edwardsville', '618', ['62025']],
+    ['Collinsville', '618', ['62234']],
+  ];
+  const COLORS = ['Black', 'White', 'Silver', 'Gray', 'Blue', 'Red', 'Dark Green', 'Pearl White', 'Charcoal'];
+  // Numbers kept free for the past customers below and the demo's online booking request.
+  const usedExt = new Set([...customers.map((c) => c.phone), ...['0115', '0116', '0117', '0177', '0188', '0199'].map((x) => `(217) 555-${x}`)]);
+  const usedNames = new Set(customers.map((c) => `${c.firstName} ${c.lastName}`));
+  const gr = mulberry32(99);
+  const gpick = (arr) => arr[Math.floor(gr() * arr.length)];
+  let serial = 300000;
+  for (let i = 0; i < 150; i++) {
+    let firstName;
+    let lastName;
+    do {
+      firstName = gpick(FIRST);
+      lastName = gpick(LAST);
+    } while (usedNames.has(`${firstName} ${lastName}`));
+    usedNames.add(`${firstName} ${lastName}`);
+    const [city, area, zips] = i < 70 ? TOWNS[i % 6 === 5 ? 1 : 0] : gpick(TOWNS.slice(2));
+    let phone;
+    do phone = `(${area}) 555-01${String(Math.floor(gr() * 100)).padStart(2, '0')}`;
+    while (usedExt.has(phone));
+    usedExt.add(phone);
+    const c = {
+      id: id('cus'),
+      firstName,
+      lastName,
+      phone,
+      email: gr() < 0.8 ? `${firstName}.${lastName}${Math.floor(gr() * 90) + 10}@example.com`.toLowerCase() : '',
+      address: `${100 + Math.floor(gr() * 2800)} ${gpick(['Oak', 'Maple', 'Cedar', 'Walnut', 'Elm', 'Lincoln', 'Washington', 'Jefferson', 'Park', 'Prairie', 'Chestnut'])} ${gpick(['St', 'Ave', 'Dr', 'Ln', 'Ct', 'Rd'])}`,
+      city,
+      state: 'IL',
+      zip: gpick(zips),
+      company: '',
+      notes: '',
+      tags: gr() < 0.06 ? ['VIP'] : [],
+      textOptIn: gr() < 0.92,
+      createdAt: at(160 + Math.floor(gr() * 900)),
+    };
+    customers.push(c);
+    const nVeh = gr() < 0.18 ? 2 : 1;
+    for (let k = 0; k < nVeh; k++) {
+      const [, prefix, yr, plant, year, make, model, trim, engine] = gpick(VEHICLES.filter((v) => v[6] !== 'Model 3'));
+      serial += 1 + Math.floor(gr() * 9000);
+      vehicles.push({
+        id: id('veh'),
+        customerId: c.id,
+        vin: withCheckDigit(`${prefix}0${yr}${plant}${String(serial).slice(-6)}`),
+        year,
+        make,
+        model,
+        trim,
+        engine,
+        color: gpick(COLORS),
+        plate: `${String.fromCharCode(65 + Math.floor(gr() * 26))}${String.fromCharCode(65 + Math.floor(gr() * 26))}${String.fromCharCode(65 + Math.floor(gr() * 26))} ${100 + Math.floor(gr() * 9000)}`,
+        plateState: 'IL',
+        mileage: (2026 - year) * (9000 + Math.floor(gr() * 7000)) + Math.floor(gr() * 5000),
+        notes: '',
+        createdAt: c.createdAt,
+      });
+    }
+  }
+
+  // History: closed repair orders over the last ~150 days (feeds reports, accounting, marketing and
+  // service history). Each service goes to the tech who'd normally do that kind of work.
+  const JOB_MIX = [
+    ['cj-oil', 18], ['cj-rotate', 8], ['cj-filters', 7], ['cj-wipers', 4], ['cj-fbrakes', 9], ['cj-rbrakes', 6], ['cj-bfluid', 4], ['cj-battery', 5], ['cj-diag', 8], ['cj-elec', 3],
+    ['cj-align', 6], ['cj-balance', 4], ['cj-coolant', 3], ['cj-trans', 3], ['cj-plugs', 4], ['cj-ac', 4], ['cj-tpms', 3], ['cj-belt', 3], ['cj-struts', 3], ['cj-hub', 3],
+    ['cj-waterpump', 3], ['cj-timing', 3], ['cj-valvecover', 4], ['cj-cv', 3], ['cj-arms', 3],
+  ];
+  const mixTotal = JOB_MIX.reduce((a, [, w]) => a + w, 0);
+  const pickJob = () => {
+    let r = rand() * mixTotal;
+    for (const [jid, w] of JOB_MIX) if ((r -= w) < 0) return jid;
+    return 'cj-oil';
+  };
+  const TECH_FOR = { Maintenance: ['t4', 't3'], Tires: ['t4', 't3'], Brakes: ['t3', 't1'], Diagnostics: ['t2', 't1'], Electrical: ['t2', 't3'], Climate: ['t2', 't3'], Engine: ['t1', 't3'], Suspension: ['t1', 't3'] };
+  // Flagged hours a tech can turn in a day (Kim is part-time; Saturdays are a half day for two techs).
+  const CAP = { t1: 7, t2: 7, t3: 7, t4: 5 };
+  const hoursOf = (jid) => CANNED_JOBS.find((j) => j.id === jid).items.filter((i) => i.type === 'labor').reduce((a, i) => a + i.hours, 0);
+  const regulars = vehicles.map((_, i) => i).filter((i) => !['Model 3'].includes(vehicles[i].model));
+  // A growing shop: busier over the last two months than earlier in the year.
+  for (let daysAgo = 150; daysAgo >= 1; daysAgo--) {
+    const day = new Date(now);
+    day.setDate(day.getDate() - daysAgo);
+    if (day.getDay() === 0) continue;
+    const saturday = day.getDay() === 6;
+    const load = { t1: 0, t2: 0, t3: 0, t4: 0 };
+    const cap = saturday ? { t1: 0, t2: 0, t3: 3.2, t4: 3.2 } : CAP;
+    const assign = (jid) => {
+      const h = hoursOf(jid);
+      const cat = CANNED_JOBS.find((j) => j.id === jid).category;
+      // Dispatch like a service advisor: the specialist if they have room, otherwise whoever's lightest.
+      const pref = TECH_FOR[cat] || ['t3'];
+      const fits = (t) => cap[t] > 0 && load[t] + h <= cap[t];
+      const score = (t) => load[t] / cap[t] - (t === pref[0] ? 0.3 : pref.includes(t) ? 0.15 : 0);
+      const t = ['t1', 't2', 't3', 't4'].filter(fits).sort((a, b) => score(a) - score(b))[0];
+      if (t) load[t] += h;
+      return t;
+    };
+    const busy = daysAgo <= 60;
+    const count = saturday ? 2 + Math.floor(rand() * 2) : busy ? 6 + Math.floor(rand() * 3) : 4 + Math.floor(rand() * 2);
+    for (let n = 0; n < count; n++) {
+      const vi = pick(regulars);
+      const jobs = [pickJob()];
+      if (rand() < 0.68) jobs.push(pickJob());
+      if (rand() < 0.32) jobs.push(pickJob());
+      const services = [];
+      for (const j of new Set(jobs)) {
+        const t = assign(j);
+        if (t) services.push({ ...svc(j, 'approved'), techId: t, done: true });
+      }
+      if (!services.length) continue; // fully booked — the car comes back another day
+      if (rand() < 0.3) services.push({ ...svc(pick(['cj-fbrakes', 'cj-struts', 'cj-coolant', 'cj-trans', 'cj-align', 'cj-arms', 'cj-valvecover']), 'declined') });
+      const mileageIn = Math.max(1000, V(vi).mileage - Math.round(daysAgo * 38));
+      const o = order(vi, 'closed', {
+        techId: services[0].techId,
+        services,
+        mileageIn,
+        mileageOut: mileageIn + 4,
+        createdAt: at(daysAgo + (rand() < 0.2 ? 1 : 0), 7 + Math.floor(rand() * 2), Math.floor(rand() * 59)),
+        authorizedAt: at(daysAgo, 8, 15 + Math.floor(rand() * 40)),
+        invoicedAt: at(daysAgo, saturday ? 12 : 16, saturday ? 10 + Math.floor(rand() * 20) : 35 + Math.floor(rand() * 24)),
+        closedAt: at(daysAgo, saturday ? 12 : 17, 30 + Math.floor(rand() * 25)),
+        updatedAt: at(daysAgo, 17, 5),
+        concern: '',
+      });
+      o.pendingPayment = true; // filled below once totals are known
+    }
   }
   orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   orders.forEach((o, i) => (o.number = 10399 + i));
@@ -472,18 +592,84 @@ export function createSeed(now = new Date()) {
     { id: id('act'), at: at(1, 12, 0), text: 'Parts ordered: wheel hub bearing assembly (GM dealer)' },
   ];
 
+  // Older history (numbered before the main run of ROs) so Marketing has real work to do:
+  // vehicles overdue for an oil service, and past customers who haven't been back in a year.
+  const r2 = mulberry32(7);
+  let oldNumber = 10300;
+  const pastOrder = (v, daysAgo, jobIds, declined = []) => {
+    const t = pick(TECHNICIANS).id;
+    const services = [...jobIds.map((j) => ({ ...svc(j, 'approved'), techId: t, done: true })), ...declined.map((j) => svc(j, 'declined'))];
+    const mileageIn = Math.max(1000, v.mileage - Math.round(daysAgo * 36));
+    const o = {
+      id: id('ro'),
+      number: ++oldNumber,
+      status: 'closed',
+      customerId: v.customerId,
+      vehicleId: v.id,
+      techId: t,
+      advisor: 'Jordan Blake',
+      concern: '',
+      mileageIn,
+      mileageOut: mileageIn + 4,
+      services,
+      inspection: inspection(0.85),
+      notes: [],
+      payments: [],
+      discount: { type: 'amt', value: 0 },
+      createdAt: at(daysAgo, 8, Math.floor(r2() * 50)),
+      updatedAt: at(daysAgo, 17, 5),
+      promisedAt: null,
+      authorizedAt: at(daysAgo, 9, 30),
+      invoicedAt: at(daysAgo, 16, 10),
+      closedAt: at(daysAgo, 17, 5),
+    };
+    o.payments = [{ id: id('pay'), at: o.closedAt, method: pick(['Card', 'Card', 'Cash', 'Check']), amount: orderTotals(o, shop).total, ref: '' }];
+    orders.push(o);
+  };
+  // Regulars whose last oil change here was 6–7 months ago.
+  const oiled = new Set(orders.filter((o) => o.services.some((x) => /oil/i.test(x.title) && x.status !== 'declined')).map((o) => o.vehicleId));
+  const busy = new Set([...orders.filter((o) => o.status !== 'closed').map((o) => o.vehicleId), ...appointments.map((a) => a.vehicleId)]);
+  vehicles
+    .filter((v) => !oiled.has(v.id) && !busy.has(v.id) && v.make !== 'Tesla')
+    .slice(0, 4)
+    .forEach((v, i) => pastOrder(v, 186 + i * 11 + Math.floor(r2() * 5), ['cj-oil', 'cj-rotate']));
+  // Past customers — last seen 10 to 15 months ago.
+  const PAST = [
+    ['Marcus', 'Delgado', '0115', [2016, 'Chevrolet', 'Malibu', 'LT', '1.5L Turbo I4', 'Silver Ice', 'MDL 16', 88400], [452, 318], ['cj-fbrakes']],
+    ['Hannah', 'Price', '0116', [2017, 'Hyundai', 'Elantra', 'SE', '2.0L I4', 'Phantom Black', 'HNP 117', 79100], [401, 344], []],
+    ['Owen', 'Ricci', '0117', [2015, 'Ford', 'Escape', 'SE 4WD', '2.0L EcoBoost I4', 'Ruby Red', 'OWR 15', 121900], [470, 389], ['cj-struts']],
+  ];
+  PAST.forEach(([firstName, lastName, ext, [year, make, model, trim, engine, color, plate, mileage], visits, declined], i) => {
+    const c = { id: id('cus'), firstName, lastName, phone: `(217) 555-${ext}`, email: `${firstName}.${lastName}@example.com`.toLowerCase(), address: `${410 + i * 41} ${pick(['Oak', 'Maple', 'Cedar', 'Walnut'])} St`, city: 'Springfield', state: 'IL', zip: pick(['62702', '62704']), company: '', notes: '', tags: [], textOptIn: true, createdAt: at(visits[0] + 2) };
+    customers.push(c);
+    const v = { id: id('veh'), customerId: c.id, vin: '', year, make, model, trim, engine, color, plate, plateState: 'IL', mileage, notes: '', createdAt: c.createdAt };
+    vehicles.push(v);
+    visits.forEach((d, k) => pastOrder(v, d, k ? ['cj-oil'] : ['cj-oil', 'cj-filters'], k === visits.length - 1 ? declined : []));
+  });
+  orders.sort((a, b) => a.number - b.number);
+
+  const finalOrders = orders.map((o) => ({ ...o, techId: tech(o.techId) }));
+  const extras = seedExtras({ shop, orders: finalOrders, customers, vehicles, technicians: TECHNICIANS.map((t) => ({ ...t })), inventory, now, rand, id });
+
   return {
     version: 2,
     seededAt: now.toISOString(),
-    shop,
-    technicians: TECHNICIANS.map((t) => ({ ...t })),
+    shop: { ...shop, ...extras.shopExtras },
+    technicians: extras.technicians,
     customers,
     vehicles,
-    orders: orders.map((o) => ({ ...o, techId: tech(o.techId) })),
+    orders: finalOrders,
     appointments,
     inventory,
     cannedJobs: CANNED_JOBS.map((j) => ({ ...j, items: j.items.map((i) => ({ ...i })) })),
     activity,
-    counters: { order: number },
+    purchaseOrders: extras.purchaseOrders,
+    timeEntries: extras.timeEntries,
+    messages: extras.messages,
+    expenses: extras.expenses,
+    bookingRequests: extras.bookingRequests,
+    campaigns: extras.campaigns,
+    inspectionTemplates: extras.inspectionTemplates,
+    counters: { order: number, po: 2003 },
   };
 }

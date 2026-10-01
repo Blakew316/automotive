@@ -1,8 +1,8 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import {
   Printer, Send, MoreHorizontal, Plus, Trash2, MessageSquare, Mail, Check, ClipboardCheck, Wrench, StickyNote,
-  CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2,
+  CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2, PenLine, HandCoins,
 } from 'lucide-react';
 import { useShop, useUI, useLookup, useTotals } from '../store/hooks';
 import { PageHeader, Card, Tabs, Menu, EmptyState, Modal, SearchInput, InlineText, Toggle } from '../components/ui';
@@ -11,9 +11,11 @@ import InspectionPanel from './order/InspectionPanel';
 import OrderSidebar, { PaymentModal } from './order/OrderSidebar';
 import MediaPanel, { MediaViewer } from './order/MediaPanel';
 import { useMediaViewer } from '../lib/useMedia';
+import AuthorizeModal from './order/AuthorizeModal';
+import ComposeModal from '../components/Compose';
 import { removeFiles, forgetUrls } from '../lib/media';
 import { STATUSES, STATUS } from '../lib/workflow';
-import { money, fullName, vehicleName, dateTime, smsHref, mailHref, relTime } from '../lib/format';
+import { money, fullName, vehicleName, dateTime, relTime } from '../lib/format';
 import { serviceTotal } from '../lib/pricing';
 
 const ShareModal = lazy(() => import('./order/ShareModal'));
@@ -32,11 +34,14 @@ export default function OrderDetail() {
   const lookup = useLookup();
   const totals = useTotals();
   const navigate = useNavigate();
-  const [tab, setTab] = useState('services');
+  const [params] = useSearchParams();
+  const [tab, setTab] = useState(() => (['services', 'inspection', 'media', 'notes'].includes(params.get('tab')) ? params.get('tab') : 'services'));
   const [addingService, setAddingService] = useState(false);
   const [paying, setPaying] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [sharing, setSharing] = useState(false);
+  const [authorizing, setAuthorizing] = useState(false);
+  const [composing, setComposing] = useState(null);
 
   const order = state.orders.find((o) => o.id === id);
   const viewer = useMediaViewer();
@@ -87,8 +92,10 @@ export default function OrderDetail() {
                 </button>
               )}
               items={[
-                { label: `Text ${docName.toLowerCase()}`, icon: MessageSquare, disabled: !customer?.phone, onClick: () => (window.location.href = smsHref(customer.phone, message)) },
-                { label: `Email ${docName.toLowerCase()}`, icon: Mail, disabled: !customer?.email, onClick: () => (window.location.href = mailHref(customer.email, `${docName} #${order.number} — ${shop.name}`, emailBody)) },
+                { label: `Text ${docName.toLowerCase()}`, icon: MessageSquare, disabled: !customer?.phone, onClick: () => setComposing({ channel: 'sms', templateId: isInvoice ? 'ready' : 'estimate' }) },
+                { label: `Email ${docName.toLowerCase()}`, icon: Mail, disabled: !customer?.email, onClick: () => setComposing({ channel: 'email', templateId: isInvoice ? 'ready' : 'estimate', initialBody: emailBody }) },
+                isInvoice && t.balance > 0.004 && { label: 'Request payment', icon: HandCoins, disabled: !customer, onClick: () => setComposing({ templateId: 'pay' }) },
+                { label: 'Status update…', icon: MessageSquare, disabled: !customer, onClick: () => setComposing({ templateId: 'update' }) },
                 '-',
                 { label: 'Share vehicle report & photos', icon: Share2, onClick: () => setSharing(true) },
                 { label: 'Show customer view', icon: MonitorSmartphone, onClick: () => navigate(`/orders/${order.id}/report`) },
@@ -98,10 +105,16 @@ export default function OrderDetail() {
             <Link to={`/orders/${order.id}/print`} className="btn-secondary btn-icon" aria-label="Print">
               <Printer size={15} />
             </Link>
-            {next && (
-              <button className="btn-primary" onClick={() => move(next.to)}>
-                <next.icon size={15} /> {next.label}
+            {order.status === 'estimate' && t.pending > 0 ? (
+              <button className="btn-primary" onClick={() => setAuthorizing(true)}>
+                <PenLine size={15} /> Authorize
               </button>
+            ) : (
+              next && (
+                <button className="btn-primary" onClick={() => move(next.to)}>
+                  <next.icon size={15} /> {next.label}
+                </button>
+              )
             )}
             {order.status === 'ready' && t.balance > 0.004 && (
               <button className="btn-primary" onClick={() => setPaying(true)}>
@@ -180,7 +193,7 @@ export default function OrderDetail() {
 
               {order.status === 'estimate' && t.pending > 0 && (
                 <p className="text-center text-xs text-ink-3">
-                  {t.pending} service{t.pending === 1 ? '' : 's'} pending approval. “Mark approved” authorizes all pending services.
+                  {t.pending} service{t.pending === 1 ? '' : 's'} pending approval. Use “Authorize” to record the customer’s approval, or share the report so they can approve online.
                 </p>
               )}
             </div>
@@ -193,11 +206,13 @@ export default function OrderDetail() {
           {tab === 'notes' && <NotesPanel order={order} onAdd={(text, internal) => addNote(order.id, text, internal)} />}
         </div>
 
-        <OrderSidebar order={order} customer={customer} vehicle={vehicle} editable={editable} onTakePayment={() => setPaying(true)} />
+        <OrderSidebar order={order} customer={customer} vehicle={vehicle} editable={editable} onTakePayment={() => setPaying(true)} onCompose={(c) => setComposing(c)} onAuthorize={() => setAuthorizing(true)} />
       </div>
 
       {addingService && <AddServiceModal order={order} onClose={() => setAddingService(false)} />}
-      {paying && <PaymentModal order={order} onClose={() => setPaying(false)} />}
+      {paying && <PaymentModal order={order} customer={customer} onClose={() => setPaying(false)} onReceipt={(amount) => setComposing({ templateId: 'receipt', extra: { amount } })} />}
+      {authorizing && <AuthorizeModal order={order} customer={customer} onClose={() => setAuthorizing(false)} />}
+      {composing && customer && <ComposeModal customer={customer} order={order} {...composing} onClose={() => setComposing(null)} />}
       {sharing && (
         <Suspense fallback={null}>
           <ShareModal order={order} customer={customer} vehicle={vehicle} onClose={() => setSharing(false)} />

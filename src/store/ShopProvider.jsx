@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ShopContext } from './context';
 import { createSeed, CANNED_JOBS } from '../data/seed';
+import { migrate } from './defaults';
 import { priceFromMatrix, orderTotals } from '../lib/pricing';
 import { STATUS } from '../lib/workflow';
 import { uid, fullName, vehicleName } from '../lib/format';
@@ -12,12 +13,12 @@ function load() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const data = JSON.parse(raw);
-      if (data?.version === 2) return data;
+      if (data?.version === 2) return migrate(data);
     }
   } catch {
     // Corrupt or unavailable storage: fall back to demo data.
   }
-  return createSeed();
+  return migrate(createSeed());
 }
 
 const now = () => new Date().toISOString();
@@ -272,6 +273,199 @@ export default function ShopProvider({ children }) {
           const o = findOrder(s, orderId);
           o.media = (o.media || []).filter((m) => !mediaIds.includes(m.id));
         }),
+      // ---------------------------------------------------------------- Estimates
+      authorize: (orderId, { serviceIds = [], declineIds = [], method = 'in-person', by = '', signature = null, note = '' }) =>
+        update((s) => {
+          const o = findOrder(s, orderId);
+          const approved = o.services.filter((x) => serviceIds.includes(x.id));
+          approved.forEach((x) => (x.status = 'approved'));
+          o.services.filter((x) => declineIds.includes(x.id)).forEach((x) => (x.status = 'declined'));
+          const amount = orderTotals({ ...o, services: approved }, s.shop).total;
+          o.authorizations = [...(o.authorizations || []), { id: uid('auth'), at: now(), method, by, serviceIds, declinedIds: declineIds, amount, signature, note }];
+          if (approved.length && !o.authorizedAt) o.authorizedAt = now();
+          if (o.status === 'estimate' && approved.length && !o.services.some((x) => x.status === 'pending')) o.status = 'approved';
+          o.updatedAt = now();
+          log(s, `${by || 'Customer'} authorized ${approved.length} service${approved.length === 1 ? '' : 's'} on RO #${o.number}${declineIds.length ? `, declined ${declineIds.length}` : ''}`, o.id);
+        }),
+
+      // ---------------------------------------------------------------- Messages
+      addMessage: ({ customerId, orderId = null, dir = 'out', channel = 'sms', body, at: when, meta }) =>
+        update((s) => {
+          s.messages.push({ id: uid('msg'), customerId, orderId, dir, channel, body, at: when || now(), read: dir === 'out', ...(meta ? { meta } : {}) });
+        }),
+      markThreadRead: (customerId) =>
+        update((s) => {
+          s.messages.forEach((m) => m.customerId === customerId && !m.read && (m.read = true));
+        }),
+      deleteMessage: (id) => update((s) => void (s.messages = s.messages.filter((m) => m.id !== id))),
+
+      // ---------------------------------------------------------------- Time clock
+      clockIn: (techId) =>
+        update((s) => {
+          if (s.timeEntries.some((e) => e.kind === 'shift' && e.techId === techId && !e.end)) return;
+          s.timeEntries.push({ id: uid('time'), kind: 'shift', techId, start: now(), end: null });
+        }),
+      clockOut: (techId) =>
+        update((s) => {
+          const t = now();
+          s.timeEntries.forEach((e) => e.techId === techId && !e.end && (e.end = t));
+        }),
+      startJob: (techId, orderId, serviceId) =>
+        update((s) => {
+          const t = now();
+          s.timeEntries.forEach((e) => e.kind === 'job' && e.techId === techId && !e.end && (e.end = t));
+          if (!s.timeEntries.some((e) => e.kind === 'shift' && e.techId === techId && !e.end)) s.timeEntries.push({ id: uid('time'), kind: 'shift', techId, start: t, end: null });
+          s.timeEntries.push({ id: uid('time'), kind: 'job', techId, orderId, serviceId, start: t, end: null });
+          const o = findOrder(s, orderId);
+          const svc = findService(o, serviceId);
+          if (svc && !svc.techId) svc.techId = techId;
+          if (o && o.status === 'approved') {
+            o.status = 'in_progress';
+            log(s, `RO #${o.number} → In Progress`, o.id);
+          }
+        }),
+      stopJob: (entryId) =>
+        update((s) => {
+          const e = s.timeEntries.find((x) => x.id === entryId);
+          if (e && !e.end) e.end = now();
+        }),
+      saveTimeEntry: (entry) =>
+        update((s) => {
+          if (entry.id) return void Object.assign(s.timeEntries.find((x) => x.id === entry.id), entry);
+          s.timeEntries.push({ ...entry, id: uid('time') });
+        }),
+      deleteTimeEntry: (id) => update((s) => void (s.timeEntries = s.timeEntries.filter((e) => e.id !== id))),
+
+      // ---------------------------------------------------------------- Purchase orders
+      savePO: (po) =>
+        update((s) => {
+          if (po.id) {
+            Object.assign(s.purchaseOrders.find((x) => x.id === po.id), po);
+            return po.id;
+          }
+          s.counters.po = (s.counters.po || 2000) + 1;
+          const rec = { status: 'draft', notes: '', lines: [], orderedAt: null, expectedAt: null, receivedAt: null, ...po, id: uid('po'), number: s.counters.po, createdAt: now() };
+          s.purchaseOrders.unshift(rec);
+          return rec.id;
+        }),
+      deletePO: (id) => update((s) => void (s.purchaseOrders = s.purchaseOrders.filter((p) => p.id !== id))),
+      setPOStatus: (id, status) =>
+        update((s) => {
+          const po = s.purchaseOrders.find((p) => p.id === id);
+          po.status = status;
+          if (status === 'ordered') {
+            po.orderedAt = po.orderedAt || now();
+            // RO parts on this PO are now on order.
+            po.lines.forEach((l) => {
+              if (!l.orderId) return;
+              const it = findService(findOrder(s, l.orderId), l.serviceId)?.items.find((i) => i.id === l.itemId);
+              if (it && it.partStatus === 'needed') it.partStatus = 'ordered';
+            });
+            log(s, `PO #${po.number} sent to ${po.vendor}`);
+          }
+        }),
+      receivePO: (id, receipts) =>
+        update((s) => {
+          const po = s.purchaseOrders.find((p) => p.id === id);
+          let units = 0;
+          for (const l of po.lines) {
+            const q = Math.max(0, Math.min(Number(receipts[l.id]) || 0, l.qty - l.received));
+            if (!q) continue;
+            l.received += q;
+            units += q;
+            const inv = l.inventoryId && s.inventory.find((p) => p.id === l.inventoryId);
+            if (inv) {
+              inv.qty = (Number(inv.qty) || 0) + q;
+              if (l.cost) inv.cost = l.cost;
+            }
+            if (l.orderId && l.received >= l.qty) {
+              const it = findService(findOrder(s, l.orderId), l.serviceId)?.items.find((i) => i.id === l.itemId);
+              if (it) it.partStatus = 'received';
+            }
+          }
+          const done = po.lines.every((l) => l.received >= l.qty);
+          po.status = done ? 'received' : 'partial';
+          if (done) po.receivedAt = now();
+          log(s, `Received ${units} item${units === 1 ? '' : 's'} on PO #${po.number}`);
+        }),
+
+      // ---------------------------------------------------------------- Expenses
+      saveExpense: (e) =>
+        update((s) => {
+          if (e.id) return void Object.assign(s.expenses.find((x) => x.id === e.id), e);
+          s.expenses.unshift({ method: 'Card', memo: '', ...e, id: uid('exp') });
+        }),
+      deleteExpense: (id) => update((s) => void (s.expenses = s.expenses.filter((e) => e.id !== id))),
+
+      // ---------------------------------------------------------------- Online booking
+      addBookingRequests: (list) =>
+        update((s) => {
+          const have = new Set(s.bookingRequests.map((b) => b.remoteId).filter(Boolean));
+          list.filter((b) => !b.remoteId || !have.has(b.remoteId)).forEach((b) => s.bookingRequests.unshift({ status: 'new', ...b, id: uid('book') }));
+        }),
+      acceptBooking: (id, { start, duration, techId = null, title }) =>
+        update((s) => {
+          const b = s.bookingRequests.find((x) => x.id === id);
+          const digits = (p = '') => p.replace(/\D/g, '').slice(-10);
+          let c = (b.customerId && s.customers.find((x) => x.id === b.customerId)) || s.customers.find((x) => (b.phone && digits(x.phone) === digits(b.phone)) || (b.email && x.email && x.email.toLowerCase() === b.email.toLowerCase()));
+          if (!c) {
+            const [firstName, ...rest] = (b.name || 'New customer').trim().split(/\s+/);
+            c = { id: uid('cus'), firstName, lastName: rest.join(' '), phone: b.phone || '', email: b.email || '', address: '', city: '', state: '', zip: '', company: '', notes: 'Booked online', tags: ['Online booking'], textOptIn: true, createdAt: now() };
+            s.customers.unshift(c);
+            log(s, `New customer from online booking: ${fullName(c)}`);
+          }
+          const m = (b.vehicle || '').trim().match(/^(\d{4})\s+(\S+)\s+(.+)$/);
+          let v = m && s.vehicles.find((x) => x.customerId === c.id && String(x.year) === m[1] && x.make.toLowerCase() === m[2].toLowerCase());
+          if (!v && (m || b.vin)) {
+            v = { id: uid('veh'), customerId: c.id, vin: b.vin || '', year: m ? Number(m[1]) : '', make: m ? m[2] : '', model: m ? m[3] : b.vehicle || '', trim: '', engine: '', color: '', plate: '', plateState: '', mileage: 0, notes: '', createdAt: now() };
+            s.vehicles.unshift(v);
+          }
+          if (!v) v = s.vehicles.find((x) => x.customerId === c.id);
+          const appt = { id: uid('apt'), customerId: c.id, vehicleId: v?.id || null, start, duration, title: title || b.services.join(', ') || 'Online booking', techId, status: 'scheduled', notes: b.notes || '', source: 'online' };
+          s.appointments.push(appt);
+          Object.assign(b, { status: 'accepted', customerId: c.id, appointmentId: appt.id, decidedAt: now() });
+          log(s, `Online booking accepted for ${fullName(c)}`);
+          return appt.id;
+        }),
+      declineBooking: (id) =>
+        update((s) => {
+          Object.assign(s.bookingRequests.find((x) => x.id === id), { status: 'declined', decidedAt: now() });
+        }),
+
+      // ---------------------------------------------------------------- Marketing
+      logCampaign: (c) =>
+        update((s) => {
+          s.campaigns.unshift({ ...c, id: uid('cmp'), at: now() });
+        }),
+
+      // ---------------------------------------------------------------- Inspection templates
+      saveInspectionTemplate: (t) =>
+        update((s) => {
+          if (t.id && s.inspectionTemplates.some((x) => x.id === t.id)) return void Object.assign(s.inspectionTemplates.find((x) => x.id === t.id), t);
+          s.inspectionTemplates.push({ ...t, id: uid('insp') });
+        }),
+      deleteInspectionTemplate: (id) =>
+        update((s) => {
+          if (s.inspectionTemplates.length > 1) s.inspectionTemplates = s.inspectionTemplates.filter((t) => t.id !== id);
+        }),
+
+      // ---------------------------------------------------------------- Data import
+      importRecords: ({ customers = [], vehicles = [], inventory = [], inventoryUpdates = [], orders = [] }) =>
+        update((s) => {
+          s.customers.unshift(...customers);
+          s.vehicles.unshift(...vehicles);
+          s.inventory.unshift(...inventory);
+          for (const u of inventoryUpdates) {
+            const p = s.inventory.find((x) => x.id === u.id);
+            if (p) Object.assign(p, { qty: u.qty, cost: u.cost });
+          }
+          for (const o of orders) {
+            s.counters.order += 1;
+            s.orders.push({ ...o, number: o.number || s.counters.order });
+          }
+          log(s, `Imported ${customers.length} customers, ${vehicles.length} vehicles, ${inventory.length} parts${inventoryUpdates.length ? ` (${inventoryUpdates.length} updated)` : ''}${orders.length ? `, ${orders.length} repair orders` : ''}`);
+        }),
+
       setShare: (orderId, share) =>
         update((s) => {
           findOrder(s, orderId).share = share;
@@ -321,7 +515,7 @@ export default function ShopProvider({ children }) {
           s.technicians.push({ ...t, id: uid('tech') });
         }),
 
-      resetDemo: () => commit(createSeed()),
+      resetDemo: () => commit(migrate(createSeed())),
       clearAll: () => {
         const prev = stateRef.current;
         commit({
@@ -333,13 +527,21 @@ export default function ShopProvider({ children }) {
           appointments: [],
           inventory: [],
           activity: [],
+          purchaseOrders: [],
+          timeEntries: [],
+          messages: [],
+          expenses: [],
+          bookingRequests: [],
+          campaigns: [],
+          technicians: prev.technicians,
+          inspectionTemplates: prev.inspectionTemplates,
           cannedJobs: CANNED_JOBS.map((j) => structuredClone(j)),
-          counters: { order: prev.counters.order },
+          counters: { order: prev.counters.order, po: prev.counters.po || 2000 },
         });
       },
       importData: (data) => {
         if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not an AutoShop Pro backup file');
-        commit(data);
+        commit(migrate(data));
       },
     };
   }, [update, commit]);

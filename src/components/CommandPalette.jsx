@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Search, ClipboardList, UserPlus, ScanLine, CalendarPlus, Users, Car, LayoutGrid, SquareKanban,
   CalendarDays, Package, BookOpen, ChartColumn, Settings, CircleAlert, CornerDownLeft, FileText, Database,
+  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Upload, Receipt, Truck, Globe,
 } from 'lucide-react';
 import { useShop, useUI, useLookup } from '../store/hooks';
 import { fullName, vehicleName } from '../lib/format';
@@ -15,7 +16,16 @@ const PAGES = [
   { label: 'Today', to: '/', icon: LayoutGrid },
   { label: 'Workflow board', to: '/workflow', icon: SquareKanban },
   { label: 'Repair orders', to: '/orders', icon: ClipboardList },
-  { label: 'Calendar', to: '/calendar', icon: CalendarDays },
+  { label: 'Calendar & online booking requests', to: '/calendar', icon: CalendarDays },
+  { label: 'Messages — texts & emails', to: '/messages', icon: MessageSquare },
+  { label: 'Marketing — service reminders, reviews, campaigns', to: '/marketing', icon: Megaphone },
+  { label: 'Tech time clock', to: '/tech', icon: Timer },
+  { label: 'Team — timesheets, productivity, pay', to: '/team', icon: UsersRound },
+  { label: 'Accounting — profit & loss, expenses, sales tax', to: '/accounting', icon: Landmark },
+  { label: 'QuickBooks exports', to: '/accounting?tab=export', icon: Landmark },
+  { label: 'Purchase orders', to: '/parts?tab=orders', icon: Truck },
+  { label: 'Integrations', to: '/integrations', icon: Blocks },
+  { label: 'Import data from another system', to: '/import', icon: Upload },
   { label: 'Customers', to: '/customers', icon: Users },
   { label: 'Vehicles', to: '/vehicles', icon: Car },
   { label: 'Vehicle database — makes, models, diagrams, parts', to: '/catalog', icon: Database },
@@ -33,6 +43,10 @@ const ACTIONS = [
   { label: 'New customer', to: '/customers?new=1', icon: UserPlus, keywords: 'add client' },
   { label: 'Book appointment', to: '/calendar?new=1', icon: CalendarPlus, keywords: 'schedule' },
   { label: 'Decode a VIN', to: '/vin', icon: ScanLine, keywords: 'vin lookup decode' },
+  { label: 'New message', to: '/messages', icon: MessageSquare, keywords: 'text sms email customer' },
+  { label: 'Add expense', to: '/accounting?tab=expenses', icon: Receipt, keywords: 'bill cost accounting' },
+  { label: 'Clock in / start a job', to: '/tech', icon: Timer, keywords: 'time clock punch' },
+  { label: 'Online booking settings', to: '/settings?tab=booking', icon: Globe, keywords: 'schedule book online website' },
 ];
 
 export default function CommandPalette() {

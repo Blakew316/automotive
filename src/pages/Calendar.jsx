@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Globe } from 'lucide-react';
 import { useShop, useLookup } from '../store/hooks';
 import { PageHeader, Card, Segmented, Dot } from '../components/ui';
 import { AppointmentForm } from '../components/forms';
+import BookingRequests from './calendar/BookingRequests';
 import { addDays, startOfDay, sameDay, time, fullName, vehicleName } from '../lib/format';
 
 const START_HOUR = 7;
@@ -60,6 +61,8 @@ export default function Calendar() {
           </>
         }
       />
+
+      <BookingRequests />
 
       <Card className="overflow-hidden">
         <div className="overflow-x-auto">
@@ -134,6 +137,7 @@ export default function Calendar() {
                             <div className="flex items-center gap-1.5 text-2xs text-ink-3">
                               {time(a.start)}
                               {a.status === 'arrived' && <Dot className="bg-ok" size={5} />}
+                              {a.source === 'online' && <Globe size={10} className="text-accent" aria-label="Booked online" />}
                               {tech && <span className="truncate">· {tech.name.split(' ')[0]}</span>}
                             </div>
                             <div className="truncate text-xs font-semibold text-ink">{fullName(c)}</div>
