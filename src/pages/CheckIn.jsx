@@ -6,6 +6,7 @@ import { useSearchParams } from 'react-router-dom';
 import { CircleCheck, KeyRound, Wrench, Phone, ClipboardX, Car, MessageSquare } from 'lucide-react';
 import { EmptyState, Spinner, Field } from '../components/ui';
 import SignaturePad from '../components/SignaturePad';
+import { ScanButton } from '../components/Scanner';
 import { parseShareSource, submitToInbox } from '../lib/cloudShare';
 import { usePromise } from '../lib/usePromise';
 import { telHref, phone as fmtPhone, money } from '../lib/format';
@@ -44,12 +45,12 @@ export default function CheckIn() {
         <EmptyState icon={ClipboardX} title="Self check-in unavailable" body={loaded.error?.message || 'Please see the front counter.'} />
       </div>
     );
-  return <Form config={loaded.data} kiosk={params.get('kiosk') === '1'} />;
+  return <Form config={loaded.data} kiosk={params.get('kiosk') === '1'} locationId={params.get('loc') || null} />;
 }
 
-const BLANK = { name: '', phone: '', email: '', vehicle: '', plate: '', mileage: '', concern: '', dropoff: 'counter', keyTag: '', transport: 'dropoff', needBy: '', contact: 'text' };
+const BLANK = { name: '', phone: '', email: '', vehicle: '', vin: '', plate: '', mileage: '', concern: '', dropoff: 'counter', keyTag: '', transport: 'dropoff', needBy: '', contact: 'text' };
 
-function Form({ config, kiosk }) {
+function Form({ config, kiosk, locationId }) {
   const shop = config.shop;
   const afterHours = !isOpen(shop.hours);
   const [f, setF] = useState(() => ({ ...BLANK, dropoff: afterHours ? 'dropbox' : 'counter' }));
@@ -62,7 +63,7 @@ function Form({ config, kiosk }) {
   const set = (k) => (e) => setF((x) => ({ ...x, [k]: e.target.value }));
   const pick = (k, v) => setF((x) => ({ ...x, [k]: v }));
   const phoneOk = f.phone.replace(/\D/g, '').length >= 10;
-  const ready = f.name.trim() && (phoneOk || /\S+@\S+\.\S+/.test(f.email)) && (f.vehicle.trim() || f.plate.trim()) && f.concern.trim() && signature && agree;
+  const ready = f.name.trim() && (phoneOk || /\S+@\S+\.\S+/.test(f.email)) && (f.vehicle.trim() || f.plate.trim() || f.vin) && f.concern.trim() && signature && agree;
 
   const reset = useCallback(() => {
     setF({ ...BLANK, dropoff: !isOpen(shop.hours) ? 'dropbox' : 'counter' });
@@ -92,6 +93,7 @@ function Form({ config, kiosk }) {
         email: f.email.trim(),
         vehicle: f.vehicle.trim(),
         plate: f.plate.trim(),
+        vin: f.vin,
         mileage: f.mileage.replace(/\D/g, ''),
         concern: f.concern.trim(),
         dropoff: f.dropoff,
@@ -101,6 +103,7 @@ function Form({ config, kiosk }) {
         needBy: f.needBy ? new Date(f.needBy).toISOString() : null,
         contact: f.contact,
         diagLimit: config.diagLimit || 0,
+        locationId,
         signature,
         at: new Date().toISOString(),
       };
@@ -156,6 +159,12 @@ function Form({ config, kiosk }) {
 
         <Section title="Your vehicle" icon={Car}>
           <Field label="Year, make & model">{(id) => <input id={id} className="input h-11 text-base" placeholder="e.g. 2019 Toyota Camry" value={f.vehicle} onChange={set('vehicle')} />}</Field>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-ink-2">
+            <ScanButton mode="vin" className="btn-secondary btn-sm" onResult={(vin) => setF((x) => ({ ...x, vin }))} hint="Point your camera at the VIN barcode inside the driver’s door jamb.">
+              Scan VIN (optional)
+            </ScanButton>
+            {f.vin && <span className="font-mono text-xs">VIN {f.vin}</span>}
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <Field label="License plate">{(id) => <input id={id} className="input h-11 text-base uppercase" value={f.plate} onChange={set('plate')} />}</Field>
             <Field label="Mileage (optional)">{(id) => <input id={id} inputMode="numeric" className="input h-11 text-base" value={f.mileage} onChange={set('mileage')} />}</Field>

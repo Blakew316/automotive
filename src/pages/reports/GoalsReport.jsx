@@ -1,7 +1,7 @@
 // Period-over-period comparison, monthly goals scorecard and a growth planner.
 import { useMemo, useState } from 'react';
 import { ArrowUp, ArrowDown, Minus, Target, Pencil, TrendingUp, Calculator, CalendarRange } from 'lucide-react';
-import { useShop, useUI } from '../../store/hooks';
+import { useUI, useScopedShop } from '../../store/hooks';
 import { Card, CardHeader, Modal, Field, NumInput, Segmented } from '../../components/ui';
 import { periodMetrics, COMPARE_ROWS, goalProgress } from '../../lib/kpis';
 import { money, money0, pct, number, addDays, startOfDay, dateShort } from '../../lib/format';
@@ -10,7 +10,7 @@ const fmt = (kind, v) => (kind === 'money' ? money0(v) : kind === 'pct' ? pct(v,
 
 /** Previous vs current period with % change, for the same number of days. */
 export function PeriodCompare({ days }) {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const now = useMemo(() => new Date(), []);
   const cur = useMemo(() => {
     const to = addDays(startOfDay(now), 1);
@@ -66,7 +66,7 @@ export function PeriodCompare({ days }) {
 }
 
 export function GoalsReport() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const now = useMemo(() => new Date(), []);
   // In the first few days of a month, open on last month's complete scorecard.
   const [which, setWhich] = useState(() => (goalProgress(state, now).elapsed <= 3 ? 'last' : 'this'));
@@ -132,7 +132,7 @@ export function GoalsReport() {
 }
 
 function TargetsModal({ onClose }) {
-  const { state, updateShop } = useShop();
+  const { state, updateShop } = useScopedShop();
   const { toast } = useUI();
   const [f, setF] = useState({ ...state.shop.goals });
   const num = (k, label, hint) => (
@@ -187,7 +187,7 @@ function Slider({ label, value, onChange, min, max, step, format }) {
 
 /** What-if: how changes in car count, ARO and close rate move monthly sales and gross profit. */
 function GrowthPlanner() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const base = useMemo(() => {
     const to = addDays(startOfDay(new Date()), 1);
     const m = periodMetrics(state, addDays(to, -90), to);

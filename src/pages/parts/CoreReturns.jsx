@@ -3,13 +3,13 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Package } from 'lucide-react';
-import { useShop } from '../../store/hooks';
+import { useScopedShop } from '../../store/hooks';
 import { Card, EmptyState, Segmented, Stat } from '../../components/ui';
 import { coreList, CORE_STATUS } from '../../lib/operations';
 import { money, dateShort } from '../../lib/format';
 
 export default function CoreReturns() {
-  const { state, updateItem } = useShop();
+  const { state, updateItem } = useScopedShop();
   const [filter, setFilter] = useState('owed');
   const all = useMemo(() => coreList(state), [state]);
   const rows = all.filter((c) => filter === 'all' || c.status === filter);

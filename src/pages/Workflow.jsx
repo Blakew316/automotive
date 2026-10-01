@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Clock, Package, MoreHorizontal, ArrowRight } from 'lucide-react';
-import { useShop, useLookup, useTotals, useUI } from '../store/hooks';
+import { useLookup, useTotals, useUI, useScopedShop } from '../store/hooks';
 import { PageHeader, SearchInput, Avatar, Dot, Menu, Segmented } from '../components/ui';
 import { STATUSES, STATUS } from '../lib/workflow';
 import { money, money0, fullName, time, sameDay, dateShort, relTime } from '../lib/format';
@@ -9,7 +9,7 @@ import { money, money0, fullName, time, sameDay, dateShort, relTime } from '../l
 const COLUMNS = STATUSES.filter((s) => s.id !== 'closed');
 
 export default function Workflow() {
-  const { state, setOrderStatus } = useShop();
+  const { state, setOrderStatus } = useScopedShop();
   const lookup = useLookup();
   const totals = useTotals();
   const { toast } = useUI();

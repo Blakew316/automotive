@@ -7,6 +7,7 @@ import { money, fullName, vehicleName, date, phone, number } from '../lib/format
 import { itemTotal, serviceTotal } from '../lib/pricing';
 import { INSPECTION_RATINGS } from '../lib/workflow';
 import { dueDate, hasTerms, termsLabel } from '../lib/accounts';
+import { shopAt } from '../lib/locations';
 
 export default function PrintOrder() {
   const { id } = useParams();
@@ -21,7 +22,7 @@ export default function PrintOrder() {
 
   if (!order) return <EmptyState title="Repair order not found" action={<Link to="/orders" className="btn-secondary">Back</Link>} />;
 
-  const shop = state.shop;
+  const shop = shopAt(state.shop, order.locationId);
   const c = lookup.customer.get(order.customerId);
   const v = lookup.vehicle.get(order.vehicleId);
   const t = totals(order);

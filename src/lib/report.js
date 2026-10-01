@@ -6,11 +6,12 @@ import { STATUS } from './workflow';
 import { payLink } from './messaging';
 import { financingOffer } from './financing';
 import { inspectionTemplateFor } from './inspection';
+import { shopAt } from './locations';
 
 export const REPORT_VERSION = 1;
 
 export function buildReport(order, state, { showPrices = true } = {}) {
-  const shop = state.shop;
+  const shop = shopAt(state.shop, order.locationId);
   const customer = state.customers.find((c) => c.id === order.customerId);
   const vehicle = state.vehicles.find((v) => v.id === order.vehicleId);
   const t = orderTotals(order, shop);

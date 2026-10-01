@@ -5,12 +5,21 @@ import { UIContext } from './context';
 const THEME_KEY = 'autoshop-pro:appearance';
 const OLD_THEME_KEY = 'autoshop-pro:theme';
 const USER_KEY = 'autoshop-pro:user';
+const SITE_KEY = 'autoshop-pro:location';
 
 function readUser() {
   try {
     return localStorage.getItem(USER_KEY) || null;
   } catch {
     return null;
+  }
+}
+
+function readSite() {
+  try {
+    return localStorage.getItem(SITE_KEY) || 'all';
+  } catch {
+    return 'all';
   }
 }
 
@@ -35,6 +44,17 @@ export default function UIProvider({ children }) {
     try {
       if (id) localStorage.setItem(USER_KEY, id);
       else localStorage.removeItem(USER_KEY);
+    } catch {
+      // Remembered for this session only.
+    }
+  }, []);
+
+  // Which location this device is working at ('all' to see every location).
+  const [siteId, setSiteState] = useState(readSite);
+  const setSiteId = useCallback((id) => {
+    setSiteState(id || 'all');
+    try {
+      localStorage.setItem(SITE_KEY, id || 'all');
     } catch {
       // Remembered for this session only.
     }
@@ -76,8 +96,8 @@ export default function UIProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ toasts, toast, dismiss, theme, setTheme, paletteOpen, setPaletteOpen, navOpen, setNavOpen, userId, setUserId }),
-    [toasts, toast, dismiss, theme, paletteOpen, navOpen, userId, setUserId],
+    () => ({ toasts, toast, dismiss, theme, setTheme, paletteOpen, setPaletteOpen, navOpen, setNavOpen, userId, setUserId, siteId, setSiteId }),
+    [toasts, toast, dismiss, theme, paletteOpen, navOpen, userId, setUserId, siteId, setSiteId],
   );
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
 }

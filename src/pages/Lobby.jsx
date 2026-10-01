@@ -3,7 +3,7 @@
 // the shop's data changes; pages through long lists on its own.
 import { useEffect, useMemo, useState } from 'react';
 import { Wrench, Wifi, CircleCheck } from 'lucide-react';
-import { useShop } from '../store/hooks';
+import { useScopedShop, useSite } from '../store/hooks';
 import QrCode from '../components/QrCode';
 import { lobbyRows, checkinLink } from '../lib/operations';
 import { time } from '../lib/format';
@@ -12,7 +12,8 @@ const PER_PAGE = 8;
 const TONE = { ready: 'bg-ok text-white', in_progress: 'bg-accent text-on-accent', waiting_parts: 'bg-warn/90 text-ink', approved: 'bg-fill/[0.14] text-ink', estimate: 'bg-fill/[0.14] text-ink' };
 
 export default function Lobby() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
+  const site = useSite();
   const [now, setNow] = useState(() => new Date());
   const [page, setPage] = useState(0);
   const [tip, setTip] = useState(0);
@@ -32,7 +33,7 @@ export default function Lobby() {
     return () => clearInterval(t);
   }, [pages]);
   const shown = rows.slice((page % pages) * PER_PAGE, (page % pages) * PER_PAGE + PER_PAGE);
-  const link = checkinLink(state);
+  const link = checkinLink(state, site.current);
 
   return (
     <div className="force-light flex min-h-[100dvh] flex-col bg-canvas text-ink">

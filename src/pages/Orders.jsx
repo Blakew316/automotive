@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Plus, ClipboardList } from 'lucide-react';
-import { useShop, useLookup, useTotals } from '../store/hooks';
+import { useLookup, useTotals, useScopedShop, useSite } from '../store/hooks';
+import { siteFor } from '../lib/locations';
 import { PageHeader, Card, SearchInput, Segmented, StatusLabel, EmptyState } from '../components/ui';
 import { money, fullName, vehicleName, dateShort } from '../lib/format';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
@@ -16,7 +17,9 @@ const FILTERS = [
 ];
 
 export default function Orders() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
+  const site = useSite();
+  const showSite = site.multi && site.current === 'all';
   const lookup = useLookup();
   const totals = useTotals();
   const navigate = useNavigate();
@@ -76,6 +79,7 @@ export default function Orders() {
                   <th>Vehicle</th>
                   <th className="hidden lg:table-cell">Work</th>
                   <th>Status</th>
+                  {showSite && <th className="hidden md:table-cell">Location</th>}
                   <th className="hidden md:table-cell">Updated</th>
                   <th className="text-right">Total</th>
                   <th className="hidden text-right sm:table-cell">Balance</th>
@@ -95,6 +99,7 @@ export default function Orders() {
                       </td>
                       <td className="hidden max-w-[260px] truncate text-ink-2 lg:table-cell">{o.services.filter((s) => s.status !== 'declined').map((s) => s.title).join(', ') || o.concern || '—'}</td>
                       <td><StatusLabel status={o.status} /></td>
+                      {showSite && <td className="hidden whitespace-nowrap text-ink-2 md:table-cell">{siteFor(state.shop, o.locationId).name}</td>}
                       <td className="hidden whitespace-nowrap text-ink-2 md:table-cell">{dateShort(o.closedAt || o.updatedAt)}</td>
                       <td className="tabular text-right font-medium">{money(t.total)}</td>
                       <td className={`tabular hidden text-right sm:table-cell ${t.balance > 0.004 && o.status !== 'estimate' ? 'text-ink' : 'text-ink-4'}`}>

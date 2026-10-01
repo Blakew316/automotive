@@ -44,6 +44,7 @@ const CheckIn = lazy(() => import('./pages/CheckIn'));
 const FrontDesk = lazy(() => import('./pages/FrontDesk'));
 const Lobby = lazy(() => import('./pages/Lobby'));
 const CheckinSign = lazy(() => import('./pages/CheckinSign'));
+const Timecards = lazy(() => import('./pages/Timecards'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -75,6 +76,7 @@ export default function App() {
                       <Route path="/customers/:id/statement" element={<Statement />} />
                       <Route path="/lobby" element={<Lobby />} />
                       <Route path="/frontdesk/sign" element={<CheckinSign />} />
+                      <Route path="/team/timecards" element={<Timecards />} />
                       <Route element={<Layout />}>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/workflow" element={<Workflow />} />

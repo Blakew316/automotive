@@ -5,6 +5,7 @@ import { publishPublicJson, publicFolder, newShareId, trackLink } from './cloudS
 import { orderTotals } from './pricing';
 import { payLink } from './messaging';
 import { vehicleName } from './format';
+import { shopAt } from './locations';
 
 export const TRACK_STEPS = [
   { status: 'estimate', label: 'Checked in & inspected', detail: 'We’re looking your vehicle over and putting together an estimate.' },
@@ -32,7 +33,7 @@ function stepTimes(order) {
 
 /** Everything the public page shows (no prices beyond the balance due, no internal notes). */
 export function trackPayload(state, order) {
-  const shop = state.shop;
+  const shop = shopAt(state.shop, order.locationId);
   const customer = state.customers.find((c) => c.id === order.customerId);
   const vehicle = state.vehicles.find((v) => v.id === order.vehicleId);
   const t = orderTotals(order, shop);

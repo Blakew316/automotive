@@ -145,11 +145,12 @@ export function checkinConfig(state) {
 }
 
 /** Link to the public check-in page (published config when the shop's cloud is set up). */
-export function checkinLink(state) {
+export function checkinLink(state, locationId = null) {
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const base = `${origin}${import.meta.env?.BASE_URL || '/'}checkin`;
   const cfg = cloudConfig(state.shop);
-  return cfg ? `${base}?from=${encodeURIComponent(publicSiteBase(cfg))}` : '';
+  const loc = locationId && locationId !== 'all' && locationId !== 'main' ? `&loc=${encodeURIComponent(locationId)}` : '';
+  return cfg ? `${base}?from=${encodeURIComponent(publicSiteBase(cfg))}${loc}` : '';
 }
 
 const digits = (s) => String(s || '').replace(/\D/g, '').slice(-10);

@@ -14,6 +14,7 @@ import InspectionTemplates from './settings/InspectionTemplates';
 import InstallSection from './settings/InstallSection';
 import WebsiteSettings from './settings/WebsiteSettings';
 import FrontDeskSettings from './settings/FrontDeskSettings';
+import LocationsSection from './settings/LocationsSection';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
 
@@ -60,6 +61,7 @@ export default function Settings() {
                 </div>
               </div>
             </Section>
+            <LocationsSection />
             <HoursSection />
             <Section title="Rates & taxes">
               <div className="grid gap-3 sm:grid-cols-3">

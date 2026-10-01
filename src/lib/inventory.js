@@ -53,3 +53,16 @@ export const STOCK_STATUS = {
   over: { label: 'Above max', className: 'bg-sky/15 text-accent' },
   ok: { label: 'OK', className: 'bg-ok/10 text-ok' },
 };
+
+const normCode = (s) => {
+  const t = String(s || '').toUpperCase().replace(/[\s-]+/g, '');
+  // UPC-A and EAN-13 are the same number with a leading zero; compare numeric codes without them.
+  return /^\d+$/.test(t) ? t.replace(/^0+/, '') : t;
+};
+
+/** The inventory item a scanned or typed code belongs to: barcode first, then part number, then SKU. */
+export function findPartByCode(inventory, code) {
+  const c = normCode(code);
+  if (!c) return null;
+  return inventory.find((p) => p.barcode && normCode(p.barcode) === c) || inventory.find((p) => p.partNumber && normCode(p.partNumber) === c) || inventory.find((p) => p.sku && normCode(p.sku) === c) || null;
+}

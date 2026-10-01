@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Pencil, Trash2, MonitorPlay, Printer } from 'lucide-react';
-import { useShop } from '../../store/hooks';
+import { useShop, useSite } from '../../store/hooks';
 import { Card, CardHeader, Field, Toggle, NumInput, InlineText, Modal, CopyButton } from '../../components/ui';
 import QrCode from '../../components/QrCode';
 import { FUEL, FRONT_DESK_DEFAULTS, checkinLink } from '../../lib/operations';
@@ -10,6 +10,7 @@ import { uid, relTime } from '../../lib/format';
 
 export default function FrontDeskSettings() {
   const { state, updateShop } = useShop();
+  const site = useSite();
   const fd = state.shop.frontDesk || FRONT_DESK_DEFAULTS;
   const ci = fd.checkin;
   const lobby = fd.lobby;
@@ -17,7 +18,7 @@ export default function FrontDeskSettings() {
   const setCi = (patch) => save({ checkin: { ...ci, ...patch } });
   const setLobby = (patch) => save({ lobby: { ...lobby, ...patch } });
   const [editing, setEditing] = useState(null);
-  const link = checkinLink(state);
+  const link = checkinLink(state, site.current);
 
   const saveLoaner = (l) => {
     save({ loaners: fd.loaners.some((x) => x.id === l.id) ? fd.loaners.map((x) => (x.id === l.id ? l : x)) : [...fd.loaners, l] });

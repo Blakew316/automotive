@@ -202,3 +202,12 @@ export function extractVin(text = '') {
   const m = text.toUpperCase().match(/\b[A-HJ-NPR-Z0-9]{17}\b/);
   return m ? m[0] : null;
 }
+
+/** A VIN in a scanned value (Code 39 VIN labels often add a leading "I"; QR codes may hold more text). */
+export function vinFromScan(raw) {
+  const text = String(raw || '').toUpperCase();
+  const candidates = [cleanVin(text.replace(/^I(?=[A-HJ-NPR-Z0-9]{17}$)/, '')), ...(text.match(/[A-HJ-NPR-Z0-9]{17}/g) || [])];
+  const valid = candidates.filter((v) => v.length === 17 && decodeOffline(v).valid);
+  // Prefer one whose check digit matches (North American VINs); others don't always use one.
+  return valid.find((v) => decodeOffline(v).checkDigitOk) || valid[0] || null;
+}

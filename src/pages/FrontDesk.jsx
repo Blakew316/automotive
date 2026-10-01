@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ConciergeBell, MonitorPlay, QrCode as QrIcon, KeyRound, Car, MapPin, Clock, MessageSquare, Printer, Package, Phone } from 'lucide-react';
-import { useShop, useSync } from '../store/hooks';
+import { useScopedShop, useSite, useSync } from '../store/hooks';
 import { PageHeader, Card, CardHeader, EmptyState, StatusLabel, Stat, Modal, CopyButton } from '../components/ui';
 import QrCode from '../components/QrCode';
 import ComposeModal from '../components/Compose';
@@ -13,7 +13,8 @@ import { fullName, vehicleName, time, dateTime, relTime, telHref, phone as fmtPh
 const sameDay = (a, b = new Date()) => new Date(a).toDateString() === new Date(b).toDateString();
 
 export default function FrontDesk() {
-  const { state, updateOrder } = useShop();
+  const { state, updateOrder } = useScopedShop();
+  const site = useSite();
   const sync = useSync();
   const [qr, setQr] = useState(false);
   const [composing, setComposing] = useState(null);
@@ -25,7 +26,7 @@ export default function FrontDesk() {
   const loaners = loanerBoard(state);
   const rides = shuttleRuns(state, now);
   const cores = coreList(state).filter((c) => c.status === 'owed');
-  const link = checkinLink(state);
+  const link = checkinLink(state, site.current);
   const enabled = state.shop.frontDesk?.checkin?.enabled;
 
   return (
