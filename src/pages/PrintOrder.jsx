@@ -6,6 +6,7 @@ import { Segmented, Toggle, EmptyState } from '../components/ui';
 import { money, fullName, vehicleName, date, phone, number } from '../lib/format';
 import { itemTotal, serviceTotal } from '../lib/pricing';
 import { INSPECTION_RATINGS } from '../lib/workflow';
+import { dueDate, hasTerms, termsLabel } from '../lib/accounts';
 
 export default function PrintOrder() {
   const { id } = useParams();
@@ -75,6 +76,12 @@ export default function PrintOrder() {
               No. <span className="font-medium text-ink">{order.number}</span>
             </div>
             <div className="text-sm text-ink-2">{date(kind === 'invoice' ? order.invoicedAt || new Date() : order.createdAt)}</div>
+            {order.po && <div className="text-sm text-ink-2">PO <span className="font-medium text-ink">{order.po}</span></div>}
+            {kind === 'invoice' && hasTerms(c) && (
+              <div className="text-sm text-ink-2">
+                {termsLabel(c.account.terms)} · due <span className="font-medium text-ink">{date(dueDate(order, c))}</span>
+              </div>
+            )}
           </div>
         </header>
 
@@ -83,13 +90,14 @@ export default function PrintOrder() {
             <div className="section-label mb-1.5">Customer</div>
             <div className="font-medium">{fullName(c)}</div>
             {c?.company && <div className="text-ink-2">{c.company}</div>}
+            {c?.account?.taxExempt && order.taxExempt && <div className="text-ink-2">Tax exempt{c.account.taxId ? ` · ${c.account.taxId}` : ''}</div>}
             <div className="text-ink-2">{c?.address}</div>
             <div className="text-ink-2">{[c?.city, c?.state].filter(Boolean).join(', ')} {c?.zip}</div>
             <div className="text-ink-2">{phone(c?.phone || '')}</div>
           </div>
           <div>
             <div className="section-label mb-1.5">Vehicle</div>
-            <div className="font-medium">{vehicleName(v, { trim: true })}</div>
+            <div className="font-medium">{v?.unit ? `Unit ${v.unit} · ` : ''}{vehicleName(v, { trim: true })}</div>
             {v?.engine && <div className="text-ink-2">{v.engine}</div>}
             <div className="font-mono text-[12px] text-ink-2">VIN {v?.vin || '—'}</div>
             <div className="text-ink-2">
@@ -196,6 +204,7 @@ export default function PrintOrder() {
         )}
 
         <footer className="mt-8 break-inside-avoid space-y-4 border-t border-line pt-5 text-xs leading-5 text-ink-2">
+          {kind === 'invoice' && c?.account?.invoiceNote && <p className="font-medium text-ink">{c.account.invoiceNote}</p>}
           <p>{kind === 'invoice' ? shop.invoiceTerms : shop.estimateTerms}</p>
           {shop.warranty && <p>Warranty: {shop.warranty}.</p>}
           {kind !== 'invoice' && (

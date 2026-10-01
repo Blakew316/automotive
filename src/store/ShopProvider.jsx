@@ -6,6 +6,7 @@ import { migrate } from './defaults';
 import { newTireQuote, tireLabel } from '../lib/tires';
 import { priceFromMatrix, orderTotals } from '../lib/pricing';
 import { STATUS } from '../lib/workflow';
+import { BLANK_ACCOUNT, dueDate, termsLabel } from '../lib/accounts';
 import { uid, fullName, vehicleName } from '../lib/format';
 import { loadSaved, createSaver } from '../lib/persist';
 import { diffStates, applyToDraft } from '../lib/sync/records';
@@ -230,10 +231,12 @@ function ShopStore({ boot, children }) {
         update((s) => {
           s.counters.order += 1;
           const v = s.vehicles.find((x) => x.id === vehicleId);
+          const owner = s.customers.find((c) => c.id === (customerId || v?.customerId));
           const o = {
             id: uid('ro'),
             number: s.counters.order,
             status,
+            ...(owner?.account?.taxExempt ? { taxExempt: true } : {}),
             customerId: customerId || v?.customerId || null,
             vehicleId: vehicleId || null,
             techId: null,
@@ -278,6 +281,7 @@ function ShopStore({ boot, children }) {
         update((s) => {
           const o = findOrder(s, id);
           if (!o || o.status === status) return;
+          if (o.status === 'closed' && o.charge) delete o.charge;
           o.status = status;
           o.updatedAt = now();
           if (status === 'approved' && !o.authorizedAt) {
@@ -373,7 +377,63 @@ function ShopStore({ boot, children }) {
         update((s) => {
           const o = findOrder(s, orderId);
           o.payments = o.payments.filter((p) => p.id !== paymentId);
-          if (o.status === 'closed' && orderTotals(o, s.shop).balance > 0.004) o.status = 'ready';
+          // Invoices charged to an account stay closed (they're on the statement); others reopen for payment.
+          if (o.status === 'closed' && !o.charge && orderTotals(o, s.shop).balance > 0.004) o.status = 'ready';
+        }),
+
+      // ---- Fleet & business accounts
+      saveAccount: (customerId, patch) =>
+        update((s) => {
+          const c = s.customers.find((x) => x.id === customerId);
+          if (!c) return;
+          c.account = patch === null ? null : { ...BLANK_ACCOUNT, ...(c.account || {}), ...patch };
+        }),
+      // Invoice on terms: the vehicle goes home, the balance goes on the account's statement.
+      chargeToAccount: (orderId, { po } = {}) =>
+        update((s) => {
+          const o = findOrder(s, orderId);
+          const c = s.customers.find((x) => x.id === o?.customerId);
+          if (!o || !c?.account) return;
+          if (po != null) o.po = po;
+          const at = now();
+          o.invoicedAt = o.invoicedAt || at;
+          o.charge = { at, terms: c.account.terms, dueAt: dueDate({ ...o, charge: null }, c) };
+          o.status = 'closed';
+          o.closedAt = o.closedAt || at;
+          o.updatedAt = at;
+          if (o.mileageIn && !o.mileageOut) o.mileageOut = o.mileageIn;
+          log(s, `RO #${o.number} charged to ${c.company || fullName(c)} (${termsLabel(c.account.terms)})`, o.id);
+        }),
+      // One check or transfer paying several invoices.
+      receivePayment: (customerId, { method, ref = '', at, allocations }) =>
+        update((s) => {
+          const batchId = allocations.length > 1 ? uid('batch') : undefined;
+          const when = at || now();
+          let total = 0;
+          for (const a of allocations) {
+            const o = findOrder(s, a.orderId);
+            if (!o || o.customerId !== customerId) continue;
+            // Never more than what's owed now (another device may have taken a payment meanwhile).
+            const amount = Math.round(Math.min(Number(a.amount) || 0, orderTotals(o, s.shop).balance) * 100) / 100;
+            if (amount <= 0) continue;
+            o.payments.push({ id: uid('pay'), at: when, method, amount, ref, ...(batchId ? { batchId } : {}) });
+            total += amount;
+            if (orderTotals(o, s.shop).balance <= 0.004 && (o.status === 'ready' || o.status === 'closed')) {
+              o.status = 'closed';
+              o.closedAt = o.closedAt || when;
+            }
+            o.updatedAt = now();
+          }
+          const c = s.customers.find((x) => x.id === customerId);
+          log(s, `${method} $${total.toFixed(2)}${ref ? ` (${ref})` : ''} from ${c?.company || fullName(c)} applied to ${allocations.length} invoice${allocations.length === 1 ? '' : 's'}`);
+        }),
+      // A PM done somewhere else (or before the shop's records start).
+      recordPm: (vehicleId, planId, entry) =>
+        update((s) => {
+          const v = s.vehicles.find((x) => x.id === vehicleId);
+          if (!v) return;
+          v.pm = { ...(v.pm || {}), [planId]: entry };
+          if (entry?.miles && entry.miles > (v.mileage || 0)) v.mileage = entry.miles;
         }),
 
       addNote: (orderId, text, internal = true) =>

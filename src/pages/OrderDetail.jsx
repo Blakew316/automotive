@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   Printer, Send, MoreHorizontal, Plus, Trash2, MessageSquare, Mail, Check, ClipboardCheck, Wrench, StickyNote,
   CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2, PenLine, HandCoins,
-  History, Activity,
+  History, Activity, Building2,
 } from 'lucide-react';
 import { useShop, useUI, useLookup, useTotals, useSync } from '../store/hooks';
 import RecordHistory from '../components/RecordHistory';
@@ -13,6 +13,8 @@ import { PageHeader, Card, Tabs, Menu, EmptyState, Modal, SearchInput, InlineTex
 import ServiceBlock from './order/ServiceBlock';
 import InspectionPanel from './order/InspectionPanel';
 import OrderSidebar, { PaymentModal } from './order/OrderSidebar';
+import ChargeModal from './order/ChargeModal';
+import { hasTerms } from '../lib/accounts';
 import MediaPanel, { MediaViewer } from './order/MediaPanel';
 import { useMediaViewer } from '../lib/useMedia';
 import AuthorizeModal from './order/AuthorizeModal';
@@ -42,6 +44,7 @@ export default function OrderDetail() {
   const [tab, setTab] = useState(() => (['services', 'inspection', 'media', 'notes'].includes(params.get('tab')) ? params.get('tab') : 'services'));
   const [addingService, setAddingService] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [charging, setCharging] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [authorizing, setAuthorizing] = useState(false);
@@ -64,6 +67,7 @@ export default function OrderDetail() {
 
   const move = (status) => {
     const prev = order.status;
+    if ((status === 'ready' || status === 'closed') && customer?.account?.poRequired && !order.po) toast(`${customer.company} requires a PO number on its invoices — add it in the account box`, { tone: 'error' });
     setOrderStatus(order.id, status);
     toast(`Moved to ${STATUS[status].label}`, { action: { label: 'Undo', onClick: () => setOrderStatus(order.id, prev) } });
   };
@@ -112,7 +116,7 @@ export default function OrderDetail() {
           </span>
         }
         title={vehicle ? vName : fullName(customer)}
-        subtitle={vehicle ? `${fullName(customer)}${vehicle.plate ? ` · ${vehicle.plate}` : ''}` : undefined}
+        subtitle={vehicle ? `${customer?.account && customer.company ? customer.company : fullName(customer)}${vehicle.unit ? ` · Unit ${vehicle.unit}` : ''}${vehicle.plate ? ` · ${vehicle.plate}` : ''}${order.po ? ` · PO ${order.po}` : ''}` : undefined}
         actions={
           <>
             <Menu
@@ -146,6 +150,11 @@ export default function OrderDetail() {
                   <next.icon size={15} /> {next.label}
                 </button>
               )
+            )}
+            {order.status === 'ready' && t.balance > 0.004 && hasTerms(customer) && (
+              <button className="btn-secondary" onClick={() => setCharging(true)}>
+                <Building2 size={15} /> Charge to account
+              </button>
             )}
             {order.status === 'ready' && t.balance > 0.004 && (
               <button className="btn-primary" onClick={() => setPaying(true)}>
@@ -240,11 +249,12 @@ export default function OrderDetail() {
           {tab === 'notes' && <NotesPanel order={order} onAdd={(text, internal) => addNote(order.id, text, internal)} />}
         </div>
 
-        <OrderSidebar order={order} customer={customer} vehicle={vehicle} editable={editable} onTakePayment={() => setPaying(true)} onCompose={(c) => setComposing(c)} onAuthorize={() => setAuthorizing(true)} />
+        <OrderSidebar order={order} customer={customer} vehicle={vehicle} editable={editable} onTakePayment={() => setPaying(true)} onCharge={() => setCharging(true)} onCompose={(c) => setComposing(c)} onAuthorize={() => setAuthorizing(true)} />
       </div>
 
       {addingService && <AddServiceModal order={order} onClose={() => setAddingService(false)} />}
       {paying && <PaymentModal order={order} customer={customer} onClose={() => setPaying(false)} onReceipt={(amount) => setComposing({ templateId: 'receipt', extra: { amount } })} />}
+      {charging && customer?.account && <ChargeModal order={order} customer={customer} onClose={() => setCharging(false)} />}
       {authorizing && <AuthorizeModal order={order} customer={customer} onClose={() => setAuthorizing(false)} />}
       {composing && customer && <ComposeModal customer={customer} order={order} {...composing} onClose={() => setComposing(null)} />}
       {sharing && (

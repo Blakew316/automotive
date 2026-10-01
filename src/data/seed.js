@@ -585,7 +585,7 @@ export function createSeed(now = new Date()) {
   });
 
   // Payments for closed history.
-  const payMethods = ['Card', 'Card', 'Card', 'Card', 'Cash', 'Check', 'Fleet account'];
+  const payMethods = ['Card', 'Card', 'Card', 'Card', 'Cash', 'Check', 'ACH'];
   orders.forEach((o) => {
     if (o.status !== 'closed') return;
     delete o.pendingPayment;
@@ -688,6 +688,82 @@ export function createSeed(now = new Date()) {
     vehicles.push(v);
     visits.forEach((d, k) => pastOrder(v, d, k ? ['cj-oil'] : ['cj-oil', 'cj-filters'], k === visits.length - 1 ? declined : []));
   });
+  // Fleet accounts: Mitchell Plumbing Co. (Net 30, PO numbers, credit limit) and Okafor Landscaping
+  // (Net 15) — units with unit numbers, maintenance plans, invoices on terms and a batch check.
+  const fleetAccounts = (() => {
+    const DAY = 86400000;
+    const mitchell = customers.find((c) => c.company === 'Mitchell Plumbing Co.');
+    const okafor = customers.find((c) => c.company === 'Okafor Landscaping');
+    if (!mitchell || !okafor) return;
+    const spec = (model) => VEHICLES.find((x) => x[6] === model);
+    const addUnit = (c, model, unit, plate, mileage, driver, serial) => {
+      const [, prefix, yr, plant, year, make, , trim, engine] = spec(model);
+      const v = { id: id('veh'), customerId: c.id, vin: withCheckDigit(`${prefix}0${yr}${plant}${String(serial).slice(-6)}`), year, make, model, trim, engine, color: 'Oxford White', plate, plateState: 'IL', mileage, notes: '', unit, driver, createdAt: c.createdAt };
+      vehicles.push(v);
+      return v;
+    };
+    const mine = (c) => vehicles.filter((v) => v.customerId === c.id);
+    const [m1, m2] = mine(mitchell);
+    Object.assign(m1, { unit: '12', driver: 'Service — R. Ortiz' });
+    Object.assign(m2, { unit: '7', driver: 'Service — K. Lee' });
+    const m3 = addUnit(mitchell, 'F-150', '14', 'FLT 2214', 88120, 'Install — D. Ruiz', 551208);
+    const m4 = addUnit(mitchell, 'Silverado 1500', '15', 'FLT 2215', 23400, 'Install — T. Brooks', 662914);
+    const m5 = addUnit(mitchell, '1500', '9', 'FLT 2209', 104300, 'Owner — J. Mitchell', 773419);
+    const [o1] = mine(okafor);
+    Object.assign(o1, { unit: 'T-1', driver: 'Crew lead' });
+    const o2 = addUnit(okafor, 'F-150', 'T-2', 'OKF 552', 131800, 'Mowing crew', 884127);
+
+    mitchell.account = {
+      terms: 'net30', creditLimit: 15000, poRequired: true, preApproved: 750, taxExempt: false, taxId: '',
+      billingEmail: 'ap@mitchellplumbing.example', invoiceNote: 'Mitchell Plumbing Co.: include the PO number on every invoice. Remit to Accounts Payable.',
+      contacts: [
+        { id: id('ct'), name: 'Dana Whitfield', role: 'Accounts payable', phone: '(217) 555-0190', email: 'ap@mitchellplumbing.example' },
+        { id: id('ct'), name: 'Ray Ortiz', role: 'Fleet manager', phone: '(217) 555-0191', email: 'ray.ortiz@mitchellplumbing.example' },
+      ],
+      pmPlans: [
+        { id: id('pm'), label: 'Oil & filter service', miles: 5000, months: 6, jobId: 'cj-oil' },
+        { id: id('pm'), label: 'Tire rotation', miles: 7500, months: null, jobId: 'cj-rotate' },
+        { id: id('pm'), label: 'Annual safety inspection', miles: null, months: 12, jobId: null },
+      ],
+      portal: null,
+    };
+    okafor.account = {
+      terms: 'net15', creditLimit: 5000, poRequired: false, preApproved: 400, taxExempt: false, taxId: '', billingEmail: okafor.email, invoiceNote: '',
+      contacts: [], pmPlans: [{ id: id('pm'), label: 'Oil & filter service', miles: 5000, months: 6, jobId: 'cj-oil' }], portal: null,
+    };
+
+    // Service history (PM status follows from it), then put some invoices on the account.
+    const last = () => orders[orders.length - 1];
+    let po = 4460;
+    const charge = (o, c, terms) => {
+      o.payments = [];
+      o.po = c === mitchell ? `PO-${++po}` : '';
+      o.charge = { at: o.invoicedAt, terms, dueAt: new Date(new Date(o.invoicedAt).getTime() + (terms === 'net30' ? 30 : 15) * DAY).toISOString() };
+      return o;
+    };
+    pastOrder(m1, 205, ['cj-oil', 'cj-rotate']);
+    pastOrder(m2, 38, ['cj-oil']);
+    charge(last(), mitchell, 'net30');
+    pastOrder(m3, 168, ['cj-oil', 'cj-rotate']);
+    pastOrder(m5, 96, ['cj-oil', 'cj-fbrakes']);
+    const older = [charge(last(), mitchell, 'net30')];
+    pastOrder(m3, 74, ['cj-rbrakes']);
+    older.push(charge(last(), mitchell, 'net30'));
+    pastOrder(m1, 52, ['cj-battery']);
+    const pastDue = charge(last(), mitchell, 'net30');
+    last().services.push(custom('Annual safety inspection', [{ type: 'labor', description: 'Fleet annual inspection: brakes, steering, lights, tires, leaks, emissions check', hours: 1.0 }]));
+    pastOrder(m4, 12, ['cj-oil', 'cj-wipers']);
+    charge(last(), mitchell, 'net30');
+    // One check paid the two oldest invoices (and part of the next).
+    const check = { id: id('batch'), at: new Date(now.getTime() - 9 * DAY).toISOString(), ref: '20417' };
+    older.forEach((o) => o.payments.push({ id: id('pay'), at: check.at, method: 'Check', amount: orderTotals(o, shop).total, ref: check.ref, batchId: check.id }));
+    pastDue.payments.push({ id: id('pay'), at: check.at, method: 'Check', amount: 150, ref: check.ref, batchId: check.id });
+    pastOrder(o1, 140, ['cj-oil']);
+    pastOrder(o2, 24, ['cj-oil', 'cj-filters']);
+    charge(last(), okafor, 'net15');
+    return [mitchell.id, okafor.id];
+  })();
+  void fleetAccounts;
   orders.sort((a, b) => a.number - b.number);
 
   const finalOrders = orders.map((o) => ({ ...o, techId: tech(o.techId) }));

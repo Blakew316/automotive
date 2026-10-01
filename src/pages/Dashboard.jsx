@@ -9,6 +9,7 @@ import { money, money0, moneyShort, fullName, vehicleName, time, relTime, sameDa
 import { STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { openShift, runningJob, entryMs, fmtDuration, useNow } from '../lib/time';
 import { automationStatus } from '../lib/automations';
+import { openInvoices, isAccount } from '../lib/accounts';
 
 export default function Dashboard() {
   const { state } = useShop();
@@ -38,6 +39,12 @@ export default function Dashboard() {
       if (o.status === 'estimate' && now - new Date(o.createdAt) > 3 * 3600000) attention.push({ id: `est-${o.id}`, icon: FileText, text: `${name} estimate needs a follow-up`, sub: `Sent ${relTime(o.createdAt, now)} · ${money0(totals(o).total)}`, to: `/orders/${o.id}`, tone: 'bg-info' });
     });
     receivable.filter((o) => o.status === 'ready').forEach((o) => attention.push({ id: `bal-${o.id}`, icon: Receipt, text: `#${o.number} ready — ${money(totals(o).balance)} due`, sub: fullName(lookup.customer.get(o.customerId)), to: `/orders/${o.id}`, tone: 'bg-ok' }));
+    // Business accounts with invoices past their terms.
+    const late = openInvoices(state, { now }).filter((i) => i.pastDue > 0 && isAccount(i.customer));
+    if (late.length) {
+      const names = [...new Set(late.map((i) => i.customer.company || fullName(i.customer)))];
+      attention.push({ id: 'ar-late', icon: Receipt, text: `${late.length} account invoice${late.length === 1 ? '' : 's'} past due — ${money0(late.reduce((t, i) => t + i.balance, 0))}`, sub: names.slice(0, 3).join(', '), to: '/accounts', tone: 'bg-warn' });
+    }
     const requests = state.bookingRequests.filter((b) => b.status === 'new');
     if (requests.length) attention.unshift({ id: 'book', icon: Globe, text: `${requests.length} online booking request${requests.length === 1 ? '' : 's'} to confirm`, sub: requests.map((b) => b.name).join(', '), to: '/calendar', tone: 'bg-accent' });
     const unread = state.messages.filter((m) => m.dir === 'in' && !m.read);
@@ -73,7 +80,7 @@ export default function Dashboard() {
       receivableTotal: receivable.reduce((s, o) => s + totals(o).balance, 0),
       receivableCount: receivable.length,
     };
-  }, [state.orders, state.inventory, state.bookingRequests, state.messages, state.purchaseOrders, lookup, totals, now]);
+  }, [state, lookup, totals, now]);
 
   const appointments = state.appointments.filter((a) => sameDay(a.start, now)).sort((a, b) => new Date(a.start) - new Date(b.start));
   const hour = now.getHours();
@@ -106,7 +113,7 @@ export default function Dashboard() {
           <HeroStat icon={Receipt} tone="teal" label="Billed today" value={money0(data.billedToday)} sub={`${data.invoicedTodayCount} invoice${data.invoicedTodayCount === 1 ? '' : 's'}`} to="/orders?status=ready" />
           <HeroStat icon={FileText} tone="sky" label="Awaiting approval" value={money0(data.estimateValue)} sub={`${data.estimates.length} open estimates`} to="/orders?status=estimate" />
           <HeroStat icon={Car} tone="green" label="Ready for pickup" value={data.ready.length} sub={`${money0(data.readyBalance)} to collect`} to="/orders?status=ready" />
-          <HeroStat icon={Wallet} tone="slate" label="Receivables" value={money0(data.receivableTotal)} sub={`${data.receivableCount} unpaid`} to="/accounting?tab=deposits" />
+          <HeroStat icon={Wallet} tone="slate" label="Receivables" value={money0(data.receivableTotal)} sub={`${data.receivableCount} unpaid`} to="/accounts" />
         </div>
       </section>
 

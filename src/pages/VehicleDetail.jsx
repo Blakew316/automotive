@@ -10,6 +10,7 @@ import { decodeVinLocal } from '../lib/vindb';
 import { usePromise } from '../lib/usePromise';
 import { loadMake, modelYearRows, buildOptions, slugify, catalogPath, enrichValues } from '../lib/catalog';
 import { money, fullName, dateShort, number } from '../lib/format';
+import { pmStatus } from '../lib/accounts';
 import { decodeOffline } from '../lib/vin';
 
 const VehicleKnowledge = lazy(() => import('../components/VehicleKnowledge'));
@@ -37,8 +38,8 @@ export default function VehicleDetail() {
     <>
       <PageHeader
         back="/vehicles"
-        eyebrow={owner ? <Link to={`/customers/${owner.id}`} className="hover:text-accent">{fullName(owner)}</Link> : 'No owner'}
-        title={`${v.year} ${v.make} ${v.model}`}
+        eyebrow={owner ? <Link to={`/customers/${owner.id}`} className="hover:text-accent">{owner.account && owner.company ? owner.company : fullName(owner)}</Link> : 'No owner'}
+        title={`${v.unit ? `Unit ${v.unit} · ` : ''}${v.year} ${v.make} ${v.model}`}
         subtitle={[v.trim, v.engine, v.color].filter(Boolean).join(' · ')}
         actions={
           <>
@@ -60,6 +61,7 @@ export default function VehicleDetail() {
       {history && <RecordHistory collection="vehicles" id={v.id} title={`${v.year} ${v.make} ${v.model}`} onClose={() => setHistory(false)} />}
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-6">
+          {owner?.account?.pmPlans?.length > 0 && <PmCard vehicle={v} plans={owner.account.pmPlans} customerId={owner.id} />}
           <Card>
             <CardHeader title="Service history" subtitle={`${orders.length} visits · ${money(spend)} lifetime`} />
             {orders.length === 0 ? (
@@ -110,6 +112,8 @@ export default function VehicleDetail() {
               <KV label="Engine">{v.engine || '—'}</KV>
               <KV label="Color">{v.color || '—'}</KV>
               <KV label="Owner">{owner ? <Link to={`/customers/${owner.id}`} className="link">{fullName(owner)}</Link> : '—'}</KV>
+              {v.unit && <KV label="Unit #">{v.unit}</KV>}
+              {v.driver && <KV label="Driver / dept.">{v.driver}</KV>}
             </dl>
           </Card>
           <ResourcesCard year={v.year} make={v.make} model={v.model} vin={v.vin} />
@@ -197,5 +201,43 @@ function TechnicalSection({ vehicle: v }) {
         <EmptyState icon={Database} title="Not found in the vehicle database" body="Check the make and model spelling, or add the VIN to decode the exact configuration." />
       )}
     </section>
+  );
+}
+
+const PM_DOT = { overdue: 'bg-bad', due: 'bg-warn', ok: 'bg-ok', unknown: 'bg-ink-4' };
+const PM_TONE = { overdue: 'text-bad', due: 'text-warn', ok: 'text-ink-2', unknown: 'text-ink-3' };
+
+/** The fleet's maintenance plans for this unit: last done and what's next. */
+function PmCard({ vehicle, plans, customerId }) {
+  const { state } = useShop();
+  const rows = plans.map((p) => pmStatus(state, vehicle, p));
+  const due = rows.filter((r) => r.status === 'overdue' || r.status === 'due');
+  const jobs = due.map((r) => r.plan.jobId).filter(Boolean);
+  return (
+    <Card>
+      <CardHeader
+        title="Fleet maintenance"
+        subtitle={due.length ? `${due.length} due` : 'Up to date'}
+        actions={
+          due.length > 0 && (
+            <Link to={`/orders/new?customer=${customerId}&vehicle=${vehicle.id}${jobs.length ? `&jobs=${jobs.join(',')}` : ''}&concern=${encodeURIComponent(`Scheduled maintenance: ${due.map((r) => r.plan.label).join(', ')}`)}`} className="btn-primary btn-sm">
+              <Plus size={13} /> PM repair order
+            </Link>
+          )
+        }
+      />
+      <ul className="divide-y divide-line/70">
+        {rows.map((r) => (
+          <li key={r.plan.id} className="flex items-center gap-3 px-4 py-2.5 text-sm">
+            <span className={`h-2 w-2 shrink-0 rounded-full ${PM_DOT[r.status]}`} />
+            <span className="min-w-0 flex-1">
+              <span className="block font-medium">{r.plan.label}</span>
+              <span className="block text-xs text-ink-3">{r.last ? `Last ${dateShort(r.last.date)}${r.last.miles ? ` at ${number(r.last.miles)} mi` : ''}${r.last.ro ? ` · RO #${r.last.ro}` : ''}` : 'No record yet'}</span>
+            </span>
+            <span className={`text-right text-xs ${PM_TONE[r.status]}`}>{r.status === 'unknown' ? '—' : r.text}</span>
+          </li>
+        ))}
+      </ul>
+    </Card>
   );
 }

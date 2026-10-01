@@ -1,23 +1,30 @@
-// Keeps customers' live status pages current: whenever a tracked repair order changes in a way the
-// page shows, the signed-in device republishes it (and records what it published, so other devices
-// sharing the shop's data don't publish it again).
-import { useEffect, useRef } from 'react';
+// Keeps customers' public pages current: live status pages for repair orders and fleet portals for
+// business accounts. Whenever something a page shows changes, the signed-in device republishes it
+// (and records what it published, so other devices sharing the shop's data don't publish it again).
+import { useEffect, useRef, useState } from 'react';
 import { useShop, useSync } from '../store/hooks';
 import { trackFingerprint, trackPayload, publishTrack } from './tracker';
+import { portalFingerprint, portalPayload, publishPortal } from './fleetPortal';
 
 const KEEP_AFTER_CLOSE = 3 * 86_400_000;
 
 export function useTracking() {
-  const { state, updateOrder } = useShop();
+  const { state, updateOrder, saveAccount } = useShop();
   const sync = useSync();
   const latest = useRef(state);
   const busy = useRef(new Set());
   const cfg = sync?.cfg;
   const staff = Boolean(sync?.staff);
+  // Hourly check so day-based countdowns (PM due dates, days past due) roll over without an edit.
+  const [hour, setHour] = useState(0);
 
   useEffect(() => {
     latest.current = state;
   });
+  useEffect(() => {
+    const t = setInterval(() => setHour((h) => h + 1), 3_600_000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     if (!staff || !cfg) return undefined;
@@ -40,7 +47,23 @@ export function useTracking() {
           busy.current.delete(o.id);
         }
       }
+      for (const c of s.customers) {
+        const portal = c.account?.portal;
+        if (!portal?.id || portal.off || busy.current.has(c.id)) continue;
+        const at = new Date();
+        const fp = portalFingerprint(s, c, cfg, at);
+        if (fp === portal.fp) continue;
+        busy.current.add(c.id);
+        try {
+          await publishPortal(cfg, portal.id, portalPayload(s, c, cfg, at));
+          saveAccount(c.id, { portal: { ...portal, fp, publishedAt: at.toISOString() } });
+        } catch {
+          // Offline: the next change retries.
+        } finally {
+          busy.current.delete(c.id);
+        }
+      }
     }, 1500);
     return () => clearTimeout(t);
-  }, [state.orders, state.customers, state.vehicles, staff, cfg, updateOrder]);
+  }, [state.orders, state.customers, state.vehicles, staff, cfg, updateOrder, saveAccount, hour]);
 }

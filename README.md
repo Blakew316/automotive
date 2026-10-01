@@ -30,6 +30,12 @@ The repo also holds the shop's public website (`website/`), published alongside 
 - **Payments** — record card, cash, check, ACH, financing, warranty and fleet payments with tips and an optional card surcharge; text-to-pay links through the shop’s own Stripe, Square, PayPal, Venmo or Cash App account; receipts by text or email.
 - **Financing** — “as low as $/mo” on estimates and the customer report, with a link to the shop’s financing partner.
 - **Customers & vehicles** — history, lifetime value, recent messages, declined-work follow-ups, and per-vehicle service timeline.
+- **Fleet & business accounts** — turn a commercial customer into an account (customer menu → *Set up business account*, or **Fleet & Accounts → Business account**) with payment terms (due on receipt to Net 60), a credit limit, a pre-approved (not-to-exceed) amount per visit, required PO numbers, tax exemption with the certificate number, a billing email and a note printed on every invoice.
+  - **Units & maintenance:** each vehicle gets a unit number and driver/department; maintenance plans (e.g. oil every 5,000 mi or 6 months) show every unit as up to date, due soon or overdue, worked out from its repair orders (or recorded by hand for work done elsewhere), with one-click *PM RO* that starts the repair order with the due jobs.
+  - **Invoicing on terms:** *Charge to account* closes a finished RO onto the account (asking for the PO number when it's required and warning when it goes over the credit limit); invoices print the PO, unit, terms and due date.
+  - **Receivables:** aging by days past due (current, 1–30, 31–60, 61–90, 90+) per account and across the shop (**Fleet & Accounts → Receivables**, also on Reports and the Today page). *Receive payment* applies one check or ACH across several invoices, oldest first, under one batch.
+  - **Statements:** a printable/PDF statement with aging, open invoices and recent payments, or emailed to the billing contact.
+  - **Fleet portal:** a private link for the fleet manager showing every unit's maintenance status, what's in the shop (with live status and estimate links), open invoices, the balance and payment/booking buttons; it updates itself and can be turned off.
 
 **Team & techs**
 - **Tech Time Clock** — a phone-friendly view for each technician: clock in/out, their assigned jobs, one-tap job timers (starting a job clocks them in and moves the RO to In Progress), mark jobs done, and the inspection checklist.
@@ -99,6 +105,7 @@ Settings → Shop Cloud → **Shared shop data** puts the whole shop in the clou
 With it connected:
 - **Share links** for vehicle reports with photos and video. Only items marked “Customer can see” are uploaded; links use random 22-character IDs and can be updated or turned off (which deletes the files).
 - **Online approvals & replies** — customers approve or decline work with a signature, or send a message, from the report; it arrives in the shop’s inbox and is applied to the RO automatically while a staff member is signed in.
+- **Fleet portals** — each account's portal publishes `fleet/<random id>.json` (units, maintenance status, open ROs, open invoice totals, payments, balance — no line costs, margins or notes), republished by a signed-in device when any of that changes and at least daily for the countdowns.
 - **Live status pages** — each tracked RO publishes a small `track/<random id>.json` file (shop name and phone, first name, vehicle, status, step times, promised time, service titles, balance due — no prices per line, costs or notes). A signed-in device republishes it when something the page shows changes; turning it off replaces the file with a notice.
 - **Online booking** shows real open times (business hours minus booked appointments, up to the capacity you set) and requests arrive in Calendar without the customer texting. The booking page republishes itself when the calendar changes.
 
