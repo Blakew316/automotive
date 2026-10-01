@@ -80,7 +80,7 @@ export default function Messages() {
                         <span className={`line-clamp-1 text-xs ${t.unread ? 'text-ink' : 'text-ink-3'}`}>
                           {t.last ? `${t.last.dir === 'out' ? 'You: ' : ''}${t.last.body}` : 'No messages yet'}
                         </span>
-                        {t.unread > 0 && <span className="ml-auto flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-accent px-1 text-2xs font-semibold text-white">{t.unread}</span>}
+                        {t.unread > 0 && <span className="ml-auto flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full bg-accent px-1 text-2xs font-semibold text-on-accent">{t.unread}</span>}
                       </span>
                     </span>
                   </Link>
@@ -162,7 +162,7 @@ function Thread({ customer, onBack }) {
                 <div className={`max-w-[78%] ${out ? 'items-end' : 'items-start'} flex flex-col`}>
                   <div
                     className={`whitespace-pre-wrap rounded-[18px] px-3.5 py-2 text-sm leading-5 ${
-                      m.channel === 'note' ? 'border border-dashed border-line bg-surface text-ink-2' : out ? 'bg-accent text-white' : 'bg-fill/[0.12] text-ink'
+                      m.channel === 'note' ? 'border border-dashed border-line bg-surface text-ink-2' : out ? 'bg-accent text-on-accent' : 'bg-fill/[0.12] text-ink'
                     } ${out ? 'rounded-br-[6px]' : 'rounded-bl-[6px]'}`}
                   >
                     {m.body}

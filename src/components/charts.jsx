@@ -1,4 +1,18 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+/** Track an element's width so SVG text stays at its true pixel size. */
+function useWidth(fallback = 640) {
+  const ref = useRef(null);
+  const [w, setW] = useState(fallback);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof ResizeObserver === 'undefined') return undefined;
+    const ro = new ResizeObserver(([e]) => setW(Math.max(280, Math.round(e.contentRect.width))));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, w];
+}
 
 /** Round a max up to a clean axis ceiling and return ~4 ticks. */
 function niceTicks(max, count = 4) {
@@ -17,9 +31,8 @@ function niceTicks(max, count = 4) {
  * hairline gridlines, and a per-column hover/focus tooltip.
  */
 export function ColumnChart({ data, height = 200, format = (v) => v, tickFormat = format, label = 'Chart', highlight }) {
-  const wrap = useRef(null);
+  const [wrap, W] = useWidth();
   const [hover, setHover] = useState(null);
-  const W = 640;
   const pad = { top: 12, right: 8, bottom: 26, left: 48 };
   const innerW = W - pad.left - pad.right;
   const innerH = height - pad.top - pad.bottom;
@@ -138,5 +151,107 @@ export function RankBars({ rows, format = (v) => v }) {
         </li>
       ))}
     </ul>
+  );
+}
+
+/**
+ * Stacked columns (two or three series) with 2px surface gaps between segments, a rounded cap on
+ * the top segment only, a legend, and a per-column tooltip listing every series.
+ */
+export function StackedColumnChart({ data, series, height = 220, format = (v) => v, tickFormat = format, label = 'Chart' }) {
+  const [wrap, W] = useWidth();
+  const [hover, setHover] = useState(null);
+  const pad = { top: 12, right: 8, bottom: 26, left: 40 };
+  const innerW = W - pad.left - pad.right;
+  const innerH = height - pad.top - pad.bottom;
+  const totals = data.map((d) => d.values.reduce((s, v) => s + v, 0));
+  const ticks = niceTicks(Math.max(0, ...totals));
+  const top = ticks[ticks.length - 1] || 1;
+  const band = innerW / Math.max(1, data.length);
+  const barW = Math.min(28, band * 0.6);
+  const y = (v) => pad.top + innerH - (v / top) * innerH;
+  const color = (i) => series[i]?.color || SERIES[i];
+
+  return (
+    <div>
+      <div ref={wrap} className="relative" role="img" aria-label={label}>
+        <svg viewBox={`0 0 ${W} ${height}`} className="block h-auto w-full overflow-visible">
+          {ticks.map((t) => (
+            <g key={t}>
+              <line x1={pad.left} x2={W - pad.right} y1={y(t)} y2={y(t)} stroke="rgb(var(--line))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+              <text x={pad.left - 8} y={y(t)} dy="0.32em" textAnchor="end" className="tabular fill-ink-3" style={{ fontSize: 11 }}>
+                {tickFormat(t)}
+              </text>
+            </g>
+          ))}
+          {data.map((d, i) => {
+            const cx = pad.left + band * i + band / 2;
+            const x0 = cx - barW / 2;
+            let base = pad.top + innerH;
+            const lastIdx = d.values.reduce((li, v, k) => (v > 0 ? k : li), -1);
+            const faded = hover != null && hover !== i;
+            return (
+              <g key={d.key ?? i} opacity={faded ? 0.45 : 1} className="transition-opacity">
+                {d.values.map((v, k) => {
+                  if (v <= 0) return null;
+                  const h = (v / top) * innerH;
+                  const gap = k > 0 ? 2 : 0;
+                  const yTop = base - h;
+                  const segH = Math.max(0, h - gap);
+                  const r = k === lastIdx ? Math.min(4, segH, barW / 2) : 0;
+                  const bottom = base - gap;
+                  const path = `M${x0},${bottom} V${yTop + r} ${r ? `Q${x0},${yTop} ${x0 + r},${yTop}` : ''} H${x0 + barW - r} ${r ? `Q${x0 + barW},${yTop} ${x0 + barW},${yTop + r}` : ''} V${bottom} Z`;
+                  base = yTop;
+                  return <path key={k} d={path} fill={color(k)} />;
+                })}
+                <rect
+                  x={pad.left + band * i}
+                  y={pad.top}
+                  width={band}
+                  height={innerH}
+                  fill="transparent"
+                  tabIndex={0}
+                  aria-label={`${d.label}: ${series.map((s, k) => `${s.label} ${format(d.values[k])}`).join(', ')}`}
+                  onPointerEnter={() => setHover(i)}
+                  onPointerLeave={() => setHover(null)}
+                  onFocus={() => setHover(i)}
+                  onBlur={() => setHover(null)}
+                  style={{ outline: 'none' }}
+                />
+                <text x={cx} y={height - 8} textAnchor="middle" className="fill-ink-3" style={{ fontSize: 11 }}>
+                  {d.short ?? d.label}
+                </text>
+              </g>
+            );
+          })}
+          <line x1={pad.left} x2={W - pad.right} y1={pad.top + innerH} y2={pad.top + innerH} stroke="rgb(var(--ink-4))" strokeWidth="1" vectorEffect="non-scaling-stroke" />
+        </svg>
+        {hover != null && data[hover] && (
+          <div
+            className="pointer-events-none absolute z-10 min-w-[140px] -translate-x-1/2 -translate-y-full rounded-[8px] bg-surface px-2.5 py-2 shadow-pop"
+            style={{ left: `${((pad.left + band * hover + band / 2) / W) * 100}%`, top: `${(y(totals[hover]) / height) * 100}%`, marginTop: -8 }}
+          >
+            <div className="mb-1 whitespace-nowrap text-2xs font-semibold text-ink">{data[hover].label}</div>
+            {series.map((s, k) => (
+              <div key={s.label} className="flex items-center justify-between gap-3 whitespace-nowrap text-2xs text-ink-2">
+                <span className="flex items-center gap-1.5">
+                  <span className="h-2 w-2 rounded-[2px]" style={{ background: color(k) }} /> {s.label}
+                </span>
+                <span className="tabular font-medium text-ink">{format(data[hover].values[k])}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <ul className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-2">
+        {series.map((s, k) => (
+          <li key={s.label} className="flex items-center gap-1.5">
+            <span className="h-2 w-2 rounded-[2px]" style={{ background: color(k) }} />
+            {s.label}
+            <span className="tabular text-ink-3">{format(data.reduce((sum, d) => sum + (d.values[k] || 0), 0))}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

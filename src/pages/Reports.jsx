@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ChartColumn, Wrench, FileCheck, Users } from 'lucide-react';
+import { ChartColumn, Wrench, FileCheck, Users, Target } from 'lucide-react';
 import { useShop, useLookup, useTotals } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Segmented, Tabs } from '../components/ui';
 import { TechReport, EstimateReport, CustomerReport } from './reports/MoreReports';
+import { GoalsReport, PeriodCompare } from './reports/GoalsReport';
 import { ColumnChart, MixBar, RankBars } from '../components/charts';
 import { money, money0, moneyShort, pct, startOfDay, addDays, dateShort, fullName, number } from '../lib/format';
 
@@ -12,6 +13,7 @@ const TABS = [
   { value: 'techs', label: 'Technicians', icon: Wrench },
   { value: 'estimates', label: 'Estimates & approvals', icon: FileCheck },
   { value: 'customers', label: 'Customers', icon: Users },
+  { value: 'goals', label: 'Goals & growth', icon: Target },
 ];
 
 const RANGES = [
@@ -129,9 +131,12 @@ export default function Reports() {
     <>
       <PageHeader title="Reports" subtitle="Invoiced work, profitability and productivity. Every number below respects the selected range." />
       <Tabs className="mb-5" tabs={TABS} value={tab} onChange={(t) => setParams(t === 'overview' ? {} : { tab: t }, { replace: true })} />
-      <div className="mb-5">
-        <Segmented options={RANGES} value={days} onChange={setDays} />
-      </div>
+      {tab !== 'goals' && (
+        <div className="mb-5">
+          <Segmented options={RANGES} value={days} onChange={setDays} />
+        </div>
+      )}
+      {tab === 'goals' && <GoalsReport />}
       {tab === 'techs' && <TechReport from={range[0]} to={range[1]} />}
       {tab === 'estimates' && <EstimateReport from={range[0]} to={range[1]} />}
       {tab === 'customers' && <CustomerReport from={range[0]} to={range[1]} />}
@@ -172,6 +177,10 @@ export default function Reports() {
                 </div>
               </div>
             </Card>
+          </div>
+
+          <div className="mt-6">
+            <PeriodCompare days={days} />
           </div>
 
           <div className="mt-6 grid gap-6 lg:grid-cols-3">

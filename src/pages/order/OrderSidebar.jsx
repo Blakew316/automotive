@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, MessageSquare, Mail, Plus, Trash2, ShieldAlert, ScanLine, ChevronRight, PenLine, HandCoins, Receipt } from 'lucide-react';
+import { orderProfit, profitTone, TONE_TEXT, TONE_BG } from '../../lib/profit';
 import { useShop, useUI, useTotals } from '../../store/hooks';
 import { Card, CardHeader, Avatar, CopyButton, NumInput, Modal, Field, Mono, ExternalLink, Toggle } from '../../components/ui';
 import { AuthorizationLog } from './AuthorizeModal';
@@ -167,10 +168,8 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
             </div>
           )}
         </dl>
-        <div className="border-t border-line/70 px-4 py-2.5 text-xs text-ink-3">
-          Gross profit {money(t.grossProfit)} · {Math.round(t.gpPct * 100)}% GP
-          {t.declined > 0 && <> · {money(t.declined)} declined</>}
-        </div>
+        <ProfitMeter order={order} />
+        {t.declined > 0 && <div className="border-t border-line/70 px-4 py-2 text-xs text-ink-3">{money(t.declined)} declined — follow up from Marketing</div>}
       </Card>
 
       {(order.authorizations?.length > 0 || t.pending > 0) && (
@@ -376,5 +375,40 @@ export function PaymentModal({ order, onClose, onReceipt }) {
         )}
       </div>
     </Modal>
+  );
+}
+
+/** GP%, GP$ and GP per labor hour with a bar against the shop's target. */
+function ProfitMeter({ order }) {
+  const { state } = useShop();
+  const p = orderProfit(order, state.shop, state.technicians);
+  const target = state.shop.goals?.gpPct ?? 55;
+  const tone = profitTone(p.gpPct, target);
+  if (p.revenue <= 0) return null;
+  return (
+    <div className="border-t border-line/70 px-4 py-3">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="section-label">Job profit</span>
+        <span className="text-2xs text-ink-3">Target {target}% GP</span>
+      </div>
+      <div className="grid grid-cols-3 gap-2 text-center">
+        <div>
+          <div className={`tabular text-lg font-semibold ${TONE_TEXT[tone]}`}>{Math.round(p.gpPct * 100)}%</div>
+          <div className="text-2xs text-ink-3">GP%</div>
+        </div>
+        <div>
+          <div className="tabular text-lg font-semibold">{money(p.gp)}</div>
+          <div className="text-2xs text-ink-3">GP$</div>
+        </div>
+        <div>
+          <div className="tabular text-lg font-semibold">{p.gpHr == null ? '—' : money(p.gpHr)}</div>
+          <div className="text-2xs text-ink-3">GP / labor hr</div>
+        </div>
+      </div>
+      <div className="relative mt-2.5 h-1.5 rounded-full bg-fill/[0.14]">
+        <div className={`h-full rounded-full ${TONE_BG[tone]}`} style={{ width: `${Math.max(0, Math.min(100, p.gpPct * 100))}%` }} />
+        <span className="absolute -top-0.5 h-2.5 w-[2px] rounded-full bg-ink-2" style={{ left: `${target}%` }} title={`Target ${target}%`} />
+      </div>
+    </div>
   );
 }

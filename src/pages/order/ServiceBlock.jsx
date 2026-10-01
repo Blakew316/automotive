@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { Trash2, MoreHorizontal, Wrench, Package, Receipt, Truck, Boxes, ArrowUpRight, Check, MessageSquareText, Camera } from 'lucide-react';
+import { Trash2, MoreHorizontal, Wrench, Package, Receipt, Truck, Boxes, ArrowUpRight, Check, MessageSquareText, Camera, Disc3 } from 'lucide-react';
 import { useShop, useUI } from '../../store/hooks';
 import { Menu, NumInput, InlineText, Segmented, Spinner } from '../../components/ui';
 import { itemTotal, serviceTotal, serviceHours } from '../../lib/pricing';
 import { money } from '../../lib/format';
 import { SUPPLIERS } from '../../lib/suppliers';
+import { jobProfit, profitTone, TONE_TEXT } from '../../lib/profit';
 import InventoryPicker from './InventoryPicker';
+import TirePanel from './TirePanel';
+import { newTireQuote } from '../../lib/tires';
 import { MediaThumb, PickButton } from './MediaPanel';
 import { useIngest } from '../../lib/useMedia';
 
@@ -22,6 +25,8 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
   const linked = (order.media || []).filter((m) => m.serviceId === service.id);
   const total = serviceTotal(service);
   const hours = serviceHours(service);
+  const profit = jobProfit(service, state.shop, state.technicians, order.techId);
+  const tone = profitTone(profit.gpPct, state.shop.goals?.gpPct);
   const declined = service.status === 'declined';
   const up = (patch) => updateService(order.id, service.id, patch);
   const upItem = (itemId, patch) => updateItem(order.id, service.id, itemId, patch);
@@ -87,6 +92,7 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
               )}
               items={[
                 { label: story ? 'Hide cause & correction' : 'Add cause & correction', icon: MessageSquareText, onClick: () => setStory((s) => !s) },
+                ...(service.tires ? [] : [{ label: 'Quote tire options', icon: Disc3, onClick: () => up({ tires: newTireQuote() }) }]),
                 '-',
                 { label: 'Remove service', icon: Trash2, danger: true, onClick: () => removeService(order.id, service.id) },
               ]}
@@ -197,6 +203,8 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
         </div>
       )}
 
+      {service.tires && <TirePanel order={order} service={service} editable={editable} />}
+
       {story && (
         <div className="grid gap-3 border-t border-line/70 px-4 py-3 sm:grid-cols-2">
           <label className="block">
@@ -236,6 +244,15 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
           </PickButton>
         )}
         <div className="flex items-baseline gap-3 pr-1 text-sm">
+          {total > 0 && !declined && (
+            <span className="tabular hidden items-baseline gap-2 font-mono text-2xs text-ink-3 sm:flex" title="Gross profit after parts, sublet and technician pay">
+              <span>
+                GP <b className={TONE_TEXT[tone]}>{Math.round(profit.gpPct * 100)}%</b>
+              </span>
+              <span>{money(profit.gp)}</span>
+              {profit.gpHr != null && <span>{money(profit.gpHr)}/hr</span>}
+            </span>
+          )}
           {hours > 0 && <span className="text-xs text-ink-3">{hours.toFixed(1)} hr</span>}
           <span className="tabular font-semibold">{money(total)}</span>
         </div>

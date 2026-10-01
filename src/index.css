@@ -3,97 +3,147 @@
 @tailwind utilities;
 
 /*
- * Design tokens. Neutral surfaces, hairline separators and a single accent.
- * Status color only ever appears as a small dot or a thin text tint, never as a filled block.
+ * Design tokens — blue and grey. Cool neutral surfaces, a deep slate sidebar, one strong blue for
+ * actions, with sky blue, slate and graphite for module tiles and highlights. Status color
+ * (green/amber/red) is reserved for meaning and appears as dots, thin tints and small pills.
  */
 :root {
   color-scheme: light;
-  --canvas: 245 245 247;
+  --canvas: 241 243 246;
   --surface: 255 255 255;
-  --raised: 250 250 252;
-  --sidebar: 240 240 243;
-  --ink: 29 29 31;
-  --ink-2: 102 102 108;
-  --ink-3: 134 134 139;
-  --ink-4: 174 174 178;
-  --line: 228 228 233;
-  --fill: 118 118 128;
-  --accent: 0 113 227;
-  --ok: 36 160 80;
-  --warn: 232 140 0;
-  --bad: 224 49 40;
-  --info: 0 122 255;
-  --violet: 160 80 220;
-  --shadow-ring: 0 0 0;
-  --series-1: #2a78d6;
-  --series-2: #eb6834;
-  --series-3: #1baf7a;
+  --raised: 248 249 251;
+  --sidebar: 20 27 38;
+  --sidebar-2: 31 40 54;
+  --sidebar-ink: 234 239 246;
+  --sidebar-ink-2: 142 154 172;
+  --sidebar-line: 39 49 64;
+  --ink: 22 27 34;
+  --ink-2: 84 94 108;
+  --ink-3: 118 128 142;
+  --ink-4: 164 172 184;
+  --line: 223 227 233;
+  --fill: 110 120 136;
+  --accent: 31 99 212;
+  --on-accent: 255 255 255;
+  --brand: 37 112 232;
+  --sky: 56 152 236;
+  --slate: 84 98 118;
+  --graphite: 22 30 42;
+  --ok: 22 150 90;
+  --warn: 212 130 0;
+  --bad: 214 48 52;
+  --info: 31 99 212;
+  --violet: 112 86 210;
+  --grid: 31 60 110;
+  --shadow-ring: 15 23 42;
+  --series-1: #2a6fd6;
+  --series-2: #15998a;
+  --series-3: #8a94a3;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --canvas: 14 14 16;
-    --surface: 28 28 30;
-    --raised: 36 36 39;
-    --sidebar: 22 22 25;
-    --ink: 245 245 247;
-    --ink-2: 168 168 173;
-    --ink-3: 134 134 139;
-    --ink-4: 99 99 104;
-    --line: 50 50 54;
-    --fill: 128 128 138;
-    --accent: 41 151 255;
-    --ok: 48 209 88;
-    --warn: 255 159 10;
-    --bad: 255 69 58;
-    --info: 10 132 255;
-    --violet: 191 90 242;
+    --canvas: 13 16 21;
+    --surface: 24 28 35;
+    --raised: 31 36 45;
+    --sidebar: 15 19 26;
+    --sidebar-2: 27 33 43;
+    --sidebar-ink: 236 240 246;
+    --sidebar-ink-2: 138 150 168;
+    --sidebar-line: 36 43 55;
+    --ink: 236 240 245;
+    --ink-2: 160 170 184;
+    --ink-3: 124 134 148;
+    --ink-4: 88 97 110;
+    --line: 44 51 62;
+    --fill: 130 140 156;
+    --accent: 61 132 245;
+    --on-accent: 255 255 255;
+    --brand: 61 132 245;
+    --sky: 96 170 255;
+    --slate: 96 110 132;
+    --graphite: 27 34 46;
+    --ok: 48 200 112;
+    --warn: 255 170 40;
+    --bad: 255 92 92;
+    --info: 96 160 255;
+    --violet: 160 140 255;
+    --grid: 150 180 230;
     --shadow-ring: 255 255 255;
-    --series-1: #3987e5;
-    --series-2: #d95926;
-    --series-3: #199e70;
+    --series-1: #3b80e6;
+    --series-2: #169a88;
+    --series-3: #7d8696;
   }
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --canvas: 14 14 16;
-  --surface: 28 28 30;
-  --raised: 36 36 39;
-  --sidebar: 22 22 25;
-  --ink: 245 245 247;
-  --ink-2: 168 168 173;
-  --ink-3: 134 134 139;
-  --ink-4: 99 99 104;
-  --line: 50 50 54;
-  --fill: 128 128 138;
-  --accent: 41 151 255;
-  --ok: 48 209 88;
-  --warn: 255 159 10;
-  --bad: 255 69 58;
-  --info: 10 132 255;
-  --violet: 191 90 242;
+  --canvas: 13 16 21;
+  --surface: 24 28 35;
+  --raised: 31 36 45;
+  --sidebar: 15 19 26;
+  --sidebar-2: 27 33 43;
+  --sidebar-ink: 236 240 246;
+  --sidebar-ink-2: 138 150 168;
+  --sidebar-line: 36 43 55;
+  --ink: 236 240 245;
+  --ink-2: 160 170 184;
+  --ink-3: 124 134 148;
+  --ink-4: 88 97 110;
+  --line: 44 51 62;
+  --fill: 130 140 156;
+  --accent: 61 132 245;
+  --on-accent: 255 255 255;
+  --brand: 61 132 245;
+  --sky: 96 170 255;
+  --slate: 96 110 132;
+  --graphite: 27 34 46;
+  --ok: 48 200 112;
+  --warn: 255 170 40;
+  --bad: 255 92 92;
+  --info: 96 160 255;
+  --violet: 160 140 255;
+  --grid: 150 180 230;
   --shadow-ring: 255 255 255;
-  --series-1: #3987e5;
-  --series-2: #d95926;
-  --series-3: #199e70;
+  --series-1: #3b80e6;
+  --series-2: #169a88;
+  --series-3: #7d8696;
 }
 
 /* Documents (estimates/invoices) always render on paper-white regardless of app theme. */
 .force-light {
   color-scheme: light;
-  --canvas: 245 245 247;
+  --canvas: 241 243 246;
   --surface: 255 255 255;
-  --raised: 250 250 252;
-  --ink: 29 29 31;
-  --ink-2: 90 90 96;
-  --ink-3: 120 120 126;
-  --ink-4: 170 170 175;
-  --line: 222 222 227;
-  --fill: 118 118 128;
-  --accent: 0 113 227;
-  --shadow-ring: 0 0 0;
+  --raised: 248 249 251;
+  --sidebar: 20 27 38;
+  --sidebar-2: 31 40 54;
+  --sidebar-ink: 234 239 246;
+  --sidebar-ink-2: 142 154 172;
+  --sidebar-line: 39 49 64;
+  --ink: 22 27 34;
+  --ink-2: 84 94 108;
+  --ink-3: 118 128 142;
+  --ink-4: 164 172 184;
+  --line: 223 227 233;
+  --fill: 110 120 136;
+  --accent: 31 99 212;
+  --on-accent: 255 255 255;
+  --brand: 37 112 232;
+  --sky: 56 152 236;
+  --slate: 84 98 118;
+  --graphite: 22 30 42;
+  --ok: 22 150 90;
+  --warn: 212 130 0;
+  --bad: 214 48 52;
+  --info: 31 99 212;
+  --violet: 112 86 210;
+  --grid: 31 60 110;
+  --shadow-ring: 15 23 42;
+  --series-1: #2a6fd6;
+  --series-2: #15998a;
+  --series-3: #8a94a3;
 }
 
 @layer base {
@@ -152,7 +202,10 @@
     @apply inline-flex h-8 shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-3 text-sm font-medium transition duration-150 ease-apple disabled:pointer-events-none disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn bg-accent text-white hover:brightness-[1.08] active:brightness-95;
+    @apply btn bg-accent text-on-accent shadow-[0_1px_0_rgb(255_255_255/0.18)_inset,0_1px_2px_rgb(0_0_0/0.12)] hover:brightness-[1.07] active:brightness-95;
+  }
+  .btn-dark {
+    @apply btn bg-graphite text-white hover:brightness-125 active:brightness-110;
   }
   .btn-secondary {
     @apply btn bg-fill/[0.11] text-ink hover:bg-fill/[0.17] active:bg-fill/[0.22];
@@ -206,7 +259,31 @@
     @apply text-md font-semibold text-ink;
   }
   .section-label {
-    @apply text-xs font-medium uppercase tracking-[0.04em] text-ink-3;
+    @apply font-mono text-2xs font-semibold uppercase tracking-[0.08em] text-ink-3;
+  }
+  /* Short blue rule that opens a section label. */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 font-mono text-2xs font-semibold uppercase tracking-[0.1em] text-ink-3;
+  }
+  .eyebrow::before {
+    content: '';
+    @apply h-[3px] w-4 rounded-full bg-brand;
+  }
+  .eyebrow-on-dark {
+    @apply text-sidebar-ink-2;
+  }
+  /* Colored icon tile used for modules, KPIs and card headers. */
+  .icon-tile {
+    @apply inline-flex shrink-0 items-center justify-center rounded-[9px] text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_1px_2px_rgb(0_0_0/0.12)];
+  }
+  /* Angled top-right corner — the "toolbox" cut used on hero and module tiles. */
+  .chamfer {
+    clip-path: polygon(0 0, calc(100% - var(--cut, 22px)) 0, 100% var(--cut, 22px), 100% 100%, 0 100%);
+  }
+  /* Faint blueprint grid for page backgrounds and hero panels. */
+  .bg-grid {
+    background-image: linear-gradient(rgb(var(--grid) / 0.06) 1px, transparent 1px), linear-gradient(90deg, rgb(var(--grid) / 0.06) 1px, transparent 1px);
+    background-size: 28px 28px;
   }
 
   /* Tables */
@@ -230,8 +307,15 @@
   .kbd {
     @apply inline-flex h-5 min-w-[20px] items-center justify-center rounded-[5px] border border-line bg-surface px-1 font-sans text-2xs font-medium text-ink-3;
   }
+  .kbd-dark {
+    @apply inline-flex h-5 min-w-[20px] items-center justify-center rounded-[5px] border border-sidebar-line bg-sidebar-2 px-1 font-sans text-2xs font-medium text-sidebar-ink-2;
+  }
   .chip {
     @apply inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface px-2.5 text-xs font-medium text-ink-2;
+  }
+  /* Tinted status pill: text in the tone, background a light wash of it. */
+  .pill {
+    @apply inline-flex h-[22px] items-center gap-1 whitespace-nowrap rounded-full px-2 text-2xs font-semibold;
   }
   .link {
     @apply text-accent hover:underline;

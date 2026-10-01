@@ -2,7 +2,8 @@ import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop, useTotals } from '../../store/hooks';
 import { Card, CardHeader, EmptyState } from '../../components/ui';
-import { RankBars, MixBar } from '../../components/charts';
+import { RankBars, MixBar, StackedColumnChart } from '../../components/charts';
+import { bookingChannels } from '../../lib/kpis';
 import { teamSummary } from '../../lib/time';
 import { serviceTotal } from '../../lib/pricing';
 import { AUTH_METHODS } from '../../lib/authMethods';
@@ -235,6 +236,7 @@ export function CustomerReport({ from, to }) {
       campaignSends: campaigns.reduce((s, c) => s + (c.count || 0), 0),
     };
   }, [state, from, to, totals]);
+  const channels = useMemo(() => bookingChannels(state), [state]);
 
   return (
     <>
@@ -247,6 +249,21 @@ export function CustomerReport({ from, to }) {
           ['Campaign sends', number(r.campaignSends), 'Reminders, follow-ups & promos'],
         ]}
       />
+      <Card className="mb-6">
+        <CardHeader title="How customers book" subtitle="Visits by booking channel, last 6 months — online booking frees up the phone" />
+        <div className="px-3 pb-3 pt-3">
+          <StackedColumnChart
+            data={channels}
+            series={[
+              { label: 'Online booking', color: 'var(--series-1)' },
+              { label: 'Phone & walk-in', color: 'var(--series-3)' },
+            ]}
+            height={220}
+            format={(v) => number(v)}
+            label="Visits per month by booking channel"
+          />
+        </div>
+      </Card>
       <Card>
         <CardHeader title="Top customers" subtitle="By invoiced total in the period" />
         {r.top.length ? (

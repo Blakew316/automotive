@@ -35,6 +35,7 @@ const Marketing = lazy(() => import('./pages/Marketing'));
 const Integrations = lazy(() => import('./pages/Integrations'));
 const Import = lazy(() => import('./pages/Import'));
 const Book = lazy(() => import('./pages/Book'));
+const ShopSite = lazy(() => import('./pages/ShopSite'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -51,6 +52,7 @@ export default function App() {
             {/* Public pages (report links, online booking) open on customers' devices, so they never load shop data. */}
             <Route path="/share/:id" element={<SharedReport />} />
             <Route path="/book" element={<Book />} />
+            <Route path="/site" element={<ShopSite />} />
             <Route
               path="*"
               element={

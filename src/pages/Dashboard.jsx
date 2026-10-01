@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer } from 'lucide-react';
-import { useShop, useLookup, useTotals } from '../store/hooks';
-import { PageHeader, Card, CardHeader, StatusLabel, Avatar, EmptyState, Dot } from '../components/ui';
+import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer, Wrench, Car, Wallet, Megaphone, Landmark, ChartColumn, Activity } from 'lucide-react';
+import { useShop, useLookup, useTotals, useAccess } from '../store/hooks';
+import { Card, CardHeader, StatusLabel, Avatar, EmptyState, Dot, IconTile } from '../components/ui';
 import { ColumnChart } from '../components/charts';
 import { AppointmentForm } from '../components/forms';
 import { money, money0, moneyShort, fullName, vehicleName, time, relTime, sameDay, startOfDay, addDays, dateShort, weekday } from '../lib/format';
 import { STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { openShift, runningJob, entryMs, fmtDuration, useNow } from '../lib/time';
+import { automationStatus } from '../lib/automations';
 
 export default function Dashboard() {
   const { state } = useShop();
@@ -81,33 +82,45 @@ export default function Dashboard() {
 
   return (
     <>
-      <PageHeader
-        eyebrow={now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-        title={greeting}
-        actions={
-          <>
-            <button className="btn-secondary" onClick={() => setBooking(true)}>
+      <section className="chamfer relative mb-6 overflow-hidden rounded-xl bg-graphite text-white shadow-pop [--cut:28px]">
+        <div aria-hidden className="bg-grid absolute inset-0 opacity-60 [--grid:150_180_230]" />
+        <div aria-hidden className="absolute -right-24 -top-28 h-72 w-72 rounded-full bg-brand/30 blur-3xl" />
+        <div aria-hidden className="absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-sky/15 blur-3xl" />
+        <div className="relative flex flex-wrap items-end justify-between gap-4 px-5 pb-5 pt-6 sm:px-7 sm:pt-7">
+          <div className="min-w-0">
+            <div className="eyebrow eyebrow-on-dark mb-2">{now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+            <h1 className="text-3xl font-bold tracking-tight">{greeting}</h1>
+            <p className="mt-1 text-md text-white/70">
+              {data.wip.length} in the shop · {appointments.length} appointment{appointments.length === 1 ? '' : 's'} today
+              {data.estimates.length ? ` · ${data.estimates.length} estimate${data.estimates.length === 1 ? '' : 's'} out` : ''}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button className="btn bg-white/10 text-white ring-1 ring-white/15 hover:bg-white/15" onClick={() => setBooking(true)}>
               <CalendarPlus size={15} /> Book appointment
             </button>
             <Link to="/orders/new" className="btn-primary">
               <Plus size={16} strokeWidth={2.2} /> New repair order
             </Link>
-          </>
-        }
-      />
+          </div>
+        </div>
+        <div className="relative grid grid-cols-2 gap-px border-t border-white/10 bg-white/10 sm:grid-cols-3 lg:grid-cols-5 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1">
+          <HeroStat icon={Wrench} tone="blue" label="In the shop" value={data.wip.length} sub={`${data.inShop.length} on the lot`} to="/workflow" />
+          <HeroStat icon={Receipt} tone="teal" label="Billed today" value={money0(data.billedToday)} sub={`${data.invoicedTodayCount} invoice${data.invoicedTodayCount === 1 ? '' : 's'}`} to="/orders?status=ready" />
+          <HeroStat icon={FileText} tone="sky" label="Awaiting approval" value={money0(data.estimateValue)} sub={`${data.estimates.length} open estimates`} to="/orders?status=estimate" />
+          <HeroStat icon={Car} tone="green" label="Ready for pickup" value={data.ready.length} sub={`${money0(data.readyBalance)} to collect`} to="/orders?status=ready" />
+          <HeroStat icon={Wallet} tone="slate" label="Receivables" value={money0(data.receivableTotal)} sub={`${data.receivableCount} unpaid`} to="/accounting?tab=deposits" />
+        </div>
+      </section>
 
-      <Card className="mb-6 grid grid-cols-2 divide-line p-1 sm:grid-cols-3 lg:grid-cols-5 lg:divide-x">
-        <Stat label="In the shop" value={data.wip.length} sub={`${appointments.length} appointments today`} to="/workflow" />
-        <Stat label="Billed today" value={money0(data.billedToday)} sub={`${data.invoicedTodayCount} invoice${data.invoicedTodayCount === 1 ? '' : 's'}`} to="/orders?status=ready" />
-        <Stat label="Awaiting approval" value={money0(data.estimateValue)} sub={`${data.estimates.length} open estimates`} to="/orders?status=estimate" />
-        <Stat label="Ready for pickup" value={data.ready.length} sub={`${money0(data.readyBalance)} to collect`} to="/orders?status=ready" />
-        <Stat label="Receivables" value={money0(data.receivableTotal)} sub={`${data.receivableCount} unpaid`} to="/reports" />
-      </Card>
+      <ModuleStrip />
 
       <div className="grid gap-6 min-[1420px]:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-6">
           <Card>
             <CardHeader
+              icon={Wrench}
+              tone="blue"
               title="In the shop"
               subtitle={`${data.inShop.length} vehicles on the lot`}
               actions={
@@ -173,6 +186,8 @@ export default function Dashboard() {
 
           <Card>
             <CardHeader
+              icon={CalendarDays}
+              tone="sky"
               title="Today’s appointments"
               subtitle={`${appointments.length} scheduled`}
               actions={
@@ -217,7 +232,7 @@ export default function Dashboard() {
 
         <div className="grid min-w-0 content-start gap-6 md:grid-cols-2 min-[1420px]:grid-cols-1">
           <Card>
-            <CardHeader title="Needs attention" subtitle={data.attention.length ? `${data.attention.length} items` : 'All clear'} />
+            <CardHeader icon={CircleAlert} tone="slate" title="Needs attention" subtitle={data.attention.length ? `${data.attention.length} items` : 'All clear'} />
             {data.attention.length === 0 ? (
               <EmptyState icon={CircleAlert} title="You’re all caught up" />
             ) : (
@@ -244,6 +259,8 @@ export default function Dashboard() {
 
           <Card>
             <CardHeader
+              icon={ChartColumn}
+              tone="teal"
               title="Invoiced, last 14 days"
               subtitle={`${money0(fortnight)} total`}
               actions={
@@ -258,7 +275,7 @@ export default function Dashboard() {
           </Card>
 
           <Card>
-            <CardHeader title="Activity" />
+            <CardHeader icon={Activity} tone="graphite" title="Activity" />
             <ul className="px-4 py-2">
               {state.activity.slice(0, 7).map((a) => (
                 <li key={a.id} className="flex gap-3 py-1.5">
@@ -277,13 +294,53 @@ export default function Dashboard() {
   );
 }
 
-function Stat({ label, value, sub, to }) {
+function HeroStat({ icon, tone, label, value, sub, to }) {
   return (
-    <Link to={to} className="block rounded-[10px] px-4 py-3.5 transition-colors hover:bg-fill/[0.05]">
-      <div className="text-sm text-ink-2">{label}</div>
-      <div className="mt-1 text-[26px] font-semibold leading-8 tracking-tight text-ink">{value}</div>
-      <div className="mt-0.5 truncate text-xs text-ink-3">{sub}</div>
+    <Link to={to} className="group flex items-start gap-3 bg-graphite px-5 py-4 transition-colors hover:bg-[rgb(var(--graphite)/0.85)] sm:px-6">
+      <IconTile icon={icon} tone={tone} size={30} className="mt-0.5" />
+      <div className="min-w-0">
+        <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-white/55">{label}</div>
+        <div className="tabular mt-0.5 text-[24px] font-semibold leading-7 tracking-tight">{value}</div>
+        <div className="truncate text-xs text-white/55 group-hover:text-white/75">{sub}</div>
+      </div>
     </Link>
+  );
+}
+
+/** One-tap entry points into the rest of the shop, each with a live number. */
+function ModuleStrip() {
+  const { state } = useShop();
+  const { can } = useAccess();
+  const unread = state.messages.filter((m) => m.dir === 'in' && !m.read).length;
+  const clocked = state.timeEntries.filter((e) => e.kind === 'shift' && !e.end).length;
+  const onOrder = state.purchaseOrders.filter((p) => p.status === 'ordered' || p.status === 'partial').length;
+  const low = state.inventory.filter((p) => Number(p.qty) <= Number(p.min)).length;
+  const requests = state.bookingRequests.filter((b) => b.status === 'new').length;
+  const followUps = useMemo(() => {
+    const st = automationStatus(state);
+    const off = state.shop.marketing?.automations || {};
+    return Object.entries(st).reduce((s, [id, a]) => s + (off[id] === false ? 0 : a.due.length), 0);
+  }, [state]);
+  const tiles = [
+    { to: '/messages', icon: MessageSquare, tone: 'blue', title: 'Messages', meta: unread ? `${unread} unread` : 'All caught up' },
+    { to: '/calendar', icon: CalendarDays, tone: 'sky', title: 'Bookings', meta: requests ? `${requests} to confirm` : 'No new requests' },
+    { to: '/tech', icon: Timer, tone: 'slate', title: 'Tech clock', meta: `${clocked} clocked in` },
+    { to: '/parts?tab=orders', icon: Truck, tone: 'teal', title: 'Parts & POs', meta: onOrder ? `${onOrder} on order` : low ? `${low} low stock` : 'Stock OK' },
+    { to: '/marketing', icon: Megaphone, tone: 'blue', title: 'Marketing', meta: followUps ? `${followUps} follow-ups ready` : 'All caught up' },
+    { to: '/accounting', icon: Landmark, tone: 'graphite', title: 'Accounting', meta: 'P&L · QuickBooks' },
+  ];
+  return (
+    <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      {tiles.filter((t) => can(t.to.split('?')[0])).map((t) => (
+        <Link key={t.to} to={t.to} className="card chamfer group flex items-center gap-3 px-3.5 py-3 transition-shadow [--cut:14px] hover:shadow-pop">
+          <IconTile icon={t.icon} tone={t.tone} size={34} />
+          <div className="min-w-0">
+            <div className="truncate text-sm font-semibold">{t.title}</div>
+            <div className="truncate text-xs text-ink-3 group-hover:text-ink-2">{t.meta}</div>
+          </div>
+        </Link>
+      ))}
+    </div>
   );
 }
 
@@ -303,6 +360,8 @@ function OnTheClock() {
   return (
     <Card>
       <CardHeader
+        icon={Timer}
+        tone="slate"
         title="On the clock"
         subtitle={`${clocked} of ${techs.length} technicians in`}
         actions={

@@ -1,12 +1,22 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowUpRight, Check, ChevronLeft, Copy, Search, X } from 'lucide-react';
 import { STATUS } from '../lib/workflow';
 import { initials } from '../lib/format';
 
+// Which part of the shop a page belongs to — shown as the label above each page title.
+const SECTIONS = [
+  ['/workflow', 'Shop floor'], ['/orders', 'Shop floor'], ['/calendar', 'Shop floor'], ['/messages', 'Shop floor'],
+  ['/customers', 'Customers'], ['/vehicles', 'Customers'], ['/marketing', 'Customers'],
+  ['/tech', 'Technical'], ['/catalog', 'Technical'], ['/vin', 'Technical'], ['/parts', 'Technical'], ['/library', 'Technical'],
+  ['/team', 'Business'], ['/reports', 'Business'], ['/accounting', 'Business'], ['/integrations', 'Business'], ['/import', 'Business'], ['/settings', 'Business'],
+];
+
 export function PageHeader({ title, subtitle, actions, back, backText, eyebrow, children }) {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const section = eyebrow ?? (back ? null : SECTIONS.find(([p]) => pathname === p || pathname.startsWith(`${p}/`))?.[1]);
   return (
     <header className="mb-6">
       {back && (
@@ -17,7 +27,7 @@ export function PageHeader({ title, subtitle, actions, back, backText, eyebrow, 
       )}
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
         <div className="min-w-0">
-          {eyebrow && <div className="mb-1 text-sm text-ink-3">{eyebrow}</div>}
+          {section && <div className="eyebrow mb-2">{section}</div>}
           <h1 className="text-3xl font-bold text-ink">{title}</h1>
           {subtitle && <p className="mt-1 text-md text-ink-2">{subtitle}</p>}
         </div>
@@ -39,11 +49,30 @@ export function Card({ className = '', children, ...rest }) {
   );
 }
 
-export function CardHeader({ title, subtitle, actions, icon: Icon }) {
+/** Background classes for colored icon tiles, by tone. */
+const TONES = {
+  blue: 'bg-gradient-to-br from-brand to-accent',
+  sky: 'bg-gradient-to-br from-sky to-brand',
+  slate: 'bg-gradient-to-br from-slate to-graphite',
+  graphite: 'bg-graphite',
+  green: 'bg-gradient-to-br from-ok to-[rgb(14_120_80)]',
+  teal: 'bg-gradient-to-br from-[rgb(21_153_138)] to-[rgb(14_116_110)]',
+};
+
+export function IconTile({ icon, tone = 'blue', size = 32, className = '' }) {
+  const Icon = icon;
+  return (
+    <span className={`icon-tile ${TONES[tone] || TONES.blue} ${className}`} style={{ width: size, height: size }}>
+      <Icon size={Math.round(size * 0.5)} strokeWidth={1.9} />
+    </span>
+  );
+}
+
+export function CardHeader({ title, subtitle, actions, icon: Icon, tone }) {
   return (
     <div className="card-header">
       <div className="flex min-w-0 items-center gap-2.5">
-        {Icon && <Icon size={16} strokeWidth={1.75} className="shrink-0 text-ink-3" />}
+        {Icon && (tone ? <IconTile icon={Icon} tone={tone} size={28} /> : <Icon size={16} strokeWidth={1.75} className="shrink-0 text-ink-3" />)}
         <div className="min-w-0">
           <h2 className="card-title truncate">{title}</h2>
           {subtitle && <p className="truncate text-xs text-ink-3">{subtitle}</p>}
@@ -129,10 +158,10 @@ export function Tabs({ tabs, value, onChange, className = '' }) {
             key={t.value}
             onClick={() => onChange(t.value)}
             className={`relative -mb-px flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 pb-2.5 pt-1 text-sm font-medium transition-colors ${
-              active ? 'border-ink text-ink' : 'border-transparent text-ink-3 hover:text-ink'
+              active ? 'border-accent text-ink' : 'border-transparent text-ink-3 hover:text-ink'
             }`}
           >
-            {t.icon && <t.icon size={15} strokeWidth={1.8} />}
+            {t.icon && <t.icon size={15} strokeWidth={1.8} className={active ? 'text-accent' : ''} />}
             {t.label}
             {t.count != null && <span className="tabular text-xs text-ink-4">{t.count}</span>}
           </button>
@@ -332,7 +361,7 @@ export function Menu({ trigger, items, align = 'right' }) {
                   setOpen(false);
                   it.onClick?.();
                 }}
-                className={`flex w-full items-center gap-2.5 rounded-[6px] px-2.5 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-white disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-ink ${
+                className={`flex w-full items-center gap-2.5 rounded-[6px] px-2.5 py-1.5 text-left text-sm transition-colors hover:bg-accent hover:text-on-accent disabled:opacity-40 disabled:hover:bg-transparent disabled:hover:text-ink ${
                   it.danger ? 'text-bad' : 'text-ink'
                 }`}
               >

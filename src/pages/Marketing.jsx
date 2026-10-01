@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { BellRing, Undo2, HeartHandshake, Star, Megaphone, Send, Settings2, MessageSquare, Mail, Info, CalendarCheck } from 'lucide-react';
+import { BellRing, Undo2, HeartHandshake, Star, Megaphone, Send, Settings2, MessageSquare, Mail, Info, CalendarCheck, Workflow, Wrench } from 'lucide-react';
 import { useShop } from '../store/hooks';
-import { PageHeader, Card, CardHeader, Tabs, EmptyState, Stat, Field, Segmented } from '../components/ui';
+import { PageHeader, Card, CardHeader, Tabs, EmptyState, Stat, Field, Segmented, IconTile, Toggle } from '../components/ui';
+import { AUTOMATIONS, automationStatus } from '../lib/automations';
 import ComposeModal from '../components/Compose';
 import SendQueue from '../components/SendQueue';
 import { serviceReminders, declinedWork, lapsedCustomers, reviewCandidates, campaignAudience } from '../lib/marketing';
@@ -13,6 +14,7 @@ import { money, money0, date, dateShort, relTime, fullName, vehicleName, number 
 const when = (iso) => (new Date(iso).getFullYear() === new Date().getFullYear() ? dateShort(iso) : date(iso));
 
 const TABS = [
+  { value: 'auto', label: 'Automations', icon: Workflow },
   { value: 'due', label: 'Service due', icon: BellRing },
   { value: 'declined', label: 'Declined work', icon: Undo2 },
   { value: 'lapsed', label: 'Win-back', icon: HeartHandshake },
@@ -23,7 +25,7 @@ const TABS = [
 export default function Marketing() {
   const { state } = useShop();
   const [params, setParams] = useSearchParams();
-  const tab = params.get('tab') || 'due';
+  const tab = params.get('tab') || 'auto';
   const now = useMemo(() => new Date(), []);
   const lists = useMemo(
     () => ({
@@ -62,11 +64,13 @@ export default function Marketing() {
       <Tabs
         className="mb-5"
         value={tab}
-        onChange={(t) => setParams(t === 'due' ? {} : { tab: t }, { replace: true })}
-        tabs={TABS.map((t) => ({ ...t, count: t.value === 'campaigns' ? state.campaigns.length || null : lists[t.value].length }))}
+        onChange={(t) => setParams(t === 'auto' ? {} : { tab: t }, { replace: true })}
+        tabs={TABS.map((t) => ({ ...t, count: t.value === 'campaigns' ? state.campaigns.length || null : t.value === 'auto' ? null : lists[t.value].length }))}
       />
 
-      {!hasBooking && tab !== 'campaigns' && (
+      {tab === 'auto' && <Automations onQueue={setQueue} />}
+
+      {!hasBooking && tab !== 'campaigns' && tab !== 'auto' && (
         <p className="mb-4 flex items-start gap-2 rounded-[10px] bg-fill/[0.06] px-3 py-2 text-xs text-ink-3">
           <Info size={13} className="mt-0.5 shrink-0" />
           <span>
@@ -332,5 +336,79 @@ function Campaigns({ onQueue }) {
         )}
       </Card>
     </div>
+  );
+}
+
+const AUTO_ICON = { confirm: CalendarCheck, reminder: BellRing, review: Star, service: Wrench, declined: Undo2, winback: HeartHandshake };
+
+/** Recipes that line up today's follow-ups; each sends from the shop's own phone or email. */
+function Automations({ onQueue }) {
+  const { state, updateShop } = useShop();
+  const now = useMemo(() => new Date(), []);
+  const status = useMemo(() => automationStatus(state, now), [state, now]);
+  const m = state.shop.marketing || {};
+  const enabled = (id) => (m.automations || {})[id] !== false;
+  const setEnabled = (id, v) => updateShop({ marketing: { ...m, automations: { ...(m.automations || {}), [id]: v } } });
+  const ready = AUTOMATIONS.filter((a) => enabled(a.id) && status[a.id].due.length);
+  const total = ready.reduce((s, a) => s + status[a.id].due.length, 0);
+  const sent30 = AUTOMATIONS.reduce((s, a) => s + status[a.id].sent, 0);
+  const start = (a) => onQueue({ recipients: status[a.id].due, templateId: a.template, name: a.title, automation: a.id });
+
+  return (
+    <>
+      <section className="chamfer relative mb-6 overflow-hidden rounded-xl bg-graphite px-5 py-5 text-white shadow-pop [--cut:22px] sm:px-6">
+        <div aria-hidden className="bg-grid absolute inset-0 opacity-60 [--grid:150_180_230]" />
+        <div aria-hidden className="absolute -right-16 -top-24 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
+        <div className="relative flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div className="eyebrow eyebrow-on-dark mb-1.5">Today’s follow-ups</div>
+            <div className="text-2xl font-semibold tracking-tight">{total ? `${total} message${total === 1 ? '' : 's'} ready to send` : 'All caught up'}</div>
+            <div className="text-sm text-white/65">{sent30} sent in the last 30 days · texts open in your phone one tap at a time, emails can go as one message</div>
+          </div>
+          {ready[0] && (
+            <button className="btn-primary" onClick={() => start(ready[0])}>
+              <Send size={15} /> Start with {ready[0].title.toLowerCase()} ({status[ready[0].id].due.length})
+            </button>
+          )}
+        </div>
+      </section>
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {AUTOMATIONS.map((a) => {
+          const st = status[a.id];
+          const on = enabled(a.id);
+          return (
+            <Card key={a.id} className={`flex flex-col p-4 transition-opacity ${on ? '' : 'opacity-60'}`}>
+              <div className="flex items-start gap-3">
+                <IconTile icon={AUTO_ICON[a.id]} tone={a.tone} size={36} />
+                <div className="min-w-0 flex-1">
+                  <div className="font-semibold">{a.title}</div>
+                  <p className="text-xs text-ink-3">{a.body}</p>
+                </div>
+                <Toggle checked={on} onChange={(v) => setEnabled(a.id, v)} label={`${a.title} on`} />
+              </div>
+              <div className="mt-4 flex flex-wrap gap-x-4 gap-y-1 border-t border-line/70 pt-3 text-xs text-ink-2">
+                <span>
+                  <b className="tabular text-ink">{st.sent}</b> sent in the last 30 days
+                </span>
+                {st.upcoming != null && (
+                  <span>
+                    <b className="tabular text-ink">{st.upcoming}</b> coming up in 30 days
+                  </span>
+                )}
+              </div>
+              <div className="mt-3 flex items-center justify-between gap-2">
+                <span className={`pill ${st.due.length && on ? 'bg-accent/10 text-accent' : 'bg-fill/[0.1] text-ink-3'}`}>{st.due.length ? `${st.due.length} ready now` : 'Nothing due'}</span>
+                <button className="btn-secondary btn-sm" disabled={!on || !st.due.length} onClick={() => start(a)}>
+                  <Send size={13} /> Send
+                </button>
+              </div>
+            </Card>
+          );
+        })}
+      </div>
+      <p className="mt-4 text-xs text-ink-3">
+        Edit the wording of each message in <Link to="/settings?tab=messaging" className="link">Settings → Messaging</Link>. Fully automatic sending from a business number needs a texting service; until then each follow-up is lined up here so it takes seconds, not a morning.
+      </p>
+    </>
   );
 }

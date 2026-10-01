@@ -10,7 +10,7 @@ import { downloadCsv } from '../lib/accounting';
 import { toCsv } from '../lib/serviceHistory';
 import { fullName, mailHref, phone as fmtPhone, vehicleName } from '../lib/format';
 
-export default function SendQueue({ recipients, templateId, initialBody, name, onClose }) {
+export default function SendQueue({ recipients, templateId, initialBody, name, automation, onClose }) {
   const { state, addMessage, logCampaign } = useShop();
   const { toast } = useUI();
   const templates = state.shop.templates || [];
@@ -22,7 +22,8 @@ export default function SendQueue({ recipients, templateId, initialBody, name, o
   const [started, setStarted] = useState(false);
 
   const list = useMemo(() => recipients.filter((r) => (channel === 'sms' ? r.customer.phone && r.customer.textOptIn !== false : r.customer.email)), [recipients, channel]);
-  const personalize = (r) => fillTemplate(body, messageContext(state, { customer: r.customer, vehicle: r.vehicle, order: r.order, extra: r.extra }));
+  const personalize = (r) => fillTemplate(body, messageContext(state, { customer: r.customer, vehicle: r.vehicle, order: r.order, appointment: r.appointment, extra: r.extra }));
+  const meta = (extra = {}) => (templateId || automation ? { ...(templateId ? { template: templateId } : {}), ...(automation ? { automation } : {}), ...extra } : Object.keys(extra).length ? extra : undefined);
   const current = list[index];
   const done = started && index >= list.length;
 
@@ -33,7 +34,7 @@ export default function SendQueue({ recipients, templateId, initialBody, name, o
 
   const sendOne = () => {
     const text = personalize(current);
-    addMessage({ customerId: current.customer.id, orderId: current.order?.id || null, channel, body: text, meta: templateId ? { template: templateId } : undefined });
+    addMessage({ customerId: current.customer.id, orderId: current.order?.id || null, channel, body: text, meta: meta() });
     setSent((s) => [...s, current.customer.id]);
     setIndex((i) => i + 1);
   };
@@ -42,7 +43,7 @@ export default function SendQueue({ recipients, templateId, initialBody, name, o
     // One email to everyone (BCC), with personal fields made generic.
     const generic = fillTemplate(body, { ...messageContext(state, {}), first: 'there', vehicle: 'vehicle' });
     const addresses = list.map((r) => r.customer.email);
-    for (const r of list) addMessage({ customerId: r.customer.id, channel: 'email', body: generic, meta: templateId ? { template: templateId, bulk: true } : { bulk: true } });
+    for (const r of list) addMessage({ customerId: r.customer.id, channel: 'email', body: generic, meta: meta({ bulk: true }) });
     window.location.href = `${mailHref(state.shop.email || '', subject, generic)}&bcc=${encodeURIComponent(addresses.join(','))}`;
     logCampaign({ name, template: templateId || null, channel: 'email', count: list.length, customerIds: list.map((r) => r.customer.id) });
     toast(`Opened one email to ${list.length} recipients (BCC)`, { tone: 'success' });

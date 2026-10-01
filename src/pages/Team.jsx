@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Users, Clock, BadgeDollarSign, LayoutList, Plus, Pencil, Download, Trash2, Timer } from 'lucide-react';
-import { useShop, useUI, useLookup } from '../store/hooks';
+import { Users, Clock, BadgeDollarSign, LayoutList, Plus, Pencil, Download, Trash2, Timer, ShieldCheck } from 'lucide-react';
+import { useShop, useUI, useLookup, useAccess } from '../store/hooks';
+import { canSeePay } from '../lib/access';
+import Access from './team/Access';
 import { PageHeader, Card, CardHeader, Tabs, Segmented, Avatar, Modal, Field, Toggle, EmptyState, Dot } from '../components/ui';
 import { teamSummary, useNow, entryMs, fmtDuration, runningJob, openShift } from '../lib/time';
 import { serviceHours } from '../lib/pricing';
@@ -29,6 +31,7 @@ export default function Team() {
   const tab = params.get('tab') || 'board';
   const [period, setPeriod] = useState('week');
   const { state } = useShop();
+  const { role } = useAccess();
   const [from, to] = useMemo(() => periodRange(period), [period]);
   const summary = useMemo(() => teamSummary(state, from, to), [state, from, to]);
 
@@ -42,8 +45,9 @@ export default function Team() {
         tabs={[
           { value: 'board', label: 'Right now', icon: LayoutList },
           { value: 'time', label: 'Timesheets', icon: Clock },
-          { value: 'pay', label: 'Pay & commissions', icon: BadgeDollarSign },
-          { value: 'people', label: 'People', icon: Users, count: state.technicians.length },
+          ...(canSeePay(role) ? [{ value: 'pay', label: 'Pay & commissions', icon: BadgeDollarSign }] : []),
+          { value: 'people', label: 'Technicians', icon: Users, count: state.technicians.length },
+          ...(role === 'owner' ? [{ value: 'access', label: 'Staff & access', icon: ShieldCheck, count: (state.shop.staff || []).length }] : []),
         ]}
       />
       {(tab === 'time' || tab === 'pay') && (
@@ -56,8 +60,9 @@ export default function Team() {
       )}
       {tab === 'board' && <Board />}
       {tab === 'time' && <Timesheets summary={summary} from={from} to={to} />}
-      {tab === 'pay' && <Pay summary={summary} from={from} to={to} />}
+      {tab === 'pay' && canSeePay(role) && <Pay summary={summary} from={from} to={to} />}
       {tab === 'people' && <People />}
+      {tab === 'access' && role === 'owner' && <Access />}
     </>
   );
 }

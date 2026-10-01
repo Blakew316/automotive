@@ -130,7 +130,7 @@ export default function NewOrder() {
                             onClick={() => setJobs((list) => (on ? list.filter((x) => x !== j.id) : [...list, j.id]))}
                             className={`flex items-center gap-2.5 rounded-[9px] border px-3 py-2 text-left text-sm transition-colors ${on ? 'border-accent/60 bg-accent/[0.05]' : 'border-line hover:bg-fill/[0.04]'}`}
                           >
-                            <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] border ${on ? 'border-accent bg-accent text-white' : 'border-ink-4'}`}>{on && <Check size={11} strokeWidth={3} />}</span>
+                            <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-[4px] border ${on ? 'border-accent bg-accent text-on-accent' : 'border-ink-4'}`}>{on && <Check size={11} strokeWidth={3} />}</span>
                             <span className="min-w-0 flex-1 truncate">{j.title}</span>
                             <span className="tabular shrink-0 text-xs text-ink-3">~{money(priceOf(j))}</span>
                           </button>

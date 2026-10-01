@@ -3,6 +3,7 @@ import { Send, CircleCheck } from 'lucide-react';
 import SignaturePad from './SignaturePad';
 import { Spinner } from './ui';
 import { money } from '../lib/format';
+import { totalWithChoice } from '../lib/report';
 
 /** Name + signature + submit for the customer's approve/decline choices on a report. */
 export default function ApprovalPanel({ report, decisions, onSubmit, busy, done, error, defaultName = '', submitLabel = 'Sign & send to the shop' }) {
@@ -11,7 +12,7 @@ export default function ApprovalPanel({ report, decisions, onSubmit, busy, done,
   const pending = report.services.filter((s) => s.status === 'pending');
   const approved = pending.filter((s) => decisions[s.id] === 'approved');
   const declined = pending.filter((s) => decisions[s.id] === 'declined');
-  const amount = approved.reduce((sum, s) => sum + (s.total || 0), 0);
+  const amount = approved.reduce((sum, s) => sum + (totalWithChoice(s, decisions) || 0), 0);
   const chosen = approved.length + declined.length;
 
   if (done)

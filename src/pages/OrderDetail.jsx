@@ -263,7 +263,7 @@ function Stepper({ status, onPick }) {
             onClick={() => !current && onPick(s.id)}
             className={`flex min-w-[128px] flex-1 items-center gap-2 rounded-[8px] px-3 py-2 text-left transition-colors ${current ? 'bg-fill/[0.1]' : 'hover:bg-fill/[0.05]'}`}
           >
-            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-2xs font-semibold ${past ? 'bg-ink/80 text-canvas' : current ? 'bg-accent text-white' : 'border border-line text-ink-4'}`}>
+            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-2xs font-semibold ${past ? 'bg-ink/80 text-canvas' : current ? 'bg-accent text-on-accent' : 'border border-line text-ink-4'}`}>
               {past ? <Check size={11} strokeWidth={3} /> : i + 1}
             </span>
             <span className={`truncate text-sm ${current ? 'font-semibold text-ink' : past ? 'text-ink-2' : 'text-ink-3'}`}>{s.label}</span>

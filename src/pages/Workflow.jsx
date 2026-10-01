@@ -86,15 +86,16 @@ export default function Workflow() {
                   setDragId(null);
                   move(id, col.id);
                 }}
-                className={`flex min-h-[60vh] flex-col rounded-xl p-1.5 transition-colors ${over === col.id ? 'bg-accent/[0.07] ring-1 ring-accent/30' : 'bg-fill/[0.06]'}`}
+                className={`relative flex min-h-[60vh] flex-col overflow-hidden rounded-xl p-1.5 pt-2.5 transition-colors ${over === col.id ? 'bg-accent/[0.07] ring-1 ring-accent/30' : 'bg-fill/[0.07]'}`}
               >
-                <header className="flex items-center justify-between px-2 pb-2 pt-1.5">
+                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `rgb(var(--${col.tone}))` }} />
+                <header className="flex items-center justify-between px-2 pb-2 pt-1">
                   <div className="flex items-center gap-2">
                     <Dot className={col.dot} size={7} />
                     <h2 className="text-sm font-semibold text-ink">{col.label}</h2>
-                    <span className="tabular text-xs text-ink-3">{list.length}</span>
+                    <span className="tabular rounded-full bg-surface px-1.5 text-2xs font-semibold text-ink-2 shadow-card">{list.length}</span>
                   </div>
-                  <span className="tabular text-xs text-ink-3">{money0(sum)}</span>
+                  <span className="tabular font-mono text-2xs text-ink-3">{money0(sum)}</span>
                 </header>
                 <div className="flex flex-1 flex-col gap-1.5">
                   {list.map((o) => (
@@ -171,7 +172,7 @@ function BoardCard({ order: o, now, dragging, onDragStart, onDragEnd, onMove }) 
       {active > 0 && o.status !== 'estimate' && (
         <div className="mt-2.5 flex items-center gap-2">
           <div className="h-1 flex-1 rounded-full bg-fill/[0.14]">
-            <div className="h-full rounded-full bg-ink-3" style={{ width: `${(done / active) * 100}%` }} />
+            <div className={`h-full rounded-full ${done === active ? 'bg-ok' : 'bg-accent'}`} style={{ width: `${(done / active) * 100}%` }} />
           </div>
           <span className="tabular text-2xs text-ink-3">
             {done}/{active}

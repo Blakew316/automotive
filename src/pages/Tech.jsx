@@ -123,7 +123,7 @@ export default function Tech() {
 
       {running && runningSvc && (
         <Card className="mb-4 flex flex-wrap items-center gap-4 border border-accent/40 p-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-white">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent">
             <Timer size={22} />
           </div>
           <div className="min-w-0 flex-1">

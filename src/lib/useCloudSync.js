@@ -56,7 +56,7 @@ export function useCloudSync() {
   // ---------------------------------------------------------------- Booking page open times
   const published = state.shop.booking?.published;
   const bookingOn = state.shop.booking?.enabled;
-  const fingerprint = signedIn && published && bookingOn ? JSON.stringify({ ...bookingConfig(state, { includeBusy: true }), publishedAt: null }) : '';
+  const fingerprint = signedIn && published && bookingOn ? JSON.stringify({ ...bookingConfig(state, { includeBusy: true, includeSite: true }), publishedAt: null }) : '';
   const lastFingerprint = useRef('');
   useEffect(() => {
     if (!fingerprint) return undefined;
@@ -68,7 +68,7 @@ export function useCloudSync() {
     if (fingerprint === lastFingerprint.current) return undefined;
     const t = setTimeout(async () => {
       try {
-        await publishBooking(cfg, bookingConfig(latest.current.state, { includeBusy: true }));
+        await publishBooking(cfg, bookingConfig(latest.current.state, { includeBusy: true, includeSite: true }));
         lastFingerprint.current = fingerprint;
       } catch {
         // Next change retries.
@@ -82,7 +82,7 @@ export function useCloudSync() {
 }
 
 /** Turn inbox rows into bookings, approvals and messages. Returns the ids that were handled. */
-function applyInbox(rows, { state, addBookingRequests, authorize, addMessage }) {
+function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, selectTire }) {
   const handled = [];
   const bookings = [];
   for (const row of rows) {
@@ -119,6 +119,12 @@ function applyInbox(rows, { state, addBookingRequests, authorize, addMessage }) 
       const pending = new Set(order.services.filter((s) => s.status === 'pending').map((s) => s.id));
       const serviceIds = Object.keys(decisions).filter((id) => decisions[id] === 'approved' && pending.has(id));
       const declineIds = Object.keys(decisions).filter((id) => decisions[id] === 'declined' && pending.has(id));
+      // Tire picks arrive as `tire:<serviceId>` → option id.
+      for (const k of Object.keys(decisions)) {
+        const sid = k.startsWith('tire:') ? k.slice(5) : null;
+        const svc = sid && order.services.find((s) => s.id === sid);
+        if (svc?.tires?.options.some((o) => o.id === decisions[k])) selectTire(order.id, sid, decisions[k]);
+      }
       if (serviceIds.length || declineIds.length) {
         authorize(order.id, { serviceIds, declineIds, method: 'online', by: String(p.name || 'Customer').slice(0, 120), signature: typeof p.signature === 'string' && p.signature.startsWith('data:image/') ? p.signature : null, note: 'Approved from the online report' });
         const titles = (ids) => order.services.filter((s) => ids.includes(s.id)).map((s) => s.title);

@@ -76,7 +76,7 @@ export default function Calendar() {
                   <button key={d.toISOString()} onClick={() => { setAnchor(d); setView('day'); }} className="border-l border-line/70 px-3 py-2.5 text-left transition-colors hover:bg-fill/[0.04]">
                     <div className="text-xs text-ink-3">{d.toLocaleDateString('en-US', { weekday: 'short' })}</div>
                     <div className="flex items-baseline gap-2">
-                      <span className={`text-xl font-semibold ${isToday ? 'flex h-7 w-7 items-center justify-center rounded-full bg-accent text-base text-white' : 'text-ink'}`}>{d.getDate()}</span>
+                      <span className={`text-xl font-semibold ${isToday ? 'flex h-7 w-7 items-center justify-center rounded-full bg-accent text-base text-on-accent' : 'text-ink'}`}>{d.getDate()}</span>
                       {count > 0 && <span className="text-xs text-ink-3">{count} appt{count === 1 ? '' : 's'}</span>}
                     </div>
                   </button>

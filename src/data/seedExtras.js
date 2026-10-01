@@ -173,6 +173,25 @@ export function seedExtras({ shop, orders, customers, vehicles, technicians, inv
     }
   });
 
+  // Automation history: review requests after recent pickups and declined-work follow-ups.
+  const auto = (c, template, automation, body, when, orderId = null) => {
+    if (when > now) return;
+    msg(c, 'out', 'sms', body, when, orderId);
+    messages[messages.length - 1].meta = { template, automation };
+  };
+  const ago = (iso) => (now - new Date(iso)) / 86400000;
+  for (const o of orders) {
+    if (o.status !== 'closed' || !o.closedAt) continue;
+    const c = customers.find((x) => x.id === o.customerId);
+    if (!c?.phone) continue;
+    const d = ago(o.closedAt);
+    if (d >= 3 && d <= 30 && rand() < 0.55) auto(c, 'review', 'review', `Thanks for choosing ${shop.name}, ${c.firstName}! Would you take 30 seconds to share how we did?`, new Date(new Date(o.closedAt).getTime() + 2 * 3600000), o.id);
+    const declinedSvc = o.services.find((sv) => sv.status === 'declined');
+    if (declinedSvc && d >= 15 && d <= 60 && rand() < 0.5) {
+      auto(c, 'declined', 'declined', `Hi ${c.firstName}, it’s ${shop.name}. At your last visit we recommended ${declinedSvc.title.toLowerCase()}. Want us to get that scheduled?`, new Date(new Date(o.closedAt).getTime() + 14 * 86400000), o.id);
+    }
+  }
+
   // ---------------------------------------------------------------- Expenses (operating, not parts)
   const expenses = [];
   const exp = (date, category, vendor, amount, method = 'ACH', memo = '') => expenses.push({ id: id('exp'), date: iso(date), category, vendor, amount: Math.round(amount * 100) / 100, method, memo });
@@ -220,7 +239,7 @@ export function seedExtras({ shop, orders, customers, vehicles, technicians, inv
     inspectionTemplates: [DEFAULT_INSPECTION_TEMPLATE],
     shopExtras: {
       ...SHOP_DEFAULTS,
-      financing: { ...SHOP_DEFAULTS.financing, enabled: true, provider: 'Our financing partner', apr: 9.99, terms: [6, 12, 24], minAmount: 300 },
+      financing: { ...SHOP_DEFAULTS.financing, enabled: true, provider: '', apr: 9.99, terms: [6, 12, 24], minAmount: 300 },
     },
   };
 }

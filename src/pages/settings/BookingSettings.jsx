@@ -23,7 +23,7 @@ export default function BookingSettings() {
   const publish = async () => {
     setBusy(true);
     try {
-      await publishBooking(cfg, bookingConfig(state, { includeBusy: true }));
+      await publishBooking(cfg, bookingConfig(state, { includeBusy: true, includeSite: true }));
       set({ published: new Date().toISOString() });
       toast('Booking page published — open slots now reflect your calendar', { tone: 'success' });
     } catch (e) {
