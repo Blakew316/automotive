@@ -35,6 +35,7 @@ const Marketing = lazy(() => import('./pages/Marketing'));
 const Integrations = lazy(() => import('./pages/Integrations'));
 const Import = lazy(() => import('./pages/Import'));
 const Book = lazy(() => import('./pages/Book'));
+const SignIn = lazy(() => import('./pages/SignIn'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -57,6 +58,7 @@ export default function App() {
                 <ShopProvider>
                   <Suspense fallback={<Loading />}>
                     <Routes>
+                      <Route path="/signin" element={<SignIn />} />
                       <Route path="/orders/:id/print" element={<PrintOrder />} />
                       <Route path="/orders/:id/report" element={<CustomerReport />} />
                       <Route element={<Layout />}>

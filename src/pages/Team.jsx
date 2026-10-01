@@ -4,6 +4,7 @@ import { Users, Clock, BadgeDollarSign, LayoutList, Plus, Pencil, Download, Tras
 import { useShop, useUI, useLookup, useAccess } from '../store/hooks';
 import { canSeePay } from '../lib/access';
 import Access from './team/Access';
+import Logins from './team/Logins';
 import { PageHeader, Card, CardHeader, Tabs, Segmented, Avatar, Modal, Field, Toggle, EmptyState, Dot } from '../components/ui';
 import { teamSummary, useNow, entryMs, fmtDuration, runningJob, openShift } from '../lib/time';
 import { serviceHours } from '../lib/pricing';
@@ -62,7 +63,12 @@ export default function Team() {
       {tab === 'time' && <Timesheets summary={summary} from={from} to={to} />}
       {tab === 'pay' && canSeePay(role) && <Pay summary={summary} from={from} to={to} />}
       {tab === 'people' && <People />}
-      {tab === 'access' && role === 'owner' && <Access />}
+      {tab === 'access' && role === 'owner' && (
+        <div className="space-y-6">
+          <Access />
+          <Logins />
+        </div>
+      )}
     </>
   );
 }

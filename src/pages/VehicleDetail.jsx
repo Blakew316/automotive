@@ -1,7 +1,8 @@
 import { lazy, Suspense, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Plus, Pencil, ScanLine, Car, Trash2, MoreHorizontal, Database, ChevronRight } from 'lucide-react';
-import { useShop, useUI, useTotals, useLookup } from '../store/hooks';
+import { Plus, Pencil, ScanLine, Car, Trash2, MoreHorizontal, Database, ChevronRight, History } from 'lucide-react';
+import RecordHistory from '../components/RecordHistory';
+import { useShop, useUI, useTotals, useLookup, useSync } from '../store/hooks';
 import { PageHeader, Card, CardHeader, EmptyState, StatusLabel, KV, Mono, CopyButton, Menu, Modal, Spinner } from '../components/ui';
 import { VehicleForm } from '../components/forms';
 import { RecallsCard, ComplaintsCard, SafetyCard, ResourcesCard } from '../components/VehicleIntel';
@@ -22,6 +23,8 @@ export default function VehicleDetail() {
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [history, setHistory] = useState(false);
+  const sync = useSync();
   const v = state.vehicles.find((x) => x.id === id);
   if (!v) return <EmptyState icon={Car} title="Vehicle not found" action={<Link to="/vehicles" className="btn-secondary">All vehicles</Link>} />;
 
@@ -45,6 +48,7 @@ export default function VehicleDetail() {
               trigger={({ toggle }) => <button className="btn-secondary btn-icon" onClick={toggle} aria-label="More"><MoreHorizontal size={16} /></button>}
               items={[
                 { label: 'Edit vehicle', icon: Pencil, onClick: () => setEditing(true) },
+                sync?.enabled && { label: 'Change history', icon: History, onClick: () => setHistory(true) },
                 '-',
                 { label: 'Delete vehicle', icon: Trash2, danger: true, onClick: () => setConfirmDelete(true) },
               ]}
@@ -53,6 +57,7 @@ export default function VehicleDetail() {
         }
       />
 
+      {history && <RecordHistory collection="vehicles" id={v.id} title={`${v.year} ${v.make} ${v.model}`} onClose={() => setHistory(false)} />}
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="min-w-0 space-y-6">
           <Card>

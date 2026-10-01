@@ -3,8 +3,10 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   Printer, Send, MoreHorizontal, Plus, Trash2, MessageSquare, Mail, Check, ClipboardCheck, Wrench, StickyNote,
   CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2, PenLine, HandCoins,
+  History,
 } from 'lucide-react';
-import { useShop, useUI, useLookup, useTotals } from '../store/hooks';
+import { useShop, useUI, useLookup, useTotals, useSync } from '../store/hooks';
+import RecordHistory from '../components/RecordHistory';
 import { PageHeader, Card, Tabs, Menu, EmptyState, Modal, SearchInput, InlineText, Toggle } from '../components/ui';
 import ServiceBlock from './order/ServiceBlock';
 import InspectionPanel from './order/InspectionPanel';
@@ -42,6 +44,8 @@ export default function OrderDetail() {
   const [sharing, setSharing] = useState(false);
   const [authorizing, setAuthorizing] = useState(false);
   const [composing, setComposing] = useState(null);
+  const [history, setHistory] = useState(false);
+  const sync = useSync();
 
   const order = state.orders.find((o) => o.id === id);
   const viewer = useMediaViewer();
@@ -136,6 +140,7 @@ export default function OrderDetail() {
                 order.status === 'in_progress' && { label: 'Waiting on parts', icon: PackageCheck, onClick: () => move('waiting_parts') },
                 order.status === 'closed' && { label: 'Reopen', icon: RotateCcw, onClick: () => move('ready') },
                 { label: order.taxExempt ? 'Charge tax' : 'Mark tax exempt', icon: Receipt, onClick: () => updateOrder(order.id, { taxExempt: !order.taxExempt }) },
+                sync?.enabled && { label: 'Change history', icon: History, onClick: () => setHistory(true) },
                 '-',
                 { label: 'Delete repair order', icon: Trash2, danger: true, onClick: () => setConfirmDelete(true) },
               ]}
@@ -145,6 +150,7 @@ export default function OrderDetail() {
       />
 
       <Stepper status={order.status} onPick={move} />
+      {history && <RecordHistory collection="orders" id={order.id} title={`${docName} #${order.number}`} onClose={() => setHistory(false)} />}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0">

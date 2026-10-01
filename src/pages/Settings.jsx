@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive, Store, Wrench, CreditCard, MessageSquareText, CalendarCheck, Cloud, ChevronRight, Globe } from 'lucide-react';
-import { useShop, useUI } from '../store/hooks';
+import { useShop, useUI, useSync, useAccess } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Field, Toggle, Modal, NumInput, InlineText, Tabs } from '../components/ui';
 import { priceFromMatrix, DEFAULT_MATRIX } from '../lib/pricing';
 import { money } from '../lib/format';
@@ -13,6 +13,8 @@ import BookingSettings from './settings/BookingSettings';
 import InspectionTemplates from './settings/InspectionTemplates';
 import InstallSection from './settings/InstallSection';
 import WebsiteSettings from './settings/WebsiteSettings';
+import { SyncSection, CloudBackups } from './settings/CloudData';
+import { downloadJson } from '../lib/sync/labels';
 
 const TABS = [
   { value: 'general', label: 'General', icon: Store },
@@ -101,7 +103,12 @@ export default function Settings() {
         )}
         {tab === 'booking' && <BookingSettings />}
         {tab === 'website' && <WebsiteSettings />}
-        {tab === 'cloud' && <SharingSection />}
+        {tab === 'cloud' && (
+          <>
+            <SharingSection />
+            <SyncSection />
+          </>
+        )}
         {tab === 'data' && (
           <>
             <Link to="/import" className="card flex items-center gap-3 px-4 py-3.5 hover:bg-fill/[0.03]">
@@ -113,6 +120,7 @@ export default function Settings() {
               <ChevronRight size={16} className="text-ink-4" />
             </Link>
             <DataSection />
+            <CloudBackups />
           </>
         )}
       </div>
@@ -249,29 +257,35 @@ function SimpleForm({ title, initial, fields, onClose, onSave }) {
 
 function DataSection() {
   const { state, resetDemo, clearAll, importData } = useShop();
+  const sync = useSync();
+  const { role } = useAccess();
   const { toast } = useUI();
   const file = useRef(null);
   const [confirm, setConfirm] = useState(null);
+  const [pendingImport, setPendingImport] = useState(null);
+  const shared = Boolean(sync?.enabled);
+  const owner = role === 'owner';
 
   const exportData = () => {
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' }));
-    a.download = `autoshop-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(a.href);
+    downloadJson(state, `autoshop-backup-${new Date().toISOString().slice(0, 10)}.json`);
     toast('Backup downloaded', { tone: 'success' });
   };
 
   const size = new Blob([JSON.stringify(state)]).size;
   return (
-    <Section title="Data & backup" subtitle="Everything is stored privately in this browser">
+    <Section title="Data & backup" subtitle={shared ? 'Shared with every device in the shop through the cloud' : 'Everything is stored privately in this browser'}>
       <div className="mb-4 flex items-center gap-3 rounded-[10px] bg-fill/[0.06] px-3 py-2.5 text-sm text-ink-2">
         <HardDrive size={16} className="shrink-0 text-ink-3" />
-        {state.customers.length} customers · {state.vehicles.length} vehicles · {state.orders.length} repair orders · {(size / 1024).toFixed(0)} KB. Export a backup regularly — clearing browser data erases it. Photos and video stay on this device and aren’t included in the backup file.
+        {state.customers.length} customers · {state.vehicles.length} vehicles · {state.orders.length} repair orders · {(size / 1024).toFixed(0)} KB.{' '}
+        {shared
+          ? 'Every change is kept in the change history and the whole shop is backed up nightly (below).'
+          : 'Export a backup regularly — clearing browser data erases it. Photos and video stay on this device and aren’t included in the backup file. Turn on shared data under Shop Cloud for automatic cloud backups.'}
       </div>
       <div className="flex flex-wrap gap-2">
         <button className="btn-secondary" onClick={exportData}><Download size={14} /> Export backup</button>
-        <button className="btn-secondary" onClick={() => file.current?.click()}><Upload size={14} /> Import backup</button>
+        {(!shared || owner) && (
+          <button className="btn-secondary" onClick={() => file.current?.click()}><Upload size={14} /> Import backup</button>
+        )}
         <input
           ref={file}
           type="file"
@@ -279,38 +293,46 @@ function DataSection() {
           className="hidden"
           onChange={async (e) => {
             const f = e.target.files?.[0];
+            e.target.value = '';
             if (!f) return;
             try {
-              importData(JSON.parse(await f.text()));
-              toast('Backup restored', { tone: 'success' });
+              const data = JSON.parse(await f.text());
+              if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not an AutoShop Pro backup file');
+              setPendingImport(data);
+              setConfirm('import');
             } catch (err) {
               toast(err.message || 'Could not read that file', { tone: 'error' });
             }
-            e.target.value = '';
           }}
         />
         <span className="flex-1" />
-        <button className="btn-secondary" onClick={() => setConfirm('demo')}><RotateCcw size={14} /> Reload demo data</button>
-        <button className="btn-danger" onClick={() => setConfirm('clear')}><Trash2 size={14} /> Start fresh</button>
+        {!shared && <button className="btn-secondary" onClick={() => setConfirm('demo')}><RotateCcw size={14} /> Reload demo data</button>}
+        {(!shared || owner) && <button className="btn-danger" onClick={() => setConfirm('clear')}><Trash2 size={14} /> Start fresh</button>}
       </div>
       <Modal
         open={Boolean(confirm)}
         onClose={() => setConfirm(null)}
         size="sm"
-        title={confirm === 'clear' ? 'Start with an empty shop?' : 'Reload demo data?'}
+        title={confirm === 'clear' ? 'Start with an empty shop?' : confirm === 'import' ? 'Replace the shop’s data with this backup?' : 'Reload demo data?'}
         footer={
           <>
             <button className="btn-secondary" onClick={() => setConfirm(null)}>Cancel</button>
             <button
               className="btn-primary !bg-bad"
               onClick={() => {
-                if (confirm === 'clear') clearAll();
-                else resetDemo();
-                toast(confirm === 'clear' ? 'All customers, vehicles and orders removed' : 'Demo data reloaded');
+                try {
+                  if (confirm === 'clear') clearAll();
+                  else if (confirm === 'import') importData(pendingImport);
+                  else resetDemo();
+                  toast(confirm === 'clear' ? 'All customers, vehicles and orders removed' : confirm === 'import' ? 'Backup restored' : 'Demo data reloaded', { tone: 'success' });
+                } catch (err) {
+                  toast(err.message || 'Could not restore that backup', { tone: 'error' });
+                }
                 setConfirm(null);
+                setPendingImport(null);
               }}
             >
-              {confirm === 'clear' ? 'Erase everything' : 'Replace my data'}
+              {confirm === 'clear' ? 'Erase everything' : 'Replace the data'}
             </button>
           </>
         }
@@ -318,8 +340,10 @@ function DataSection() {
         <p className="text-sm text-ink-2">
           {confirm === 'clear'
             ? 'Removes all customers, vehicles, repair orders, appointments and inventory. Your shop profile, rates and service menu are kept.'
-            : 'Replaces everything in this browser with the sample shop.'}{' '}
-          Export a backup first if you might want it back.
+            : confirm === 'import'
+              ? `Replaces everything with the backup (${pendingImport?.orders?.length || 0} repair orders, ${pendingImport?.customers?.length || 0} customers).`
+              : 'Replaces everything in this browser with the sample shop.'}{' '}
+          {shared ? 'This changes the shared data on every device; the change history and nightly backups can bring it back.' : 'Export a backup first if you might want it back.'}
         </p>
       </Modal>
     </Section>

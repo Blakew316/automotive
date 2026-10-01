@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react';
-import { ShopContext, UIContext } from './context';
+import { ShopContext, UIContext, SyncContext } from './context';
 import { totalsCalculator } from '../lib/pricing';
 import { canAccess } from '../lib/access';
 
@@ -7,6 +7,11 @@ export function useShop() {
   const ctx = useContext(ShopContext);
   if (!ctx) throw new Error('useShop must be used inside <ShopProvider>');
   return ctx;
+}
+
+/** Shared shop data: status and the join / upload / leave actions (see lib/sync/useShopSync). */
+export function useSync() {
+  return useContext(SyncContext);
 }
 
 export function useUI() {

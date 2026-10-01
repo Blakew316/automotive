@@ -12,7 +12,7 @@ import { useMediaUrl } from '../lib/media';
 
 /** Photo or video stored on this device. */
 export function LocalMedia({ media, variant, className }) {
-  const url = useMediaUrl(variant === 'thumb' && !media.hasThumb ? null : media.id, variant === 'thumb' ? 'thumb' : 'blob');
+  const url = useMediaUrl(variant === 'thumb' && !media.hasThumb ? null : media.id, variant === 'thumb' ? 'thumb' : 'blob', media.cloud);
   if (!url) return <MediaFallback media={media} className={className} />;
   if (media.kind === 'video' && variant === 'full') return <video src={url} controls playsInline autoPlay className={className} />;
   return <img src={url} alt={media.caption || ''} loading="lazy" className={className} />;

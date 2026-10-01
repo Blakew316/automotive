@@ -3,13 +3,14 @@ import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package,
   BookOpen, ChartColumn, Settings, Search, Menu as MenuIcon, Sun, Moon, Monitor, Wrench, X, Database,
-  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock,
+  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock, CloudDownload,
 } from 'lucide-react';
-import { useShop, useUI, useAccess } from '../store/hooks';
+import { useShop, useUI, useAccess, useSync } from '../store/hooks';
 import { ROLES, homeFor } from '../lib/access';
 import SwitchUser from './SwitchUser';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { useCloudSync } from '../lib/useCloudSync';
+import { syncLabel } from '../lib/sync/labels';
 import CommandPalette from './CommandPalette';
 import Toasts from './Toasts';
 
@@ -145,6 +146,7 @@ function Sidebar({ onNavigate }) {
       </nav>
 
       <div className="border-t border-sidebar-line px-3 py-3">
+        <SyncBadge onNavigate={onNavigate} />
         <button onClick={() => setSwitching(true)} className="mb-2.5 flex w-full items-center gap-2.5 rounded-[9px] px-1.5 py-1.5 text-left transition-colors hover:bg-fill/[0.08]" title="Switch user">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-fill/[0.14] text-xs font-semibold text-sidebar-ink">
             {user.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
@@ -174,6 +176,52 @@ function Sidebar({ onNavigate }) {
       </div>
       {switching && <SwitchUser onClose={() => setSwitching(false)} />}
     </div>
+  );
+}
+
+/** Prompts that need the signed-in person's attention (temporary password, signed out of a synced shop). */
+function AccountNotice() {
+  const sync = useSync();
+  if (!sync) return null;
+  const temp = sync.signedIn && sync.session?.mustChange;
+  const out = sync.enabled && sync.status.phase === 'signed-out';
+  if (!temp && !out) return null;
+  return (
+    <div className="no-print flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-warn/30 bg-warn/[0.08] px-4 py-2 text-sm">
+      <span className="text-ink">{temp ? 'You’re using a temporary password.' : 'You’re signed out — changes on this device are saved and will sync when you sign in.'}</span>
+      <Link to="/signin" className="font-semibold text-accent hover:underline">
+        {temp ? 'Choose your own' : 'Sign in'}
+      </Link>
+    </div>
+  );
+}
+
+/** Shared-data status at the bottom of the sidebar. */
+function SyncBadge({ onNavigate }) {
+  const sync = useSync();
+  if (!sync) return null;
+  if (!sync.enabled) {
+    if (!(sync.staff && sync.cloudHasData)) return null;
+    return (
+      <Link to="/settings?tab=cloud#sync" onClick={onNavigate} className="mb-2 flex items-center gap-2 rounded-[8px] bg-accent/[0.09] px-2.5 py-2 text-xs font-semibold text-accent hover:bg-accent/[0.14]">
+        <CloudDownload size={14} /> Load the shop’s shared data
+      </Link>
+    );
+  }
+  const s = sync.status;
+  const warn = ['signed-out', 'not-staff', 'error', 'offline'].includes(s.phase);
+  const busy = s.phase === 'syncing' || s.pending > 0;
+  return (
+    <Link
+      to={s.phase === 'signed-out' ? '/signin' : '/settings?tab=cloud#sync'}
+      onClick={onNavigate}
+      className="mb-2 flex items-center gap-2 rounded-[8px] px-2 py-1.5 text-xs font-medium text-sidebar-ink-2 transition-colors hover:bg-fill/[0.08] hover:text-sidebar-ink"
+      title={s.error || 'Shared shop data'}
+    >
+      <span className={`h-2 w-2 shrink-0 rounded-full ${warn ? 'bg-warn' : busy ? 'animate-pulse bg-accent' : 'bg-ok'}`} />
+      <span className="min-w-0 flex-1 truncate">{syncLabel(sync)}</span>
+      {s.live && !warn && <span className="text-[10px] font-semibold uppercase tracking-wide text-ok">Live</span>}
+    </Link>
   );
 }
 
@@ -253,6 +301,7 @@ export default function Layout() {
           </button>
         </header>
         <main id="main-scroll" className="relative flex-1 overflow-y-auto">
+          <AccountNotice />
           <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-6 sm:px-6 lg:px-10 lg:pt-9">
             {can(location.pathname) ? <Outlet /> : <NoAccess />}
           </div>

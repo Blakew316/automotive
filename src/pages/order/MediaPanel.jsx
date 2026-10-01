@@ -36,7 +36,7 @@ export function PickButton({ onFiles, capture, multiple = true, className = 'btn
 }
 
 export function MediaThumb({ media, onClick, className = '', showMeta = true }) {
-  const url = useMediaUrl(media.hasThumb ? media.id : null, 'thumb');
+  const url = useMediaUrl(media.hasThumb ? media.id : null, 'thumb', media.cloud);
   return (
     <button type="button" onClick={onClick} className={`group relative block overflow-hidden rounded-[10px] bg-fill/[0.08] ${className}`} aria-label={media.caption || media.name}>
       {url ? (
@@ -194,7 +194,7 @@ export function MediaViewer({ order, mediaId, editable, onNavigate, onClose }) {
   const list = order.media || [];
   const idx = list.findIndex((m) => m.id === mediaId);
   const m = list[idx];
-  const url = useMediaUrl(m?.id, 'blob');
+  const url = useMediaUrl(m?.id, 'blob', m?.cloud);
   const prev = list[idx - 1];
   const next = list[idx + 1];
 
