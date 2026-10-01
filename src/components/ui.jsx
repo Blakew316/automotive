@@ -219,6 +219,7 @@ export function EmptyState({ icon: Icon, title, body, action, className = '' }) 
 }
 
 export function Modal({ open, onClose, title, subtitle, children, footer, size = 'md', layer = 'z-50' }) {
+  const titleId = useId();
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === 'Escape' && onClose?.();
@@ -233,13 +234,13 @@ export function Modal({ open, onClose, title, subtitle, children, footer, size =
   if (!open) return null;
   const width = { sm: 'max-w-md', md: 'max-w-xl', lg: 'max-w-3xl', xl: 'max-w-5xl' }[size];
   return createPortal(
-    <div className={`fixed inset-0 ${layer} flex items-end justify-center p-0 sm:items-center sm:p-6`} role="dialog" aria-modal="true">
+    <div className={`fixed inset-0 ${layer} flex items-end justify-center p-0 sm:items-center sm:p-6`} role="dialog" aria-modal="true" aria-labelledby={title ? titleId : undefined}>
       <div className="absolute inset-0 animate-fade-in bg-black/25 backdrop-blur-[2px]" onClick={onClose} />
       <div className={`relative flex max-h-[92vh] w-full ${width} animate-sheet-in flex-col overflow-hidden rounded-t-xl bg-surface shadow-sheet sm:rounded-xl`}>
         {(title || onClose) && (
           <div className="flex items-start justify-between gap-4 px-5 pb-3 pt-4">
             <div className="min-w-0">
-              {title && <h2 className="text-lg font-semibold text-ink">{title}</h2>}
+              {title && <h2 id={titleId} className="text-lg font-semibold text-ink">{title}</h2>}
               {subtitle && <p className="mt-0.5 text-sm text-ink-3">{subtitle}</p>}
             </div>
             <button onClick={onClose} aria-label="Close" className="btn-ghost btn-icon -mr-1.5 h-7 w-7 rounded-full">

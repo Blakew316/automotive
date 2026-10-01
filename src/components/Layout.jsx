@@ -11,6 +11,7 @@ import SwitchUser from './SwitchUser';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { useCloudSync } from '../lib/useCloudSync';
 import { useTracking } from '../lib/useTracking';
+import PhoneLine from './PhoneLine';
 import { syncLabel } from '../lib/sync/labels';
 import CommandPalette from './CommandPalette';
 import Toasts from './Toasts';
@@ -296,46 +297,48 @@ export default function Layout() {
   }, [location.pathname]);
 
   return (
-    <div className="flex h-[100dvh] overflow-hidden bg-canvas">
-      <aside className="no-print hidden w-[240px] shrink-0 lg:block">
-        <Sidebar />
-      </aside>
+    <PhoneLine>
+      <div className="flex h-[100dvh] overflow-hidden bg-canvas">
+        <aside className="no-print hidden w-[240px] shrink-0 lg:block">
+          <Sidebar />
+        </aside>
 
-      {navOpen && (
-        <div className="no-print fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 animate-fade-in bg-black/25" onClick={() => setNavOpen(false)} />
-          <aside className="relative h-full w-[272px] animate-slide-in bg-sidebar shadow-sheet">
-            <button onClick={() => setNavOpen(false)} className="btn-icon btn absolute right-2 top-4 rounded-full text-sidebar-ink-2 hover:bg-fill/10 hover:text-sidebar-ink" aria-label="Close menu">
-              <X size={17} />
+        {navOpen && (
+          <div className="no-print fixed inset-0 z-50 lg:hidden">
+            <div className="absolute inset-0 animate-fade-in bg-black/25" onClick={() => setNavOpen(false)} />
+            <aside className="relative h-full w-[272px] animate-slide-in bg-sidebar shadow-sheet">
+              <button onClick={() => setNavOpen(false)} className="btn-icon btn absolute right-2 top-4 rounded-full text-sidebar-ink-2 hover:bg-fill/10 hover:text-sidebar-ink" aria-label="Close menu">
+                <X size={17} />
+              </button>
+              <Sidebar onNavigate={() => setNavOpen(false)} />
+            </aside>
+          </div>
+        )}
+
+        <div className="flex min-w-0 flex-1 flex-col">
+          <header className="no-print glass sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b border-line/80 bg-canvas/80 px-3 lg:hidden">
+            <button onClick={() => setNavOpen(true)} className="btn-ghost btn-icon" aria-label="Open menu">
+              <MenuIcon size={19} />
             </button>
-            <Sidebar onNavigate={() => setNavOpen(false)} />
-          </aside>
+            <div className="flex flex-1 items-center gap-2">
+              <Logo size={24} />
+              <span className="text-md font-semibold">AutoShop Pro</span>
+            </div>
+            <button onClick={() => setPaletteOpen(true)} className="btn-ghost btn-icon" aria-label="Search">
+              <Search size={18} />
+            </button>
+          </header>
+          <main id="main-scroll" className="relative flex-1 overflow-y-auto">
+            <AccountNotice />
+            <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-6 sm:px-6 lg:px-10 lg:pt-9">
+              {can(location.pathname) ? <Outlet /> : <NoAccess />}
+            </div>
+          </main>
         </div>
-      )}
 
-      <div className="flex min-w-0 flex-1 flex-col">
-        <header className="no-print glass sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b border-line/80 bg-canvas/80 px-3 lg:hidden">
-          <button onClick={() => setNavOpen(true)} className="btn-ghost btn-icon" aria-label="Open menu">
-            <MenuIcon size={19} />
-          </button>
-          <div className="flex flex-1 items-center gap-2">
-            <Logo size={24} />
-            <span className="text-md font-semibold">AutoShop Pro</span>
-          </div>
-          <button onClick={() => setPaletteOpen(true)} className="btn-ghost btn-icon" aria-label="Search">
-            <Search size={18} />
-          </button>
-        </header>
-        <main id="main-scroll" className="relative flex-1 overflow-y-auto">
-          <AccountNotice />
-          <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-6 sm:px-6 lg:px-10 lg:pt-9">
-            {can(location.pathname) ? <Outlet /> : <NoAccess />}
-          </div>
-        </main>
+        <CommandPalette />
+        <Toasts />
       </div>
-
-      <CommandPalette />
-      <Toasts />
-    </div>
+    </PhoneLine>
   );
 }

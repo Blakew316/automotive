@@ -11,7 +11,8 @@ import { customerContext } from '../lib/ai';
 import { AccountCard, ContactsCard, PmPlansCard, UnitsCard, InvoicesCard, PortalCard } from './customer/AccountPanels';
 import { accountSummary, isAccount, termsLabel } from '../lib/accounts';
 import { CustomerForm, VehicleForm, AppointmentForm } from '../components/forms';
-import { money, money0, fullName, vehicleName, phone, telHref, mailHref, dateShort, date, number, time, relTime } from '../lib/format';
+import { money, money0, fullName, vehicleName, phone, mailHref, dateShort, date, number, time, relTime } from '../lib/format';
+import CallButton from '../components/CallButton';
 
 export default function CustomerDetail() {
   const { id } = useParams();
@@ -77,7 +78,7 @@ export default function CustomerDetail() {
         }
         actions={
           <>
-            <a href={telHref(c.phone)} className="btn-secondary btn-icon" aria-label="Call"><Phone size={15} /></a>
+            {c.phone ? <CallButton customer={c} /> : <button className="btn-secondary btn-icon" disabled aria-label="Call"><Phone size={15} /></button>}
             <button onClick={() => setComposing({ channel: 'sms' })} disabled={!c.phone} className="btn-secondary btn-icon" aria-label="Text"><MessageSquare size={15} /></button>
             <button onClick={() => setComposing({ channel: 'email' })} disabled={!c.email} className="btn-secondary btn-icon" aria-label="Email"><Mail size={15} /></button>
             <button className="btn-secondary" onClick={() => setBooking(true)}><CalendarPlus size={15} /> Book</button>
@@ -234,7 +235,7 @@ export default function CustomerDetail() {
           )}
           <Card className="px-4 py-2">
             <dl className="divide-y divide-line/70">
-              <KV label="Mobile">{c.phone ? <a href={telHref(c.phone)} className="link">{phone(c.phone)}</a> : '—'}</KV>
+              <KV label="Mobile">{c.phone ? <CallButton customer={c} className="link" size={0}>{phone(c.phone)}</CallButton> : '—'}</KV>
               <KV label="Email">{c.email ? <a href={mailHref(c.email)} className="link break-all">{c.email}</a> : '—'}</KV>
               <KV label="Address">
                 {c.address ? (

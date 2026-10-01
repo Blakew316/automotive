@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer, Wrench, Car, Wallet, Megaphone, Landmark, ChartColumn, Activity, KeyRound } from 'lucide-react';
+import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer, Wrench, Car, Wallet, Megaphone, Landmark, ChartColumn, Activity, KeyRound, PhoneMissed } from 'lucide-react';
 import { useLookup, useTotals, useAccess, useScopedShop } from '../store/hooks';
 import { Card, CardHeader, StatusLabel, Avatar, EmptyState, Dot, IconTile } from '../components/ui';
 import { ColumnChart } from '../components/charts';
@@ -9,6 +9,7 @@ import { money, money0, moneyShort, fullName, vehicleName, time, relTime, sameDa
 import { STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { openShift, runningJob, entryMs, fmtDuration, useNow } from '../lib/time';
 import { automationStatus } from '../lib/automations';
+import { needsCallback } from '../lib/phone';
 import { openInvoices, isAccount } from '../lib/accounts';
 
 export default function Dashboard() {
@@ -49,7 +50,10 @@ export default function Dashboard() {
       attention.push({ id: 'ar-late', icon: Receipt, text: `${late.length} account invoice${late.length === 1 ? '' : 's'} past due — ${money0(late.reduce((t, i) => t + i.balance, 0))}`, sub: names.slice(0, 3).join(', '), to: '/accounts', tone: 'bg-warn' });
     }
     const requests = state.bookingRequests.filter((b) => b.status === 'new');
-    if (requests.length) attention.unshift({ id: 'book', icon: Globe, text: `${requests.length} online booking request${requests.length === 1 ? '' : 's'} to confirm`, sub: requests.map((b) => b.name).join(', '), to: '/calendar', tone: 'bg-accent' });
+    if (requests.length) attention.unshift({ id: 'book', icon: Globe, text: `${requests.length} booking request${requests.length === 1 ? '' : 's'} to confirm`, sub: requests.map((b) => b.name).join(', '), to: '/calendar', tone: 'bg-accent' });
+    // Missed calls and voicemails from the business line nobody has returned yet.
+    const callbacks = [...new Map(state.messages.filter((m) => m.channel === 'call' && needsCallback(state, m)).map((m) => [m.customerId, m])).values()];
+    if (callbacks.length) attention.unshift({ id: 'calls', icon: PhoneMissed, text: `${callbacks.length} missed call${callbacks.length === 1 ? '' : 's'} to return`, sub: callbacks.map((m) => fullName(lookup.customer.get(m.customerId))).slice(0, 3).join(', '), to: callbacks.length === 1 ? `/messages/${callbacks[0].customerId}` : '/messages', tone: 'bg-bad' });
     const unread = state.messages.filter((m) => m.dir === 'in' && !m.read);
     if (unread.length) {
       const who = [...new Set(unread.map((m) => fullName(lookup.customer.get(m.customerId))))];

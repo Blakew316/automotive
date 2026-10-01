@@ -27,7 +27,7 @@ export default function BookingRequests() {
     <>
       {requests.length > 0 && (
         <Card className="mb-6 border-accent/30">
-          <CardHeader icon={Globe} title={`${requests.length} online booking request${requests.length === 1 ? '' : 's'}`} subtitle="Confirm to add them to the calendar" />
+          <CardHeader icon={Globe} title={`${requests.length} booking request${requests.length === 1 ? '' : 's'}`} subtitle="Confirm to add them to the calendar" />
           <ul className="divide-y divide-line/70">
             {requests.map((b) => {
               const clash = state.appointments.filter((a) => {
@@ -41,7 +41,7 @@ export default function BookingRequests() {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline gap-x-2">
                       <span className="font-semibold">{b.name}</span>
-                      <span className="text-xs text-ink-3">{b.source === 'website' ? 'from your website · ' : ''}requested {relTime(b.createdAt)}</span>
+                      <span className="text-xs text-ink-3">{b.source === 'website' ? 'from your website · ' : b.source === 'phone' ? 'by phone (AI receptionist) · ' : ''}requested {relTime(b.createdAt)}</span>
                     </div>
                     <div className="mt-0.5 text-sm text-ink-2">
                       <CalendarCheck size={13} className="mr-1 inline text-accent" />

@@ -8,7 +8,8 @@ import { PageHeader, Card, CardHeader, EmptyState, StatusLabel, Stat, Modal, Cop
 import QrCode from '../components/QrCode';
 import ComposeModal from '../components/Compose';
 import { TRANSPORT, loanerBoard, shuttleRuns, coreList, checkinLink } from '../lib/operations';
-import { fullName, vehicleName, time, dateTime, relTime, telHref, phone as fmtPhone, money } from '../lib/format';
+import { fullName, vehicleName, time, dateTime, relTime, money } from '../lib/format';
+import CallButton from '../components/CallButton';
 
 const sameDay = (a, b = new Date()) => new Date(a).toDateString() === new Date(b).toDateString();
 
@@ -165,9 +166,7 @@ export default function FrontDesk() {
                       )}
                     </span>
                     {r.customer?.phone && (
-                      <a href={telHref(r.customer.phone)} className="btn-ghost btn-icon h-7 w-7" aria-label={`Call ${fullName(r.customer)}`} title={fmtPhone(r.customer.phone)}>
-                        <Phone size={13} />
-                      </a>
+                      <CallButton customer={r.customer} orderId={r.order?.id || null} className="btn-ghost btn-icon h-7 w-7" size={13} />
                     )}
                   </li>
                 );

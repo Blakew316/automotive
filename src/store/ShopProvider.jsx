@@ -11,6 +11,7 @@ import { matchCustomer, matchVehicle, parseVehicle, TRANSPORT } from '../lib/ope
 import { decodeOffline } from '../lib/vin';
 import { shopAt, stampFor } from '../lib/locations';
 import { uid, fullName, vehicleName } from '../lib/format';
+import { callMeta, callText } from '../lib/phone';
 import { loadSaved, createSaver } from '../lib/persist';
 import { diffStates, applyToDraft } from '../lib/sync/records';
 import { useShopSync } from '../lib/sync/useShopSync';
@@ -486,9 +487,77 @@ function ShopStore({ boot, children }) {
         }),
 
       // ---------------------------------------------------------------- Messages
-      addMessage: ({ customerId, orderId = null, dir = 'out', channel = 'sms', body, at: when, meta }) =>
+      addMessage: ({ id, customerId, orderId = null, dir = 'out', channel = 'sms', body, at: when, meta }) =>
         update((s) => {
-          s.messages.push({ id: uid('msg'), customerId, orderId, dir, channel, body, at: when || now(), read: dir === 'out', ...(meta ? { meta } : {}) });
+          if (id && s.messages.some((m) => m.id === id)) return;
+          s.messages.push({ id: id || uid('msg'), customerId, orderId, dir, channel, body, at: when || now(), read: dir === 'out', ...(meta ? { meta } : {}) });
+        }),
+      updateMessage: (id, patch) =>
+        update((s) => {
+          const m = s.messages.find((x) => x.id === id);
+          if (m) Object.assign(m, typeof patch === 'function' ? patch(m) : patch);
+        }),
+      // Texts, delivery receipts and calls from the business line (shop_phone_events). Ids come from
+      // Twilio's, so devices that both handle the same event agree. Returns the event ids handled.
+      applyPhoneEvents: (rows) =>
+        update((s) => {
+          const handled = [];
+          const ten = (p) => String(p || '').replace(/\D/g, '').slice(-10);
+          const find = (p) => (ten(p).length === 10 ? s.customers.find((c) => ten(c.phone) === ten(p)) : null);
+          // Someone new texting or calling the shop becomes a customer, named if we know the name.
+          const ensure = (p, name) => {
+            const found = find(p);
+            if (found || ten(p).length !== 10) return found;
+            const [firstName = '', ...rest] = String(name || '').trim().split(/\s+/).filter((w) => /[a-z]/i.test(w));
+            const d = ten(p);
+            const c = { id: `cus_ph_${d}`, firstName, lastName: rest.join(' '), company: firstName ? '' : `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`, phone: `(${d.slice(0, 3)}) ${d.slice(3, 6)}-${d.slice(6)}`, email: '', address: '', city: '', state: '', zip: '', notes: 'Added from a call or text to the business line', tags: ['New contact'], textOptIn: true, createdAt: now() };
+            if (!s.customers.some((x) => x.id === c.id)) s.customers.unshift(c);
+            return s.customers.find((x) => x.id === c.id);
+          };
+          const openOrder = (c) => s.orders.filter((o) => o.customerId === c.id && o.status !== 'closed').sort((a, b) => b.number - a.number)[0];
+          for (const row of rows) {
+            const p = row.payload || {};
+            if (row.kind === 'sms_in') {
+              const c = ensure(p.from);
+              const id = `msg_tw_${row.sid}`;
+              if (c && !s.messages.some((m) => m.id === id)) {
+                const body = String(p.body || '').trim() || (p.media?.length ? (p.media.length === 1 ? 'Sent a photo' : `Sent ${p.media.length} files`) : '');
+                s.messages.push({ id, customerId: c.id, orderId: openOrder(c)?.id || null, dir: 'in', channel: 'sms', body, at: p.at || row.created_at, read: false, meta: { sid: row.sid, via: 'line', media: (p.media || []).slice(0, 5), ...(p.optOut ? { optOut: p.optOut } : {}) } });
+              }
+              if (c && p.optOut === 'stop') c.textOptIn = false;
+              if (c && p.optOut === 'start') c.textOptIn = true;
+            } else if (row.kind === 'sms_status') {
+              const m = s.messages.find((x) => x.meta?.sid === row.sid);
+              if (m) m.meta = { ...m.meta, status: p.status, error: p.errorCode || null };
+            } else if (row.kind === 'sms_out') {
+              const c = (p.customerId && s.customers.find((x) => x.id === p.customerId)) || ensure(p.to);
+              const id = `msg_tw_${row.sid}`;
+              if (c && !s.messages.some((m) => m.id === id)) {
+                const meta = { sid: row.sid, via: 'line', status: 'sent', automation: p.automation || 'auto' };
+                if (p.template) meta.template = p.template;
+                if (p.appointmentId) Object.assign(meta, { appointmentId: p.appointmentId, apptStart: p.apptStart || null });
+                if (p.key) meta.remoteId = p.key;
+                s.messages.push({ id, customerId: c.id, orderId: null, dir: 'out', channel: 'sms', body: String(p.body || ''), at: p.at || row.created_at, read: true, meta });
+              }
+            } else if (row.kind === 'call') {
+              // Ringing calls stay on the server for the screen pop; only finished ones are filed.
+              if (!row.final) continue;
+              const id = `msg_call_${row.sid}`;
+              const existing = s.messages.find((m) => m.id === id);
+              if (existing) {
+                // A late voicemail transcript (or summary) for a call already filed.
+                const call = callMeta({ ...existing.meta?.call, ...p });
+                existing.body = callText(call);
+                existing.meta = { ...existing.meta, call };
+              } else {
+                const call = callMeta(p);
+                const c = ensure(p.from, call.callerName || p.appointment?.name);
+                if (c) s.messages.push({ id, customerId: c.id, orderId: openOrder(c)?.id || null, dir: call.direction === 'out' ? 'out' : 'in', channel: 'call', body: callText(call), at: p.startedAt || row.created_at, read: call.status === 'answered', meta: { sid: row.sid, call } });
+              }
+            }
+            handled.push(row.id);
+          }
+          return handled;
         }),
       // Self check-in from the lobby tablet or the key drop: find (or add) the customer and vehicle and
       // open the repair order. Ids come from the inbox row, so two devices handling it agree.
@@ -684,7 +753,7 @@ function ShopStore({ boot, children }) {
             s.vehicles.unshift(v);
           }
           if (!v) v = s.vehicles.find((x) => x.customerId === c.id);
-          const appt = { id: uid('apt'), customerId: c.id, vehicleId: v?.id || null, start, duration, title: title || b.services.join(', ') || 'Online booking', techId, status: 'scheduled', notes: b.notes || '', source: 'online', ...at(here(s)) };
+          const appt = { id: uid('apt'), customerId: c.id, vehicleId: v?.id || null, start, duration, title: title || b.services.join(', ') || 'Online booking', techId, status: 'scheduled', notes: b.notes || '', source: b.source === 'phone' ? 'phone' : 'online', ...at(here(s)), createdAt: now() };
           s.appointments.push(appt);
           Object.assign(b, { status: 'accepted', customerId: c.id, appointmentId: appt.id, decidedAt: now() });
           log(s, `Online booking accepted for ${fullName(c)}`);
@@ -743,7 +812,7 @@ function ShopStore({ boot, children }) {
       saveAppointment: (a) =>
         update((s) => {
           if (a.id) return void Object.assign(s.appointments.find((x) => x.id === a.id), a);
-          const rec = { status: 'scheduled', notes: '', duration: 60, ...at(here(s)), ...a, id: uid('apt') };
+          const rec = { status: 'scheduled', notes: '', duration: 60, ...at(here(s)), ...a, id: uid('apt'), createdAt: now() };
           s.appointments.push(rec);
           const c = s.customers.find((x) => x.id === rec.customerId);
           log(s, `Appointment booked${c ? ` for ${fullName(c)}` : ''}`);

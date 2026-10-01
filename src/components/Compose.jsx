@@ -1,16 +1,18 @@
 // One composer for every customer message: estimates, updates, payment requests, reminders.
-// Texts and emails open in the device's Messages/Mail app (so they come from the shop's own number
-// and address) and are logged to the customer's conversation.
+// With the business line connected, texts go out from the shop's Twilio number; otherwise texts and
+// emails open in the device's Messages/Mail app. Either way they're logged to the conversation.
 import { useMemo, useState } from 'react';
 import { MessageSquare, Mail, NotebookPen, Info } from 'lucide-react';
-import { useShop, useUI } from '../store/hooks';
-import { Modal, Segmented } from './ui';
+import { useShop, useUI, usePhone } from '../store/hooks';
+import { Modal, Segmented, Spinner } from './ui';
 import { fillTemplate, messageContext, sendHref } from '../lib/messaging';
 import { fullName, phone as fmtPhone } from '../lib/format';
 
 export default function ComposeModal({ customer, order, appointment, templateId = 'update', initialBody, channel: initialChannel, extra, subject: initialSubject, onClose, onSent }) {
   const { state, addMessage } = useShop();
   const { toast } = useUI();
+  const line = usePhone();
+  const [busy, setBusy] = useState(false);
   const ctx = useMemo(() => messageContext(state, { customer, order, appointment, extra }), [state, customer, order, appointment, extra]);
   const templates = state.shop.templates || [];
   const [tid, setTid] = useState(initialBody ? '' : templateId);
@@ -20,6 +22,9 @@ export default function ComposeModal({ customer, order, appointment, templateId 
   const canSms = Boolean(customer?.phone);
   const canEmail = Boolean(customer?.email);
   const href = sendHref(channel, customer, body, subject);
+  const viaLine = channel === 'sms' && line.ready && canSms;
+  // Replied STOP: the business line won't send until they reply START.
+  const stopped = viaLine && line.optedOut(customer?.phone);
 
   const pickTemplate = (id) => {
     setTid(id);
@@ -30,8 +35,22 @@ export default function ComposeModal({ customer, order, appointment, templateId 
     addMessage({ customerId: customer.id, orderId: order?.id || null, dir, channel: ch, body: body.trim(), meta: tid ? { template: tid } : undefined });
   };
 
-  const send = () => {
+  const send = async () => {
     if (!body.trim() || !href) return;
+    if (viaLine) {
+      setBusy(true);
+      try {
+        await line.send({ customer, body: body.trim(), orderId: order?.id || null, meta: tid ? { template: tid } : undefined });
+        toast(`Text sent from ${fmtPhone(line.status?.phone || '')}`, { tone: 'success' });
+        onSent?.();
+        onClose();
+      } catch (e) {
+        toast(e.message || 'The text didn’t send', { tone: 'error' });
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     log();
     window.location.href = href;
     toast(channel === 'sms' ? 'Opened in Messages — logged to the conversation' : 'Opened in Mail — logged to the conversation', { tone: 'success' });
@@ -61,8 +80,8 @@ export default function ComposeModal({ customer, order, appointment, templateId 
             <NotebookPen size={14} /> Log only
           </button>
           <button className="btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn-primary" disabled={!body.trim() || !href} onClick={send}>
-            {channel === 'sms' ? <MessageSquare size={15} /> : <Mail size={15} />} {channel === 'sms' ? 'Send text' : 'Send email'}
+          <button className="btn-primary" disabled={!body.trim() || !href || busy || stopped} onClick={send}>
+            {busy ? <Spinner size={14} /> : channel === 'sms' ? <MessageSquare size={15} /> : <Mail size={15} />} {channel === 'sms' ? 'Send text' : 'Send email'}
           </button>
         </>
       }
@@ -89,13 +108,24 @@ export default function ComposeModal({ customer, order, appointment, templateId 
         <textarea rows={6} className="input resize-none" value={body} onChange={(e) => setBody(e.target.value)} aria-label="Message" autoFocus />
         <div className="flex items-center justify-between text-xs text-ink-3">
           <span>{channel === 'sms' ? `${body.length} characters${body.length > 160 ? ` · ${Math.ceil(body.length / 153)} texts` : ''}` : ''}</span>
-          {customer && customer.textOptIn === false && channel === 'sms' && <span className="text-warn">Customer opted out of texts</span>}
+          {channel === 'sms' && (line.optedOut(customer?.phone) ? <span className="text-bad">Replied STOP — texts are blocked until they reply START</span> : customer?.textOptIn === false ? <span className="text-warn">Customer opted out of texts</span> : null)}
         </div>
         <p className="flex items-start gap-2 rounded-[8px] bg-fill/[0.06] px-3 py-2 text-xs text-ink-3">
           <Info size={13} className="mt-0.5 shrink-0" />
-          {channel === 'sms'
-            ? 'Opens your Messages app with this text ready to send from your shop phone (iPhone, Android, or Messages on Mac). Replies arrive there — log them here, or they arrive automatically when customers reply from their report link.'
-            : 'Opens your email app with this message ready to send.'}
+          {viaLine ? (
+            <span>
+              Sends from your business number {fmtPhone(line.status?.phone || '')}; replies and delivery receipts show up in Messages.{' '}
+              {href && (
+                <a href={href} className="link" onClick={() => { log(); onClose(); }}>
+                  Use this device’s Messages app instead
+                </a>
+              )}
+            </span>
+          ) : channel === 'sms' ? (
+            'Opens your Messages app with this text ready to send from your shop phone (iPhone, Android, or Messages on Mac). Replies arrive there — log them here, or they arrive automatically when customers reply from their report link.'
+          ) : (
+            'Opens your email app with this message ready to send.'
+          )}
         </p>
       </div>
     </Modal>

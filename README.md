@@ -33,6 +33,12 @@ The repo also holds the shop's public website (`website/`), published alongside 
 - **Core returns** — enter a core charge on a part line; **Parts → Cores** tracks each core from to-return to returned to credited.
 - **Calendar & online booking** — day/week scheduling, plus a public booking page customers open from your website, Google profile or a text: they choose services, see open times based on your hours and capacity, and send a request that lands in **Calendar → Requests** to confirm (customer and vehicle are created automatically, with a confirmation text ready to send).
 - **Messages** — one inbox for texts, emails and portal replies per customer, with templates and merge fields (estimate ready, status update, ready for pickup, pay request, receipt, appointment reminder, service reminder, declined-work follow-up, review request, win-back). Texts and emails open in the shop phone’s Messages / Mail app so they come from the shop’s own number and address; customer replies are logged with **Log reply** or arrive automatically from report links.
+- **Business texting & calling** — connect the shop's own Twilio number (Settings → Messaging) and the shop gets:
+  - **Two-way texting** from the business number: send from Messages, repair orders, report links and follow-ups (in one pass for a whole list); replies, photos and delivery receipts arrive in the conversation live, people who text in for the first time become contacts, and STOP/START is honored.
+  - **Calls** that ring every listed phone at once, with a **screen pop** on signed-in devices showing who's calling, their vehicle and open repair order. Voicemail is recorded and transcribed, and a **missed-call text** goes out so the caller can reply instead. Missed calls you haven't returned are flagged on Today and in Messages → Call back.
+  - **Click-to-call** from Messages, customers, repair orders and the front desk: it rings your phone first, then connects the customer, who sees the shop's number.
+  - An **AI receptionist** (Claude) that answers after hours, when nobody picks up, or every call. It greets known callers by name, tells them where their vehicle is (when the caller ID matches), answers from your hours and notes, takes messages, files appointment requests in Calendar → Requests, texts the booking link or directions, and transfers to a person on request. Each call is summarized in Messages with its transcript.
+  - **Automatic texts**: appointment confirmations, day-before reminders (sent by the server even when no device is open, never 9 PM–8 AM) and an optional after-hours auto-reply.
 - **Payments** — record card, cash, check, ACH, financing, warranty and fleet payments with tips and an optional card surcharge; text-to-pay links through the shop’s own Stripe, Square, PayPal, Venmo or Cash App account; receipts by text or email.
 - **Financing** — “as low as $/mo” on estimates and the customer report, with a link to the shop’s financing partner.
 - **Customers & vehicles** — history, lifetime value, recent messages, declined-work follow-ups, and per-vehicle service timeline.
@@ -67,7 +73,7 @@ The repo also holds the shop's public website (`website/`), published alongside 
 - **AI assistant** — an *Assistant* button on repair orders, *Suggest reply* in Messages and *Summarize with AI* on customers. It drafts a plain-English explanation of the estimate grouped by urgency, a status text, a reply to the customer's latest message, the cause & correction for a service (from the tech's notes and the inspection), diagnostic ideas and a test plan for the tech, a customer summary for the advisor, or answers any question about the record on screen. Answers go into the message composer, onto the service, or into an internal note; staff review everything before it reaches a customer. It runs on Claude through the shop's own Anthropic API key (see [Integration keys & the AI assistant](#integration-keys--the-ai-assistant)).
 - **Shop website** — the shop's public site ([Public website](#public-website)). Its *Book a service* form drops requests into **Calendar → Requests** with the customer's preferred day and time of day, and its contact and fleet forms arrive in **Messages** (new people are added as customers).
 - **Roles & access** — staff profiles for owner, shop manager, service advisor and technician with optional 4-digit PINs; each role sees only the pages it needs (switch people from the sidebar).
-- **Integrations** — Shop Cloud, the AI assistant (Claude), online booking, Google reviews, QuickBooks exports, payment links, financing, PartsTech / Nexpart / WORLDPAC ordering with POs, NHTSA, calendar (.ics) export for Google/Apple/Outlook, CARFAX service history, and data import.
+- **Integrations** — Shop Cloud, the AI assistant (Claude), business texting & calls (Twilio), online booking, Google reviews, QuickBooks exports, payment links, financing, PartsTech / Nexpart / WORLDPAC ordering with POs, NHTSA, calendar (.ics) export for Google/Apple/Outlook, CARFAX service history, and data import.
 - **Data migration** — import customers & vehicles or parts inventory from CSV (or paste from a spreadsheet) exported from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks or Excel: columns are matched automatically, previewed, and de-duplicated by phone, email, VIN and part number.
 - **Mobile app** — installable on iPhone, iPad, Android, Mac and PC (Settings → General → Mobile & desktop app); opens full-screen, works offline, with home-screen shortcuts to a new RO, the tech clock, the board and messages.
 
@@ -118,12 +124,38 @@ Settings → Shop Cloud → **Shared shop data** puts the whole shop in the clou
 
 ### Integration keys & the AI assistant
 
-**Settings → Keys & AI** (owner; managers can view) stores the shop's integration keys on the Shop Cloud server, encrypted in [Supabase Vault](https://supabase.com/docs/guides/database/vault). After saving, a key is never sent back to any device — the screen shows only that it's set, its last four characters and when it changed. Keys for texting & calls (Twilio), card payments (Stripe), QuickBooks Online and connected cars (Smartcar) can be stored ahead of those integrations being turned on.
+**Settings → Keys & AI** (owner; managers can view) stores the shop's integration keys on the Shop Cloud server, encrypted in [Supabase Vault](https://supabase.com/docs/guides/database/vault). After saving, a key is never sent back to any device — the screen shows only that it's set, its last four characters and when it changed. The same screen holds the Twilio keys for business texting & calls, and keys for card payments (Stripe), QuickBooks Online and connected cars (Smartcar) can be stored ahead of those integrations being turned on.
 
 - `shop_secret_set` / `shop_secret_get` / `shop_secret_list` (`supabase/migrations/20261003120000_secrets_and_ai.sql`) wrap Vault and can only be called by the service role — the browser can't read a key even with a staff login.
 - The `shop-secrets` Edge Function lets the owner set or remove keys from an allowlist and returns status only; the AI model and monthly limit are plain settings.
 - The `shop-ai` Edge Function runs each assistant task with a fixed instruction and the shop data for that screen (repair order, conversation or customer history — never customer email, phone or payment details), calls the Anthropic Messages API with the shop's key, and counts requests per month in `shop_ai_usage` so the owner can set a limit. Shop data is wrapped as information only, so instructions inside a customer's message aren't followed.
-- To turn it on: create an API key at [console.anthropic.com](https://console.anthropic.com) (usage is billed to the shop's Anthropic account), paste it into **Anthropic API key**, and optionally pick the model (Sonnet by default; Haiku is cheaper, Opus is the most capable) and a monthly request limit.
+- To turn it on: create an API key at [console.anthropic.com](https://console.anthropic.com) (usage is billed to the shop's Anthropic account), paste it into **Anthropic API key**, and optionally pick the model (Claude Opus 5.5 by default, the most capable; Sonnet 5.5 and Haiku 4.5 are faster and cheaper) and a monthly request limit.
+
+### Business texting & calling (Twilio)
+
+Texts and calls run on the shop's own Twilio account (billed by Twilio per text and minute). Setup:
+
+1. Buy (or port) a number with texting and voice in the [Twilio console](https://www.twilio.com/console).
+2. Save the Account SID, Auth token and number in **Settings → Keys & AI**.
+3. Choose **Connect** in **Settings → Messaging**. The `shop-phone` Edge Function checks the keys and points the number's texting, calling and call-status webhooks at the `twilio-webhook` function.
+4. Register the number for business texting. Local numbers need **A2P 10DLC** registration and toll-free numbers need **toll-free verification**. U.S. carriers block unregistered business texts; calls work right away.
+
+How it fits together (`supabase/migrations/20261004120000_business_phone.sql`):
+- **`twilio-webhook`** (`supabase/functions/twilio-webhook`):
+  - Checks every Twilio request against its `X-Twilio-Signature`.
+  - Handles calls end to end: ringing the listed phones, voicemail, the receptionist, transfers and the missed-call text.
+  - Copies picture messages and voicemail into the private `autoshop-files` bucket.
+- **`shop_phone_events`**: what happened (texts, receipts, calls, server-sent texts). Signed-in devices pick these up over Realtime, with polling as a fallback, and file them into conversations. Ids come from Twilio's, so two devices never file the same text twice. A ringing call drives the screen pop.
+- **Receptionist profile**: the receptionist reads `phone/profile.json` in the private bucket, which signed-in devices republish whenever something in it changes. It contains:
+  - hours, address and services
+  - the receptionist settings and notes
+  - a small caller directory: phone number, first name, open repair orders' status and promised time, and the next appointment
+- **The receptionist's replies** use Twilio speech recognition and text-to-speech, with Claude choosing what to say through structured output. The model defaults to Claude Haiku 4.5 for quick replies on a live call; Sonnet 5.5 and Opus 5.5 are available.
+- **AI usage**: replies and call summaries count toward the AI monthly limit.
+- **Scheduled texts**: devices queue appointment confirmations and reminders in `shop_sms_outbox` (keyed by appointment and date, so every device queues the same rows and rescheduling replaces them). A pg_cron job checks every minute and calls the webhook's dispatcher only when something is due. The dispatcher:
+  - skips numbers that replied STOP (`shop_sms_optouts`)
+  - moves anything due between 9 PM and 8 AM to 8 AM
+  - drops anything more than six hours late
 
 **Using a different Supabase project** (e.g. one per shop): open *Connection details* in **Settings → Shop Cloud**, paste the Project URL and anon key, create the bucket, and run the setup SQL shown there — it creates the same staff function, storage policies and inbox table.
 

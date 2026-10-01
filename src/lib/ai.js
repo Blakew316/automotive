@@ -6,10 +6,12 @@ import { STATUS, INSPECTION_RATINGS } from './workflow';
 import { fullName, vehicleName, money, dateShort, number } from './format';
 
 export const AI_MODELS = [
-  { value: 'claude-sonnet-5-5', label: 'Claude Sonnet 5.5 — balanced (recommended)' },
-  { value: 'claude-haiku-4-5-20251001', label: 'Claude Haiku 4.5 — fastest, lowest cost' },
-  { value: 'claude-opus-5-5', label: 'Claude Opus 5.5 — most capable' },
+  { value: 'claude-opus-5-5', label: 'Claude Opus 5.5 — most capable (recommended)' },
+  { value: 'claude-sonnet-5-5', label: 'Claude Sonnet 5.5 — faster, lower cost' },
+  { value: 'claude-haiku-4-5', label: 'Claude Haiku 4.5 — fastest, lowest cost' },
 ];
+// Saved before the Haiku id was shortened.
+export const modelValue = (v) => (v === 'claude-haiku-4-5-20251001' ? 'claude-haiku-4-5' : v);
 
 /** Integration keys the shop can store (values stay on the server). */
 export const KEY_GROUPS = [
@@ -19,10 +21,11 @@ export const KEY_GROUPS = [
   },
   {
     title: 'Texting & calls (Twilio)',
+    setup: { to: '/settings?tab=messaging', label: 'Connect the number in Settings → Messaging' },
     keys: [
-      { name: 'twilio_account_sid', label: 'Account SID', hint: 'Twilio console → Account info' },
-      { name: 'twilio_auth_token', label: 'Auth token', hint: 'Twilio console → Account info' },
-      { name: 'twilio_phone', label: 'Business phone number', hint: 'Your Twilio number in +1… format', setting: true },
+      { name: 'twilio_account_sid', label: 'Account SID', hint: 'Twilio console → Account info (starts with AC)', ready: true },
+      { name: 'twilio_auth_token', label: 'Auth token', hint: 'Twilio console → Account info', ready: true },
+      { name: 'twilio_phone', label: 'Business phone number', hint: 'Your Twilio number, e.g. +15125550100', setting: true, ready: true },
     ],
   },
   {

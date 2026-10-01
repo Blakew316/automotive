@@ -131,8 +131,8 @@ function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, ad
       if (p.name && p.start) {
         bookings.push({
           remoteId: row.id,
-          source: p.source === 'website' ? 'website' : 'online',
-          window: p.source === 'website' && ['Morning', 'Midday', 'Afternoon', 'Flexible'].includes(p.window) ? p.window : null,
+          source: p.source === 'website' || p.source === 'phone' ? p.source : 'online',
+          window: (p.source === 'website' || p.source === 'phone') && ['Morning', 'Midday', 'Afternoon', 'Flexible'].includes(p.window) ? p.window : null,
           createdAt: row.created_at || p.at,
           name: String(p.name).slice(0, 120),
           phone: String(p.phone || '').slice(0, 40),

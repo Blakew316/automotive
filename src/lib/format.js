@@ -66,8 +66,9 @@ export const mailHref = (to = '', subject = '', body = '') =>
 
 export const fullName = (c) => (c ? [c.firstName, c.lastName].filter(Boolean).join(' ') || c.company || 'Unnamed' : 'Walk-in');
 export const initials = (c) => {
-  const n = fullName(c).split(' ').filter(Boolean);
-  return ((n[0]?.[0] || '') + (n[1]?.[0] || '')).toUpperCase() || '?';
+  // Contacts known only by their number (a new caller) get a # instead of digits.
+  const n = fullName(c).replace(/[^\p{L}\p{N}\s]/gu, '').split(' ').filter((w) => /\p{L}/u.test(w));
+  return ((n[0]?.[0] || '') + (n[1]?.[0] || '')).toUpperCase() || (/\d/.test(fullName(c)) ? '#' : '?');
 };
 export const vehicleName = (v, { trim = false } = {}) =>
   v ? [v.year, v.make, v.model, trim ? v.trim : null].filter(Boolean).join(' ') : 'No vehicle';

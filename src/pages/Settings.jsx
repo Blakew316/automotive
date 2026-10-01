@@ -16,6 +16,7 @@ import WebsiteSettings from './settings/WebsiteSettings';
 import FrontDeskSettings from './settings/FrontDeskSettings';
 import LocationsSection from './settings/LocationsSection';
 import KeysSettings from './settings/KeysSettings';
+import PhoneSettings from './settings/PhoneSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
 
@@ -103,6 +104,7 @@ export default function Settings() {
         )}
         {tab === 'messaging' && (
           <>
+            <PhoneSettings />
             <TemplatesSection />
             <MarketingSettings />
           </>

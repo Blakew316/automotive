@@ -8,9 +8,10 @@ import { accountSummary, dueDate, hasTerms, termsLabel } from '../../lib/account
 import TransportCard from './TransportCard';
 import { AuthorizationLog } from './AuthorizeModal';
 import { financingOffer } from '../../lib/financing';
-import { money, fullName, vehicleName, phone, telHref, dateShort, time, number, round2 } from '../../lib/format';
+import { money, fullName, vehicleName, phone, dateShort, time, number, round2 } from '../../lib/format';
 import { PAYMENT_METHODS } from '../../lib/workflow';
 import { nhtsaVinRecallUrl } from '../../lib/nhtsa';
+import CallButton from '../../components/CallButton';
 
 const toLocalInput = (iso) => {
   if (!iso) return '';
@@ -39,9 +40,15 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
               <ChevronRight size={16} className="text-ink-4" />
             </Link>
             <div className="grid grid-cols-3 gap-1.5 px-4 pb-4">
-              <a href={telHref(customer.phone)} className="btn-secondary btn-sm flex-col gap-0.5 py-1.5" style={{ height: 'auto' }}>
-                <Phone size={15} /> Call
-              </a>
+              {customer.phone ? (
+                <CallButton customer={customer} orderId={order.id} className="btn-secondary btn-sm h-auto flex-col gap-0.5 py-1.5">
+                  <Phone size={15} /> Call
+                </CallButton>
+              ) : (
+                <button className="btn-secondary btn-sm flex-col gap-0.5 py-1.5" style={{ height: 'auto' }} disabled>
+                  <Phone size={15} /> Call
+                </button>
+              )}
               <button onClick={() => onCompose({ channel: 'sms', templateId: 'update' })} disabled={!customer.phone} className="btn-secondary btn-sm flex-col gap-0.5 py-1.5" style={{ height: 'auto' }}>
                 <MessageSquare size={15} /> Text
               </button>
