@@ -112,12 +112,10 @@ function Booking({ config }) {
 
   return (
     <div className="min-h-screen bg-canvas">
-      <header className="relative overflow-hidden bg-graphite text-white">
-        <div aria-hidden className="bg-grid absolute inset-0 opacity-70 [--grid:150_180_230]" />
-        <div aria-hidden className="absolute -right-16 -top-24 h-64 w-64 rounded-full bg-brand/35 blur-3xl" />
-        <div className="relative mx-auto max-w-xl px-4 pb-6 pt-5">
+      <header className="bg-graphite text-white">
+        <div className="mx-auto max-w-xl px-4 pb-6 pt-5">
           <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-gradient-to-br from-sky to-accent text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.25)]">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-white text-[rgb(16_33_62)]">
               <Wrench size={18} />
             </span>
             <div className="min-w-0">
@@ -220,9 +218,9 @@ function Booking({ config }) {
                         }}
                         className={`flex w-[62px] shrink-0 flex-col items-center rounded-[12px] border py-2 transition-colors disabled:opacity-35 ${on ? 'border-accent bg-accent text-on-accent' : 'border-line bg-surface hover:bg-fill/[0.04]'}`}
                       >
-                        <span className={`text-2xs uppercase ${on ? 'text-white/80' : 'text-ink-3'}`}>{d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
+                        <span className={`text-2xs uppercase ${on ? 'text-on-accent/80' : 'text-ink-3'}`}>{d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
                         <span className="text-lg font-semibold leading-6">{d.getDate()}</span>
-                        <span className={`text-2xs ${on ? 'text-white/80' : 'text-ink-3'}`}>{d.toLocaleDateString('en-US', { month: 'short' })}</span>
+                        <span className={`text-2xs ${on ? 'text-on-accent/80' : 'text-ink-3'}`}>{d.toLocaleDateString('en-US', { month: 'short' })}</span>
                       </button>
                     );
                   })}
@@ -297,7 +295,7 @@ function Booking({ config }) {
 function ServiceIcon({ title, on }) {
   const Icon = SERVICE_ICONS[title === OTHER ? 'inspect' : iconKey(title)];
   return (
-    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-colors ${on ? 'bg-accent text-white' : 'bg-accent/10 text-accent'}`}>
+    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-colors ${on ? 'bg-accent text-on-accent' : 'bg-accent/10 text-accent'}`}>
       <Icon size={18} strokeWidth={1.9} />
     </span>
   );

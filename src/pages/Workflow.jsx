@@ -86,9 +86,8 @@ export default function Workflow() {
                   setDragId(null);
                   move(id, col.id);
                 }}
-                className={`relative flex min-h-[60vh] flex-col overflow-hidden rounded-xl p-1.5 pt-2.5 transition-colors ${over === col.id ? 'bg-accent/[0.07] ring-1 ring-accent/30' : 'bg-fill/[0.07]'}`}
+                className={`relative flex min-h-[60vh] flex-col overflow-hidden rounded-xl p-1.5 pt-2 transition-colors ${over === col.id ? 'bg-accent/[0.07] ring-1 ring-accent/30' : 'bg-fill/[0.07]'}`}
               >
-                <span aria-hidden className="absolute inset-x-0 top-0 h-[3px]" style={{ background: `rgb(var(--${col.tone}))` }} />
                 <header className="flex items-center justify-between px-2 pb-2 pt-1">
                   <div className="flex items-center gap-2">
                     <Dot className={col.dot} size={7} />

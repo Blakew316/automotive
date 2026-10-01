@@ -356,14 +356,12 @@ function Automations({ onQueue }) {
 
   return (
     <>
-      <section className="chamfer relative mb-6 overflow-hidden rounded-xl bg-graphite px-5 py-5 text-white shadow-pop [--cut:22px] sm:px-6">
-        <div aria-hidden className="bg-grid absolute inset-0 opacity-60 [--grid:150_180_230]" />
-        <div aria-hidden className="absolute -right-16 -top-24 h-56 w-56 rounded-full bg-brand/30 blur-3xl" />
-        <div className="relative flex flex-wrap items-center justify-between gap-4">
+      <section className="card mb-6 px-5 py-5 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <div className="eyebrow eyebrow-on-dark mb-1.5">Today’s follow-ups</div>
+            <div className="eyebrow mb-1.5">Today’s follow-ups</div>
             <div className="text-2xl font-semibold tracking-tight">{total ? `${total} message${total === 1 ? '' : 's'} ready to send` : 'All caught up'}</div>
-            <div className="text-sm text-white/65">{sent30} sent in the last 30 days · texts open in your phone one tap at a time, emails can go as one message</div>
+            <div className="text-sm text-ink-3">{sent30} sent in the last 30 days · texts open in your phone one tap at a time, emails can go as one message</div>
           </div>
           {ready[0] && (
             <button className="btn-primary" onClick={() => start(ready[0])}>

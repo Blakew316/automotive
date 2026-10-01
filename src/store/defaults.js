@@ -2,6 +2,7 @@
 // into saved data and imported backups so older data keeps working.
 import { INSPECTION_TEMPLATE } from '../lib/workflow';
 import { defaultStaff } from '../lib/access';
+import { SHOP_CLOUD } from '../lib/cloudDefaults';
 
 export const MESSAGE_TEMPLATES = [
   { id: 'estimate', label: 'Estimate ready', body: 'Hi {first}, it’s {shop}. Your estimate for the {vehicle} is {total}. Reply YES to approve or call {phone} with questions. Photos and online approval: {link}' },
@@ -62,6 +63,8 @@ export function migrate(data) {
   }
   d.technicians = (d.technicians || []).map((t) => ({ ...TECH_DEFAULTS, ...t }));
   if (!Array.isArray(d.shop.staff) || !d.shop.staff.length) d.shop.staff = defaultStaff(d.technicians);
+  // Connected to the shop's own cloud project unless another one was set up.
+  if (!d.shop.cloud?.url) d.shop.cloud = { ...SHOP_CLOUD };
   for (const k of ['purchaseOrders', 'timeEntries', 'messages', 'expenses', 'bookingRequests', 'campaigns']) if (!Array.isArray(d[k])) d[k] = [];
   if (!Array.isArray(d.inspectionTemplates) || !d.inspectionTemplates.length) d.inspectionTemplates = [DEFAULT_INSPECTION_TEMPLATE];
   d.counters = { po: 2000, ...(d.counters || {}) };

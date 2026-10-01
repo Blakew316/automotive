@@ -49,15 +49,10 @@ export function Card({ className = '', children, ...rest }) {
   );
 }
 
-/** Background classes for colored icon tiles, by tone. */
-const TONES = {
-  blue: 'bg-gradient-to-br from-brand to-accent',
-  sky: 'bg-gradient-to-br from-sky to-brand',
-  slate: 'bg-gradient-to-br from-slate to-graphite',
-  graphite: 'bg-graphite',
-  green: 'bg-gradient-to-br from-ok to-[rgb(14_120_80)]',
-  teal: 'bg-gradient-to-br from-[rgb(21_153_138)] to-[rgb(14_116_110)]',
-};
+/** Icon tile tints by tone — navy or neutral grey, kept light so color never dominates. */
+const NAVY = 'bg-accent/[0.09] text-accent';
+const GREY = 'bg-fill/[0.12] text-ink-2';
+const TONES = { blue: NAVY, sky: NAVY, graphite: NAVY, green: NAVY, slate: GREY, teal: GREY };
 
 export function IconTile({ icon, tone = 'blue', size = 32, className = '' }) {
   const Icon = icon;
@@ -192,7 +187,7 @@ export function Avatar({ person, name, size = 32, className = '' }) {
   const text = person ? initials(person) : (name || '?').split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
   return (
     <span
-      className={`inline-flex shrink-0 select-none items-center justify-center rounded-full bg-gradient-to-b from-fill/[0.16] to-fill/[0.26] font-semibold text-ink-2 ${className}`}
+      className={`inline-flex shrink-0 select-none items-center justify-center rounded-full bg-fill/[0.16] font-semibold text-ink-2 ${className}`}
       style={{ width: size, height: size, fontSize: Math.max(10, size * 0.38) }}
     >
       {text}

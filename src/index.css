@@ -3,147 +3,147 @@
 @tailwind utilities;
 
 /*
- * Design tokens — blue and grey. Cool neutral surfaces, a deep slate sidebar, one strong blue for
- * actions, with sky blue, slate and graphite for module tiles and highlights. Status color
- * (green/amber/red) is reserved for meaning and appears as dots, thin tints and small pills.
+ * Design tokens — navy and light grey. Light grey canvas, white cards, a flat navy sidebar and navy
+ * for actions and links. Everything else stays neutral grey; status color (green/amber/red) is
+ * reserved for meaning and appears only as dots, thin tints and small pills.
  */
 :root {
   color-scheme: light;
-  --canvas: 241 243 246;
+  --canvas: 239 241 244;
   --surface: 255 255 255;
-  --raised: 248 249 251;
-  --sidebar: 20 27 38;
-  --sidebar-2: 31 40 54;
-  --sidebar-ink: 234 239 246;
-  --sidebar-ink-2: 142 154 172;
-  --sidebar-line: 39 49 64;
-  --ink: 22 27 34;
-  --ink-2: 84 94 108;
-  --ink-3: 118 128 142;
-  --ink-4: 164 172 184;
-  --line: 223 227 233;
-  --fill: 110 120 136;
-  --accent: 31 99 212;
+  --raised: 247 248 250;
+  --sidebar: 16 33 62;
+  --sidebar-2: 27 48 84;
+  --sidebar-ink: 233 238 246;
+  --sidebar-ink-2: 152 168 194;
+  --sidebar-line: 33 54 90;
+  --ink: 20 27 38;
+  --ink-2: 76 88 106;
+  --ink-3: 102 113 130;
+  --ink-4: 160 170 184;
+  --line: 222 226 232;
+  --fill: 108 120 138;
+  --accent: 28 59 107;
   --on-accent: 255 255 255;
-  --brand: 37 112 232;
-  --sky: 56 152 236;
-  --slate: 84 98 118;
-  --graphite: 22 30 42;
-  --ok: 22 150 90;
-  --warn: 212 130 0;
-  --bad: 214 48 52;
-  --info: 31 99 212;
-  --violet: 112 86 210;
-  --grid: 31 60 110;
+  --brand: 28 59 107;
+  --sky: 112 140 180;
+  --slate: 100 113 132;
+  --graphite: 16 33 62;
+  --ok: 24 128 80;
+  --warn: 170 100 6;
+  --bad: 196 48 48;
+  --info: 28 59 107;
+  --violet: 90 104 150;
+  --grid: 28 59 107;
   --shadow-ring: 15 23 42;
-  --series-1: #2a6fd6;
-  --series-2: #15998a;
-  --series-3: #8a94a3;
+  --series-1: #2f62b0;
+  --series-2: #13968a;
+  --series-3: #9aa3af;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --canvas: 13 16 21;
-    --surface: 24 28 35;
-    --raised: 31 36 45;
-    --sidebar: 15 19 26;
-    --sidebar-2: 27 33 43;
-    --sidebar-ink: 236 240 246;
-    --sidebar-ink-2: 138 150 168;
-    --sidebar-line: 36 43 55;
-    --ink: 236 240 245;
-    --ink-2: 160 170 184;
-    --ink-3: 124 134 148;
-    --ink-4: 88 97 110;
-    --line: 44 51 62;
-    --fill: 130 140 156;
-    --accent: 61 132 245;
-    --on-accent: 255 255 255;
-    --brand: 61 132 245;
-    --sky: 96 170 255;
-    --slate: 96 110 132;
-    --graphite: 27 34 46;
-    --ok: 48 200 112;
-    --warn: 255 170 40;
-    --bad: 255 92 92;
-    --info: 96 160 255;
-    --violet: 160 140 255;
-    --grid: 150 180 230;
+    --canvas: 11 16 25;
+    --surface: 20 27 39;
+    --raised: 27 35 49;
+    --sidebar: 13 21 35;
+    --sidebar-2: 26 38 58;
+    --sidebar-ink: 233 238 246;
+    --sidebar-ink-2: 140 156 182;
+    --sidebar-line: 33 45 66;
+    --ink: 234 238 244;
+    --ink-2: 162 172 188;
+    --ink-3: 126 137 154;
+    --ink-4: 88 99 116;
+    --line: 42 51 66;
+    --fill: 130 142 160;
+    --accent: 140 172 226;
+    --on-accent: 12 24 44;
+    --brand: 140 172 226;
+    --sky: 120 156 210;
+    --slate: 100 114 136;
+    --graphite: 26 38 58;
+    --ok: 64 186 120;
+    --warn: 230 166 64;
+    --bad: 238 104 104;
+    --info: 140 172 226;
+    --violet: 150 160 210;
+    --grid: 140 172 226;
     --shadow-ring: 255 255 255;
-    --series-1: #3b80e6;
-    --series-2: #169a88;
+    --series-1: #4a82da;
+    --series-2: #16a08f;
     --series-3: #7d8696;
   }
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --canvas: 13 16 21;
-  --surface: 24 28 35;
-  --raised: 31 36 45;
-  --sidebar: 15 19 26;
-  --sidebar-2: 27 33 43;
-  --sidebar-ink: 236 240 246;
-  --sidebar-ink-2: 138 150 168;
-  --sidebar-line: 36 43 55;
-  --ink: 236 240 245;
-  --ink-2: 160 170 184;
-  --ink-3: 124 134 148;
-  --ink-4: 88 97 110;
-  --line: 44 51 62;
-  --fill: 130 140 156;
-  --accent: 61 132 245;
-  --on-accent: 255 255 255;
-  --brand: 61 132 245;
-  --sky: 96 170 255;
-  --slate: 96 110 132;
-  --graphite: 27 34 46;
-  --ok: 48 200 112;
-  --warn: 255 170 40;
-  --bad: 255 92 92;
-  --info: 96 160 255;
-  --violet: 160 140 255;
-  --grid: 150 180 230;
+  --canvas: 11 16 25;
+  --surface: 20 27 39;
+  --raised: 27 35 49;
+  --sidebar: 13 21 35;
+  --sidebar-2: 26 38 58;
+  --sidebar-ink: 233 238 246;
+  --sidebar-ink-2: 140 156 182;
+  --sidebar-line: 33 45 66;
+  --ink: 234 238 244;
+  --ink-2: 162 172 188;
+  --ink-3: 126 137 154;
+  --ink-4: 88 99 116;
+  --line: 42 51 66;
+  --fill: 130 142 160;
+  --accent: 140 172 226;
+  --on-accent: 12 24 44;
+  --brand: 140 172 226;
+  --sky: 120 156 210;
+  --slate: 100 114 136;
+  --graphite: 26 38 58;
+  --ok: 64 186 120;
+  --warn: 230 166 64;
+  --bad: 238 104 104;
+  --info: 140 172 226;
+  --violet: 150 160 210;
+  --grid: 140 172 226;
   --shadow-ring: 255 255 255;
-  --series-1: #3b80e6;
-  --series-2: #169a88;
+  --series-1: #4a82da;
+  --series-2: #16a08f;
   --series-3: #7d8696;
 }
 
 /* Documents (estimates/invoices) always render on paper-white regardless of app theme. */
 .force-light {
   color-scheme: light;
-  --canvas: 241 243 246;
+  --canvas: 239 241 244;
   --surface: 255 255 255;
-  --raised: 248 249 251;
-  --sidebar: 20 27 38;
-  --sidebar-2: 31 40 54;
-  --sidebar-ink: 234 239 246;
-  --sidebar-ink-2: 142 154 172;
-  --sidebar-line: 39 49 64;
-  --ink: 22 27 34;
-  --ink-2: 84 94 108;
-  --ink-3: 118 128 142;
-  --ink-4: 164 172 184;
-  --line: 223 227 233;
-  --fill: 110 120 136;
-  --accent: 31 99 212;
+  --raised: 247 248 250;
+  --sidebar: 16 33 62;
+  --sidebar-2: 27 48 84;
+  --sidebar-ink: 233 238 246;
+  --sidebar-ink-2: 152 168 194;
+  --sidebar-line: 33 54 90;
+  --ink: 20 27 38;
+  --ink-2: 76 88 106;
+  --ink-3: 102 113 130;
+  --ink-4: 160 170 184;
+  --line: 222 226 232;
+  --fill: 108 120 138;
+  --accent: 28 59 107;
   --on-accent: 255 255 255;
-  --brand: 37 112 232;
-  --sky: 56 152 236;
-  --slate: 84 98 118;
-  --graphite: 22 30 42;
-  --ok: 22 150 90;
-  --warn: 212 130 0;
-  --bad: 214 48 52;
-  --info: 31 99 212;
-  --violet: 112 86 210;
-  --grid: 31 60 110;
+  --brand: 28 59 107;
+  --sky: 112 140 180;
+  --slate: 100 113 132;
+  --graphite: 16 33 62;
+  --ok: 24 128 80;
+  --warn: 170 100 6;
+  --bad: 196 48 48;
+  --info: 28 59 107;
+  --violet: 90 104 150;
+  --grid: 28 59 107;
   --shadow-ring: 15 23 42;
-  --series-1: #2a6fd6;
-  --series-2: #15998a;
-  --series-3: #8a94a3;
+  --series-1: #2f62b0;
+  --series-2: #13968a;
+  --series-3: #9aa3af;
 }
 
 @layer base {
@@ -202,7 +202,7 @@
     @apply inline-flex h-8 shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-3 text-sm font-medium transition duration-150 ease-apple disabled:pointer-events-none disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn bg-accent text-on-accent shadow-[0_1px_0_rgb(255_255_255/0.18)_inset,0_1px_2px_rgb(0_0_0/0.12)] hover:brightness-[1.07] active:brightness-95;
+    @apply btn bg-accent text-on-accent shadow-[0_1px_2px_rgb(0_0_0/0.1)] hover:brightness-[1.12] active:brightness-95;
   }
   .btn-dark {
     @apply btn bg-graphite text-white hover:brightness-125 active:brightness-110;
@@ -261,7 +261,7 @@
   .section-label {
     @apply font-mono text-2xs font-semibold uppercase tracking-[0.08em] text-ink-3;
   }
-  /* Short blue rule that opens a section label. */
+  /* Short navy rule that opens a section label. */
   .eyebrow {
     @apply inline-flex items-center gap-2 font-mono text-2xs font-semibold uppercase tracking-[0.1em] text-ink-3;
   }
@@ -272,9 +272,9 @@
   .eyebrow-on-dark {
     @apply text-sidebar-ink-2;
   }
-  /* Colored icon tile used for modules, KPIs and card headers. */
+  /* Quiet icon tile used for modules, KPIs and card headers: a light tint, never a solid fill. */
   .icon-tile {
-    @apply inline-flex shrink-0 items-center justify-center rounded-[9px] text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2),0_1px_2px_rgb(0_0_0/0.12)];
+    @apply inline-flex shrink-0 items-center justify-center rounded-[9px];
   }
   /* Angled top-right corner — the "toolbox" cut used on hero and module tiles. */
   .chamfer {

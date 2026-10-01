@@ -60,13 +60,21 @@ Built with React, Vite and Tailwind. It runs entirely in the browser: shop data 
 
 ## Shop Cloud
 
-Shop data and photos live on the device (localStorage and IndexedDB), so everything works offline and costs nothing. Anything that has to open on a customer’s phone needs to be online, so it uses the shop’s own [Supabase](https://supabase.com) project:
+Shop data and photos live on the device (localStorage and IndexedDB), so everything works offline and costs nothing. Anything that has to open on a customer’s phone needs to be online, so it uses a [Supabase](https://supabase.com) project dedicated to AutoShop Pro.
 
-1. Create a project; copy the Project URL and anon (publishable) key into **Settings → Shop Cloud**.
-2. Create a **public** Storage bucket (default name `shop-media`) and set its file size limit for your videos (50 MB per file on the free plan).
-3. Add a staff user under Authentication → Users and turn off public sign-ups.
-4. Run the SQL shown in Settings (SQL Editor): storage policies so only signed-in staff can upload, replace or delete files, and the `shop_inbox` table customers can only *add* to.
-5. Sign in on each device that publishes reports and press **Test**.
+**It comes preconfigured.** The app ships connected to the *AutoShop Pro* project (`src/lib/cloudDefaults.js`): a public-read `autoshop-media` Storage bucket (photos, video and report files, 50 MB per file) and a `shop_inbox` table. Customers can only *add* booking requests, approvals and messages to the inbox; reading or clearing it, and uploading, replacing or deleting files, require a signed-in account whose `app_metadata.autoshop_staff` flag is set (checked by `public.is_shop_staff()` in every policy). Staff just sign in under **Settings → Shop Cloud** on each device; the first staff sign-in publishes the booking page and website, and passwords can be changed from the same screen. A signed-in account without the staff flag is warned and gets no access.
+
+To add another staff login: create the user under Authentication → Users, then run
+
+```sql
+update auth.users
+  set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"autoshop_staff": true}'::jsonb
+  where email = 'person@yourshop.com';
+```
+
+Turning off “Allow new users to sign up” (Authentication → Sign In / Providers) is recommended; accounts without the flag can’t see or change anything either way.
+
+**Using a different Supabase project** (e.g. one per shop): open *Connection details* in **Settings → Shop Cloud**, paste the Project URL and anon key, create the bucket, and run the setup SQL shown there — it creates the same staff function, storage policies and inbox table.
 
 With it connected:
 - **Share links** for vehicle reports with photos and video. Only items marked “Customer can see” are uploaded; links use random 22-character IDs and can be updated or turned off (which deletes the files).
@@ -81,7 +89,7 @@ CARFAX doesn’t accept uploads from individual shops. Records reach CARFAX Repo
 
 ## Design
 
-A blue-and-grey theme built for the shop: a deep slate sidebar, cool grey surfaces, one strong blue for actions, sky / slate / graphite module tiles, and green / amber / red reserved for status. Monospaced section labels, a faint blueprint grid behind page headers, chart colors checked for color-blind separation, San Francisco on Apple devices with Inter elsewhere, light and dark appearance, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
+Navy and light grey, kept calm: a flat navy sidebar, light grey canvas with white cards, navy for actions and links, and quiet navy or grey icon tints instead of colored tiles — no gradients or glows. Green / amber / red are reserved for status and appear only as dots and small pills. Monospaced section labels, chart colors checked for color-blind separation, San Francisco on Apple devices with Inter elsewhere, light and dark appearance, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
 
 ## Data sources
 
@@ -89,7 +97,7 @@ A blue-and-grey theme built for the shop: a deep slate sidebar, cool grey surfac
 | --- | --- |
 | Vehicle database & VIN decode | NHTSA vPIC (public domain), stored in `public/data` |
 | Recalls, complaints, NCAP ratings | api.nhtsa.gov (optional, live) |
-| Shared reports, photos & video, online approvals, customer replies, booking requests | The shop’s own Supabase project — Storage bucket and `shop_inbox` table (optional) |
+| Shared reports, photos & video, online approvals, customer replies, booking requests | The AutoShop Pro Supabase project — `autoshop-media` Storage bucket and `shop_inbox` table |
 | Firing orders & cylinder numbering | Manufacturer-published data for the engine families in `src/data/engines.js` |
 | OEM service portals & free documents | Manufacturer and government sites, verified Sept 2026 |
 | Trouble codes | SAE J2012 generic definitions |
