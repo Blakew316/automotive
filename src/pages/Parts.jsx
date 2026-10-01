@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Plus, Minus, Package, Boxes, Droplets, ArrowUpRight, Download, Pencil, Trash2, Store } from 'lucide-react';
+import { Search, Plus, Minus, Package, Boxes, Droplets, ArrowUpRight, Download, Pencil, Trash2, Store, ClipboardList } from 'lucide-react';
+import PurchaseOrders from './parts/PurchaseOrders';
+import { onOrderByItem } from '../lib/purchasing';
 import { useShop, useUI } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Tabs, SearchInput, Segmented, EmptyState, Modal, Field, Mono, ExternalLink, Dot } from '../components/ui';
 import { SUPPLIERS, B2B_PLATFORMS, OEM_PARTS, oemPartsFor } from '../lib/suppliers';
@@ -18,7 +20,7 @@ export default function Parts() {
   const low = state.inventory.filter((p) => Number(p.qty) <= Number(p.min)).length;
   return (
     <>
-      <PageHeader title="Parts & Inventory" subtitle="Look up parts across suppliers by vehicle, manage stock, and pull verified maintenance specs." />
+      <PageHeader title="Parts & Inventory" subtitle="Look up parts across suppliers by vehicle, manage stock and purchase orders, and pull verified maintenance specs." />
       <Tabs
         className="mb-6"
         value={tab}
@@ -26,11 +28,13 @@ export default function Parts() {
         tabs={[
           { value: 'catalog', label: 'Supplier lookup', icon: Search },
           { value: 'inventory', label: 'Inventory', icon: Boxes, count: low ? `${low} low` : state.inventory.length },
+          { value: 'orders', label: 'Purchase orders', icon: ClipboardList, count: state.purchaseOrders.filter((p) => ['draft', 'ordered', 'partial'].includes(p.status)).length || null },
           { value: 'specs', label: 'Maintenance specs', icon: Droplets, count: vehicleSpecs.length },
         ]}
       />
       {tab === 'catalog' && <Catalog />}
       {tab === 'inventory' && <Inventory />}
+      {tab === 'orders' && <PurchaseOrders />}
       {tab === 'specs' && <Specs />}
     </>
   );
@@ -164,6 +168,7 @@ function Inventory() {
   const filter = params.get('filter') || 'all';
   const categories = useMemo(() => [...new Set(state.inventory.map((p) => p.category))].sort(), [state.inventory]);
   const [cat, setCat] = useState('all');
+  const onOrder = useMemo(() => onOrderByItem(state.purchaseOrders), [state.purchaseOrders]);
 
   const rows = useMemo(() => {
     const query = q.toLowerCase();
@@ -234,9 +239,12 @@ function Inventory() {
                       <td>
                         <div className="flex items-center justify-center gap-1">
                           <button className="btn-ghost btn-icon h-6 w-6" onClick={() => adjustInventory(p.id, -1)} aria-label="Decrease"><Minus size={12} /></button>
-                          <span className="tabular inline-flex w-12 items-center justify-center gap-1.5 font-medium">
-                            {isLow && <Dot className="bg-warn" size={6} />}
-                            {p.qty}
+                          <span className="tabular inline-flex w-12 flex-col items-center justify-center font-medium">
+                            <span className="inline-flex items-center gap-1.5">
+                              {isLow && !onOrder.get(p.id) && <Dot className="bg-warn" size={6} />}
+                              {p.qty}
+                            </span>
+                            {onOrder.get(p.id) > 0 && <span className="whitespace-nowrap text-2xs font-normal text-info">+{onOrder.get(p.id)} on order</span>}
                           </span>
                           <button className="btn-ghost btn-icon h-6 w-6" onClick={() => adjustInventory(p.id, 1)} aria-label="Increase"><Plus size={12} /></button>
                         </div>

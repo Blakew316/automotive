@@ -1,9 +1,18 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
+import { ChartColumn, Wrench, FileCheck, Users } from 'lucide-react';
 import { useShop, useLookup, useTotals } from '../store/hooks';
-import { PageHeader, Card, CardHeader, Segmented } from '../components/ui';
+import { PageHeader, Card, CardHeader, Segmented, Tabs } from '../components/ui';
+import { TechReport, EstimateReport, CustomerReport } from './reports/MoreReports';
 import { ColumnChart, MixBar, RankBars } from '../components/charts';
 import { money, money0, moneyShort, pct, startOfDay, addDays, dateShort, fullName, number } from '../lib/format';
+
+const TABS = [
+  { value: 'overview', label: 'Sales & profit', icon: ChartColumn },
+  { value: 'techs', label: 'Technicians', icon: Wrench },
+  { value: 'estimates', label: 'Estimates & approvals', icon: FileCheck },
+  { value: 'customers', label: 'Customers', icon: Users },
+];
 
 const RANGES = [
   { value: 7, label: '7 days' },
@@ -18,6 +27,9 @@ export default function Reports() {
   const totals = useTotals();
   const [days, setDays] = useState(30);
   const now = useMemo(() => new Date(), []);
+  const [params, setParams] = useSearchParams();
+  const tab = params.get('tab') || 'overview';
+  const range = useMemo(() => [startOfDay(addDays(now, -days + 1)), addDays(startOfDay(now), 1)], [now, days]);
 
   const r = useMemo(() => {
     const from = startOfDay(addDays(now, -days + 1));
@@ -116,102 +128,110 @@ export default function Reports() {
   return (
     <>
       <PageHeader title="Reports" subtitle="Invoiced work, profitability and productivity. Every number below respects the selected range." />
+      <Tabs className="mb-5" tabs={TABS} value={tab} onChange={(t) => setParams(t === 'overview' ? {} : { tab: t }, { replace: true })} />
       <div className="mb-5">
         <Segmented options={RANGES} value={days} onChange={setDays} />
       </div>
+      {tab === 'techs' && <TechReport from={range[0]} to={range[1]} />}
+      {tab === 'estimates' && <EstimateReport from={range[0]} to={range[1]} />}
+      {tab === 'customers' && <CustomerReport from={range[0]} to={range[1]} />}
+      {tab === 'overview' && (
+        <>
 
-      <Card className="mb-6 grid grid-cols-2 divide-line p-1 md:grid-cols-3 lg:grid-cols-6 lg:divide-x">
-        <Kpi label="Revenue" value={money0(r.revenue)} sub={r.delta == null ? 'No prior period' : `${r.delta >= 0 ? '▲' : '▼'} ${pct(Math.abs(r.delta))} vs prior ${days} days`} />
-        <Kpi label="Car count" value={r.carCount} sub="Invoiced repair orders" />
-        <Kpi label="Avg repair order" value={money0(r.aro)} sub="ARO, incl. tax" />
-        <Kpi label="Gross profit" value={pct(r.gpPct)} sub={`${money0(r.gp)} on parts & labor`} />
-        <Kpi label="Hours sold" value={r.hours.toFixed(1)} sub={`${(r.hours / Math.max(1, r.carCount)).toFixed(1)} per RO`} />
-        <Kpi label="Effective labor rate" value={money0(r.elr)} sub="Labor $ ÷ hours sold" />
-      </Card>
+          <Card className="mb-6 grid grid-cols-2 divide-line p-1 md:grid-cols-3 lg:grid-cols-6 lg:divide-x">
+            <Kpi label="Revenue" value={money0(r.revenue)} sub={r.delta == null ? 'No prior period' : `${r.delta >= 0 ? '▲' : '▼'} ${pct(Math.abs(r.delta))} vs prior ${days} days`} />
+            <Kpi label="Car count" value={r.carCount} sub="Invoiced repair orders" />
+            <Kpi label="Avg repair order" value={money0(r.aro)} sub="ARO, incl. tax" />
+            <Kpi label="Gross profit" value={pct(r.gpPct)} sub={`${money0(r.gp)} on parts & labor`} />
+            <Kpi label="Hours sold" value={r.hours.toFixed(1)} sub={`${(r.hours / Math.max(1, r.carCount)).toFixed(1)} per RO`} />
+            <Kpi label="Effective labor rate" value={money0(r.elr)} sub="Labor $ ÷ hours sold" />
+          </Card>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
-        <Card>
-          <CardHeader title={days <= 7 ? 'Revenue by day' : 'Revenue by week'} subtitle={`${money(r.revenue)} invoiced`} />
-          <div className="px-3 pb-2 pt-3">
-            <ColumnChart data={r.buckets} height={240} format={money0} tickFormat={moneyShort} label="Invoiced revenue over time" />
+          <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+            <Card>
+              <CardHeader title={days <= 7 ? 'Revenue by day' : 'Revenue by week'} subtitle={`${money(r.revenue)} invoiced`} />
+              <div className="px-3 pb-2 pt-3">
+                <ColumnChart data={r.buckets} height={240} format={money0} tickFormat={moneyShort} label="Invoiced revenue over time" />
+              </div>
+            </Card>
+            <Card>
+              <CardHeader title="Sales mix" subtitle="Before tax" />
+              <div className="p-4">
+                <MixBar format={money0} segments={[{ label: 'Labor', value: r.labor }, { label: 'Parts', value: r.parts }, { label: 'Fees & supplies', value: r.other }]} />
+                <div className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-4 text-sm">
+                  <div>
+                    <div className="text-ink-3">Estimate close rate</div>
+                    <div className="text-xl font-semibold">{pct(r.closeRate)}</div>
+                    <div className="text-xs text-ink-3">of quoted service value approved</div>
+                  </div>
+                  <div>
+                    <div className="text-ink-3">Declined work</div>
+                    <div className="text-xl font-semibold">{money0(r.declined)}</div>
+                    <div className="text-xs text-ink-3">follow-up opportunity</div>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
-        </Card>
-        <Card>
-          <CardHeader title="Sales mix" subtitle="Before tax" />
-          <div className="p-4">
-            <MixBar format={money0} segments={[{ label: 'Labor', value: r.labor }, { label: 'Parts', value: r.parts }, { label: 'Fees & supplies', value: r.other }]} />
-            <div className="mt-5 grid grid-cols-2 gap-4 border-t border-line pt-4 text-sm">
-              <div>
-                <div className="text-ink-3">Estimate close rate</div>
-                <div className="text-xl font-semibold">{pct(r.closeRate)}</div>
-                <div className="text-xs text-ink-3">of quoted service value approved</div>
+
+          <div className="mt-6 grid gap-6 lg:grid-cols-3">
+            <Card>
+              <CardHeader title="Technician hours" subtitle="Billed labor hours on invoiced work" />
+              <div className="p-4">
+                <RankBars rows={r.techs} format={(v) => `${v.toFixed(1)} hr`} />
               </div>
-              <div>
-                <div className="text-ink-3">Declined work</div>
-                <div className="text-xl font-semibold">{money0(r.declined)}</div>
-                <div className="text-xs text-ink-3">follow-up opportunity</div>
-              </div>
+            </Card>
+            <Card>
+              <CardHeader title="Top services" subtitle="By revenue" />
+              <table className="table">
+                <tbody>
+                  {r.services.map((s) => (
+                    <tr key={s.title}>
+                      <td className="max-w-[180px] truncate">{s.title}</td>
+                      <td className="tabular text-right text-ink-3">{s.count}×</td>
+                      <td className="tabular text-right">{money0(s.value)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </Card>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader title="Receivables aging" subtitle={`${r.unpaid.length} unpaid invoices`} />
+                <dl className="px-4 py-2">
+                  {r.aging.map((b) => (
+                    <div key={b.label} className="flex justify-between border-b border-line/60 py-2 text-sm last:border-0">
+                      <dt className="text-ink-2">{b.label} <span className="text-ink-4">· {b.list.length}</span></dt>
+                      <dd className="tabular font-medium">{money(b.amount)}</dd>
+                    </div>
+                  ))}
+                </dl>
+                {r.unpaid.slice(0, 4).map((o) => (
+                  <Link key={o.id} to={`/orders/${o.id}`} className="flex justify-between border-t border-line/60 px-4 py-2 text-xs hover:bg-fill/[0.04]">
+                    <span className="text-ink-2">#{o.number} · {fullName(lookup.customer.get(o.customerId))}</span>
+                    <span className="tabular">{money(totals(o).balance)}</span>
+                  </Link>
+                ))}
+              </Card>
+              <Card>
+                <CardHeader title="Payments received" />
+                <dl className="px-4 py-2">
+                  {r.payments.map(([m, v]) => (
+                    <div key={m} className="flex justify-between border-b border-line/60 py-2 text-sm last:border-0">
+                      <dt className="text-ink-2">{m}</dt>
+                      <dd className="tabular">{money(v)}</dd>
+                    </div>
+                  ))}
+                  {!r.payments.length && <p className="py-2 text-sm text-ink-3">No payments in this range.</p>}
+                </dl>
+              </Card>
             </div>
           </div>
-        </Card>
-      </div>
-
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <Card>
-          <CardHeader title="Technician hours" subtitle="Billed labor hours on invoiced work" />
-          <div className="p-4">
-            <RankBars rows={r.techs} format={(v) => `${v.toFixed(1)} hr`} />
-          </div>
-        </Card>
-        <Card>
-          <CardHeader title="Top services" subtitle="By revenue" />
-          <table className="table">
-            <tbody>
-              {r.services.map((s) => (
-                <tr key={s.title}>
-                  <td className="max-w-[180px] truncate">{s.title}</td>
-                  <td className="tabular text-right text-ink-3">{s.count}×</td>
-                  <td className="tabular text-right">{money0(s.value)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </Card>
-        <div className="space-y-6">
-          <Card>
-            <CardHeader title="Receivables aging" subtitle={`${r.unpaid.length} unpaid invoices`} />
-            <dl className="px-4 py-2">
-              {r.aging.map((b) => (
-                <div key={b.label} className="flex justify-between border-b border-line/60 py-2 text-sm last:border-0">
-                  <dt className="text-ink-2">{b.label} <span className="text-ink-4">· {b.list.length}</span></dt>
-                  <dd className="tabular font-medium">{money(b.amount)}</dd>
-                </div>
-              ))}
-            </dl>
-            {r.unpaid.slice(0, 4).map((o) => (
-              <Link key={o.id} to={`/orders/${o.id}`} className="flex justify-between border-t border-line/60 px-4 py-2 text-xs hover:bg-fill/[0.04]">
-                <span className="text-ink-2">#{o.number} · {fullName(lookup.customer.get(o.customerId))}</span>
-                <span className="tabular">{money(totals(o).balance)}</span>
-              </Link>
-            ))}
-          </Card>
-          <Card>
-            <CardHeader title="Payments received" />
-            <dl className="px-4 py-2">
-              {r.payments.map(([m, v]) => (
-                <div key={m} className="flex justify-between border-b border-line/60 py-2 text-sm last:border-0">
-                  <dt className="text-ink-2">{m}</dt>
-                  <dd className="tabular">{money(v)}</dd>
-                </div>
-              ))}
-              {!r.payments.length && <p className="py-2 text-sm text-ink-3">No payments in this range.</p>}
-            </dl>
-          </Card>
-        </div>
-      </div>
-      <p className="mt-6 text-xs text-ink-3">
-        Gross profit uses part costs and your tech pay rate ({money(state.shop.techPayRate)}/hr) from Settings. {number(state.orders.length)} repair orders on file.
-      </p>
+          <p className="mt-6 text-xs text-ink-3">
+            Gross profit uses part costs and your default tech cost ({money(state.shop.techPayRate)}/hr) from Settings. For profit after actual payroll and overhead, see <Link to="/accounting" className="link">Accounting</Link>. {number(state.orders.length)} repair orders on file.
+          </p>
+        </>
+      )}
     </>
   );
 }

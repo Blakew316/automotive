@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, MessageSquare, Mail, Plus, Trash2, ShieldAlert, ScanLine, ChevronRight } from 'lucide-react';
+import { Phone, MessageSquare, Mail, Plus, Trash2, ShieldAlert, ScanLine, ChevronRight, PenLine, HandCoins, Receipt } from 'lucide-react';
 import { useShop, useUI, useTotals } from '../../store/hooks';
-import { Card, CardHeader, Avatar, CopyButton, NumInput, Modal, Field, Mono, ExternalLink } from '../../components/ui';
-import { money, fullName, vehicleName, phone, telHref, smsHref, mailHref, dateShort, time, number, round2 } from '../../lib/format';
+import { Card, CardHeader, Avatar, CopyButton, NumInput, Modal, Field, Mono, ExternalLink, Toggle } from '../../components/ui';
+import { AuthorizationLog } from './AuthorizeModal';
+import { financingOffer } from '../../lib/financing';
+import { money, fullName, vehicleName, phone, telHref, dateShort, time, number, round2 } from '../../lib/format';
 import { PAYMENT_METHODS } from '../../lib/workflow';
 import { nhtsaVinRecallUrl } from '../../lib/nhtsa';
 
@@ -14,7 +16,7 @@ const toLocalInput = (iso) => {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-export default function OrderSidebar({ order, customer, vehicle, editable, onTakePayment }) {
+export default function OrderSidebar({ order, customer, vehicle, editable, onTakePayment, onCompose, onAuthorize }) {
   const { state, updateOrder, removePayment } = useShop();
   const totals = useTotals();
   const t = totals(order);
@@ -36,12 +38,12 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
               <a href={telHref(customer.phone)} className="btn-secondary btn-sm flex-col gap-0.5 py-1.5" style={{ height: 'auto' }}>
                 <Phone size={15} /> Call
               </a>
-              <a href={smsHref(customer.phone)} className="btn-secondary btn-sm flex-col gap-0.5 py-1.5" style={{ height: 'auto' }}>
+              <button onClick={() => onCompose({ channel: 'sms', templateId: 'update' })} disabled={!customer.phone} className="btn-secondary btn-sm flex-col gap-0.5 py-1.5" style={{ height: 'auto' }}>
                 <MessageSquare size={15} /> Text
-              </a>
-              <a href={mailHref(customer.email)} className="btn-secondary btn-sm flex-col gap-0.5 py-1.5" style={{ height: 'auto' }}>
+              </button>
+              <button onClick={() => onCompose({ channel: 'email', templateId: 'update' })} disabled={!customer.email} className="btn-secondary btn-sm flex-col gap-0.5 py-1.5" style={{ height: 'auto' }}>
                 <Mail size={15} /> Email
-              </a>
+              </button>
             </div>
           </>
         ) : (
@@ -171,14 +173,40 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
         </div>
       </Card>
 
+      {(order.authorizations?.length > 0 || t.pending > 0) && (
+        <Card>
+          <CardHeader
+            title="Authorizations"
+            subtitle={t.pending ? `${t.pending} service${t.pending === 1 ? '' : 's'} awaiting approval` : undefined}
+            actions={
+              t.pending > 0 && (
+                <button className="btn-plain btn-sm" onClick={onAuthorize}>
+                  <PenLine size={13} /> Authorize
+                </button>
+              )
+            }
+          />
+          {order.authorizations?.length ? <AuthorizationLog order={order} /> : <p className="px-4 py-3 text-sm text-ink-3">No approvals recorded yet.</p>}
+        </Card>
+      )}
+
+      <FinancingCard order={order} total={t.total} />
+
       <Card>
         <CardHeader
           title="Payments"
           actions={
             order.status !== 'estimate' && (
-              <button className="btn-plain btn-sm" onClick={onTakePayment} disabled={t.balance <= 0.004}>
-                <Plus size={14} /> Take payment
-              </button>
+              <span className="flex gap-1">
+                {customer && t.balance > 0.004 && ['ready', 'closed'].includes(order.status) && (
+                  <button className="btn-plain btn-sm" onClick={() => onCompose({ templateId: 'pay' })} title="Text or email a payment link">
+                    <HandCoins size={14} /> Request
+                  </button>
+                )}
+                <button className="btn-plain btn-sm" onClick={onTakePayment} disabled={t.balance <= 0.004}>
+                  <Plus size={14} /> Take payment
+                </button>
+              </span>
             )
           }
         />
@@ -190,7 +218,11 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
               <li key={p.id} className="group flex items-center gap-3 px-4 py-2 text-sm">
                 <div className="min-w-0 flex-1">
                   <div>{p.method}{p.ref ? <span className="text-ink-3"> · {p.ref}</span> : null}</div>
-                  <div className="text-xs text-ink-3">{dateShort(p.at)}, {time(p.at)}</div>
+                  <div className="text-xs text-ink-3">
+                    {dateShort(p.at)}, {time(p.at)}
+                    {p.tip > 0 ? ` · tip ${money(p.tip)}` : ''}
+                    {p.surcharge > 0 ? ` · surcharge ${money(p.surcharge)}` : ''}
+                  </div>
                 </div>
                 <span className="tabular font-medium">{money(p.amount)}</span>
                 <button onClick={() => removePayment(order.id, p.id)} className="btn-ghost btn-icon h-6 w-6 opacity-0 group-hover:opacity-100" aria-label="Remove payment">
@@ -214,21 +246,56 @@ function Row({ label, value }) {
   );
 }
 
-export function PaymentModal({ order, onClose }) {
-  const { addPayment } = useShop();
+function FinancingCard({ order, total }) {
+  const { state } = useShop();
+  const offer = financingOffer(state.shop, total);
+  if (!offer || order.status === 'closed') return null;
+  return (
+    <Card className="px-4 py-3">
+      <div className="flex items-start gap-2.5">
+        <HandCoins size={16} className="mt-0.5 shrink-0 text-ink-3" />
+        <div className="min-w-0 flex-1 text-sm">
+          <div className="font-medium">
+            As low as {money(offer.monthly)}/mo
+            <span className="font-normal text-ink-3"> for {offer.months} months</span>
+          </div>
+          <div className="text-xs text-ink-3">
+            {offer.terms.map((x) => `${money(x.monthly)} × ${x.months}`).join(' · ')} · {offer.apr}% APR example{offer.provider ? ` · ${offer.provider}` : ''}
+          </div>
+          {offer.url && (
+            <ExternalLink href={offer.url} className="mt-1 text-xs">
+              Application link
+            </ExternalLink>
+          )}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+export function PaymentModal({ order, onClose, onReceipt }) {
+  const { state, addPayment } = useShop();
   const { toast } = useUI();
   const totals = useTotals();
+  const pay = state.shop.payments || {};
   const balance = Math.max(0, totals(order).balance);
   const [amount, setAmount] = useState(balance.toFixed(2));
   const [method, setMethod] = useState('Card');
   const [ref, setRef] = useState('');
+  const [tipPct, setTipPct] = useState(0);
+  const [tipCustom, setTipCustom] = useState('');
+  const [sendReceipt, setSendReceipt] = useState(true);
   const n = round2(parseFloat(amount) || 0);
+  const tip = round2(tipCustom !== '' ? parseFloat(tipCustom) || 0 : (n * tipPct) / 100);
+  const surcharge = method === 'Card' && pay.surchargePct > 0 ? round2(((n + tip) * pay.surchargePct) / 100) : 0;
+  const charge = round2(n + tip + surcharge);
 
   const submit = () => {
     if (n <= 0) return;
-    addPayment(order.id, { amount: n, method, ref });
-    toast(`${money(n)} ${method.toLowerCase()} payment recorded`, { tone: 'success' });
+    addPayment(order.id, { amount: n, method, ref, tip, surcharge });
+    toast(`${money(charge)} ${method.toLowerCase()} payment recorded`, { tone: 'success' });
     onClose();
+    if (sendReceipt) onReceipt?.(charge);
   };
 
   return (
@@ -241,12 +308,12 @@ export function PaymentModal({ order, onClose }) {
       footer={
         <>
           <button className="btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn-primary" disabled={n <= 0} onClick={submit}>Record {money(n)}</button>
+          <button className="btn-primary" disabled={n <= 0} onClick={submit}>Charge {money(charge)}</button>
         </>
       }
     >
       <div className="space-y-4">
-        <Field label="Amount">
+        <Field label="Amount toward invoice">
           {(id) => (
             <div className="relative">
               <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-lg text-ink-3">$</span>
@@ -264,7 +331,33 @@ export function PaymentModal({ order, onClose }) {
             ))}
           </div>
         </div>
-        <Field label="Reference" hint="Last 4, check #, authorization code…">{(id) => <input id={id} className="input" value={ref} onChange={(e) => setRef(e.target.value)} />}</Field>
+        {pay.tipsEnabled && (
+          <div>
+            <span className="field-label">Tip</span>
+            <div className="flex flex-wrap items-center gap-1.5">
+              {[0, 10, 15, 20].map((p) => (
+                <button
+                  key={p}
+                  onClick={() => {
+                    setTipPct(p);
+                    setTipCustom('');
+                  }}
+                  className={`chip h-7 ${tipCustom === '' && tipPct === p ? 'border-accent bg-accent/[0.08] text-ink' : 'hover:bg-fill/[0.05]'}`}
+                >
+                  {p ? `${p}%` : 'No tip'}
+                </button>
+              ))}
+              <input inputMode="decimal" placeholder="Custom $" value={tipCustom} onChange={(e) => setTipCustom(e.target.value)} className="input h-7 w-24 py-0 text-sm" aria-label="Custom tip" />
+            </div>
+          </div>
+        )}
+        <Field label="Reference" hint="Terminal approval code, last 4, check #…">{(id) => <input id={id} className="input" value={ref} onChange={(e) => setRef(e.target.value)} />}</Field>
+        <dl className="space-y-1 rounded-[10px] bg-fill/[0.06] px-3 py-2 text-sm">
+          <div className="flex justify-between"><dt className="text-ink-2">Toward invoice</dt><dd className="tabular">{money(n)}</dd></div>
+          {tip > 0 && <div className="flex justify-between"><dt className="text-ink-2">Tip</dt><dd className="tabular">{money(tip)}</dd></div>}
+          {surcharge > 0 && <div className="flex justify-between"><dt className="text-ink-2">Card surcharge ({pay.surchargePct}%)</dt><dd className="tabular">{money(surcharge)}</dd></div>}
+          <div className="flex justify-between border-t border-line/70 pt-1 font-semibold"><dt>Charge</dt><dd className="tabular">{money(charge)}</dd></div>
+        </dl>
         {n > 0 && n < balance && (
           <p className="text-xs text-ink-3">
             Partial payment — {money(balance - n)} will remain.{' '}
@@ -272,6 +365,14 @@ export function PaymentModal({ order, onClose }) {
               Pay in full
             </button>
           </p>
+        )}
+        {onReceipt && (
+          <label className="flex items-center justify-between gap-3 text-sm text-ink-2">
+            <span className="flex items-center gap-2">
+              <Receipt size={14} className="text-ink-3" /> Send a receipt after recording
+            </span>
+            <Toggle checked={sendReceipt} onChange={setSendReceipt} label="Send receipt" />
+          </label>
         )}
       </div>
     </Modal>

@@ -2,7 +2,10 @@
 // Deliberately excludes internal data — costs, margins, technician pay, internal notes, and any
 // photo or video marked internal.
 import { orderTotals, serviceTotal, itemTotal } from './pricing';
-import { STATUS, INSPECTION_TEMPLATE } from './workflow';
+import { STATUS } from './workflow';
+import { payLink } from './messaging';
+import { financingOffer } from './financing';
+import { inspectionTemplateFor } from './inspection';
 
 export const REPORT_VERSION = 1;
 
@@ -12,7 +15,7 @@ export function buildReport(order, state, { showPrices = true } = {}) {
   const vehicle = state.vehicles.find((v) => v.id === order.vehicleId);
   const t = orderTotals(order, shop);
   const media = (order.media || []).filter((m) => m.customer);
-  const keys = INSPECTION_TEMPLATE.flatMap((s) => s.items.map((label) => ({ key: `${s.section}::${label}`, section: s.section, label })));
+  const keys = inspectionTemplateFor(state, order).sections.flatMap((s) => s.items.map((label) => ({ key: `${s.section}::${label}`, section: s.section, label })));
   const inspection = keys
     .map((k) => ({ ...k, ...(order.inspection?.[k.key] || {}) }))
     .filter((i) => i.rating && i.rating !== 'na');
@@ -47,9 +50,11 @@ export function buildReport(order, state, { showPrices = true } = {}) {
         .map((i) => ({ type: i.type, description: i.description, qty: i.type === 'labor' ? null : Number(i.qty) || 1, total: showPrices ? itemTotal(i) : null })),
     })),
     totals: showPrices ? { subtotal: t.subtotal, discount: t.discount, supplies: t.supplies, tax: t.tax, total: t.total, paid: t.paid, balance: t.balance } : null,
+    payLink: showPrices && t.balance > 0.004 && ['ready', 'closed'].includes(order.status) ? payLink(shop, t.balance, `RO ${order.number}`) || null : null,
+    financing: showPrices && !['closed'].includes(order.status) ? financingOffer(shop, t.total) : null,
     inspection: {
       counts: { good: inspection.filter((i) => i.rating === 'good').length, soon: inspection.filter((i) => i.rating === 'soon').length, now: inspection.filter((i) => i.rating === 'now').length },
-      items: inspection.map(({ key, section, label, rating, note }) => ({ key, section, label, rating, note: note || '' })),
+      items: inspection.map(({ key, section, label, rating, note, measure }) => ({ key, section, label, rating, note: note || '', measure: measure ?? null, unit: /\(mm\)/i.test(label) ? 'mm' : /\(32nds\)/i.test(label) ? '/32 in' : '' })),
     },
     notes: (order.notes || []).filter((n) => !n.internal).map((n) => ({ at: n.at, text: n.text })),
     media: media.map(({ id, kind, caption, serviceId, inspectionKey, width, height, duration, type, hasThumb, createdAt }) => ({

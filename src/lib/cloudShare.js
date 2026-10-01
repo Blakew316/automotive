@@ -1,6 +1,6 @@
 // Optional cloud sharing for vehicle reports, photos and video, using Supabase Storage. The site
 // itself is static, so links that work on a customer's phone need the files hosted somewhere:
-// the shop connects its own Supabase project (Settings → Photo & video sharing), signs in as a
+// the shop connects its own Supabase project (Settings → Shop Cloud), signs in as a
 // staff user, and published reports live at unguessable URLs in a public bucket.
 import { getFile } from './media';
 
@@ -49,7 +49,7 @@ export const signIn = (cfg, email, password) => authRequest(cfg, 'password', { e
 
 async function accessToken(cfg) {
   const s = readSession();
-  if (!s || s.url !== cfg.url) throw new Error('Sign in under Settings → Photo & video sharing first.');
+  if (!s || s.url !== cfg.url) throw new Error('Sign in under Settings → Shop Cloud first.');
   if (s.expires - Date.now() > 60_000) return s.access;
   return (await authRequest(cfg, 'refresh_token', { refresh_token: s.refresh })).access;
 }
@@ -58,6 +58,7 @@ async function accessToken(cfg) {
 
 const objectUrl = (cfg, path) => `${cfg.url}/storage/v1/object/${encodeURIComponent(cfg.bucket)}/${path}`;
 export const publicBase = (cfg) => `${cfg.url}/storage/v1/object/public/${encodeURIComponent(cfg.bucket)}/ro`;
+export const publicSiteBase = (cfg) => `${cfg.url}/storage/v1/object/public/${encodeURIComponent(cfg.bucket)}/site`;
 
 async function upload(cfg, token, path, body, contentType, cacheSeconds = 31536000) {
   const res = await fetch(objectUrl(cfg, path), {
@@ -117,6 +118,8 @@ export async function publishReport(cfg, report, share, onProgress = () => {}) {
   onProgress({ done, total: todo.length, name: 'report' });
   const remote = {
     ...report,
+    // Lets the customer approve work or send a message back through the shop's inbox table.
+    inbox: { url: cfg.url, key: cfg.key },
     media: report.media.map((m) => ({ ...m, file: `${m.id}.${extFor(m)}`, thumbFile: m.hasThumb ? `${m.id}-thumb.jpg` : null })),
   };
   // Short cache so updates to the report reach customers quickly.
@@ -140,6 +143,47 @@ export async function revokeReport(cfg, share) {
   return { ...share, revoked: true, uploaded: [] };
 }
 
+/** Publish the online-booking configuration (hours, services, busy times) for the public page. */
+export async function publishBooking(cfg, config) {
+  const token = await accessToken(cfg);
+  await upload(cfg, token, 'site/booking.json', new Blob([JSON.stringify(config)], { type: 'application/json' }), 'application/json', 60);
+}
+
+// ---------------------------------------------------------------- Shop inbox (Supabase table)
+// Customers (anonymous) can only insert; signed-in staff read and clear. See the SQL in Settings.
+
+const restHeaders = (key, token) => ({ apikey: key, Authorization: `Bearer ${token || key}`, 'Content-Type': 'application/json' });
+
+/** Customer side: drop a booking request, approval or message into the shop's inbox. */
+export async function submitToInbox(inbox, kind, ref, payload) {
+  const res = await fetch(`${trim(inbox.url)}/rest/v1/shop_inbox`, {
+    method: 'POST',
+    headers: { ...restHeaders(inbox.key), Prefer: 'return=minimal' },
+    body: JSON.stringify({ kind, ref: ref || null, payload }),
+  });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.message || `Couldn’t send (${res.status})`);
+  }
+}
+
+/** Shop side: everything waiting in the inbox, oldest first. */
+export async function fetchInbox(cfg) {
+  const token = await accessToken(cfg);
+  const res = await fetch(`${cfg.url}/rest/v1/shop_inbox?select=*&order=created_at.asc&limit=200`, { headers: restHeaders(cfg.key, token) });
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(res.status === 404 || /relation .* does not exist/i.test(data.message || '') ? 'The shop_inbox table is missing — run the setup SQL in Settings → Shop Cloud.' : data.message || `Inbox unavailable (${res.status})`);
+  }
+  return res.json();
+}
+
+export async function clearInbox(cfg, ids) {
+  if (!ids.length) return;
+  const token = await accessToken(cfg);
+  await fetch(`${cfg.url}/rest/v1/shop_inbox?id=in.(${ids.map((x) => encodeURIComponent(x)).join(',')})`, { method: 'DELETE', headers: restHeaders(cfg.key, token) });
+}
+
 /** Upload, read back and delete a small file to prove the setup works. */
 export async function testConnection(cfg) {
   const token = await accessToken(cfg);
@@ -157,13 +201,14 @@ export async function testConnection(cfg) {
  * Where a share link's files live. Only Supabase Storage public URLs are accepted, so a crafted
  * link can't make this site display a report from an arbitrary server.
  */
-export function parseShareSource(from) {
+export function parseShareSource(from, folder = 'ro') {
   try {
     const u = new URL(from);
     if (u.protocol !== 'https:') return null;
     if (!/\.supabase\.(co|in)$/i.test(u.hostname)) return null;
-    if (!/^\/storage\/v1\/object\/public\/[^/]+\/ro$/.test(u.pathname.replace(/\/+$/, ''))) return null;
-    return `${u.origin}${u.pathname.replace(/\/+$/, '')}`;
+    const path = u.pathname.replace(/\/+$/, '');
+    if (!new RegExp(`^/storage/v1/object/public/[^/]+/${folder}$`).test(path)) return null;
+    return `${u.origin}${path}`;
   } catch {
     return null;
   }

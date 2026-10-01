@@ -1,15 +1,17 @@
 import { Plus } from 'lucide-react';
 import { useShop, useUI } from '../../store/hooks';
 import { Card, CardHeader, Dot, InlineText } from '../../components/ui';
-import { INSPECTION_TEMPLATE, INSPECTION_RATINGS } from '../../lib/workflow';
+import { INSPECTION_RATINGS } from '../../lib/workflow';
+import { inspectionTemplateFor, inspectionPoints, measurementKind, ratingForMeasurement } from '../../lib/inspection';
 import { MediaStrip } from './MediaPanel';
 
 const RATING_ORDER = ['good', 'soon', 'now'];
 
 export default function InspectionPanel({ order, editable, onOpenMedia }) {
-  const { setInspection, addService } = useShop();
+  const { state, setInspection, addService, updateOrder } = useShop();
   const { toast } = useUI();
-  const all = INSPECTION_TEMPLATE.flatMap((s) => s.items.map((label) => ({ key: `${s.section}::${label}`, section: s.section, label })));
+  const template = inspectionTemplateFor(state, order);
+  const all = inspectionPoints(template);
   const ratings = all.map((i) => order.inspection[i.key]?.rating).filter(Boolean);
   const count = (r) => ratings.filter((x) => x === r).length;
   const flagged = all.filter((i) => ['soon', 'now'].includes(order.inspection[i.key]?.rating));
@@ -22,6 +24,19 @@ export default function InspectionPanel({ order, editable, onOpenMedia }) {
   return (
     <div className="space-y-4">
       <Card className="flex flex-wrap items-center gap-x-6 gap-y-2 px-4 py-3">
+        {state.inspectionTemplates.length > 1 && (
+          <select
+            className="input h-8 w-auto py-0 text-sm font-medium"
+            value={template.id}
+            disabled={!editable}
+            onChange={(e) => updateOrder(order.id, { inspectionTemplateId: e.target.value })}
+            aria-label="Inspection template"
+          >
+            {state.inspectionTemplates.map((t) => (
+              <option key={t.id} value={t.id}>{t.name}</option>
+            ))}
+          </select>
+        )}
         <div className="text-sm text-ink-2">
           <span className="font-semibold text-ink">{ratings.length}</span> of {all.length} points inspected
         </div>
@@ -55,13 +70,14 @@ export default function InspectionPanel({ order, editable, onOpenMedia }) {
         </Card>
       )}
 
-      {INSPECTION_TEMPLATE.map((section) => (
+      {template.sections.map((section) => (
         <Card key={section.section}>
           <CardHeader title={section.section} />
           <ul className="divide-y divide-line/70">
             {section.items.map((label) => {
               const key = `${section.section}::${label}`;
               const entry = order.inspection[key] || {};
+              const kind = measurementKind(label);
               return (
                 <li key={key} className="flex flex-wrap items-center gap-x-4 gap-y-1.5 px-4 py-2">
                   <span className="min-w-[180px] flex-1 text-sm text-ink">{label}</span>
@@ -83,6 +99,24 @@ export default function InspectionPanel({ order, editable, onOpenMedia }) {
                       );
                     })}
                   </div>
+                  {kind && (
+                    <span className="flex items-center gap-1">
+                      <input
+                        inputMode="decimal"
+                        disabled={!editable}
+                        defaultValue={entry.measure ?? ''}
+                        key={`${key}:${entry.measure ?? ''}`}
+                        onBlur={(e) => {
+                          const v = e.target.value.trim();
+                          if (v === String(entry.measure ?? '')) return;
+                          setInspection(order.id, key, { measure: v === '' ? null : Number(v), ...(v !== '' ? { rating: ratingForMeasurement(kind, v) } : {}) });
+                        }}
+                        className="h-7 w-14 rounded-[6px] border border-line bg-surface px-1.5 text-right text-sm tabular-nums outline-none focus:border-accent/60"
+                        aria-label={`${label} measurement`}
+                      />
+                      <span className="text-xs text-ink-3">{kind === 'mm' ? 'mm' : '/32'}</span>
+                    </span>
+                  )}
                   <InlineText
                     value={entry.note}
                     placeholder="Note / measurement"

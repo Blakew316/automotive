@@ -3,7 +3,7 @@
 // "customer view" and public share links. `Media` renders one photo/video from wherever it lives.
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Phone, MessageSquare, Check, X, ChevronLeft, ChevronRight, Play, CircleCheck, CircleAlert, TriangleAlert, Wrench, Images, Clock } from 'lucide-react';
+import { Phone, MessageSquare, Check, X, ChevronLeft, ChevronRight, Play, CircleCheck, CircleAlert, TriangleAlert, Wrench, Images, Clock, CreditCard } from 'lucide-react';
 import { money, date, dateTime, phone as fmtPhone, telHref, smsHref, number } from '../lib/format';
 import { approvalText } from '../lib/report';
 import { formatDuration } from '../lib/media';
@@ -23,7 +23,7 @@ const STATUS_COPY = {
 };
 const SVC_STATUS = { pending: 'Awaiting your approval', approved: 'Approved', declined: 'Declined' };
 
-export default function ReportView({ report, Media, onDecision }) {
+export default function ReportView({ report, Media, onDecision, decisions = {}, footer }) {
   const [open, setOpen] = useState(null);
   const { shop, vehicle, ro, totals } = report;
   useEffect(() => {
@@ -86,23 +86,34 @@ export default function ReportView({ report, Media, onDecision }) {
       )}
 
       {pending.length > 0 && (
-        <Block title="Needs your approval" subtitle={onDecision ? 'Approve or decline each item' : 'Reply by text or call us to approve'} accent>
+        <Block title="Needs your approval" subtitle={onDecision ? 'Choose for each item, then sign to send your decision' : 'Reply by text or call us to approve'} accent>
           <ul className="divide-y divide-line/70">
             {pending.map((s) => (
               <ServiceRow key={s.id} s={s} showPrices={report.showPrices} media={byService(s.id)} Media={Media} onOpen={openMedia}>
                 {onDecision ? (
-                  <div className="mt-3 flex gap-2">
-                    <button className="btn-primary flex-1 sm:flex-none" onClick={() => onDecision(s.id, 'approved')}>
-                      <Check size={15} /> Approve
+                  <div className="mt-3 flex gap-2" role="radiogroup" aria-label={`Decision for ${s.title}`}>
+                    <button
+                      role="radio"
+                      aria-checked={decisions[s.id] === 'approved'}
+                      className={`flex-1 sm:flex-none ${decisions[s.id] === 'approved' ? 'btn-primary' : 'btn-secondary'}`}
+                      onClick={() => onDecision(s.id, decisions[s.id] === 'approved' ? null : 'approved')}
+                    >
+                      <Check size={15} /> {decisions[s.id] === 'approved' ? 'Approved' : 'Approve'}
                     </button>
-                    <button className="btn-secondary flex-1 sm:flex-none" onClick={() => onDecision(s.id, 'declined')}>
-                      <X size={15} /> Decline
+                    <button
+                      role="radio"
+                      aria-checked={decisions[s.id] === 'declined'}
+                      className={`flex-1 sm:flex-none ${decisions[s.id] === 'declined' ? 'btn-primary !bg-ink-2' : 'btn-secondary'}`}
+                      onClick={() => onDecision(s.id, decisions[s.id] === 'declined' ? null : 'declined')}
+                    >
+                      <X size={15} /> {decisions[s.id] === 'declined' ? 'Declined' : 'Not now'}
                     </button>
                   </div>
                 ) : null}
               </ServiceRow>
             ))}
           </ul>
+          {footer}
           {!onDecision && (
             <div className="border-t border-line/70 px-4 py-3">
               <a href={smsHref(shop.phone, approvalText(report))} className="btn-primary w-full sm:w-auto">
@@ -132,7 +143,10 @@ export default function ReportView({ report, Media, onDecision }) {
                     <R.icon size={17} className={`mt-0.5 shrink-0 ${R.tone}`} />
                     <div className="min-w-0 flex-1">
                       <div className="text-md font-medium text-ink">{i.label.replace(/\s*\(.*\)$/, '')}</div>
-                      <div className={`text-xs font-medium ${R.tone}`}>{R.label}</div>
+                      <div className={`text-xs font-medium ${R.tone}`}>
+                        {R.label}
+                        {i.measure != null && <span className="text-ink-2"> · measured {i.measure}{i.unit === 'mm' ? ' mm' : i.unit}</span>}
+                      </div>
                       {i.note && <p className="mt-1 text-sm text-ink-2">{i.note}</p>}
                     </div>
                   </div>
@@ -198,6 +212,29 @@ export default function ReportView({ report, Media, onDecision }) {
             {totals.paid > 0 && <Row k="Balance due" v={money(totals.balance)} strong />}
           </dl>
           {pending.length > 0 && <p className="border-t border-line/70 px-4 py-2 text-xs text-ink-3">Totals include items awaiting your approval; declined items are removed.</p>}
+          {report.payLink && (
+            <div className="border-t border-line/70 px-4 py-3">
+              <a href={report.payLink} target="_blank" rel="noopener noreferrer" className="btn-primary w-full sm:w-auto">
+                <CreditCard size={15} /> Pay {money(totals.balance)} now
+              </a>
+            </div>
+          )}
+          {report.financing && (
+            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line/70 px-4 py-3 text-sm">
+              <span>
+                <span className="font-medium text-ink">Financing available</span>
+                <span className="block text-xs text-ink-3">
+                  As low as {money(report.financing.monthly)}/mo for {report.financing.months} months ({report.financing.apr}% APR example, subject to approval)
+                  {report.financing.provider ? ` · ${report.financing.provider}` : ''}
+                </span>
+              </span>
+              {report.financing.url && (
+                <a href={report.financing.url} target="_blank" rel="noopener noreferrer" className="btn-secondary btn-sm">
+                  Apply
+                </a>
+              )}
+            </div>
+          )}
         </Block>
       )}
 

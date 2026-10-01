@@ -4,6 +4,7 @@ import { ChevronLeft, Share2, Eye } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
 import { EmptyState, Toggle } from '../components/ui';
 import ReportView, { MediaFallback } from '../components/ReportView';
+import ApprovalPanel from '../components/ApprovalPanel';
 import ShareModal from './order/ShareModal';
 import Toasts from '../components/Toasts';
 import { buildReport } from '../lib/report';
@@ -20,10 +21,12 @@ export function LocalMedia({ media, variant, className }) {
 /** The customer-facing report, shown in the shop (counter screen, tablet hand-off). */
 export default function CustomerReport() {
   const { id } = useParams();
-  const { state, updateService } = useShop();
+  const { state, authorize } = useShop();
   const { toast } = useUI();
   const [showPrices, setShowPrices] = useState(true);
   const [sharing, setSharing] = useState(false);
+  const [decisions, setDecisions] = useState({});
+  const [done, setDone] = useState('');
   const order = state.orders.find((o) => o.id === id);
   const report = useMemo(() => (order ? buildReport(order, state, { showPrices }) : null), [order, state, showPrices]);
   if (!order) return <EmptyState title="Repair order not found" action={<Link to="/orders" className="btn-secondary">Back</Link>} />;
@@ -51,10 +54,25 @@ export default function CustomerReport() {
       <ReportView
         report={report}
         Media={LocalMedia}
-        onDecision={(serviceId, status) => {
-          updateService(order.id, serviceId, { status });
-          toast(status === 'approved' ? 'Approved — thank you!' : 'Declined', { tone: status === 'approved' ? 'success' : undefined });
-        }}
+        decisions={decisions}
+        onDecision={(serviceId, status) => setDecisions((d) => ({ ...d, [serviceId]: status }))}
+        footer={
+          <ApprovalPanel
+            report={report}
+            decisions={decisions}
+            done={done}
+            defaultName={customer ? [customer.firstName, customer.lastName].filter(Boolean).join(' ') : ''}
+            submitLabel="Sign & authorize"
+            onSubmit={({ name, signature }) => {
+              const serviceIds = Object.keys(decisions).filter((k) => decisions[k] === 'approved');
+              const declineIds = Object.keys(decisions).filter((k) => decisions[k] === 'declined');
+              authorize(order.id, { serviceIds, declineIds, method: 'in-person', by: name, signature });
+              setDecisions({});
+              setDone(`${serviceIds.length} approved${declineIds.length ? `, ${declineIds.length} declined` : ''}. Your service advisor has it.`);
+              toast('Authorization recorded', { tone: 'success' });
+            }}
+          />
+        }
       />
       <Toasts />
       {sharing && <ShareModal order={order} customer={customer} vehicle={vehicle} showPrices={showPrices} onClose={() => setSharing(false)} />}

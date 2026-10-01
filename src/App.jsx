@@ -27,6 +27,14 @@ const SharedReport = lazy(() => import('./pages/SharedReport'));
 const CatalogHome = lazy(() => import('./pages/catalog/CatalogHome'));
 const CatalogMake = lazy(() => import('./pages/catalog/CatalogMake'));
 const CatalogModel = lazy(() => import('./pages/catalog/CatalogModel'));
+const Messages = lazy(() => import('./pages/Messages'));
+const Tech = lazy(() => import('./pages/Tech'));
+const Team = lazy(() => import('./pages/Team'));
+const Accounting = lazy(() => import('./pages/Accounting'));
+const Marketing = lazy(() => import('./pages/Marketing'));
+const Integrations = lazy(() => import('./pages/Integrations'));
+const Import = lazy(() => import('./pages/Import'));
+const Book = lazy(() => import('./pages/Book'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -40,8 +48,9 @@ export default function App() {
       <UIProvider>
         <Suspense fallback={<Loading />}>
           <Routes>
-            {/* Public report links open on customers' devices, so they never load shop data. */}
+            {/* Public pages (report links, online booking) open on customers' devices, so they never load shop data. */}
             <Route path="/share/:id" element={<SharedReport />} />
+            <Route path="/book" element={<Book />} />
             <Route
               path="*"
               element={
@@ -57,6 +66,14 @@ export default function App() {
                         <Route path="/orders/new" element={<NewOrder />} />
                         <Route path="/orders/:id" element={<OrderDetail />} />
                         <Route path="/calendar" element={<Calendar />} />
+                        <Route path="/messages" element={<Messages />} />
+                        <Route path="/messages/:customerId" element={<Messages />} />
+                        <Route path="/marketing" element={<Marketing />} />
+                        <Route path="/tech" element={<Tech />} />
+                        <Route path="/team" element={<Team />} />
+                        <Route path="/accounting" element={<Accounting />} />
+                        <Route path="/integrations" element={<Integrations />} />
+                        <Route path="/import" element={<Import />} />
                         <Route path="/customers" element={<Customers />} />
                         <Route path="/customers/:id" element={<CustomerDetail />} />
                         <Route path="/vehicles" element={<Vehicles />} />

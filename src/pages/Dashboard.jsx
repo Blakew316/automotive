@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays } from 'lucide-react';
+import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer } from 'lucide-react';
 import { useShop, useLookup, useTotals } from '../store/hooks';
 import { PageHeader, Card, CardHeader, StatusLabel, Avatar, EmptyState, Dot } from '../components/ui';
 import { ColumnChart } from '../components/charts';
 import { AppointmentForm } from '../components/forms';
 import { money, money0, moneyShort, fullName, vehicleName, time, relTime, sameDay, startOfDay, addDays, dateShort, weekday } from '../lib/format';
 import { STATUSES, WIP_STATUSES } from '../lib/workflow';
+import { openShift, runningJob, entryMs, fmtDuration, useNow } from '../lib/time';
 
 export default function Dashboard() {
   const { state } = useShop();
@@ -36,6 +37,16 @@ export default function Dashboard() {
       if (o.status === 'estimate' && now - new Date(o.createdAt) > 3 * 3600000) attention.push({ id: `est-${o.id}`, icon: FileText, text: `${name} estimate needs a follow-up`, sub: `Sent ${relTime(o.createdAt, now)} · ${money0(totals(o).total)}`, to: `/orders/${o.id}`, tone: 'bg-info' });
     });
     receivable.filter((o) => o.status === 'ready').forEach((o) => attention.push({ id: `bal-${o.id}`, icon: Receipt, text: `#${o.number} ready — ${money(totals(o).balance)} due`, sub: fullName(lookup.customer.get(o.customerId)), to: `/orders/${o.id}`, tone: 'bg-ok' }));
+    const requests = state.bookingRequests.filter((b) => b.status === 'new');
+    if (requests.length) attention.unshift({ id: 'book', icon: Globe, text: `${requests.length} online booking request${requests.length === 1 ? '' : 's'} to confirm`, sub: requests.map((b) => b.name).join(', '), to: '/calendar', tone: 'bg-accent' });
+    const unread = state.messages.filter((m) => m.dir === 'in' && !m.read);
+    if (unread.length) {
+      const who = [...new Set(unread.map((m) => fullName(lookup.customer.get(m.customerId))))];
+      attention.unshift({ id: 'msgs', icon: MessageSquare, text: `${unread.length} unread customer message${unread.length === 1 ? '' : 's'}`, sub: who.slice(0, 3).join(', '), to: unread.length && who.length === 1 ? `/messages/${unread[0].customerId}` : '/messages', tone: 'bg-accent' });
+    }
+    state.purchaseOrders
+      .filter((po) => (po.status === 'ordered' || po.status === 'partial') && po.expectedAt && new Date(po.expectedAt) < addDays(startOfDay(now), 1))
+      .forEach((po) => attention.push({ id: `po-${po.id}`, icon: Truck, text: `PO #${po.number} from ${po.vendor} ${new Date(po.expectedAt) < startOfDay(now) ? 'is overdue' : 'arrives today'}`, sub: `${po.lines.length} line${po.lines.length === 1 ? '' : 's'} — receive it when it lands`, to: '/parts?tab=orders', tone: 'bg-warn' }));
     const low = state.inventory.filter((p) => Number(p.qty) <= Number(p.min));
     if (low.length) attention.push({ id: 'low', icon: Package, text: `${low.length} inventory items at or below minimum`, sub: low.slice(0, 3).map((p) => p.partNumber || p.description).join(', '), to: '/parts?tab=inventory&filter=low', tone: 'bg-warn' });
 
@@ -61,7 +72,7 @@ export default function Dashboard() {
       receivableTotal: receivable.reduce((s, o) => s + totals(o).balance, 0),
       receivableCount: receivable.length,
     };
-  }, [state.orders, state.inventory, lookup, totals, now]);
+  }, [state.orders, state.inventory, state.bookingRequests, state.messages, state.purchaseOrders, lookup, totals, now]);
 
   const appointments = state.appointments.filter((a) => sameDay(a.start, now)).sort((a, b) => new Date(a.start) - new Date(b.start));
   const hour = now.getHours();
@@ -229,6 +240,8 @@ export default function Dashboard() {
             )}
           </Card>
 
+          <OnTheClock />
+
           <Card>
             <CardHeader
               title="Invoiced, last 14 days"
@@ -271,6 +284,65 @@ function Stat({ label, value, sub, to }) {
       <div className="mt-1 text-[26px] font-semibold leading-8 tracking-tight text-ink">{value}</div>
       <div className="mt-0.5 truncate text-xs text-ink-3">{sub}</div>
     </Link>
+  );
+}
+
+/** Who's clocked in and what they're working on right now. */
+function OnTheClock() {
+  const { state } = useShop();
+  const lookup = useLookup();
+  const now = useNow(30000);
+  const techs = state.technicians.filter((t) => t.active !== false);
+  const rows = techs.map((t) => {
+    const shift = openShift(state.timeEntries, t.id);
+    const job = runningJob(state.timeEntries, t.id);
+    const order = job && lookup.order.get(job.orderId);
+    return { t, shift, job, order, service: order?.services.find((s) => s.id === job.serviceId) };
+  });
+  const clocked = rows.filter((r) => r.shift).length;
+  return (
+    <Card>
+      <CardHeader
+        title="On the clock"
+        subtitle={`${clocked} of ${techs.length} technicians in`}
+        actions={
+          <Link to="/team" className="btn-plain btn-sm">
+            Team <ArrowRight size={13} />
+          </Link>
+        }
+      />
+      <ul className="divide-y divide-line/70">
+        {rows.map(({ t, shift, job, order, service }) => (
+          <li key={t.id} className="flex items-center gap-3 px-4 py-2.5">
+            <span className="relative">
+              <Avatar name={t.name} size={30} />
+              <span className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full ring-2 ring-surface ${job ? 'bg-ok' : shift ? 'bg-warn' : 'bg-ink-4'}`} />
+            </span>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-medium">{t.name}</div>
+              <div className="truncate text-xs text-ink-3">
+                {job && order ? (
+                  <Link to={`/orders/${order.id}`} className="hover:text-ink">
+                    {service?.title || 'Job'} · RO #{order.number}
+                  </Link>
+                ) : shift ? (
+                  'Clocked in — no job running'
+                ) : (
+                  'Off the clock'
+                )}
+              </div>
+            </div>
+            {job ? (
+              <span className="tabular flex items-center gap-1 text-xs text-ok">
+                <Timer size={12} /> {fmtDuration(entryMs(job, now))}
+              </span>
+            ) : shift ? (
+              <span className="tabular text-xs text-ink-3">since {time(shift.start)}</span>
+            ) : null}
+          </li>
+        ))}
+      </ul>
+    </Card>
   );
 }
 
