@@ -1,13 +1,15 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, ClipboardList, PackageCheck, Send, Trash2, Wand2, Mail, Copy, Check, Search } from 'lucide-react';
-import { useShop, useUI } from '../../store/hooks';
+import { useUI, useScopedShop } from '../../store/hooks';
 import { Card, Segmented, EmptyState, Modal, Field, Dot, Mono, SearchInput } from '../../components/ui';
 import { money, dateShort, mailHref, isoDate } from '../../lib/format';
 import { PO_STATUS, poTotal, onOrderByItem } from '../../lib/purchasing';
+import { findPartByCode } from '../../lib/inventory';
+import Scanner from '../../components/Scanner';
 
 export default function PurchaseOrders() {
-  const { state, savePO } = useShop();
+  const { state, savePO } = useScopedShop();
   const { toast } = useUI();
   const [filter, setFilter] = useState('open');
   const [openId, setOpenId] = useState(null);
@@ -119,13 +121,33 @@ export default function PurchaseOrders() {
 }
 
 function POModal({ po, onClose, onCreated }) {
-  const { state, savePO, deletePO, setPOStatus, receivePO } = useShop();
+  const { state, savePO, deletePO, setPOStatus, receivePO } = useScopedShop();
   const { toast } = useUI();
   const [draft, setDraft] = useState(() => po || { vendor: '', vendorEmail: '', expectedAt: null, notes: '', lines: [] });
   const [mode, setMode] = useState(po && ['ordered', 'partial'].includes(po.status) ? 'view' : 'edit');
   const [receipts, setReceipts] = useState(() => Object.fromEntries((po?.lines || []).map((l) => [l.id, Math.max(0, l.qty - l.received)])));
   const [picking, setPicking] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [scanned, setScanned] = useState(false);
+  // Scan-to-receive: count each box as it's unpacked (the first scan starts the count from zero).
+  const onScan = (code) => {
+    const inv = findPartByCode(state.inventory, code);
+    const line = po.lines.find((l) => (inv && l.inventoryId === inv.id) || (l.partNumber && findPartByCode([{ partNumber: l.partNumber }], code)));
+    if (!line) {
+      toast(`${code} isn’t on this PO`, { tone: 'error' });
+    } else {
+      setReceipts((r) => {
+        const base = scanned ? r : Object.fromEntries(po.lines.map((l) => [l.id, 0]));
+        const left = Math.max(0, line.qty - line.received);
+        const next = Math.min(left, (Number(base[line.id]) || 0) + 1);
+        toast(next === (Number(base[line.id]) || 0) ? `All ${left} of ${line.description} already counted` : `${line.description}: ${next} of ${left}`);
+        return { ...base, [line.id]: next };
+      });
+      setScanned(true);
+    }
+    setTimeout(() => setScanning(true), 400);
+  };
   const editable = !po || po.status === 'draft';
   const vendors = useMemo(() => [...new Set([...state.inventory.map((p) => p.vendor), ...state.purchaseOrders.map((p) => p.vendor)].filter(Boolean))].sort(), [state.inventory, state.purchaseOrders]);
   const total = poTotal(draft);
@@ -138,6 +160,8 @@ function POModal({ po, onClose, onCreated }) {
   const text = `Purchase order #${po?.number || ''} — ${state.shop.name}\n${draft.lines.map((l) => `${l.qty} × ${l.partNumber ? `${l.partNumber} ` : ''}${l.description}`).join('\n')}\n\n${state.shop.name}, ${state.shop.address}, ${state.shop.city} ${state.shop.state} · ${state.shop.phone}`;
 
   return (
+    <>
+    {scanning && <Scanner mode="part" title="Scan to receive" hint="Scan each part as you unpack it — the counts below follow." onResult={onScan} onClose={() => setScanning(false)} />}
     <Modal
       open
       onClose={onClose}
@@ -160,6 +184,7 @@ function POModal({ po, onClose, onCreated }) {
           )}
           {mode === 'receive' ? (
             <>
+              <button className="btn-secondary mr-auto" onClick={() => setScanning(true)}>Scan items</button>
               <button className="btn-secondary" onClick={() => setMode('view')}>Cancel</button>
               <button
                 className="btn-primary"
@@ -353,11 +378,12 @@ function POModal({ po, onClose, onCreated }) {
         />
       )}
     </Modal>
+    </>
   );
 }
 
 function LinePicker({ kind, onClose, onAdd }) {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const [q, setQ] = useState('');
   const [chosen, setChosen] = useState({});
   const roParts = useMemo(

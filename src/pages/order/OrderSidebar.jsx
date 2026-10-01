@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Phone, MessageSquare, Mail, Plus, Trash2, ShieldAlert, ScanLine, ChevronRight, PenLine, HandCoins, Receipt, Building2, CalendarClock } from 'lucide-react';
 import { orderProfit, profitTone, TONE_TEXT, TONE_BG } from '../../lib/profit';
-import { useShop, useUI, useTotals } from '../../store/hooks';
+import { useShop, useUI, useTotals, useSite } from '../../store/hooks';
 import { Card, CardHeader, Avatar, CopyButton, NumInput, Modal, Field, Mono, ExternalLink, Toggle, InlineText } from '../../components/ui';
 import { accountSummary, dueDate, hasTerms, termsLabel } from '../../lib/accounts';
 import TransportCard from './TransportCard';
@@ -22,6 +22,7 @@ const toLocalInput = (iso) => {
 export default function OrderSidebar({ order, customer, vehicle, editable, onTakePayment, onCharge, onCompose, onAuthorize }) {
   const { state, updateOrder, removePayment } = useShop();
   const totals = useTotals();
+  const site = useSite();
   const t = totals(order);
 
   return (
@@ -103,6 +104,17 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
 
       <Card className="px-4 py-3">
         <div className="space-y-2.5">
+          {site.multi && (
+            <Field label="Location">
+              {(id) => (
+                <select id={id} className="input" value={order.locationId || 'main'} onChange={(e) => updateOrder(order.id, { locationId: e.target.value === 'main' ? null : e.target.value })}>
+                  {site.sites.map((l) => (
+                    <option key={l.id} value={l.id}>{l.name}</option>
+                  ))}
+                </select>
+              )}
+            </Field>
+          )}
           <Field label="Technician">
             {(id) => (
               <select id={id} className="input" value={order.techId || ''} onChange={(e) => updateOrder(order.id, { techId: e.target.value || null })}>

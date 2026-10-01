@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Car, Plus, CircleCheck, Check } from 'lucide-react';
-import { useShop, useUI } from '../store/hooks';
+import { useShop, useUI, useSite } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Field, Avatar } from '../components/ui';
 import { CustomerPicker, CustomerForm, VehicleForm } from '../components/forms';
 import { fullName, vehicleName, money } from '../lib/format';
@@ -22,13 +22,15 @@ export default function NewOrder() {
   const [jobs, setJobs] = useState(() => (params.get('jobs') || '').split(',').filter((j) => state.cannedJobs.some((x) => x.id === j)));
   const [newCustomer, setNewCustomer] = useState(false);
   const [newVehicle, setNewVehicle] = useState(false);
+  const site = useSite();
+  const [locationId, setLocationId] = useState(site.current === 'all' ? 'main' : site.current);
 
   const customer = state.customers.find((c) => c.id === customerId);
   const vehicles = state.vehicles.filter((v) => v.customerId === customerId);
   const categories = useMemo(() => [...new Set(state.cannedJobs.map((j) => j.category))], [state.cannedJobs]);
 
   const create = (status) => {
-    const o = createOrder({ customerId, vehicleId: vehicleId || null, concern, jobIds: jobs, appointmentId: appt?.id, status });
+    const o = createOrder({ customerId, vehicleId: vehicleId || null, concern, jobIds: jobs, appointmentId: appt?.id, status, ...(site.multi ? { locationId: locationId === 'main' ? null : locationId } : {}) });
     toast(`Repair order #${o.number} created`, { tone: 'success' });
     navigate(`/orders/${o.id}`, { replace: true });
   };
@@ -151,6 +153,18 @@ export default function NewOrder() {
               <div className="flex justify-between gap-3"><dt className="text-ink-3">Customer</dt><dd className="truncate text-right">{customer ? fullName(customer) : '—'}</dd></div>
               <div className="flex justify-between gap-3"><dt className="text-ink-3">Vehicle</dt><dd className="truncate text-right">{vehicleId ? vehicleName(state.vehicles.find((v) => v.id === vehicleId)) : '—'}</dd></div>
               <div className="flex justify-between gap-3"><dt className="text-ink-3">Services</dt><dd>{jobs.length}</dd></div>
+              {site.multi && (
+                <div className="flex items-center justify-between gap-3">
+                  <dt className="text-ink-3">Location</dt>
+                  <dd>
+                    <select className="input h-7 py-0 text-sm" value={locationId} onChange={(e) => setLocationId(e.target.value)} aria-label="Location">
+                      {site.sites.map((l) => (
+                        <option key={l.id} value={l.id}>{l.name}</option>
+                      ))}
+                    </select>
+                  </dd>
+                </div>
+              )}
             </dl>
             <div className="mt-4 space-y-2">
               <button className="btn-primary w-full" disabled={!customerId} onClick={() => create('estimate')}>

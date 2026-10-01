@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer, Wrench, Car, Wallet, Megaphone, Landmark, ChartColumn, Activity, KeyRound } from 'lucide-react';
-import { useShop, useLookup, useTotals, useAccess } from '../store/hooks';
+import { useLookup, useTotals, useAccess, useScopedShop } from '../store/hooks';
 import { Card, CardHeader, StatusLabel, Avatar, EmptyState, Dot, IconTile } from '../components/ui';
 import { ColumnChart } from '../components/charts';
 import { AppointmentForm } from '../components/forms';
@@ -12,7 +12,7 @@ import { automationStatus } from '../lib/automations';
 import { openInvoices, isAccount } from '../lib/accounts';
 
 export default function Dashboard() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const lookup = useLookup();
   const totals = useTotals();
   const navigate = useNavigate();
@@ -316,7 +316,7 @@ function HeroStat({ icon, tone, label, value, sub, to }) {
 
 /** One-tap entry points into the rest of the shop, each with a live number. */
 function ModuleStrip() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const { can } = useAccess();
   const unread = state.messages.filter((m) => m.dir === 'in' && !m.read).length;
   const clocked = state.timeEntries.filter((e) => e.kind === 'shift' && !e.end).length;
@@ -353,7 +353,7 @@ function ModuleStrip() {
 
 /** Who's clocked in and what they're working on right now. */
 function OnTheClock() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const lookup = useLookup();
   const now = useNow(30000);
   const techs = state.technicians.filter((t) => t.active !== false);

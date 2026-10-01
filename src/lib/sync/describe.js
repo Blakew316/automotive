@@ -39,6 +39,10 @@ const LABELS = {
   unit: 'Unit #',
   driver: 'Driver',
   pm: 'Maintenance record',
+  locationId: 'Location',
+  barcode: 'Barcode',
+  countedAt: 'Inventory count',
+  payrollId: 'Payroll employee ID',
 };
 const IGNORE = new Set(['updatedAt', 'id']);
 const titleOf = (x) => x?.title || x?.description || x?.text || x?.name || 'item';

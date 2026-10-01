@@ -1,15 +1,16 @@
 // Printable sign for the key drop box and the lobby: scan to check in.
 import { Link } from 'react-router-dom';
 import { ChevronLeft, Printer } from 'lucide-react';
-import { useShop } from '../store/hooks';
+import { useShop, useSite } from '../store/hooks';
 import QrCode from '../components/QrCode';
 import { checkinLink } from '../lib/operations';
 import { phone as fmtPhone } from '../lib/format';
 
 export default function CheckinSign() {
   const { state } = useShop();
+  const site = useSite();
   const shop = state.shop;
-  const link = checkinLink(state);
+  const link = checkinLink(state, site.current);
   return (
     <div className="min-h-screen bg-canvas pb-16">
       <div className="no-print glass sticky top-0 z-10 border-b border-line bg-canvas/80">

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Users, Clock, BadgeDollarSign, LayoutList, Plus, Pencil, Download, Trash2, Timer, ShieldCheck } from 'lucide-react';
+import { Users, Clock, BadgeDollarSign, LayoutList, Plus, Pencil, Download, Trash2, Timer, ShieldCheck, Printer, CircleCheck, Settings2 } from 'lucide-react';
 import { useShop, useUI, useLookup, useAccess } from '../store/hooks';
 import { canSeePay } from '../lib/access';
 import Access from './team/Access';
@@ -9,16 +9,19 @@ import { PageHeader, Card, CardHeader, Tabs, Segmented, Avatar, Modal, Field, To
 import { teamSummary, useNow, entryMs, fmtDuration, runningJob, openShift } from '../lib/time';
 import { serviceHours } from '../lib/pricing';
 import { money, pct, dateShort, time, startOfDay, addDays, vehicleName, isoDate } from '../lib/format';
-import { toCsv } from '../lib/serviceHistory';
+import { payPeriod, payrollSettings, payrollRows, payrollCsv, hoursImportCsv, periodKey, PAY_PERIODS } from '../lib/payroll';
 
 const PERIODS = [
+  { value: 'pp', label: 'This pay period' },
+  { value: 'ppl', label: 'Last pay period' },
   { value: 'week', label: 'This week' },
   { value: 'last', label: 'Last week' },
   { value: 'month', label: 'This month' },
   { value: '30', label: '30 days' },
 ];
 
-function periodRange(p, now = new Date()) {
+function periodRange(p, settings, now = new Date()) {
+  if (p === 'pp' || p === 'ppl') return payPeriod(settings, now, p === 'ppl' ? -1 : 0);
   const today = startOfDay(now);
   const monday = addDays(today, -((today.getDay() + 6) % 7));
   if (p === 'week') return [monday, addDays(monday, 7)];
@@ -30,10 +33,11 @@ function periodRange(p, now = new Date()) {
 export default function Team() {
   const [params, setParams] = useSearchParams();
   const tab = params.get('tab') || 'board';
-  const [period, setPeriod] = useState('week');
+  const [period, setPeriod] = useState('pp');
   const { state } = useShop();
   const { role } = useAccess();
-  const [from, to] = useMemo(() => periodRange(period), [period]);
+  const settings = useMemo(() => payrollSettings(state.shop), [state.shop]);
+  const [from, to] = useMemo(() => periodRange(period, settings), [period, settings]);
   const summary = useMemo(() => teamSummary(state, from, to), [state, from, to]);
 
   return (
@@ -61,7 +65,7 @@ export default function Team() {
       )}
       {tab === 'board' && <Board />}
       {tab === 'time' && <Timesheets summary={summary} from={from} to={to} />}
-      {tab === 'pay' && canSeePay(role) && <Pay summary={summary} from={from} to={to} />}
+      {tab === 'pay' && canSeePay(role) && <Pay from={from} to={to} />}
       {tab === 'people' && <People />}
       {tab === 'access' && role === 'owner' && (
         <div className="space-y-6">
@@ -263,68 +267,150 @@ function EntryForm({ entry, onClose }) {
   );
 }
 
-function Pay({ summary, from, to }) {
+function Pay({ from, to }) {
+  const { state, updateShop } = useShop();
   const { toast } = useUI();
-  const total = summary.reduce((s, r) => s + r.totalPay, 0);
-  const exportCsv = () => {
-    const rows = summary.map((r) => [r.tech.name, r.tech.payType === 'flat' ? 'Flat rate' : 'Hourly', r.tech.payRate, r.shiftH.toFixed(2), r.flagged.toFixed(2), r.basePay.toFixed(2), r.laborSales.toFixed(2), r.partsSales.toFixed(2), r.commission.toFixed(2), r.totalPay.toFixed(2)]);
+  const { user } = useAccess();
+  const [editing, setEditing] = useState(false);
+  const settings = payrollSettings(state.shop);
+  const rows = useMemo(() => payrollRows(state, from, to), [state, from, to]);
+  const total = rows.reduce((s, r) => s + r.gross, 0);
+  const key = periodKey(from);
+  const approved = settings.approved?.[key];
+  const download = (text, name) => {
     const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([toCsv(['Technician', 'Pay type', 'Rate', 'Hours on clock', 'Flagged hours', 'Base pay', 'Labor sales', 'Parts sales', 'Commission', 'Gross pay'], rows)], { type: 'text/csv' }));
-    a.download = `payroll-${isoDate(from)}-to-${isoDate(addDays(to, -1))}.csv`;
+    a.href = URL.createObjectURL(new Blob([text], { type: 'text/csv' }));
+    a.download = name;
     a.click();
     URL.revokeObjectURL(a.href);
-    toast('Payroll export downloaded', { tone: 'success' });
+    toast(`${name} downloaded`, { tone: 'success' });
+  };
+  const stamp = `${isoDate(from)}-to-${isoDate(addDays(to, -1))}`;
+  const approve = () => {
+    updateShop({ payroll: { ...settings, approved: { ...(settings.approved || {}), [key]: approved ? undefined : { at: new Date().toISOString(), by: user?.name || 'Owner', gross: Math.round(total * 100) / 100 } } } });
+    toast(approved ? 'Approval removed' : 'Pay period approved', { tone: 'success' });
   };
   return (
-    <Card>
-      <CardHeader
-        title="Gross pay"
-        subtitle={`${money(total)} for the period · hourly techs paid on clock hours, flat-rate techs on flagged hours`}
-        actions={
-          <button className="btn-secondary btn-sm" onClick={exportCsv}>
-            <Download size={13} /> Payroll CSV
-          </button>
-        }
-      />
-      <div className="overflow-x-auto">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Technician</th>
-              <th>Pay</th>
-              <th className="text-right">Hours paid</th>
-              <th className="text-right">Base pay</th>
-              <th className="hidden text-right md:table-cell">Labor sales</th>
-              <th className="hidden text-right md:table-cell">Parts sales</th>
-              <th className="text-right">Commission</th>
-              <th className="text-right">Gross</th>
-            </tr>
-          </thead>
-          <tbody>
-            {summary.map((r) => (
-              <tr key={r.tech.id}>
-                <td className="font-medium">{r.tech.name}</td>
-                <td className="whitespace-nowrap text-ink-2">
-                  {r.tech.payType === 'flat' ? 'Flat rate' : 'Hourly'} {money(r.tech.payRate)}/hr
-                  {(r.tech.laborCommissionPct > 0 || r.tech.partsCommissionPct > 0) && (
-                    <span className="block text-xs text-ink-3">
-                      +{r.tech.laborCommissionPct || 0}% labor{r.tech.partsCommissionPct ? `, ${r.tech.partsCommissionPct}% parts` : ''}
-                    </span>
-                  )}
-                </td>
-                <td className="tabular text-right">{(r.tech.payType === 'flat' ? r.flagged : r.shiftH).toFixed(1)}</td>
-                <td className="tabular text-right">{money(r.basePay)}</td>
-                <td className="tabular hidden text-right text-ink-2 md:table-cell">{money(r.laborSales)}</td>
-                <td className="tabular hidden text-right text-ink-2 md:table-cell">{money(r.partsSales)}</td>
-                <td className="tabular text-right">{money(r.commission)}</td>
-                <td className="tabular text-right font-semibold">{money(r.totalPay)}</td>
+    <div className="space-y-4">
+      <Card>
+        <CardHeader
+          title="Gross pay"
+          subtitle={`${money(total)} for ${dateShort(from)} – ${dateShort(addDays(to, -1))} · ${PAY_PERIODS[settings.period]?.toLowerCase()} pay, overtime over ${settings.overtimeWeekly || '—'} h/week${settings.overtimeDaily ? ` or ${settings.overtimeDaily} h/day` : ''}`}
+          actions={
+            <>
+              <button className="btn-plain btn-sm" onClick={() => setEditing(true)}><Settings2 size={13} /> Settings</button>
+              <Link to={`/team/timecards?from=${isoDate(from)}&to=${isoDate(to)}`} className="btn-secondary btn-sm"><Printer size={13} /> Timecards</Link>
+              <button className="btn-secondary btn-sm" onClick={() => download(hoursImportCsv(rows), `payroll-hours-${stamp}.csv`)}><Download size={13} /> Hours import</button>
+              <button className="btn-secondary btn-sm" onClick={() => download(payrollCsv(rows, from, to), `payroll-${stamp}.csv`)}><Download size={13} /> Payroll CSV</button>
+            </>
+          }
+        />
+        <div className="overflow-x-auto">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Technician</th>
+                <th>Pay</th>
+                <th className="text-right">Regular</th>
+                <th className="text-right">Overtime</th>
+                <th className="hidden text-right md:table-cell">Flagged</th>
+                <th className="text-right">Base pay</th>
+                <th className="text-right">Commission</th>
+                <th className="text-right">Gross</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((r) => (
+                <tr key={r.tech.id}>
+                  <td>
+                    <div className="font-medium">{r.tech.name}</div>
+                    {r.tech.payrollId && <div className="text-xs text-ink-3">ID {r.tech.payrollId}</div>}
+                  </td>
+                  <td className="whitespace-nowrap text-ink-2">
+                    {r.flat ? 'Flat rate' : 'Hourly'} {money(r.rate)}/hr
+                    {(r.tech.laborCommissionPct > 0 || r.tech.partsCommissionPct > 0) && (
+                      <span className="block text-xs text-ink-3">
+                        +{r.tech.laborCommissionPct || 0}% labor{r.tech.partsCommissionPct ? `, ${r.tech.partsCommissionPct}% parts` : ''}
+                      </span>
+                    )}
+                  </td>
+                  <td className="tabular text-right">{(r.flat ? r.flagged : r.regular).toFixed(2)}</td>
+                  <td className={`tabular text-right ${r.overtime > 0 && !r.flat ? 'font-medium text-warn' : 'text-ink-3'}`}>{r.flat ? '—' : r.overtime.toFixed(2)}</td>
+                  <td className="tabular hidden text-right text-ink-2 md:table-cell">{r.flagged.toFixed(1)}</td>
+                  <td className="tabular text-right">{money(r.regularPay + r.overtimePay)}</td>
+                  <td className="tabular text-right">{money(r.commission)}</td>
+                  <td className="tabular text-right font-semibold">{money(r.gross)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line/70 px-4 py-3">
+          <p className="max-w-2xl text-xs text-ink-3">
+            Hourly techs: clock hours, overtime at {settings.otMultiplier}× by workweek. Flat-rate techs: flagged hours on work invoiced in the period (check your state’s minimum-wage and overtime rules for flat-rate pay). Commission is on labor and parts sales invoiced in the period. <b>Hours import</b> is the simple spreadsheet most payroll services (Gusto, ADP, Paychex, QuickBooks Payroll) take — match its columns on your provider’s import screen; set each tech’s payroll employee ID under Technicians.
+          </p>
+          <button className={approved ? 'btn-secondary btn-sm' : 'btn-primary btn-sm'} onClick={approve}>
+            <CircleCheck size={13} /> {approved ? `Approved by ${approved.by} · ${dateShort(approved.at)}` : 'Approve this period'}
+          </button>
+        </div>
+      </Card>
+      {editing && <PayrollSettings settings={settings} onSave={(patch) => updateShop({ payroll: { ...settings, ...patch } })} onClose={() => setEditing(false)} />}
+    </div>
+  );
+}
+
+function PayrollSettings({ settings, onSave, onClose }) {
+  const [f, setF] = useState(() => ({ ...settings, overtimeDaily: settings.overtimeDaily ?? '' }));
+  const set = (k) => (e) => setF((x) => ({ ...x, [k]: e.target.value }));
+  const num = (v) => (Number(v) > 0 ? Number(v) : null);
+  return (
+    <Modal
+      open
+      size="sm"
+      onClose={onClose}
+      title="Payroll settings"
+      footer={
+        <>
+          <button className="btn-secondary" onClick={onClose}>Cancel</button>
+          <button
+            className="btn-primary"
+            onClick={() => {
+              onSave({ period: f.period, anchor: f.anchor, weekStart: Number(f.weekStart), overtimeWeekly: num(f.overtimeWeekly), overtimeDaily: num(f.overtimeDaily), otMultiplier: Number(f.otMultiplier) || 1.5 });
+              onClose();
+            }}
+          >
+            Save
+          </button>
+        </>
+      }
+    >
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Pay period" className="col-span-2">
+          {(id) => (
+            <select id={id} className="input" value={f.period} onChange={set('period')}>
+              {Object.entries(PAY_PERIODS).map(([k, v]) => (
+                <option key={k} value={k}>{v}</option>
+              ))}
+            </select>
+          )}
+        </Field>
+        {(f.period === 'weekly' || f.period === 'biweekly') && (
+          <Field label="A period starts on" className="col-span-2" hint="Any first day of a pay period — later periods follow from it">{(id) => <input id={id} type="date" className="input" value={f.anchor} onChange={set('anchor')} />}</Field>
+        )}
+        <Field label="Workweek starts">
+          {(id) => (
+            <select id={id} className="input" value={f.weekStart} onChange={set('weekStart')}>
+              {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((d, i) => (
+                <option key={d} value={i}>{d}</option>
+              ))}
+            </select>
+          )}
+        </Field>
+        <Field label="Overtime rate (×)">{(id) => <input id={id} inputMode="decimal" className="input" value={f.otMultiplier} onChange={set('otMultiplier')} />}</Field>
+        <Field label="Overtime after (hours / week)">{(id) => <input id={id} inputMode="decimal" className="input" value={f.overtimeWeekly ?? ''} onChange={set('overtimeWeekly')} />}</Field>
+        <Field label="…or (hours / day)" hint="Leave blank unless your state has daily overtime">{(id) => <input id={id} inputMode="decimal" className="input" value={f.overtimeDaily} onChange={set('overtimeDaily')} />}</Field>
       </div>
-      <p className="border-t border-line/70 px-4 py-2 text-xs text-ink-3">Commission is on labor and parts sales from work invoiced in the period. Export the CSV for your payroll provider.</p>
-    </Card>
+    </Modal>
   );
 }
 
@@ -422,7 +508,7 @@ function MemberForm({ initial, onClose }) {
           />
         </div>
         <Field label={f.payType === 'flat' ? 'Rate per flagged hour ($)' : 'Hourly rate ($)'}>{(id) => <input id={id} inputMode="decimal" className="input" value={f.payRate} onChange={set('payRate', true)} />}</Field>
-        <div />
+        <Field label="Payroll employee ID" hint="As it appears in your payroll service">{(id) => <input id={id} className="input" value={f.payrollId || ''} onChange={set('payrollId')} />}</Field>
         <Field label="Labor commission (%)">{(id) => <input id={id} inputMode="decimal" className="input" value={f.laborCommissionPct || 0} onChange={set('laborCommissionPct', true)} />}</Field>
         <Field label="Parts commission (%)">{(id) => <input id={id} inputMode="decimal" className="input" value={f.partsCommissionPct || 0} onChange={set('partsCommissionPct', true)} />}</Field>
         <label className="flex items-center justify-between gap-3 rounded-[8px] border border-line px-3 py-2 text-sm sm:col-span-2">

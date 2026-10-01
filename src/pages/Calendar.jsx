@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Plus, Globe } from 'lucide-react';
-import { useShop, useLookup } from '../store/hooks';
+import { useLookup, useScopedShop } from '../store/hooks';
 import { PageHeader, Card, Segmented, Dot } from '../components/ui';
 import { AppointmentForm } from '../components/forms';
 import BookingRequests from './calendar/BookingRequests';
@@ -12,7 +12,7 @@ const END_HOUR = 19;
 const HOUR_PX = 56;
 
 export default function Calendar() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const lookup = useLookup();
   const [params, setParams] = useSearchParams();
   const [anchor, setAnchor] = useState(() => startOfDay(new Date()));
@@ -190,7 +190,7 @@ function layout(appts) {
 }
 
 function UpcomingList() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const lookup = useLookup();
   const now = new Date();
   const upcoming = state.appointments.filter((a) => new Date(a.start) > now).sort((a, b) => new Date(a.start) - new Date(b.start)).slice(0, 8);

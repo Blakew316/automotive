@@ -5,6 +5,7 @@ import { useShop, useUI } from '../store/hooks';
 import { decodeOffline, cleanVin } from '../lib/vin';
 import { decodeVinLocal } from '../lib/vindb';
 import { fullName, vehicleName, isoDate } from '../lib/format';
+import { ScanButton } from './Scanner';
 
 const blankCustomer = { firstName: '', lastName: '', company: '', phone: '', email: '', address: '', city: '', state: '', zip: '', notes: '', tags: [] };
 
@@ -68,8 +69,8 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
   const set = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
   const valid = form.make && form.model && form.year;
 
-  const runDecode = async () => {
-    const offline = decodeOffline(form.vin);
+  const runDecode = async (scanned) => {
+    const offline = decodeOffline(typeof scanned === 'string' ? scanned : form.vin);
     if (!offline.valid) return setDecode({ status: 'error', message: offline.errors[0] });
     setForm((f) => ({ ...f, vin: offline.vin, year: f.year || offline.year || '', make: f.make || offline.make || '' }));
     setDecode({ status: 'loading' });
@@ -125,6 +126,7 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
                 onChange={(e) => setForm((f) => ({ ...f, vin: cleanVin(e.target.value) }))}
                 onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), runDecode())}
               />
+              <ScanButton mode="vin" className="btn-outline btn-icon" onResult={(v) => runDecode(v)} />
               <button type="button" className="btn-outline" disabled={form.vin.length !== 17 || decode.status === 'loading'} onClick={runDecode}>
                 {decode.status === 'loading' ? <Spinner size={14} /> : <ScanLine size={15} />} Decode
               </button>

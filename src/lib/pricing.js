@@ -85,7 +85,9 @@ export function orderTotals(order, shop) {
   const discountValue = Number(order.discount?.value) || 0;
   const discount = round2(Math.min(subtotal, order.discount?.type === 'pct' ? subtotal * (discountValue / 100) : discountValue));
 
-  const taxRate = (Number(shop?.taxRate) || 0) / 100;
+  // Each location can have its own sales tax rate.
+  const site = order.locationId && (shop?.locations || []).find((l) => l.id === order.locationId);
+  const taxRate = (Number(site && site.taxRate != null && site.taxRate !== '' ? site.taxRate : shop?.taxRate) || 0) / 100;
   const taxableGross = sums.parts + sums.fees + sums.sublet + supplies + (shop?.taxLabor ? sums.labor : 0);
   const taxableNet = subtotal > 0 ? taxableGross - discount * (taxableGross / subtotal) : 0;
   const tax = order.taxExempt ? 0 : round2(Math.max(0, taxableNet) * taxRate);

@@ -3,9 +3,9 @@ import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package,
   BookOpen, ChartColumn, Settings, Search, Menu as MenuIcon, Sun, Moon, Monitor, Wrench, X, Database,
-  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock, CloudDownload, Building2, ConciergeBell,
+  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock, CloudDownload, Building2, ConciergeBell, MapPin,
 } from 'lucide-react';
-import { useShop, useUI, useAccess, useSync } from '../store/hooks';
+import { useShop, useUI, useAccess, useSync, useSite, useScopedShop } from '../store/hooks';
 import { ROLES, homeFor } from '../lib/access';
 import SwitchUser from './SwitchUser';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
@@ -16,7 +16,7 @@ import CommandPalette from './CommandPalette';
 import Toasts from './Toasts';
 
 function useNavCounts() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const open = state.orders.filter((o) => OPEN_STATUSES.includes(o.status));
   return {
     workflow: open.filter((o) => WIP_STATUSES.includes(o.status)).length,
@@ -76,6 +76,25 @@ const THEMES = [
   { value: 'dark', icon: Moon, label: 'Dark' },
 ];
 
+/** Which location this device is working at (only when the shop has more than one). */
+function SiteSwitcher() {
+  const site = useSite();
+  if (!site.multi) return null;
+  return (
+    <div className="px-3 pb-2">
+      <label className="flex h-9 items-center gap-2 rounded-[8px] border border-sidebar-line bg-sidebar-2 px-2.5 text-sm text-sidebar-ink">
+        <MapPin size={14} className="shrink-0 text-sidebar-ink-2" />
+        <select className="min-w-0 flex-1 bg-transparent font-medium outline-none" value={site.current} onChange={(e) => site.setCurrent(e.target.value)} aria-label="Location">
+          <option value="all">All locations</option>
+          {site.sites.map((l) => (
+            <option key={l.id} value={l.id}>{l.name}</option>
+          ))}
+        </select>
+      </label>
+    </div>
+  );
+}
+
 function Sidebar({ onNavigate }) {
   const { state } = useShop();
   const { setPaletteOpen, theme, setTheme } = useUI();
@@ -94,6 +113,8 @@ function Sidebar({ onNavigate }) {
           <div className="truncate text-xs font-medium text-sidebar-ink-2">{state.shop.name}</div>
         </div>
       </div>
+
+      <SiteSwitcher />
 
       <div className="px-3 pb-2">
         <button

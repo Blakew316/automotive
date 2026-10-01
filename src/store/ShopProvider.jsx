@@ -8,6 +8,8 @@ import { priceFromMatrix, orderTotals } from '../lib/pricing';
 import { STATUS } from '../lib/workflow';
 import { BLANK_ACCOUNT, dueDate, termsLabel } from '../lib/accounts';
 import { matchCustomer, matchVehicle, parseVehicle, TRANSPORT } from '../lib/operations';
+import { decodeOffline } from '../lib/vin';
+import { shopAt, stampFor } from '../lib/locations';
 import { uid, fullName, vehicleName } from '../lib/format';
 import { loadSaved, createSaver } from '../lib/persist';
 import { diffStates, applyToDraft } from '../lib/sync/records';
@@ -172,7 +174,10 @@ function ShopStore({ boot, children }) {
   );
 
   // Who made a change, for the change history: the person using this device.
-  const { userId } = useUI();
+  const { userId, siteId } = useUI();
+  // The location this device is working at, for new records (read inside actions without re-creating them).
+  const siteRef = useRef(siteId);
+  siteRef.current = siteId;
   const staffList = state.shop.staff;
   const actor = useMemo(() => {
     const list = staffList || [];
@@ -187,21 +192,27 @@ function ShopStore({ boot, children }) {
     };
     const findOrder = (s, id) => s.orders.find((o) => o.id === id);
     const findService = (o, sid) => o?.services.find((x) => x.id === sid);
-    const materialize = (s, items) =>
+    const here = (s) => stampFor(s.shop, siteRef.current);
+    const at = (rec) => (rec ? { locationId: rec } : {});
+    const materialize = (s, items, laborRate = s.shop.laborRate) =>
       items.map((i) => {
         const base = { ...i, id: uid('itm') };
-        if (i.type === 'labor') return { rate: s.shop.laborRate, ...base };
+        if (i.type === 'labor') return { rate: laborRate, ...base };
         if (i.type === 'part') return { partStatus: 'needed', price: i.price ?? priceFromMatrix(i.cost, s.shop.matrix), ...base };
         return base;
       });
-    const makeOrder = (s, { customerId, vehicleId, concern = '', jobIds = [], appointmentId = null, status = 'estimate', id = null }) => {
+    const makeOrder = (s, { customerId, vehicleId, concern = '', jobIds = [], appointmentId = null, status = 'estimate', id = null, locationId }) => {
       s.counters.order += 1;
       const v = s.vehicles.find((x) => x.id === vehicleId);
+      const appt = appointmentId && s.appointments.find((x) => x.id === appointmentId);
+      const loc = locationId !== undefined ? locationId : appt?.locationId || here(s);
+      const rate = shopAt(s.shop, loc).laborRate;
       const owner = s.customers.find((c) => c.id === (customerId || v?.customerId));
       const o = {
         id: id || uid('ro'),
         number: s.counters.order,
         status,
+        ...at(loc),
         ...(owner?.account?.taxExempt ? { taxExempt: true } : {}),
         customerId: customerId || v?.customerId || null,
         vehicleId: vehicleId || null,
@@ -212,7 +223,7 @@ function ShopStore({ boot, children }) {
         mileageOut: null,
         services: jobIds.map((jid) => {
           const job = s.cannedJobs.find((j) => j.id === jid);
-          return { id: uid('svc'), title: job.title, status: 'pending', techId: null, done: false, items: materialize(s, job.items), ...(job.tires ? { tires: newTireQuote() } : {}) };
+          return { id: uid('svc'), title: job.title, status: 'pending', techId: null, done: false, items: materialize(s, job.items, rate), ...(job.tires ? { tires: newTireQuote() } : {}) };
         }),
         inspection: {},
         notes: [],
@@ -312,7 +323,7 @@ function ShopStore({ boot, children }) {
             status: o.status === 'estimate' ? 'pending' : 'approved',
             techId: o.techId,
             done: false,
-            items: materialize(s, job ? job.items : items),
+            items: materialize(s, job ? job.items : items, shopAt(s.shop, o.locationId).laborRate),
             ...(job?.tires ? { tires: newTireQuote() } : {}),
           };
           o.services.push(svc);
@@ -331,7 +342,7 @@ function ShopStore({ boot, children }) {
         }),
       addItem: (orderId, serviceId, item) =>
         update((s) => {
-          const [rec] = materialize(s, [item]);
+          const [rec] = materialize(s, [item], shopAt(s.shop, findOrder(s, orderId)?.locationId).laborRate);
           findService(findOrder(s, orderId), serviceId).items.push(rec);
           return rec.id;
         }),
@@ -499,12 +510,22 @@ function ShopStore({ boot, children }) {
           if (!v) {
             const d = parseVehicle(p.vehicle);
             const vin = clip(p.vin, 17).toUpperCase();
+            // A scanned VIN fills in the year and make when the customer didn't type them.
+            if (vin.length === 17) {
+              const off = decodeOffline(vin);
+              if (off.valid) {
+                d.year = d.year || off.year;
+                d.make = d.make || off.make || '';
+              }
+            }
             v = { id: `veh_ci_${ref}`, customerId: c.id, vin: vin.length === 17 ? vin : '', year: d.year, make: clip(d.make, 40), model: clip(d.model, 60), trim: '', engine: '', color: '', plate: clip(p.plate, 12).toUpperCase(), plateState: '', mileage: miles, notes: '', createdAt: at };
             s.vehicles.unshift(v);
           } else if (miles > (v.mileage || 0)) v.mileage = miles;
           const today = new Date().toDateString();
           const appt = s.appointments.find((a) => a.customerId === c.id && !a.orderId && new Date(a.start).toDateString() === today && !['cancelled', 'no_show'].includes(a.status));
-          const o = makeOrder(s, { customerId: c.id, vehicleId: v.id, concern: clip(p.concern, 2000), appointmentId: appt?.id, id: `ro_ci_${ref}` });
+          // The check-in link says which location the customer is at (none = the main location).
+          const locationId = (s.shop.locations || []).some((l) => l.id === p.locationId) ? p.locationId : null;
+          const o = makeOrder(s, { customerId: c.id, vehicleId: v.id, concern: clip(p.concern, 2000), appointmentId: appt?.id, id: `ro_ci_${ref}`, locationId });
           if (!appt) o.source = 'kiosk';
           if (miles) o.mileageIn = miles;
           o.transport = TRANSPORT[p.transport] ? p.transport : 'dropoff';
@@ -544,7 +565,7 @@ function ShopStore({ boot, children }) {
       clockIn: (techId) =>
         update((s) => {
           if (s.timeEntries.some((e) => e.kind === 'shift' && e.techId === techId && !e.end)) return;
-          s.timeEntries.push({ id: uid('time'), kind: 'shift', techId, start: now(), end: null });
+          s.timeEntries.push({ id: uid('time'), kind: 'shift', techId, start: now(), end: null, ...at(here(s)) });
         }),
       clockOut: (techId) =>
         update((s) => {
@@ -555,8 +576,9 @@ function ShopStore({ boot, children }) {
         update((s) => {
           const t = now();
           s.timeEntries.forEach((e) => e.kind === 'job' && e.techId === techId && !e.end && (e.end = t));
-          if (!s.timeEntries.some((e) => e.kind === 'shift' && e.techId === techId && !e.end)) s.timeEntries.push({ id: uid('time'), kind: 'shift', techId, start: t, end: null });
-          s.timeEntries.push({ id: uid('time'), kind: 'job', techId, orderId, serviceId, start: t, end: null });
+          const jobAt = findOrder(s, orderId)?.locationId || here(s);
+          if (!s.timeEntries.some((e) => e.kind === 'shift' && e.techId === techId && !e.end)) s.timeEntries.push({ id: uid('time'), kind: 'shift', techId, start: t, end: null, ...at(jobAt) });
+          s.timeEntries.push({ id: uid('time'), kind: 'job', techId, orderId, serviceId, start: t, end: null, ...at(jobAt) });
           const o = findOrder(s, orderId);
           const svc = findService(o, serviceId);
           if (svc && !svc.techId) svc.techId = techId;
@@ -585,7 +607,7 @@ function ShopStore({ boot, children }) {
             return po.id;
           }
           s.counters.po = (s.counters.po || 2000) + 1;
-          const rec = { status: 'draft', notes: '', lines: [], orderedAt: null, expectedAt: null, receivedAt: null, ...po, id: uid('po'), number: s.counters.po, createdAt: now() };
+          const rec = { status: 'draft', notes: '', lines: [], orderedAt: null, expectedAt: null, receivedAt: null, ...at(here(s)), ...po, id: uid('po'), number: s.counters.po, createdAt: now() };
           s.purchaseOrders.unshift(rec);
           return rec.id;
         }),
@@ -662,7 +684,7 @@ function ShopStore({ boot, children }) {
             s.vehicles.unshift(v);
           }
           if (!v) v = s.vehicles.find((x) => x.customerId === c.id);
-          const appt = { id: uid('apt'), customerId: c.id, vehicleId: v?.id || null, start, duration, title: title || b.services.join(', ') || 'Online booking', techId, status: 'scheduled', notes: b.notes || '', source: 'online' };
+          const appt = { id: uid('apt'), customerId: c.id, vehicleId: v?.id || null, start, duration, title: title || b.services.join(', ') || 'Online booking', techId, status: 'scheduled', notes: b.notes || '', source: 'online', ...at(here(s)) };
           s.appointments.push(appt);
           Object.assign(b, { status: 'accepted', customerId: c.id, appointmentId: appt.id, decidedAt: now() });
           log(s, `Online booking accepted for ${fullName(c)}`);
@@ -721,7 +743,7 @@ function ShopStore({ boot, children }) {
       saveAppointment: (a) =>
         update((s) => {
           if (a.id) return void Object.assign(s.appointments.find((x) => x.id === a.id), a);
-          const rec = { status: 'scheduled', notes: '', duration: 60, ...a, id: uid('apt') };
+          const rec = { status: 'scheduled', notes: '', duration: 60, ...at(here(s)), ...a, id: uid('apt') };
           s.appointments.push(rec);
           const c = s.customers.find((x) => x.id === rec.customerId);
           log(s, `Appointment booked${c ? ` for ${fullName(c)}` : ''}`);
@@ -732,9 +754,28 @@ function ShopStore({ boot, children }) {
       saveInventoryItem: (p) =>
         update((s) => {
           if (p.id) return void Object.assign(s.inventory.find((x) => x.id === p.id), p);
-          const rec = { qty: 0, min: 0, ...p, id: uid('inv') };
+          const rec = { qty: 0, min: 0, ...at(here(s)), ...p, id: uid('inv') };
           s.inventory.unshift(rec);
           return rec.id;
+        }),
+      // Move stock between locations: the same part (by part number or SKU) at the other location gets it.
+      transferInventory: (id, toLocation, qty) =>
+        update((s) => {
+          const p = s.inventory.find((x) => x.id === id);
+          const n = Math.min(Number(qty) || 0, Number(p?.qty) || 0);
+          if (!p || n <= 0) return null;
+          const dest = toLocation === 'main' ? null : toLocation;
+          const same = (x) => (x.locationId || null) === dest && ((p.partNumber && x.partNumber === p.partNumber) || (!p.partNumber && p.sku && x.sku === p.sku));
+          let target = s.inventory.find(same);
+          if (!target) {
+            target = { ...p, id: uid('inv'), qty: 0, location: '', ...(dest ? { locationId: dest } : {}) };
+            if (!dest) delete target.locationId;
+            s.inventory.unshift(target);
+          }
+          p.qty = (Number(p.qty) || 0) - n;
+          target.qty = (Number(target.qty) || 0) + n;
+          log(s, `Transferred ${n} × ${p.description} between locations`);
+          return target.id;
         }),
       adjustInventory: (id, delta) =>
         update((s) => {

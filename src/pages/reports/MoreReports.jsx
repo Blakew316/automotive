@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { useShop, useTotals } from '../../store/hooks';
+import { useTotals, useScopedShop } from '../../store/hooks';
 import { Card, CardHeader, EmptyState } from '../../components/ui';
 import { RankBars, MixBar, StackedColumnChart } from '../../components/charts';
 import { bookingChannels } from '../../lib/kpis';
@@ -25,7 +25,7 @@ function Kpis({ items }) {
 }
 
 export function TechReport({ from, to }) {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const rows = useMemo(() => teamSummary(state, from, to).filter((r) => r.tech.active !== false || r.jobs), [state, from, to]);
   const sum = (k) => rows.reduce((s, r) => s + r[k], 0);
   const flagged = sum('flagged');
@@ -94,7 +94,7 @@ export function TechReport({ from, to }) {
 
 /** Comebacks (work that came back) and no-charge work, by technician. */
 function Comebacks({ from, to, jobs }) {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const totals = useTotals();
   const c = useMemo(() => comebackStats(state, from, to, totals), [state, from, to, totals]);
   const tech = (id) => state.technicians.find((t) => t.id === id);
@@ -141,7 +141,7 @@ function Comebacks({ from, to, jobs }) {
 }
 
 export function EstimateReport({ from, to }) {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const r = useMemo(() => {
     const f = from.toISOString();
     const t = to.toISOString();
@@ -254,7 +254,7 @@ export function EstimateReport({ from, to }) {
 }
 
 export function CustomerReport({ from, to }) {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const totals = useTotals();
   const r = useMemo(() => {
     const f = from.toISOString();

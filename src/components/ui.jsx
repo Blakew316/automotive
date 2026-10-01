@@ -206,7 +206,7 @@ export function EmptyState({ icon: Icon, title, body, action, className = '' }) 
   );
 }
 
-export function Modal({ open, onClose, title, subtitle, children, footer, size = 'md' }) {
+export function Modal({ open, onClose, title, subtitle, children, footer, size = 'md', layer = 'z-50' }) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e) => e.key === 'Escape' && onClose?.();
@@ -221,7 +221,7 @@ export function Modal({ open, onClose, title, subtitle, children, footer, size =
   if (!open) return null;
   const width = { sm: 'max-w-md', md: 'max-w-xl', lg: 'max-w-3xl', xl: 'max-w-5xl' }[size];
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-6" role="dialog" aria-modal="true">
+    <div className={`fixed inset-0 ${layer} flex items-end justify-center p-0 sm:items-center sm:p-6`} role="dialog" aria-modal="true">
       <div className="absolute inset-0 animate-fade-in bg-black/25 backdrop-blur-[2px]" onClick={onClose} />
       <div className={`relative flex max-h-[92vh] w-full ${width} animate-sheet-in flex-col overflow-hidden rounded-t-xl bg-surface shadow-sheet sm:rounded-xl`}>
         {(title || onClose) && (

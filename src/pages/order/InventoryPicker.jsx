@@ -3,25 +3,36 @@ import { Modal, SearchInput, Mono } from '../../components/ui';
 import { useShop } from '../../store/hooks';
 import { money } from '../../lib/format';
 import { priceFromMatrix } from '../../lib/pricing';
+import { findPartByCode } from '../../lib/inventory';
+import { ScanButton } from '../../components/Scanner';
 
 export default function InventoryPicker({ onClose, onPick }) {
   const { state } = useShop();
   const [q, setQ] = useState('');
   const [qty, setQty] = useState(1);
+  const [miss, setMiss] = useState('');
+  const onScan = (code) => {
+    const p = findPartByCode(state.inventory, code);
+    if (!p) return setMiss(code);
+    onPick(p, qty);
+    onClose();
+  };
   const rows = useMemo(() => {
     const query = q.toLowerCase();
-    return state.inventory.filter((p) => !query || `${p.partNumber} ${p.brand} ${p.description} ${p.sku} ${p.category}`.toLowerCase().includes(query));
+    return state.inventory.filter((p) => !query || `${p.partNumber} ${p.barcode || ''} ${p.brand} ${p.description} ${p.sku} ${p.category}`.toLowerCase().includes(query));
   }, [q, state.inventory]);
 
   return (
     <Modal open onClose={onClose} title="Add from inventory" subtitle="Pulls the part from stock and prices it from your markup matrix." size="lg">
       <div className="mb-3 flex gap-2">
         <SearchInput value={q} onChange={setQ} placeholder="Part number, brand, description" className="flex-1" autoFocus />
+        <ScanButton className="btn-secondary btn-icon shrink-0" label="Scan the part’s barcode" onResult={onScan} />
         <label className="flex items-center gap-2 text-sm text-ink-2">
           Qty
           <input type="number" min={1} value={qty} onChange={(e) => setQty(Math.max(1, Number(e.target.value) || 1))} className="input w-16 text-right" />
         </label>
       </div>
+      {miss && <p className="mb-2 text-sm text-warn">No part in inventory with code {miss}.</p>}
       <div className="overflow-hidden rounded-[10px] border border-line">
         <table className="table">
           <thead>

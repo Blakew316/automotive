@@ -2,6 +2,7 @@ import { useContext, useMemo } from 'react';
 import { ShopContext, UIContext, SyncContext } from './context';
 import { totalsCalculator } from '../lib/pricing';
 import { canAccess } from '../lib/access';
+import { isMulti, siteList, scopeState } from '../lib/locations';
 
 export function useShop() {
   const ctx = useContext(ShopContext);
@@ -38,6 +39,26 @@ export function useLookup() {
 export function useTotals() {
   const { state } = useShop();
   return useMemo(() => totalsCalculator(state.shop), [state.shop]);
+}
+
+/** Locations: whether the shop has several, the list, and the one this device is working at. */
+export function useSite() {
+  const { state } = useShop();
+  const { siteId, setSiteId } = useUI();
+  return useMemo(() => {
+    const multi = isMulti(state.shop);
+    const sites = siteList(state.shop);
+    const current = multi && sites.some((l) => l.id === siteId) ? siteId : 'all';
+    return { multi, sites, current, setCurrent: setSiteId, name: current === 'all' ? 'All locations' : sites.find((l) => l.id === current)?.name };
+  }, [state.shop, siteId, setSiteId]);
+}
+
+/** useShop(), with repair orders, appointments, time, POs and inventory limited to this device's location. */
+export function useScopedShop() {
+  const ctx = useShop();
+  const { current } = useSite();
+  const scoped = useMemo(() => scopeState(ctx.state, current), [ctx.state, current]);
+  return useMemo(() => (scoped === ctx.state ? ctx : { ...ctx, state: scoped }), [ctx, scoped]);
 }
 
 /** The person using this device, their role, and a path check. Defaults to the first owner. */

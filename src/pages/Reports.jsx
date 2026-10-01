@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ChartColumn, Wrench, FileCheck, Users, Target } from 'lucide-react';
-import { useShop, useLookup, useTotals } from '../store/hooks';
+import { useLookup, useTotals, useScopedShop, useSite } from '../store/hooks';
+import { siteOf } from '../lib/locations';
 import { PageHeader, Card, CardHeader, Segmented, Tabs } from '../components/ui';
 import { TechReport, EstimateReport, CustomerReport } from './reports/MoreReports';
 import { GoalsReport, PeriodCompare } from './reports/GoalsReport';
@@ -25,7 +26,7 @@ const RANGES = [
 ];
 
 export default function Reports() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const lookup = useLookup();
   const totals = useTotals();
   const [days, setDays] = useState(30);
@@ -33,6 +34,20 @@ export default function Reports() {
   const [params, setParams] = useSearchParams();
   const tab = params.get('tab') || 'overview';
   const range = useMemo(() => [startOfDay(addDays(now, -days + 1)), addDays(startOfDay(now), 1)], [now, days]);
+  const site = useSite();
+  // Side-by-side numbers per location (when the shop has several and this device sees all of them).
+  const bySite = useMemo(() => {
+    if (!site.multi || site.current !== 'all') return null;
+    const from = startOfDay(addDays(now, -days + 1));
+    return site.sites.map((l) => {
+      const list = state.orders.filter((o) => siteOf(o) === l.id && o.invoicedAt && new Date(o.invoicedAt) >= from);
+      const revenue = list.reduce((s, o) => s + totals(o).total, 0);
+      const net = list.reduce((s, o) => s + totals(o).subtotal - totals(o).discount, 0);
+      const gp = list.reduce((s, o) => s + totals(o).grossProfit, 0);
+      const hours = list.reduce((s, o) => s + totals(o).hours, 0);
+      return { site: l, cars: list.length, revenue, aro: list.length ? revenue / list.length : 0, gpPct: net ? gp / net : 0, hours, open: state.orders.filter((o) => siteOf(o) === l.id && !['ready', 'closed'].includes(o.status)).length };
+    });
+  }, [site, state.orders, days, now, totals]);
 
   const r = useMemo(() => {
     const from = startOfDay(addDays(now, -days + 1));
@@ -148,6 +163,40 @@ export default function Reports() {
             <Kpi label="Hours sold" value={r.hours.toFixed(1)} sub={`${(r.hours / Math.max(1, r.carCount)).toFixed(1)} per RO`} />
             <Kpi label="Effective labor rate" value={money0(r.elr)} sub="Labor $ ÷ hours sold" />
           </Card>
+
+          {bySite && (
+            <Card className="mb-6">
+              <CardHeader title="By location" subtitle={`Last ${days} days`} />
+              <div className="overflow-x-auto">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Location</th>
+                      <th className="text-right">Revenue</th>
+                      <th className="text-right">Car count</th>
+                      <th className="text-right">ARO</th>
+                      <th className="text-right">GP%</th>
+                      <th className="hidden text-right sm:table-cell">Hours sold</th>
+                      <th className="hidden text-right sm:table-cell">Open ROs</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bySite.map((x) => (
+                      <tr key={x.site.id}>
+                        <td className="font-medium">{x.site.name}</td>
+                        <td className="tabular text-right">{money0(x.revenue)}</td>
+                        <td className="tabular text-right">{x.cars}</td>
+                        <td className="tabular text-right">{money0(x.aro)}</td>
+                        <td className="tabular text-right">{pct(x.gpPct)}</td>
+                        <td className="tabular hidden text-right sm:table-cell">{x.hours.toFixed(1)}</td>
+                        <td className="tabular hidden text-right sm:table-cell">{x.open}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          )}
 
           <div className="grid gap-6 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
             <Card>

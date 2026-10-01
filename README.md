@@ -45,9 +45,18 @@ The repo also holds the shop's public website (`website/`), published alongside 
 
 **Team & techs**
 - **Tech Time Clock** — a phone-friendly view for each technician: clock in/out, their assigned jobs, one-tap job timers (starting a job clocks them in and moves the RO to In Progress), mark jobs done, and the inspection checklist.
-- **Team** — live board of who’s on what, timesheets with editable entries, efficiency (flagged ÷ clocked) and productivity (on jobs ÷ on the clock), and gross pay for hourly or flat-rate techs with labor/parts commission — exportable for payroll.
+- **Team** — live board of who’s on what, timesheets with editable entries, efficiency (flagged ÷ clocked) and productivity (on jobs ÷ on the clock), and payroll:
+  - Pay periods (weekly, every two weeks, twice a month or monthly) and overtime by workweek (and by day where the state requires it).
+  - Hourly techs are paid on clock hours, flat-rate techs on flagged hours, with labor and parts commission.
+  - Exports: an **hours-import CSV** in the simple layout payroll services take (Gusto, ADP, Paychex, QuickBooks Payroll — match the columns on the import screen), a detailed payroll CSV, and printable **timecards** with employee and manager signature lines.
+  - Owner approval of each period.
 
 **Parts & purchasing**
+- **Barcode & VIN scanning** — scan VINs (door-jamb/windshield Code 39, Code 128, Data Matrix, QR) in the VIN decoder, the vehicle form and self check-in, and part barcodes (UPC/EAN, Code 128, QR) to find parts, pull them onto an RO, receive purchase orders box by box, and **count inventory**. It uses the browser's built-in barcode detector where there is one, and a bundled ZXing decoder (self-hosted WebAssembly, downloaded only the first time it's needed) everywhere else, including iPhone/Safari. A photo of the barcode or typing the code works when the camera can't focus.
+- **Multiple locations** — add locations under Settings → General. Each can have its own address, phone, sales tax and labor rate.
+  - Each device picks the location it's working at from the sidebar (or all of them).
+  - Repair orders, appointments, time, purchase orders and inventory belong to a location. The shop-floor pages show the current one, and estimates, invoices, texts and customer pages use that location's details.
+  - Reports compare locations side by side, and parts can be transferred between locations. Customers, vehicles and accounts are shared.
 - **Inventory status** — value by parts, tires, batteries and fluids; in stock, on open jobs and on order; min/max with Reorder / Above max flags; last used.
 - **Purchase orders** — create POs by vendor (from low stock or parts needed on ROs), mark ordered with an expected date, receive in full or partially into inventory (updating cost) and onto the RO, and see what’s on order.
 

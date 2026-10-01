@@ -3,6 +3,7 @@ import { orderTotals } from './pricing';
 import { money, vehicleName, smsHref, mailHref, date, time, phone as fmtPhone } from './format';
 import { bookingLink } from './booking';
 import { cloudConfig, trackLink } from './cloudShare';
+import { shopAt } from './locations';
 
 /** Payment link through the shop's own processor, with the amount filled in where supported. */
 export function payLink(shop, amount, memo = '') {
@@ -37,7 +38,7 @@ export const PAY_PROVIDERS = [
 
 /** Merge-field values for a customer (and optionally a repair order / appointment). */
 export function messageContext(state, { customer, vehicle, order, appointment, extra = {} } = {}) {
-  const shop = state.shop;
+  const shop = shopAt(state.shop, order?.locationId || appointment?.locationId);
   const t = order ? orderTotals(order, shop) : null;
   const v = vehicle || (order && state.vehicles.find((x) => x.id === order.vehicleId)) || (customer && state.vehicles.find((x) => x.customerId === customer.id));
   const balance = t ? Math.max(0, t.balance) : 0;

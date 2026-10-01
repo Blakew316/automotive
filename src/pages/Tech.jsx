@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Play, Pause, Check, LogIn, LogOut, Camera, ClipboardCheck, Cable, StickyNote, Timer, Hand, Wrench, Clock } from 'lucide-react';
-import { useShop, useUI, useLookup } from '../store/hooks';
+import { useUI, useLookup, useScopedShop } from '../store/hooks';
 import { Card, Avatar, EmptyState, Spinner, Modal } from '../components/ui';
 import { PickButton } from './order/MediaPanel';
 import { useIngest } from '../lib/useMedia';
@@ -22,7 +22,7 @@ const readTech = () => {
 };
 
 export default function Tech() {
-  const { state, clockIn, clockOut, startJob, stopJob } = useShop();
+  const { state, clockIn, clockOut, startJob, stopJob } = useScopedShop();
   const { toast } = useUI();
   const lookup = useLookup();
   const now = useNow(1000);
@@ -201,7 +201,7 @@ function Stat({ label, value, sub }) {
 }
 
 function JobCard({ order, services, running, now, onStart, onStop }) {
-  const { state, updateService } = useShop();
+  const { state, updateService } = useScopedShop();
   const lookup = useLookup();
   const { ingest, busy } = useIngest(order);
   const [notesFor, setNotesFor] = useState(null);
@@ -281,7 +281,7 @@ function JobCard({ order, services, running, now, onStart, onStop }) {
 }
 
 function StoryModal({ order, service, onClose }) {
-  const { updateService } = useShop();
+  const { updateService } = useScopedShop();
   const [cause, setCause] = useState(service.cause || '');
   const [correction, setCorrection] = useState(service.correction || '');
   return (

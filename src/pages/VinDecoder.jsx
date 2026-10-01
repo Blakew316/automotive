@@ -4,6 +4,7 @@ import { ScanLine, ClipboardPaste, Camera, CircleCheck, CircleAlert, Plus, Car, 
 import { useShop } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Spinner, Modal, Mono, CopyButton, EmptyState } from '../components/ui';
 import { VehicleForm } from '../components/forms';
+import Scanner from '../components/Scanner';
 import { RecallsCard, ComplaintsCard, SafetyCard, ResourcesCard } from '../components/VehicleIntel';
 import VehicleKnowledge from '../components/VehicleKnowledge';
 import { decodeOffline, cleanVin, autocorrectVin, extractVin, VIN_SECTIONS } from '../lib/vin';
@@ -75,7 +76,6 @@ export default function VinDecoder() {
   const onFile = result?.valid && state.vehicles.find((x) => x.vin === result.vin);
   // Balance the two spec columns (3 VIN-derived rows lead the left column).
   const split = Math.max(0, Math.ceil(((d?.specs?.length || 0) + 3) / 2) - 3);
-  const hasBarcode = typeof window !== 'undefined' && 'BarcodeDetector' in window;
 
   const submit = (e) => {
     e?.preventDefault();
@@ -127,11 +127,9 @@ export default function VinDecoder() {
               >
                 <ClipboardPaste size={16} /> Paste
               </button>
-              {hasBarcode && (
-                <button type="button" className="btn-secondary btn-lg" onClick={() => setScanning(true)}>
-                  <Camera size={16} /> Scan
-                </button>
-              )}
+              <button type="button" className="btn-secondary btn-lg" onClick={() => setScanning(true)}>
+                <Camera size={16} /> Scan
+              </button>
               <button type="submit" className="btn-primary btn-lg min-w-[120px]" disabled={vin.length !== 17 || live.status === 'loading'}>
                 {live.status === 'loading' ? <Spinner size={16} /> : <ScanLine size={17} />} Decode
               </button>
@@ -317,10 +315,10 @@ export default function VinDecoder() {
         />
       )}
       {scanning && (
-        <BarcodeScanner
+        <Scanner
+          mode="vin"
           onClose={() => setScanning(false)}
-          onFound={(code) => {
-            setScanning(false);
+          onResult={(code) => {
             setInput(code);
             decode(code);
           }}
@@ -365,60 +363,3 @@ function VinBreakdown({ vin }) {
   );
 }
 
-/** Camera barcode scanning via the Shape Detection API (Chrome/Edge on Android, some desktop builds). */
-function BarcodeScanner({ onClose, onFound }) {
-  const video = useRef(null);
-  const found = useRef(onFound);
-  const [error, setError] = useState('');
-  useEffect(() => {
-    found.current = onFound;
-  }, [onFound]);
-  useEffect(() => {
-    let stream;
-    let raf;
-    let stopped = false;
-    (async () => {
-      try {
-        const detector = new window.BarcodeDetector({ formats: ['code_39', 'code_128', 'data_matrix', 'qr_code'] });
-        stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-        if (stopped) return;
-        video.current.srcObject = stream;
-        await video.current.play();
-        const tick = async () => {
-          if (stopped) return;
-          try {
-            const codes = await detector.detect(video.current);
-            const vin = codes.map((c) => extractVin(c.rawValue.replace(/^I/, ''))).find(Boolean);
-            if (vin) return found.current(vin);
-          } catch {
-            // Frame not ready — keep scanning.
-          }
-          raf = requestAnimationFrame(tick);
-        };
-        tick();
-      } catch (e) {
-        setError(e.name === 'NotAllowedError' ? 'Camera permission was denied.' : 'Camera is not available on this device.');
-      }
-    })();
-    return () => {
-      stopped = true;
-      cancelAnimationFrame(raf);
-      stream?.getTracks().forEach((t) => t.stop());
-    };
-  }, []);
-  return (
-    <Modal open onClose={onClose} title="Scan VIN barcode" subtitle="Point the camera at the door-jamb or windshield VIN label." size="md">
-      {error ? (
-        <p className="py-8 text-center text-sm text-ink-2">{error}</p>
-      ) : (
-        <div className="relative overflow-hidden rounded-[10px] bg-black">
-          <video ref={video} playsInline muted className="aspect-video w-full object-cover" />
-          <div className="pointer-events-none absolute inset-x-8 top-1/2 h-16 -translate-y-1/2 rounded-[8px] border-2 border-white/80" />
-          <button onClick={onClose} className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5 text-white" aria-label="Close">
-            <X size={16} />
-          </button>
-        </div>
-      )}
-    </Modal>
-  );
-}

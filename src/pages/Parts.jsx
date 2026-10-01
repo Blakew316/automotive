@@ -1,12 +1,14 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Plus, Minus, Package, Boxes, Droplets, ArrowUpRight, Download, Pencil, Trash2, Store, ClipboardList, Disc3, BatteryCharging, Wrench } from 'lucide-react';
+import { Search, Plus, Minus, Package, Boxes, Droplets, ArrowUpRight, Download, Pencil, Trash2, Store, ClipboardList, Disc3, BatteryCharging, Wrench, ArrowLeftRight } from 'lucide-react';
 import PurchaseOrders from './parts/PurchaseOrders';
 import TireLog from './parts/TireLog';
 import CoreReturns from './parts/CoreReturns';
 import { coreList } from '../lib/operations';
-import { inventoryStatus, GROUPS, STOCK_STATUS } from '../lib/inventory';
-import { useShop, useUI } from '../store/hooks';
+import { inventoryStatus, GROUPS, STOCK_STATUS, findPartByCode } from '../lib/inventory';
+import Scanner, { ScanButton } from '../components/Scanner';
+import { useUI, useScopedShop, useSite } from '../store/hooks';
+import { siteFor, siteOf } from '../lib/locations';
 import { PageHeader, Card, CardHeader, Tabs, SearchInput, Segmented, EmptyState, Modal, Field, Mono, ExternalLink, IconTile } from '../components/ui';
 import { SUPPLIERS, B2B_PLATFORMS, OEM_PARTS, oemPartsFor } from '../lib/suppliers';
 import { priceFromMatrix } from '../lib/pricing';
@@ -19,7 +21,7 @@ const QUICK = ['Oil filter', 'Engine air filter', 'Cabin air filter', 'Front bra
 export default function Parts() {
   const [params, setParams] = useSearchParams();
   const tab = params.get('tab') || 'catalog';
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const low = state.inventory.filter((p) => Number(p.qty) <= Number(p.min)).length;
   return (
     <>
@@ -48,7 +50,7 @@ export default function Parts() {
 }
 
 function Catalog() {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const [params] = useSearchParams();
   const [vehicleId, setVehicleId] = useState(() => state.vehicles.find((v) => v.vin && v.vin === params.get('vin'))?.id || '');
   const [manual, setManual] = useState(() => {
@@ -164,12 +166,12 @@ function Catalog() {
   );
 }
 
-const blankPart = { sku: '', partNumber: '', brand: '', description: '', category: 'Filters', location: '', qty: 0, min: 0, max: 0, cost: 0, vendor: '' };
+const blankPart = { sku: '', barcode: '', partNumber: '', brand: '', description: '', category: 'Filters', location: '', qty: 0, min: 0, max: 0, cost: 0, vendor: '' };
 const GROUP_ICON = { parts: Wrench, tires: Disc3, batteries: BatteryCharging, fluids: Droplets };
 const GROUP_TONE = { parts: 'blue', tires: 'slate', batteries: 'teal', fluids: 'sky' };
 
 function Inventory() {
-  const { state, adjustInventory, saveInventoryItem, deleteInventoryItem } = useShop();
+  const { state, adjustInventory, saveInventoryItem, deleteInventoryItem } = useScopedShop();
   const { toast } = useUI();
   const [params, setParams] = useSearchParams();
   const [q, setQ] = useState('');
@@ -179,6 +181,18 @@ function Inventory() {
   const [cat, setCat] = useState('all');
   const status = useMemo(() => inventoryStatus(state), [state]);
   const [group, setGroup] = useState('all');
+  const [found, setFound] = useState(null);
+  const [counting, setCounting] = useState(false);
+  const [moving, setMoving] = useState(null);
+  const site = useSite();
+  const onScan = (code) => {
+    const p = findPartByCode(state.inventory, code);
+    if (p) {
+      setFound(p.id);
+      setQ('');
+    } else toast(`No part with code ${code}`, { tone: 'error', action: { label: 'Add part', onClick: () => setEditing({ ...blankPart, barcode: code }) } });
+  };
+  const hit = found && state.inventory.find((p) => p.id === found);
 
   const rows = useMemo(() => {
     const query = q.toLowerCase();
@@ -186,7 +200,7 @@ function Inventory() {
       .filter((p) => filter !== 'low' || ['reorder', 'low'].includes(status.get(p.id)?.status))
       .filter((p) => cat === 'all' || p.category === cat)
       .filter((p) => group === 'all' || status.get(p.id)?.group === group)
-      .filter((p) => !query || `${p.sku} ${p.partNumber} ${p.brand} ${p.description} ${p.location} ${p.vendor}`.toLowerCase().includes(query));
+      .filter((p) => !query || `${p.sku} ${p.barcode || ''} ${p.partNumber} ${p.brand} ${p.description} ${p.location} ${p.vendor}`.toLowerCase().includes(query));
   }, [state.inventory, q, filter, cat, group, status]);
 
   const value = state.inventory.reduce((s, p) => s + p.qty * p.cost, 0);
@@ -229,17 +243,35 @@ function Inventory() {
         ))}
       </Card>
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <SearchInput value={q} onChange={setQ} placeholder="Part #, SKU, brand, description, bin" className="w-full sm:w-72" />
+        <div className="flex w-full gap-1.5 sm:w-auto">
+          <SearchInput value={q} onChange={setQ} placeholder="Part #, SKU, barcode, brand, bin" className="w-full sm:w-72" />
+          <ScanButton className="btn-secondary btn-icon shrink-0" label="Scan a part barcode" onResult={onScan} />
+        </div>
         <Segmented size="sm" value={filter} onChange={(f) => setParams({ tab: 'inventory', ...(f === 'low' ? { filter: 'low' } : {}) })} options={[{ value: 'all', label: 'All' }, { value: 'low', label: 'Low stock' }]} />
         <select className="input h-7 w-auto text-xs" value={cat} onChange={(e) => setCat(e.target.value)} aria-label="Category">
           <option value="all">All categories</option>
           {categories.map((c) => <option key={c}>{c}</option>)}
         </select>
         <div className="ml-auto flex gap-2">
+          <button className="btn-secondary" onClick={() => setCounting(true)}><Boxes size={14} /> Count</button>
           <button className="btn-secondary" onClick={exportCsv}><Download size={14} /> CSV</button>
           <button className="btn-primary" onClick={() => setEditing(blankPart)}><Plus size={16} strokeWidth={2.2} /> Add part</button>
         </div>
       </div>
+      {hit && (
+        <Card className="mb-4 flex flex-wrap items-center gap-3 px-4 py-3">
+          <Package size={18} className="text-ink-3" />
+          <div className="min-w-0 flex-1">
+            <div className="font-medium">{hit.description}</div>
+            <div className="text-xs text-ink-3">{[hit.brand, hit.partNumber, hit.location && `Bin ${hit.location}`].filter(Boolean).join(' · ')}</div>
+          </div>
+          <span className="tabular text-lg font-semibold">{hit.qty} <span className="text-xs font-normal text-ink-3">in stock</span></span>
+          <button className="btn-secondary btn-sm" onClick={() => (adjustInventory(hit.id, -1), toast(`Pulled 1 × ${hit.description}`))}><Minus size={13} /> Pull 1</button>
+          <button className="btn-secondary btn-sm" onClick={() => (adjustInventory(hit.id, 1), toast(`Received 1 × ${hit.description}`))}><Plus size={13} /> Receive 1</button>
+          <button className="btn-plain btn-sm" onClick={() => setEditing(hit)}><Pencil size={13} /> Edit</button>
+          <button className="btn-ghost btn-icon h-7 w-7" onClick={() => setFound(null)} aria-label="Dismiss">×</button>
+        </Card>
+      )}
       <Card>
         {rows.length === 0 ? (
           <EmptyState icon={Package} title="No parts match" />
@@ -270,6 +302,7 @@ function Inventory() {
                       <td>
                         <div className="font-medium">{p.description}</div>
                         <div className="text-xs text-ink-3">
+                          {site.multi && site.current === 'all' && <span className="mr-1.5 rounded-[4px] border border-line px-1 text-2xs font-medium text-ink-2">{siteFor(state.shop, siteOf(p)).name}</span>}
                           {p.brand} {p.partNumber ? <Mono className="text-ink-2">{p.partNumber}</Mono> : <span className="text-ink-4">{p.sku}</span>}
                           {st.lastUsed && <span className="text-ink-4"> · used {dateShort(st.lastUsed)}</span>}
                         </div>
@@ -297,6 +330,9 @@ function Inventory() {
                             <a href={SUPPLIERS[0].search(p.partNumber)} target="_blank" rel="noopener noreferrer" className="btn-ghost btn-icon h-7 w-7" title="Price on RockAuto">
                               <ArrowUpRight size={14} />
                             </a>
+                          )}
+                          {site.multi && p.qty > 0 && (
+                            <button className="btn-ghost btn-icon h-7 w-7" onClick={() => setMoving(p)} aria-label={`Transfer ${p.description}`} title="Transfer to another location"><ArrowLeftRight size={13} /></button>
                           )}
                           <button className="btn-ghost btn-icon h-7 w-7" onClick={() => setEditing(p)} aria-label="Edit"><Pencil size={13} /></button>
                         </div>
@@ -331,12 +367,138 @@ function Inventory() {
           }
         />
       )}
+      {counting && <CountInventory onClose={() => setCounting(false)} />}
+      {moving && <TransferModal part={moving} onClose={() => setMoving(null)} />}
     </>
   );
 }
 
+/** Move stock to another location (the same part there gets the quantity). */
+function TransferModal({ part, onClose }) {
+  const { state, transferInventory } = useScopedShop();
+  const { toast } = useUI();
+  const site = useSite();
+  const from = siteOf(part);
+  const options = site.sites.filter((l) => l.id !== from);
+  const [to, setTo] = useState(options[0]?.id || '');
+  const [qty, setQty] = useState('1');
+  const n = Math.max(0, Math.min(Number(qty) || 0, Number(part.qty) || 0));
+  return (
+    <Modal
+      open
+      size="sm"
+      onClose={onClose}
+      title="Transfer stock"
+      subtitle={`${part.description} · ${part.qty} at ${siteFor(state.shop, from).name}`}
+      footer={
+        <>
+          <button className="btn-secondary" onClick={onClose}>Cancel</button>
+          <button
+            className="btn-primary"
+            disabled={!to || n <= 0}
+            onClick={() => {
+              transferInventory(part.id, to, n);
+              toast(`Moved ${n} to ${siteFor(state.shop, to).name}`, { tone: 'success' });
+              onClose();
+            }}
+          >
+            Transfer {n || ''}
+          </button>
+        </>
+      }
+    >
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="To">
+          {(id) => (
+            <select id={id} className="input" value={to} onChange={(e) => setTo(e.target.value)}>
+              {options.map((l) => (
+                <option key={l.id} value={l.id}>{l.name}</option>
+              ))}
+            </select>
+          )}
+        </Field>
+        <Field label="Quantity">{(id) => <input id={id} inputMode="numeric" className="input" value={qty} onChange={(e) => setQty(e.target.value)} />}</Field>
+      </div>
+    </Modal>
+  );
+}
+
+/** Cycle count: scan (or search) a part, enter what's on the shelf, and the count is corrected. */
+function CountInventory({ onClose }) {
+  const { state, saveInventoryItem } = useScopedShop();
+  const { toast } = useUI();
+  const [scanning, setScanning] = useState(true);
+  const [id, setId] = useState(null);
+  const [counted, setCounted] = useState('');
+  const [log, setLog] = useState([]);
+  const [miss, setMiss] = useState('');
+  const p = id && state.inventory.find((x) => x.id === id);
+  const pick = (code) => {
+    const hit = findPartByCode(state.inventory, code);
+    setMiss(hit ? '' : code);
+    if (hit) {
+      setId(hit.id);
+      setCounted(String(hit.qty));
+    }
+  };
+  const save = () => {
+    const n = Math.max(0, Math.round(Number(counted) || 0));
+    const diff = n - (Number(p.qty) || 0);
+    saveInventoryItem({ id: p.id, qty: n, countedAt: new Date().toISOString() });
+    setLog((l) => [{ id: p.id, name: p.description, was: p.qty, now: n }, ...l]);
+    toast(diff ? `${p.description}: ${diff > 0 ? '+' : ''}${diff} → ${n}` : `${p.description}: count matches`, { tone: 'success' });
+    setId(null);
+    setScanning(true);
+  };
+  return (
+    <Modal
+      open
+      onClose={onClose}
+      title="Count inventory"
+      subtitle="Scan each part (or pick it), enter what’s on the shelf, save — repeat."
+      footer={<button className="btn-secondary" onClick={onClose}>Done</button>}
+    >
+      {p ? (
+        <div className="space-y-3">
+          <div className="rounded-[10px] border border-line px-3 py-2.5">
+            <div className="font-medium">{p.description}</div>
+            <div className="text-xs text-ink-3">{[p.brand, p.partNumber, p.location && `Bin ${p.location}`].filter(Boolean).join(' · ')} · system says {p.qty}</div>
+          </div>
+          <Field label="Counted on the shelf">{(fid) => <input id={fid} inputMode="numeric" className="input h-11 text-lg" value={counted} onChange={(e) => setCounted(e.target.value)} autoFocus onKeyDown={(e) => e.key === 'Enter' && save()} />}</Field>
+          <div className="flex gap-2">
+            <button className="btn-primary flex-1" onClick={save}>Save count</button>
+            <button className="btn-secondary" onClick={() => setId(null)}>Skip</button>
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          <button className="btn-primary w-full" onClick={() => setScanning(true)}>Scan a part</button>
+          <select className="input" value="" onChange={(e) => pick(state.inventory.find((x) => x.id === e.target.value)?.partNumber || state.inventory.find((x) => x.id === e.target.value)?.sku)} aria-label="Pick a part">
+            <option value="">…or pick from the list</option>
+            {state.inventory.map((x) => (
+              <option key={x.id} value={x.id}>{x.description}{x.partNumber ? ` · ${x.partNumber}` : ''}</option>
+            ))}
+          </select>
+          {miss && <p className="text-sm text-warn">No part with code {miss} — add it from Inventory → Add part.</p>}
+        </div>
+      )}
+      {log.length > 0 && (
+        <ul className="mt-4 divide-y divide-line/70 rounded-[10px] border border-line text-sm">
+          {log.map((l, i) => (
+            <li key={i} className="flex justify-between px-3 py-1.5">
+              <span className="truncate">{l.name}</span>
+              <span className={`tabular ${l.now !== l.was ? 'font-medium text-warn' : 'text-ink-3'}`}>{l.was} → {l.now}</span>
+            </li>
+          ))}
+        </ul>
+      )}
+      {scanning && !p && <Scanner mode="part" title="Scan a part to count" onResult={pick} onClose={() => setScanning(false)} />}
+    </Modal>
+  );
+}
+
 function PartForm({ initial, onClose, onSave, onDelete }) {
-  const { state } = useShop();
+  const { state } = useScopedShop();
   const [f, setF] = useState(initial);
   const set = (k, num) => (e) => setF((x) => ({ ...x, [k]: num ? Number(e.target.value) || 0 : e.target.value }));
   return (
@@ -357,6 +519,14 @@ function PartForm({ initial, onClose, onSave, onDelete }) {
         <Field label="Brand">{(id) => <input id={id} className="input" value={f.brand} onChange={set('brand')} />}</Field>
         <Field label="Part number">{(id) => <input id={id} className="input font-mono" value={f.partNumber} onChange={set('partNumber')} />}</Field>
         <Field label="Internal SKU">{(id) => <input id={id} className="input" value={f.sku} onChange={set('sku')} />}</Field>
+        <Field label="Barcode (UPC/EAN)" className="col-span-2">
+          {(id) => (
+            <div className="flex gap-2">
+              <input id={id} className="input font-mono" value={f.barcode || ''} onChange={set('barcode')} />
+              <ScanButton className="btn-outline btn-icon" label="Scan the part’s barcode" onResult={(barcode) => setF((x) => ({ ...x, barcode }))} />
+            </div>
+          )}
+        </Field>
         <Field label="Category">{(id) => <input id={id} className="input" list="part-cats" value={f.category} onChange={set('category')} />}</Field>
         <datalist id="part-cats">{[...new Set(state.inventory.map((p) => p.category))].map((c) => <option key={c} value={c} />)}</datalist>
         <Field label="Bin location">{(id) => <input id={id} className="input" value={f.location} onChange={set('location')} />}</Field>
