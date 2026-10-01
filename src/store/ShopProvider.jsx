@@ -312,6 +312,20 @@ export default function ShopProvider({ children }) {
         update((s) => {
           s.messages.push({ id: uid('msg'), customerId, orderId, dir, channel, body, at: when || now(), read: dir === 'out', ...(meta ? { meta } : {}) });
         }),
+      // Contact and fleet forms on the shop's website: match the customer or add them, then log the message.
+      addWebsiteMessage: ({ remoteId, name, phone, email, company, body, at: when }) =>
+        update((s) => {
+          if (remoteId && s.messages.some((m) => m.meta?.remoteId === remoteId)) return;
+          const digits = (p = '') => p.replace(/\D/g, '').slice(-10);
+          let c = s.customers.find((x) => (phone && digits(phone).length === 10 && digits(x.phone) === digits(phone)) || (email && x.email && x.email.toLowerCase() === email.toLowerCase()));
+          if (!c) {
+            const [firstName, ...rest] = (name || 'Website visitor').trim().split(/\s+/);
+            c = { id: uid('cus'), firstName, lastName: rest.join(' '), phone: phone || '', email: email || '', address: '', city: '', state: '', zip: '', company: company || '', notes: 'Contacted through the website', tags: ['Website'], textOptIn: false, createdAt: now() };
+            s.customers.unshift(c);
+            log(s, `New contact from the website: ${fullName(c)}`);
+          }
+          s.messages.push({ id: uid('msg'), customerId: c.id, orderId: null, dir: 'in', channel: 'web', body, at: when || now(), read: false, meta: { remoteId } });
+        }),
       markThreadRead: (customerId) =>
         update((s) => {
           s.messages.forEach((m) => m.customerId === customerId && !m.read && (m.read = true));

@@ -1,4 +1,4 @@
-// Pick a recognizable icon for a service by its name (used on the booking page and shop website).
+// Pick a recognizable icon for a service by its name (used on the booking page).
 import { Droplets, Disc, Snowflake, BatteryCharging, Disc3, Gauge, Cog, Car, Wrench, ShieldCheck, Wind, Search } from 'lucide-react';
 
 export const SERVICE_ICONS = { oil: Droplets, brake: Disc, climate: Snowflake, electrical: BatteryCharging, tires: Disc3, diagnostics: Gauge, engine: Cog, suspension: Car, inspect: Search, filter: Wind, maintenance: ShieldCheck, other: Wrench };

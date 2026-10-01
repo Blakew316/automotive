@@ -8,7 +8,7 @@ const enc = (obj) => btoa(unescape(encodeURIComponent(JSON.stringify(obj)))).rep
 export const decodeConfig = (s) => JSON.parse(decodeURIComponent(escape(atob(s.replace(/-/g, '+').replace(/_/g, '/')))));
 
 /** Everything the public booking page needs (no customer data). */
-export function bookingConfig(state, { includeBusy = false, includeSite = false } = {}) {
+export function bookingConfig(state, { includeBusy = false } = {}) {
   const shop = state.shop;
   const b = shop.booking || {};
   const cfg = cloudConfig(shop);
@@ -28,41 +28,30 @@ export function bookingConfig(state, { includeBusy = false, includeSite = false 
     services,
     inbox: cfg ? { url: cfg.url, key: cfg.key } : null,
     enabled: Boolean(b.enabled),
-    site: includeSite ? siteConfig(state) : undefined,
     busy: includeBusy ? busyTimes(state) : undefined,
     publishedAt: includeBusy ? new Date().toISOString() : undefined,
   };
 }
 
-/** Public website content: tagline, reviews, highlights and the shop's service categories. */
-function siteConfig(state) {
-  const w = state.shop.website || {};
-  const categories = [...new Set(state.cannedJobs.map((j) => j.category))];
-  const services = categories.map((cat) => ({ title: cat, items: state.cannedJobs.filter((j) => j.category === cat).slice(0, 4).map((j) => j.title) }));
-  const f = state.shop.financing || {};
-  return {
-    tagline: w.tagline || '',
-    since: w.since || null,
-    about: w.about || '',
-    rating: Number(w.rating) || null,
-    reviews: Number(w.reviews) || null,
-    reviewUrl: state.shop.marketing?.reviewUrl || '',
-    testimonials: (w.testimonials || []).filter((t) => t.text).slice(0, 6),
-    highlights: (w.highlights || []).filter(Boolean).slice(0, 6),
-    services,
-    warranty: state.shop.warranty || '',
-    financing: f.enabled ? { provider: f.provider || '', url: f.url || '', min: f.minAmount || 0 } : null,
-  };
+/**
+ * The shop's public website (website/ in this repo): its own address if one is set, otherwise the
+ * copy published with the app — the app is served from <site>/app/, so the site is one level up.
+ */
+export function websiteLink(state) {
+  return state.shop.website?.url?.trim() || defaultWebsite();
 }
 
-/** Link to the public shop website (reads the same published file as the booking page). */
-export function websiteLink(state) {
-  const shop = state.shop;
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const base = `${origin}${import.meta.env?.BASE_URL || '/'}site`;
-  const cfg = cloudConfig(shop);
-  if (cfg && shop.booking?.published) return `${base}?from=${encodeURIComponent(publicSiteBase(cfg))}`;
-  return `${base}?c=${enc(bookingConfig(state, { includeSite: true }))}`;
+export function defaultWebsite() {
+  if (typeof window === 'undefined') return '';
+  const base = import.meta.env?.BASE_URL || '/';
+  return /\/app\/$/.test(base) ? `${window.location.origin}${base.replace(/app\/$/, '')}` : '';
+}
+
+/** A page on the public website, e.g. websitePage(state, 'appointment.html'). */
+export function websitePage(state, page) {
+  const site = websiteLink(state);
+  if (!site) return '';
+  return new URL(page, site.endsWith('/') || /\.html?$/.test(site) ? site : `${site}/`).href;
 }
 
 /** Scheduled appointment intervals for the booking window (times only — no names). */

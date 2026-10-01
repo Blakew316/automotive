@@ -1,0 +1,40 @@
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="{{root}}index.html" aria-label="{{name}} home">
+      <span class="brand-badge"><img src="{{root}}assets/img/logo-mark-white.webp" alt="" width="480" height="207" decoding="async"></span>
+      <span class="brand-text" aria-hidden="true"><span class="brand-line1">Complete Auto Care</span><span class="brand-line2">&amp; Small Engine Repair</span></span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li><a class="nav-link" href="{{root}}index.html" data-nav="home">Home</a></li>
+        <li class="has-menu" data-menu>
+          <a class="nav-link" href="{{root}}services.html" data-nav="services">Services</a>
+          <button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega-services" aria-label="Show all services"><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+          <div class="mega" id="mega-services">
+            <div class="mega-grid">
+{{servicesMega}}
+            </div>
+            <div class="mega-foot">
+              <p class="mega-note"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg> Not sure what you need? Describe the symptom and we&rsquo;ll diagnose it.</p>
+              <div class="mega-actions">
+                <a class="link-arrow" href="{{root}}services.html">All services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                <a class="btn btn-primary btn-sm" href="{{root}}appointment.html">Book a service</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="{{root}}services/small-engine-repair.html" data-nav="small-engine">Small Engine</a></li>
+        <li><a class="nav-link" href="{{root}}about.html" data-nav="about">About</a></li>
+        <li><a class="nav-link" href="{{root}}fleet.html" data-nav="fleet">Fleet</a></li>
+        <li><a class="nav-link" href="{{root}}resources.html" data-nav="resources">Car Care</a></li>
+        <li><a class="nav-link" href="{{root}}contact.html" data-nav="contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-call" href="tel:{{tel}}"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span class="visually-hidden">Call </span><span class="header-call-num">{{phone}}</span></a>
+      <a class="btn btn-primary btn-sm header-book" href="{{root}}appointment.html" data-nav="appointment">Book Service</a>
+    </div>
+  </div>
+  <div class="road-progress" aria-hidden="true"><span class="road-progress-lane"></span><svg class="road-progress-car"><use href="#i-car-mini"/></svg></div>
+</header>

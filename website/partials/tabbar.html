@@ -1,0 +1,41 @@
+<nav class="tabbar" aria-label="Quick navigation">
+  <a class="tab" href="{{root}}index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+  <a class="tab" href="{{root}}services.html" data-nav="services"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span>Services</span></a>
+  <a class="tab tab-book" href="{{root}}appointment.html" data-nav="appointment"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Book</span></a>
+  <a class="tab" href="{{root}}contact.html" data-nav="contact"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Contact</span></a>
+  <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>More</span></button>
+</nav>
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="more-sheet-title">Menu</h2>
+      <button class="icon-btn" type="button" data-close-sheet aria-label="Close menu" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <p class="sheet-status"><span class="open-status" data-open-status>Shop hours</span></p>
+    <div class="sheet-quick">
+      <a class="quick-action" href="tel:{{tel}}"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>Call</span></a>
+      <a class="quick-action" href="{{mapsUrl}}" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-directions"/></svg><span>Directions</span></a>
+      <a class="quick-action" href="mailto:{{email}}"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>Email</span></a>
+    </div>
+    <h3 class="sheet-label">Explore</h3>
+    <ul class="sheet-grid">
+      <li><a href="{{root}}index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a></li>
+      <li><a href="{{root}}services.html" data-nav="services"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg>Services</a></li>
+      <li><a href="{{root}}services/small-engine-repair.html" data-nav="small-engine"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small Engine</a></li>
+      <li><a href="{{root}}about.html" data-nav="about"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>About</a></li>
+      <li><a href="{{root}}fleet.html" data-nav="fleet"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet</a></li>
+      <li><a href="{{root}}specials.html" data-nav="specials"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Specials</a></li>
+      <li><a href="{{root}}brands.html" data-nav="brands"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg>Makes We Service</a></li>
+      <li><a href="{{root}}resources.html" data-nav="resources"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Car Care</a></li>
+      <li><a href="{{root}}faq.html" data-nav="faq"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+      <li><a href="{{root}}careers.html" data-nav="careers"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"/></svg>Careers</a></li>
+      <li><a href="{{root}}contact.html" data-nav="contact"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Contact</a></li>
+      <li><a href="{{root}}appointment.html" data-nav="appointment"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book Service</a></li>
+    </ul>
+    <h3 class="sheet-label">Services</h3>
+    <ul class="sheet-list">
+{{servicesSheet}}
+    </ul>
+  </div>
+</dialog>

@@ -1,5 +1,6 @@
 // Keeps the shop in sync with its Shop Cloud while a staff member is signed in on this device:
-// pulls booking requests, online approvals and customer messages from the inbox, and republishes
+// pulls booking requests, online approvals and customer messages (from report links, the booking
+// page and the shop's website) from the inbox, and republishes
 // the booking page's open times whenever the calendar changes.
 import { useEffect, useRef, useState } from 'react';
 import { useShop } from '../store/hooks';
@@ -62,7 +63,7 @@ export function useCloudSync() {
   useEffect(() => {
     if (!staff || !bookingOn || published) return;
     let alive = true;
-    publishBooking(cfg, bookingConfig(latest.current.state, { includeBusy: true, includeSite: true }))
+    publishBooking(cfg, bookingConfig(latest.current.state, { includeBusy: true }))
       .then(() => {
         if (alive) latest.current.updateShop({ booking: { ...latest.current.state.shop.booking, published: new Date().toISOString() } });
       })
@@ -74,7 +75,7 @@ export function useCloudSync() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [staff, bookingOn, published, cfg?.url]);
-  const fingerprint = signedIn && published && bookingOn ? JSON.stringify({ ...bookingConfig(state, { includeBusy: true, includeSite: true }), publishedAt: null }) : '';
+  const fingerprint = signedIn && published && bookingOn ? JSON.stringify({ ...bookingConfig(state, { includeBusy: true }), publishedAt: null }) : '';
   const lastFingerprint = useRef('');
   useEffect(() => {
     if (!fingerprint) return undefined;
@@ -86,7 +87,7 @@ export function useCloudSync() {
     if (fingerprint === lastFingerprint.current) return undefined;
     const t = setTimeout(async () => {
       try {
-        await publishBooking(cfg, bookingConfig(latest.current.state, { includeBusy: true, includeSite: true }));
+        await publishBooking(cfg, bookingConfig(latest.current.state, { includeBusy: true }));
         lastFingerprint.current = fingerprint;
       } catch {
         // Next change retries.
@@ -100,7 +101,7 @@ export function useCloudSync() {
 }
 
 /** Turn inbox rows into bookings, approvals and messages. Returns the ids that were handled. */
-function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, selectTire }) {
+function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, addWebsiteMessage, selectTire }) {
   const handled = [];
   const bookings = [];
   for (const row of rows) {
@@ -109,7 +110,8 @@ function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, se
       if (p.name && p.start) {
         bookings.push({
           remoteId: row.id,
-          source: 'online',
+          source: p.source === 'website' ? 'website' : 'online',
+          window: p.source === 'website' && ['Morning', 'Midday', 'Afternoon', 'Flexible'].includes(p.window) ? p.window : null,
           createdAt: row.created_at || p.at,
           name: String(p.name).slice(0, 120),
           phone: String(p.phone || '').slice(0, 40),
@@ -121,6 +123,23 @@ function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, se
           duration: Math.min(480, Math.max(30, Number(p.duration) || 60)),
           notes: String(p.notes || '').slice(0, 1000),
           customerId: null,
+        });
+      }
+      handled.push(row.id);
+      continue;
+    }
+    // Contact and fleet forms on the shop's website.
+    if (row.kind === 'message' && !row.ref && p.source === 'website') {
+      const text = String(p.text || '').trim().slice(0, 2000);
+      if (p.name && text && (p.phone || p.email)) {
+        addWebsiteMessage({
+          remoteId: row.id,
+          name: String(p.name).slice(0, 120),
+          phone: String(p.phone || '').slice(0, 40),
+          email: String(p.email || '').slice(0, 120),
+          company: String(p.company || '').slice(0, 120),
+          body: p.form === 'fleet' ? `Fleet inquiry\n${text}` : text,
+          at: row.created_at,
         });
       }
       handled.push(row.id);

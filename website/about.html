@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>About Us | Clinton Complete Auto Care &amp; Small Engine Repair</title>
+<meta name="description" content="Clinton Complete Auto Care looks after cars, trucks, SUVs and vans, plus mowers, generators and other small engines. Honest advice and written estimates.">
+<meta property="og:title" content="About Clinton Complete Auto Care">
+<meta property="og:description" content="A neighborhood shop for engines of every size: complete auto care, and small engine repair too.">
+<!-- @partial head -->
+<script>document.documentElement.classList.add("js")</script>
+<meta name="theme-color" content="#FAF8F5">
+<meta name="color-scheme" content="light">
+<meta name="form-endpoint" content="">
+<meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
+<meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/site.js" defer></script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"selector_matches":"[target=_blank]"}}]},"eagerness":"moderate"}]}</script>
+<link rel="canonical" href="https://blakew316.github.io/automotive/about.html">
+<meta property="og:url" content="https://blakew316.github.io/automotive/about.html">
+<meta property="og:site_name" content="Clinton Complete Auto Care">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<!-- @end head -->
+<!-- @partial jsonld -->
+<script type="application/ld+json" id="business-data">{"@context":"https://schema.org","@type":"AutoRepair","name":"Clinton Complete Auto Care","description":"Complete auto care and small engine repair: maintenance, diagnostics, brakes, engines, A/C, tires and more.","url":"https://blakew316.github.io/automotive/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png","telephone":"+15555550123","email":"service@example.com","address":{"@type":"PostalAddress","streetAddress":"123 Main Street","addressLocality":"Clinton","addressRegion":"ST","postalCode":"00000","addressCountry":"US"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Saturday"],"opens":"08:00","closes":"13:00"}]}</script>
+<!-- @end jsonld -->
+<style>
+  /* About: hero business card */
+  .about-card { position: relative; width: 100%; padding-block: 22px 6px; }
+  .about-card .note-a { top: -6px; left: -12px; }
+  .about-card .note-b { bottom: 2px; right: -10px; animation-delay: 1.15s, 2.4s; }
+  .about-card .card-orbit { position: absolute; inset: 50% auto auto 50%; width: min(118%, 640px); aspect-ratio: 1; translate: -50% -54%; z-index: -1; pointer-events: none; overflow: visible; }
+  .card-orbit .ticks { transform-box: fill-box; transform-origin: center; animation: art-spin 90s linear infinite; }
+  .card-orbit .sweep { transform-box: view-box; transform-origin: 200px 200px; animation: orbit-sweep 7s var(--ease-in-out) infinite; }
+  @keyframes orbit-sweep { 0% { transform: rotate(-120deg); opacity: 0; } 20% { opacity: 1; } 70% { opacity: 1; } 100% { transform: rotate(120deg); opacity: 0; } }
+  @media (max-width: 959.98px) { .about-card { max-width: 560px; margin-inline: auto; } }
+
+  /* The name on the sign */
+  .name-rows { display: grid; }
+  .name-row { position: relative; display: grid; grid-template-columns: auto 1fr; gap: 8px 22px; padding-block: clamp(20px, 1rem + 1vw, 30px); border-top: 1px solid var(--line); }
+  .name-row:last-child { border-bottom: 1px solid var(--line); }
+  .name-row::before { content: ""; position: absolute; left: 0; right: 0; top: -1px; height: 2px; background: var(--foil-ink); transform: scaleX(0); transform-origin: left; transition: transform 1.4s var(--ease) calc(var(--i, 0) * 140ms + .25s); }
+  .name-row.is-in::before, html:not(.js) .name-row::before { transform: scaleX(1); }
+  .name-num { grid-row: span 2; padding-top: .55em; font-family: var(--font-mono); font-size: .82rem; color: var(--ink-4); letter-spacing: 0; }
+  .name-row h3 { font-size: clamp(1.65rem, 1.15rem + 1.6vw, 2.5rem); line-height: 1.08; letter-spacing: -0.032em; font-weight: 700; }
+  .name-row p { color: var(--ink-3); max-width: 36em; }
+
+  /* Values: 2 x 2 until four columns fit, so the last card never sits alone */
+  @media (min-width: 600px) and (max-width: 1099.98px) { .values-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1100px) { .values-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  .value-card h3 { font-size: 1.14rem; }
+  .value-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); background: var(--foil); }
+  @media (max-width: 599.98px) {
+    .value-card { display: grid; grid-template-columns: auto 1fr; column-gap: 16px; align-items: start; }
+    .value-card .icon-tile { grid-row: span 2; }
+    .value-card h3.mt-2 { margin-top: 2px; }
+    .value-card p { margin-top: 4px; }
+  }
+
+  /* Visit checklist (styled like a repair order) */
+  .ro-card { position: relative; overflow: hidden; padding: clamp(22px, 1rem + 1.6vw, 36px); border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2); }
+  .ro-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 6px; background: var(--foil); }
+  .ro-head { display: flex; align-items: center; gap: 14px; padding-bottom: 18px; margin-bottom: 22px; border-bottom: 1.5px dashed var(--line-strong); }
+  .ro-head strong { display: block; font-size: 1.06rem; letter-spacing: -0.015em; }
+  .ro-head small { display: block; color: var(--ink-3); }
+  .ro-head .badge { margin-left: auto; }
+  .ro-list { gap: 18px; }
+  .ro-list h3 { font-size: 1.06rem; letter-spacing: -0.015em; }
+  .ro-list p { margin-top: 3px; color: var(--ink-3); font-size: .97rem; }
+  .ro-list li::before { margin-top: 1px; }
+  .js .ro-card:not(.is-in) .ro-list li::before { transform: scale(0); }
+  .ro-card.is-in .ro-list li::before { animation: pop .5s var(--spring) both; animation-delay: calc(.5s + var(--n, 0) * .18s); }
+  .ro-foot { display: flex; align-items: center; gap: 10px; margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--ink-3); }
+  .ro-foot .icon { color: var(--accent); }
+  @media (max-width: 479.98px) { .ro-head .badge { display: none; } }
+
+  /* Big engines and small */
+  .engine-panels { display: grid; gap: clamp(14px, .8rem + .6vw, 24px); }
+  @media (min-width: 900px) { .engine-panels { grid-template-columns: 1fr 1fr; } }
+  .engine-panel { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: clamp(24px, 1.2rem + 2vw, 44px); border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); }
+  .engine-panel.is-foil { background: var(--foil); border-color: rgba(77, 86, 191, .1); }
+  .engine-panel.is-foil::after { content: ""; position: absolute; inset: auto -12% -46% auto; width: 62%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, .7), transparent); pointer-events: none; }
+  .engine-panel > * { position: relative; z-index: 1; }
+  .engine-panel .eyebrow { margin-top: 6px; }
+  .engine-panel h3 { font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); letter-spacing: -0.03em; }
+  .engine-panel > p:not(.eyebrow) { color: var(--ink-3); max-width: 34em; }
+  .engine-panel .panel-actions { margin-top: auto; padding-top: 10px; }
+  .panel-links { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); column-gap: 18px; }
+  .panel-links a { display: flex; align-items: center; gap: 10px; min-height: 48px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: .98rem; color: var(--ink-2); text-decoration: none; transition: color var(--dur-1) var(--ease); }
+  .panel-links a .icon { color: var(--accent); }
+  .panel-links a .chev { margin-left: auto; width: 16px; height: 16px; color: var(--ink-4); transition: transform var(--dur-2) var(--ease); }
+  .panel-links a:hover { color: var(--ink); }
+  .panel-links a:hover .chev { transform: translateX(3px); color: var(--accent); }
+  .engine-panel .pill-cloud .chip { background: rgba(255, 255, 255, .72); }
+
+  /* Visit us */
+  .visit-rows { display: grid; gap: 10px; margin-top: 26px; }
+  .visit-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--r); background: var(--paper); border: 1px solid var(--line); text-decoration: none; color: var(--ink); transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
+  .visit-row:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: var(--line-strong); }
+  .visit-row small { display: block; font-size: .74rem; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+  .visit-row strong { display: block; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
+  .visit-row .chev { margin-left: auto; width: 18px; height: 18px; color: var(--ink-4); }
+  @media (max-width: 479.98px) { .visit-actions .btn { flex: 1 1 100%; } } /* two equal full-width buttons instead of a ragged pair */
+  .hours-card h3 { display: flex; align-items: center; gap: 10px; }
+  .hours-card .hours-table { margin-top: 14px; }
+  .hours-card .open-status { margin-top: 8px; }
+  /* a section head beside its content in a .split: the split gap does the spacing (avoids a double gap when stacked) */
+  .split > .section-head { margin-bottom: 0; }
+  /* land the "Visit the shop" jump on the content, not the section padding (the heading itself animates in, so it can't be the target) */
+  .visit-section { scroll-margin-top: calc(24px - clamp(64px, 5rem + 3vw, 128px)); }
+</style>
+</head>
+<body data-page="about" id="top">
+<!-- @partial icons -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-brake" viewBox="0 0 24 24"><circle cx="11" cy="13" r="8"/><circle cx="11" cy="13" r="2.4"/><path d="M11 6.9v.6M17.1 13h-.6M11 19.1v-.6M4.9 13h.6"/><path d="M15.4 3.7a9.6 9.6 0 0 1 4.9 4.9" stroke-width="3.2"/></symbol>
+  <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3.5c3 3.6 5.5 6.6 5.5 9.6a5.5 5.5 0 0 1-11 0c0-3 2.5-6 5.5-9.6z"/><path d="M9.4 14a2.6 2.6 0 0 0 2.6 2.6"/></symbol>
+  <symbol id="i-diagnostics" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M6.5 12.5l2.4-3 2.5 2.2 3-4.2 3.1 3.6"/><path d="M8.5 20.5h7M12 17v3.5"/></symbol>
+  <symbol id="i-engine" viewBox="0 0 24 24"><path d="M9.5 5.5h5M12 5.5v2.5"/><path d="M6 10.5V9a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l1.8 1.8h1.8a1 1 0 0 1 1 1v1.4h1v4h-1v1.3a1 1 0 0 1-1 1h-2.8L14.9 20H8.6l-2.6-2.6"/><path d="M6 10.5H4.5v7H6zM4.5 14H2.5M2.5 12v4"/></symbol>
+  <symbol id="i-transmission" viewBox="0 0 24 24"><circle cx="5" cy="5" r="1.7"/><circle cx="12" cy="5" r="1.7"/><circle cx="19" cy="5" r="1.7"/><circle cx="5" cy="19" r="1.7"/><circle cx="12" cy="19" r="1.7"/><path d="M5 6.7v10.6M12 6.7v10.6M19 6.7V12H5"/></symbol>
+  <symbol id="i-ac" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.6 4.4 12 6.3l2.4-1.9M9.6 19.6 12 17.7l2.4 1.9M4.4 10.6l2.8-1.2-.4-3M17.2 17.6l-.4-3 2.8-1.2M4.4 13.4l2.8 1.2-.4 3M17.2 6.4l-.4 3 2.8 1.2"/></symbol>
+  <symbol id="i-tire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+  <symbol id="i-suspension" viewBox="0 0 24 24"><path d="M12 2.5v2.5M12 19v2.5"/><path d="M8 5h8M8 19h8"/><path d="M8.5 5l7 2.3-7 2.3 7 2.4-7 2.3 7 2.4-7 .3"/></symbol>
+  <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12.5" rx="2.2"/><path d="M6.5 7V5h3v2M14.5 7V5h3v2"/><path d="M6.5 13.2h3.2M8.1 11.6v3.2M14.3 13.2h3.2"/></symbol>
+  <symbol id="i-mower" viewBox="0 0 24 24"><path d="M20.5 3.5l-5.2 8.5"/><path d="M4 12h11.8l1.7 3.8H3z"/><path d="M6 12V9.6h6.5l1 2.4"/><circle cx="6.5" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></symbol>
+  <symbol id="i-inspection" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2.2"/><path d="M9 4.5V3.2h6v1.3"/><path d="M8.6 12.6l2.3 2.3 4.6-4.8"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.2 3.8h3l1.6 4.1-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4.1 1.6v3a2 2 0 0 1-2.1 2A14.8 14.8 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2 2 4-4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.3V12l3.1 2"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7.2 12 13l8.2-5.8"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.6 2.6 5-5.2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 3.5a4.6 4.6 0 0 0-4.3 6L3.9 16.3a2 2 0 0 0 2.8 2.8l6.8-6.8a4.6 4.6 0 0 0 6-4.4c0-.5 0-.9-.2-1.3l-2.5 2.5-2.5-.6-.6-2.5 2.5-2.5c-.4-.1-.8-.1-1.2-.1z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.4c0 4.4-3 7.9-7 9.6-4-1.7-7-5.2-7-9.6V6z"/><path d="M8.8 12.1l2.2 2.2 4.3-4.4"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M2.5 15.6v-2.8a1.5 1.5 0 0 1 1-1.4l2.3-.8 2.4-3.3a2 2 0 0 1 1.6-.8h4.8a2 2 0 0 1 1.5.7l3 3.6 1.9.5a1.5 1.5 0 0 1 1.1 1.5v2.8"/><path d="M2.5 15.6h2.2M9.3 15.6h5.4M19.3 15.6h2.2"/><circle cx="7" cy="16" r="2.3"/><circle cx="17" cy="16" r="2.3"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 15.8V9.6a1 1 0 0 1 1-1h3.2l1.8-2.8h4.3a1 1 0 0 1 1 1v2.8h5.1a1.6 1.6 0 0 1 1.5 1.1l1.1 3.2v1.9"/><path d="M2.5 15.8h2M9 15.8h6M19.5 15.8h2"/><path d="M6.7 8.6h6.9"/><circle cx="6.8" cy="16.2" r="2.2"/><circle cx="17.2" cy="16.2" r="2.2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M6 9.6V20h12V9.6"/><path d="M10 20v-5.2h4V20"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 17h-9.5l-4.8 3.6V17H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 5z"/><path d="M7.5 10h9M7.5 13h5.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.4 2.9 17.3a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.5M12 17v.3"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24"><path d="M6.5 3h7.8l4.2 4.2V21h-12z"/><path d="M14 3v4.5h4.5M9.2 12h5.6M9.2 15.8h5.6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.5a1 1 0 0 1 1-1h7.8l8.2 8.2a1.5 1.5 0 0 1 0 2.1l-6.2 6.2a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7.5 4.5 3.5 4.5v14c4 0 6.5.5 8.5 2 2-1.5 4.5-2 8.5-2v-14c-4 0-6.5.5-8.5 2z"/><path d="M12 6.5v14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17.5 14.6c1.8.7 3 2.4 3.5 4.9"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.8-2.5 2.3-2.5 3.9M12 17v.3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.4 17.5a8.6 8.6 0 1 1 15.2 0"/><path d="M12 13.5l4.2-4.2"/><circle cx="12" cy="13.5" r="1.3"/><path d="M6.8 9.6l.9.6M12 6.4v1.1M17.2 9.6l-.9.6"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7.2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></symbol>
+  <symbol id="i-steering" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M3.3 10.6c3.1.6 5.6.8 6.6 1.1M20.7 10.6c-3.1.6-5.6.8-6.6 1.1M12 14.2V21"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M5.5 18.5l1.4-1.4M17.1 6.9l1.4-1.4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13.5 14.5-14-.3 9.6-5.8 14.5-13.2 14.5"/><path d="M5 19c3-4 6-6.5 9.5-8.5"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15.5a4.5 4.5 0 0 1-.4-9 5.5 5.5 0 0 1 10.6 1.4A3.8 3.8 0 0 1 17 15.5z"/><path d="M8.5 18.2l-.8 2M12.5 18.2l-.8 2M16.5 18.2l-.8 2"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9.2 14.2v-2.5a1 1 0 0 1 1-1h5M13.5 8.7l2 2-2 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2.5 8.5 6 6.5l3.2 1.2M21.5 8.5 18 6.5l-4.8 1.6-3.3 2.7a1.3 1.3 0 0 0 1.6 2l2.4-1.6 4.3 3.9"/><path d="M2.5 14.2l2 .1 4.8 4a1.4 1.4 0 0 0 2-1.9M8 15.5l2.8 2.3a1.4 1.4 0 0 0 2-1.9M11.6 13.4l3 2.6a1.4 1.4 0 0 0 1.9-2M21.5 14.2h-3.3"/></symbol>
+  <symbol id="i-fuel" viewBox="0 0 24 24"><path d="M4.5 20.5V5.5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20.5h13M4.5 10.5h10"/><path d="M14.5 8.5l3 .1 1.5 1.6v7.3a1.3 1.3 0 0 0 2.6 0V9.5L19 6.8"/></symbol>
+  <symbol id="i-car-mini" viewBox="0 0 32 14"><path d="M2 10.8V8.6c0-.6.4-1.1 1-1.3l4-1.2L10.4 2.7c.4-.4 1-.7 1.6-.7h7.3c.6 0 1.2.3 1.6.7L24 6.1l4.8.9c.7.1 1.2.7 1.2 1.4v2.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--ivory, #faf8f5)" stroke-width="1.2"/><circle cx="23.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--ivory, #faf8f5)" stroke-width="1.2"/></symbol>
+</svg>
+<!-- @end icons -->
+<!-- @partial header -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="Clinton Complete Auto Care home">
+      <span class="brand-badge"><img src="assets/img/logo-mark-white.webp" alt="" width="480" height="207" decoding="async"></span>
+      <span class="brand-text" aria-hidden="true"><span class="brand-line1">Complete Auto Care</span><span class="brand-line2">&amp; Small Engine Repair</span></span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li><a class="nav-link" href="index.html" data-nav="home">Home</a></li>
+        <li class="has-menu" data-menu>
+          <a class="nav-link" href="services.html" data-nav="services">Services</a>
+          <button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega-services" aria-label="Show all services"><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+          <div class="mega" id="mega-services">
+            <div class="mega-grid">
+              <a class="mega-item" href="services/brakes.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-brake"/></svg></span><span class="mega-text"><strong>Brakes</strong><small>Pads, rotors, fluid &amp; ABS</small></span></a>
+              <a class="mega-item" href="services/oil-change.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg></span><span class="mega-text"><strong>Oil &amp; Maintenance</strong><small>Oil, filters, fluids &amp; factory service</small></span></a>
+              <a class="mega-item" href="services/diagnostics.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span><span class="mega-text"><strong>Diagnostics</strong><small>Warning lights &amp; drivability</small></span></a>
+              <a class="mega-item" href="services/engine-repair.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-engine"/></svg></span><span class="mega-text"><strong>Engine &amp; Cooling</strong><small>Gaskets, timing, radiators &amp; more</small></span></a>
+              <a class="mega-item" href="services/transmission.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-transmission"/></svg></span><span class="mega-text"><strong>Transmission</strong><small>Fluid service, clutches &amp; axles</small></span></a>
+              <a class="mega-item" href="services/heating-ac.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-ac"/></svg></span><span class="mega-text"><strong>A/C &amp; Heating</strong><small>Recharge, leaks, blower &amp; heater</small></span></a>
+              <a class="mega-item" href="services/tires-alignment.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg></span><span class="mega-text"><strong>Tires &amp; Alignment</strong><small>Mount, balance, rotate &amp; align</small></span></a>
+              <a class="mega-item" href="services/suspension-steering.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-suspension"/></svg></span><span class="mega-text"><strong>Suspension &amp; Steering</strong><small>Shocks, struts &amp; steering</small></span></a>
+              <a class="mega-item" href="services/electrical-battery.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-battery"/></svg></span><span class="mega-text"><strong>Battery &amp; Electrical</strong><small>Batteries, alternators &amp; wiring</small></span></a>
+              <a class="mega-item" href="services/inspections.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="mega-text"><strong>Inspections</strong><small>Pre-purchase &amp; road-trip checks</small></span></a>
+              <a class="mega-item" href="services/small-engine-repair.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span><span class="mega-text"><strong>Small Engine Repair</strong><small>Mowers, generators &amp; power equipment</small></span></a>
+            </div>
+            <div class="mega-foot">
+              <p class="mega-note"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg> Not sure what you need? Describe the symptom and we&rsquo;ll diagnose it.</p>
+              <div class="mega-actions">
+                <a class="link-arrow" href="services.html">All services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                <a class="btn btn-primary btn-sm" href="appointment.html">Book a service</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="services/small-engine-repair.html" data-nav="small-engine">Small Engine</a></li>
+        <li><a class="nav-link is-active" href="about.html" data-nav="about" aria-current="page"><span class="nav-pill" aria-hidden="true"></span>About</a></li>
+        <li><a class="nav-link" href="fleet.html" data-nav="fleet">Fleet</a></li>
+        <li><a class="nav-link" href="resources.html" data-nav="resources">Car Care</a></li>
+        <li><a class="nav-link" href="contact.html" data-nav="contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-call" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span class="visually-hidden">Call </span><span class="header-call-num">(555) 555-0123</span></a>
+      <a class="btn btn-primary btn-sm header-book" href="appointment.html" data-nav="appointment">Book Service</a>
+    </div>
+  </div>
+  <div class="road-progress" aria-hidden="true"><span class="road-progress-lane"></span><svg class="road-progress-car"><use href="#i-car-mini"/></svg></div>
+</header>
+<!-- @end header -->
+
+<main id="main">
+
+  <section class="page-hero" aria-labelledby="page-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li><span aria-current="page">About</span></li>
+          </ol>
+        </nav>
+        <p class="eyebrow mt-3"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>About us</p>
+        <h1 id="page-title">A neighborhood shop for engines of <span class="foil-text">every size.</span></h1>
+        <p class="lead">We look after the cars and trucks in your driveway and the mowers, generators and power equipment in your garage. Honest advice, careful work and a clear estimate before anything gets done.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="appointment.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book a service</a>
+          <a class="btn btn-secondary btn-lg" href="#visit"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Visit the shop</a>
+        </div>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg>Cars, trucks &amp; SUVs</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small engines</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>Written estimates</span>
+        </div>
+      </div>
+
+      <div class="page-hero-art" data-tilt-scope>
+        <div class="about-card">
+          <svg class="card-orbit" viewBox="0 0 400 400" aria-hidden="true">
+            <defs>
+              <linearGradient id="orbit-foil" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#c9d3ff"/><stop offset=".5" stop-color="#e2d4ff"/><stop offset="1" stop-color="#c6e4ff"/>
+              </linearGradient>
+            </defs>
+            <circle class="ticks" cx="200" cy="200" r="186" fill="none" stroke="url(#orbit-foil)" stroke-width="10" stroke-dasharray="1.6 10.6"/>
+            <circle cx="200" cy="200" r="166" fill="none" stroke="rgba(43, 37, 34, .07)" stroke-width="1"/>
+            <path class="sweep" d="M200 14a186 186 0 0 1 86 21" fill="none" stroke="#7a5cc4" stroke-opacity=".45" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div class="biz-card-stage">
+            <div class="card-deal">
+              <div class="biz-card" data-tilt="12">
+                <img class="biz-card-logo" src="assets/img/logo-white.webp" alt="Clinton Complete Auto Care" width="1400" height="764" fetchpriority="high" decoding="async">
+                <span class="biz-card-foil">And Small Engine Repair</span>
+                <span class="biz-card-sheen" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="biz-card-shadow" aria-hidden="true"></div>
+          </div>
+          <div class="float-note note-a" aria-hidden="true">
+            <span class="dot is-ok"></span>
+            <span><strong>Estimate approved</strong><small>Starting work. We&rsquo;ll call when it&rsquo;s ready.</small></span>
+          </div>
+          <div class="float-note note-b" aria-hidden="true">
+            <span class="icon-tile icon-tile-sm icon-tile-ink"><svg class="icon"><use href="#i-mower"/></svg></span>
+            <span><strong>Mower tune-up: done</strong><small>Blade sharpened, runs smooth.</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- The name on the sign -->
+  <section class="section" aria-labelledby="name-title">
+    <div class="container">
+      <div class="split split-wide-right" style="align-items: start">
+        <div class="section-head" data-reveal="left">
+          <p class="eyebrow">What&rsquo;s in a name</p>
+          <h2 id="name-title">Every word in our name is a promise.</h2>
+          <p class="lead">Our name is a pretty good summary of what we do. Here&rsquo;s what each part of it means when you pull in.</p>
+        </div>
+        <div class="name-rows" data-reveal-stagger>
+          <div class="name-row">
+            <span class="name-num" aria-hidden="true">01</span>
+            <h3>Complete</h3>
+            <p>Maintenance, diagnostics and repairs under one roof: oil changes and brakes, check-engine lights, engine and cooling work, A/C, tires, suspension, electrical and more. One shop that can look after the whole vehicle.</p>
+          </div>
+          <div class="name-row">
+            <span class="name-num" aria-hidden="true">02</span>
+            <h3>Auto Care</h3>
+            <p>Care, not just repair. We look after cars, trucks, SUVs and vans for the long run, and we&rsquo;ll tell you what&rsquo;s coming up so fewer things catch you off guard.</p>
+          </div>
+          <div class="name-row">
+            <span class="name-num" aria-hidden="true">03</span>
+            <h3><span class="foil-text">And Small Engine Repair</span></h3>
+            <p>The mowers, riding tractors, generators, pressure washers and saws that keep your home and your work running get the same careful attention as your car.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="section section-tint" aria-labelledby="values-title">
+    <div class="container">
+      <div class="section-head center" data-reveal>
+        <p class="eyebrow">What we value</p>
+        <h2 id="values-title">How we like to work.</h2>
+        <p class="lead">Four simple ideas guide every job, whether it&rsquo;s a pickup truck or a push mower.</p>
+      </div>
+      <div class="grid grid-4 values-grid" data-reveal-stagger>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+          <h3 class="mt-2">Honesty</h3>
+          <p>We recommend what your vehicle or equipment actually needs, and we&rsquo;ll tell you when something can wait.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+          <h3 class="mt-2">Clear communication</h3>
+          <p>Plain language, no jargon. You&rsquo;ll know what we found, what it costs and why it matters before we start.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+          <h3 class="mt-2">Careful workmanship</h3>
+          <p>We diagnose before we replace, follow the manufacturer&rsquo;s specs and check our work before you get your keys.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span>
+          <h3 class="mt-2">Respect for your time</h3>
+          <p>We give you a realistic idea of timing up front and keep you posted if anything changes along the way.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- What to expect -->
+  <section class="section" aria-labelledby="expect-title">
+    <div class="container">
+      <div class="split split-wide-right">
+        <div class="section-head" data-reveal="left">
+          <p class="eyebrow">What to expect</p>
+          <h2 id="expect-title">What to expect when you visit.</h2>
+          <p class="lead">Car, truck or chainsaw, every job follows the same simple routine. No pressure, no surprises on the bill.</p>
+          <div class="cluster mt-4">
+            <a class="btn btn-primary" href="appointment.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book a service</a>
+            <a class="link-arrow" href="services.html">Browse services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+        <div class="ro-card" data-reveal="right">
+          <div class="ro-head">
+            <span class="icon-tile icon-tile-sm icon-tile-ink"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+            <div><strong>Your visit, step by step</strong><small>How every job moves through the shop</small></div>
+            <span class="badge">Every visit</span>
+          </div>
+          <ul class="checklist ro-list" role="list">
+            <li style="--n: 0"><div><h3>We listen.</h3><p>Tell us what you&rsquo;re hearing, seeing or feeling. The details help us find the problem faster.</p></div></li>
+            <li style="--n: 1"><div><h3>We inspect.</h3><p>A technician checks it out and tracks down the cause, not just the symptom.</p></div></li>
+            <li style="--n: 2"><div><h3>We explain, with a written estimate.</h3><p>Parts and labor spelled out, plus what&rsquo;s urgent and what can wait.</p></div></li>
+            <li style="--n: 3"><div><h3>We call before anything extra.</h3><p>Find something else along the way? We call you first. Nothing gets added without your OK.</p></div></li>
+            <li style="--n: 4"><div><h3>We show you the old parts.</h3><p>Just ask, and we&rsquo;ll show you what came off and why it needed replacing.</p></div></li>
+            <li style="--n: 5"><div><h3>We keep records.</h3><p>Your invoice lists the work we did, so you have a service history for your vehicle or equipment.</p></div></li>
+          </ul>
+          <p class="ro-foot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Questions at any step? Just ask. We&rsquo;re happy to explain.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Big engines and small -->
+  <section class="section section-tint" aria-labelledby="engines-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Big engines and small</p>
+        <h2 id="engines-title">One shop for the whole garage.</h2>
+        <p class="lead">Drop off the family car and the lawn mower in the same trip. Same shop, same straight answers.</p>
+      </div>
+      <div class="engine-panels" data-reveal-stagger>
+        <div class="engine-panel">
+          <span class="icon-tile icon-tile-lg"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span>
+          <p class="eyebrow">Cars, trucks, SUVs &amp; vans</p>
+          <h3>Complete auto care</h3>
+          <p>Routine maintenance to major repairs for daily drivers, work trucks and family haulers. Domestic, Asian and European makes.</p>
+          <ul class="panel-links" role="list">
+            <li><a href="services/brakes.html"><svg class="icon" aria-hidden="true"><use href="#i-brake"/></svg>Brakes<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+            <li><a href="services/oil-change.html"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg>Oil &amp; maintenance<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+            <li><a href="services/diagnostics.html"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg>Diagnostics<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+            <li><a href="services/engine-repair.html"><svg class="icon" aria-hidden="true"><use href="#i-engine"/></svg>Engine &amp; cooling<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+            <li><a href="services/tires-alignment.html"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg>Tires &amp; alignment<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+            <li><a href="services/heating-ac.html"><svg class="icon" aria-hidden="true"><use href="#i-ac"/></svg>A/C &amp; heating<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+          </ul>
+          <div class="cluster panel-actions">
+            <a class="btn btn-secondary" href="services.html">All auto services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+        <div class="engine-panel is-foil">
+          <span class="icon-tile icon-tile-lg icon-tile-ink"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span>
+          <p class="eyebrow">Mowers, generators &amp; more</p>
+          <h3>Small engine repair</h3>
+          <p>The equipment that works hard at home and on the job: tune-ups, carburetor and fuel problems, hard starting, blades, belts and seasonal prep.</p>
+          <div class="pill-cloud">
+            <span class="chip">Push mowers</span>
+            <span class="chip">Riding mowers &amp; tractors</span>
+            <span class="chip">Generators</span>
+            <span class="chip">Pressure washers</span>
+            <span class="chip">Chainsaws</span>
+            <span class="chip">Trimmers &amp; blowers</span>
+            <span class="chip">Snow blowers</span>
+            <span class="chip">Tillers</span>
+          </div>
+          <div class="cluster panel-actions" style="--cluster: 12px 20px">
+            <a class="btn btn-primary" href="services/small-engine-repair.html">Small engine repair <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            <a class="link-arrow" href="appointment.html?service=small-engine-repair">Book a tune-up <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Visit us -->
+  <section class="section visit-section" id="visit" aria-labelledby="visit-title">
+    <div class="container">
+      <div class="split" style="align-items: start">
+        <div data-reveal="left">
+          <p class="eyebrow">Visit us</p>
+          <h2 id="visit-title" class="mt-2">Come see us at the shop.</h2>
+          <p class="lead mt-2">Stop by, call or send a message. Tell us what&rsquo;s going on and we&rsquo;ll take it from there.</p>
+          <address class="visit-rows">
+            <a class="visit-row" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" data-biz-href="maps" target="_blank" rel="noopener">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg></span>
+              <span><small>Address</small><strong data-biz="addressLines">123 Main Street<br>Clinton, ST 00000</strong></span>
+              <svg class="icon chev" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+            </a>
+            <a class="visit-row" href="tel:+15555550123" data-biz-href="tel">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg></span>
+              <span><small>Phone</small><strong data-biz="phone">(555) 555-0123</strong></span>
+              <svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </a>
+            <a class="visit-row" href="mailto:service@example.com" data-biz-href="mailto">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg></span>
+              <span><small>Email</small><strong data-biz="email">service@example.com</strong></span>
+              <svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </a>
+          </address>
+          <div class="cluster mt-3 visit-actions">
+            <a class="btn btn-primary" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" data-biz-href="maps" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-directions"/></svg>Get directions</a>
+            <a class="btn btn-secondary" href="contact.html"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Send a message</a>
+          </div>
+        </div>
+        <div class="card hours-card" data-reveal="right">
+          <h3><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span>Shop hours</h3>
+          <p><span class="open-status" data-open-status>Shop hours</span></p>
+<!-- @partial hours-table -->
+<table class="hours-table">
+  <caption class="visually-hidden">Shop hours</caption>
+  <tbody>
+      <tr data-day="Mo"><th scope="row">Monday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="Tu"><th scope="row">Tuesday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="We"><th scope="row">Wednesday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="Th"><th scope="row">Thursday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="Fr"><th scope="row">Friday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="Sa"><th scope="row">Saturday</th><td>8:00 AM – 1:00 PM</td></tr>
+      <tr data-day="Su"><th scope="row">Sunday</th><td>Closed</td></tr>
+  </tbody>
+</table>
+<!-- @end hours-table -->
+          <p class="small muted mt-2">Hours can change around holidays. If you&rsquo;re making a special trip, give us a quick call first.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- @partial cta -->
+<section class="cta-road" aria-labelledby="cta-road-title">
+  <div class="container cta-road-inner">
+    <div class="cta-road-copy" data-reveal>
+      <p class="eyebrow">Ready when you are</p>
+      <h2 id="cta-road-title">Let&rsquo;s get you back on the road.</h2>
+      <p class="lead">Request an appointment in about a minute, or give us a call. We&rsquo;ll confirm a time and take it from there.</p>
+    </div>
+    <div class="cta-road-actions" data-reveal>
+      <a class="btn btn-primary btn-lg" href="appointment.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book a service</a>
+      <a class="btn btn-secondary btn-lg" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>(555) 555-0123</a>
+    </div>
+  </div>
+  <div class="road" aria-hidden="true">
+    <div class="road-surface"><span class="road-dashes"></span></div>
+    <svg class="road-car" viewBox="0 0 32 14"><use href="#i-car-mini"/></svg>
+  </div>
+</section>
+<!-- @end cta -->
+<!-- @partial footer -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="mini-card" href="index.html" aria-label="Clinton Complete Auto Care home">
+        <img src="assets/img/logo-white-sm.webp" alt="" width="640" height="349" loading="lazy" decoding="async">
+        <span class="mini-card-foil">And Small Engine Repair</span>
+      </a>
+      <p class="footer-blurb">Honest repair and maintenance for cars, trucks and the small engines that keep your home and business running.</p>
+      <p><span class="open-status" data-open-status>Shop hours</span></p>
+    </div>
+    <nav class="footer-col" aria-labelledby="footer-services">
+      <h2 id="footer-services">Services</h2>
+      <ul>
+        <li><a href="services/brakes.html">Brakes</a></li>
+        <li><a href="services/oil-change.html">Oil &amp; Maintenance</a></li>
+        <li><a href="services/diagnostics.html">Diagnostics</a></li>
+        <li><a href="services/engine-repair.html">Engine &amp; Cooling</a></li>
+        <li><a href="services/transmission.html">Transmission</a></li>
+        <li><a href="services/heating-ac.html">A/C &amp; Heating</a></li>
+        <li><a href="services/tires-alignment.html">Tires &amp; Alignment</a></li>
+        <li><a href="services/suspension-steering.html">Suspension &amp; Steering</a></li>
+        <li><a href="services/electrical-battery.html">Battery &amp; Electrical</a></li>
+        <li><a href="services/inspections.html">Inspections</a></li>
+        <li><a href="services/small-engine-repair.html">Small Engine Repair</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul>
+        <li><a href="about.html" aria-current="page">About us</a></li>
+        <li><a href="fleet.html">Fleet services</a></li>
+        <li><a href="specials.html">Specials</a></li>
+        <li><a href="brands.html">Makes we service</a></li>
+        <li><a href="careers.html">Careers</a></li>
+      </ul>
+      <h2 class="footer-subhead">Help</h2>
+      <ul>
+        <li><a href="appointment.html">Book a service</a></li>
+        <li><a href="resources.html">Car care guides</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col footer-visit">
+      <h2>Visit the shop</h2>
+      <address>
+        <a class="footer-contact" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>123 Main Street<br>Clinton, ST 00000</span></a>
+        <a class="footer-contact" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>(555) 555-0123</span></a>
+        <a class="footer-contact" href="mailto:service@example.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>service@example.com</span></a>
+      </address>
+      <ul class="hours-list">
+        <li data-days="Mo Tu We Th Fr"><span>Mon – Fri</span><span>8:00 AM – 5:30 PM</span></li>
+        <li data-days="Sa"><span>Sat</span><span>8:00 AM – 1:00 PM</span></li>
+        <li data-days="Su"><span>Sun</span><span>Closed</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span data-year>2026</span> Clinton Complete Auto Care. All rights reserved.</p>
+    <p class="footer-links"><a href="privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a><span aria-hidden="true">&middot;</span><a href="https://blakew316.github.io/automotive/app/">Staff sign-in</a></p>
+  </div>
+</footer>
+<!-- @end footer -->
+<!-- @partial tabbar -->
+<nav class="tabbar" aria-label="Quick navigation">
+  <a class="tab" href="index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+  <a class="tab" href="services.html" data-nav="services"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span>Services</span></a>
+  <a class="tab tab-book" href="appointment.html" data-nav="appointment"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Book</span></a>
+  <a class="tab" href="contact.html" data-nav="contact"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Contact</span></a>
+  <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>More</span></button>
+</nav>
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="more-sheet-title">Menu</h2>
+      <button class="icon-btn" type="button" data-close-sheet aria-label="Close menu" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <p class="sheet-status"><span class="open-status" data-open-status>Shop hours</span></p>
+    <div class="sheet-quick">
+      <a class="quick-action" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>Call</span></a>
+      <a class="quick-action" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-directions"/></svg><span>Directions</span></a>
+      <a class="quick-action" href="mailto:service@example.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>Email</span></a>
+    </div>
+    <h3 class="sheet-label">Explore</h3>
+    <ul class="sheet-grid">
+      <li><a href="index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a></li>
+      <li><a href="services.html" data-nav="services"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg>Services</a></li>
+      <li><a href="services/small-engine-repair.html" data-nav="small-engine"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small Engine</a></li>
+      <li><a class="is-active" href="about.html" data-nav="about" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>About</a></li>
+      <li><a href="fleet.html" data-nav="fleet"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet</a></li>
+      <li><a href="specials.html" data-nav="specials"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Specials</a></li>
+      <li><a href="brands.html" data-nav="brands"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg>Makes We Service</a></li>
+      <li><a href="resources.html" data-nav="resources"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Car Care</a></li>
+      <li><a href="faq.html" data-nav="faq"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+      <li><a href="careers.html" data-nav="careers"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"/></svg>Careers</a></li>
+      <li><a href="contact.html" data-nav="contact"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Contact</a></li>
+      <li><a href="appointment.html" data-nav="appointment"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book Service</a></li>
+    </ul>
+    <h3 class="sheet-label">Services</h3>
+    <ul class="sheet-list">
+      <li><a href="services/brakes.html"><svg class="icon" aria-hidden="true"><use href="#i-brake"/></svg>Brakes<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/oil-change.html"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg>Oil &amp; Maintenance<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/diagnostics.html"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg>Diagnostics<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/engine-repair.html"><svg class="icon" aria-hidden="true"><use href="#i-engine"/></svg>Engine &amp; Cooling<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/transmission.html"><svg class="icon" aria-hidden="true"><use href="#i-transmission"/></svg>Transmission<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/heating-ac.html"><svg class="icon" aria-hidden="true"><use href="#i-ac"/></svg>A/C &amp; Heating<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/tires-alignment.html"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg>Tires &amp; Alignment<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/suspension-steering.html"><svg class="icon" aria-hidden="true"><use href="#i-suspension"/></svg>Suspension &amp; Steering<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/electrical-battery.html"><svg class="icon" aria-hidden="true"><use href="#i-battery"/></svg>Battery &amp; Electrical<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/inspections.html"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspections<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/small-engine-repair.html"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small Engine Repair<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+    </ul>
+  </div>
+</dialog>
+<!-- @end tabbar -->
+</body>
+</html>
