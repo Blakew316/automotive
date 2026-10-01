@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldAlert, MessageSquareWarning, Star, BookOpen, Package, Cable, RotateCw, CircleCheck, Droplets, ExternalLink as ExtIcon } from 'lucide-react';
+import { ShieldAlert, MessageSquareWarning, Star, BookOpen, Package, Cable, RotateCw, CircleCheck, Droplets, Globe, ExternalLink as ExtIcon } from 'lucide-react';
 import { Card, CardHeader, Spinner, ExternalLink, Dot } from './ui';
 import { getRecalls, getComplaints, getSafetyRatings, nhtsaVinRecallUrl } from '../lib/nhtsa';
 import { SUPPLIERS, B2B_PLATFORMS, oemPartsFor } from '../lib/suppliers';
@@ -8,11 +8,15 @@ import { oemPortals, freeDocuments } from '../data/serviceInfo';
 import { vehicleSpecs } from '../data/vehicleSpecs';
 import { date, number } from '../lib/format';
 
-/** Generic async loader keyed on its dependencies. */
-function useAsync(fn, deps) {
-  const [state, setState] = useState({ status: 'loading' });
+/** Generic async loader keyed on its dependencies. Nothing is fetched until `enabled` is true. */
+function useAsync(fn, deps, enabled = true) {
+  const [state, setState] = useState({ status: enabled ? 'loading' : 'idle' });
   const [nonce, setNonce] = useState(0);
   useEffect(() => {
+    if (!enabled) {
+      setState({ status: 'idle' });
+      return undefined;
+    }
     let alive = true;
     const ctrl = new AbortController();
     Promise.resolve()
@@ -25,11 +29,51 @@ function useAsync(fn, deps) {
       ctrl.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...deps, nonce]);
+  }, [...deps, nonce, enabled]);
   return { ...state, retry: () => setNonce((n) => n + 1) };
 }
 
-function LoadState({ state, children, empty }) {
+// Recalls, complaints and crash ratings change daily and are not stored with the app, so they are
+// fetched from NHTSA only when the user asks (or has opted in to always check).
+const ONLINE_KEY = 'autoshop-pro:online-lookups';
+const readOnline = () => {
+  try {
+    return localStorage.getItem(ONLINE_KEY) === '1';
+  } catch {
+    return false;
+  }
+};
+function useOnline() {
+  const [on, setOn] = useState(readOnline);
+  const enable = (always) => {
+    if (always) {
+      try {
+        localStorage.setItem(ONLINE_KEY, '1');
+      } catch {
+        // Preference only.
+      }
+    }
+    setOn(true);
+  };
+  return [on, enable];
+}
+
+function OnlinePrompt({ what, onEnable }) {
+  return (
+    <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-4 text-sm text-ink-2">
+      <span className="flex items-center gap-2">
+        <Globe size={15} className="shrink-0 text-ink-3" /> Live {what} from NHTSA (needs an internet connection).
+      </span>
+      <span className="flex gap-1.5">
+        <button className="btn-secondary btn-sm" onClick={() => onEnable(false)}>Check now</button>
+        <button className="btn-plain btn-sm text-ink-3" onClick={() => onEnable(true)}>Always check</button>
+      </span>
+    </div>
+  );
+}
+
+function LoadState({ state, children, empty, what = 'data', onEnable }) {
+  if (state.status === 'idle') return <OnlinePrompt what={what} onEnable={onEnable} />;
   if (state.status === 'loading')
     return (
       <div className="flex items-center gap-2 px-4 py-6 text-sm text-ink-3">
@@ -52,7 +96,8 @@ function LoadState({ state, children, empty }) {
 const component = (c = '') => c.split(':').map((s) => s.trim().toLowerCase()).filter(Boolean).slice(0, 2).join(' › ');
 
 export function RecallsCard({ year, make, model, vin }) {
-  const state = useAsync((o) => getRecalls({ year, make, model }, o), [year, make, model]);
+  const [online, enable] = useOnline();
+  const state = useAsync((o) => getRecalls({ year, make, model }, o), [year, make, model], online);
   const [open, setOpen] = useState(null);
   const recalls = state.data || [];
   return (
@@ -65,6 +110,8 @@ export function RecallsCard({ year, make, model, vin }) {
       />
       <LoadState
         state={state}
+        what="recall campaigns"
+        onEnable={enable}
         empty={
           state.status === 'done' && recalls.length === 0 ? (
             <div className="flex items-center gap-2 px-4 py-5 text-sm text-ink-2">
@@ -99,7 +146,7 @@ export function RecallsCard({ year, make, model, vin }) {
           ))}
         </ul>
       </LoadState>
-      {vin && (
+      {vin && state.status === 'done' && (
         <p className="border-t border-line/70 px-4 py-2 text-xs text-ink-3">
           Model-year campaigns shown. Whether this specific VIN is still unrepaired comes from the manufacturer — use “Check this VIN”.
         </p>
@@ -109,7 +156,8 @@ export function RecallsCard({ year, make, model, vin }) {
 }
 
 export function ComplaintsCard({ year, make, model }) {
-  const state = useAsync((o) => getComplaints({ year, make, model }, o), [year, make, model]);
+  const [online, enable] = useOnline();
+  const state = useAsync((o) => getComplaints({ year, make, model }, o), [year, make, model], online);
   const list = state.data || [];
   const byComponent = Object.entries(
     list.reduce((acc, c) => {
@@ -123,7 +171,7 @@ export function ComplaintsCard({ year, make, model }) {
   return (
     <Card>
       <CardHeader icon={MessageSquareWarning} title="Owner complaints" subtitle={state.status === 'done' ? `${number(list.length)} reports filed with NHTSA` : 'NHTSA'} />
-      <LoadState state={state} empty={state.status === 'done' && !list.length ? <p className="px-4 py-5 text-sm text-ink-3">No complaints filed.</p> : null}>
+      <LoadState state={state} what="owner complaints" onEnable={enable} empty={state.status === 'done' && !list.length ? <p className="px-4 py-5 text-sm text-ink-3">No complaints filed.</p> : null}>
         <div className="px-4 py-3">
           <div className="section-label mb-2">Most-reported systems</div>
           <ul className="space-y-2">
@@ -161,12 +209,13 @@ const stars = (r) => {
 };
 
 export function SafetyCard({ year, make, model }) {
-  const state = useAsync((o) => getSafetyRatings({ year, make, model }, o), [year, make, model]);
+  const [online, enable] = useOnline();
+  const state = useAsync((o) => getSafetyRatings({ year, make, model }, o), [year, make, model], online);
   const variants = state.data || [];
   return (
     <Card>
       <CardHeader icon={Star} title="NCAP crash ratings" subtitle="NHTSA 5-Star Safety Ratings" />
-      <LoadState state={state} empty={state.status === 'done' && !variants.length ? <p className="px-4 py-5 text-sm text-ink-3">Not tested by NHTSA for this model year.</p> : null}>
+      <LoadState state={state} what="crash ratings" onEnable={enable} empty={state.status === 'done' && !variants.length ? <p className="px-4 py-5 text-sm text-ink-3">Not tested by NHTSA for this model year.</p> : null}>
         <ul className="divide-y divide-line/70">
           {variants.map((v) => (
             <li key={v.id} className="px-4 py-3">
@@ -197,8 +246,8 @@ function findSpecs({ year, make, model }) {
   return vehicleSpecs.filter((s) => s.make.toLowerCase() === String(make).toLowerCase() && String(model).toLowerCase().startsWith(s.model.toLowerCase()) && y >= s.years[0] && y <= s.years[1]);
 }
 
-export function SpecsCard({ year, make, model }) {
-  const specs = findSpecs({ year, make, model });
+export function SpecsCard({ year, make, model, specs: given }) {
+  const specs = given || findSpecs({ year, make, model });
   const manuals = freeDocuments.filter((d) => d.category === 'Owner manuals' && d.makes.includes(make));
   return (
     <Card>

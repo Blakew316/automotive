@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { NavLink, Outlet, useLocation } from 'react-router-dom';
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package,
-  BookOpen, ChartColumn, Settings, Search, Menu as MenuIcon, Sun, Moon, Monitor, Wrench, X,
+  BookOpen, ChartColumn, Settings, Search, Menu as MenuIcon, Sun, Moon, Monitor, Wrench, X, Database,
 } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
@@ -38,6 +38,7 @@ const NAV = [
   {
     title: 'Technical',
     items: [
+      { to: '/catalog', label: 'Vehicle Database', icon: Database },
       { to: '/vin', label: 'VIN Decoder', icon: ScanLine },
       { to: '/parts', label: 'Parts & Inventory', icon: Package, count: 'lowStock' },
       { to: '/library', label: 'Service Library', icon: BookOpen },

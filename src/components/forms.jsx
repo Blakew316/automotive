@@ -3,7 +3,7 @@ import { ScanLine, CircleAlert, CircleCheck } from 'lucide-react';
 import { Modal, Field, Spinner, SearchInput, Avatar } from './ui';
 import { useShop, useUI } from '../store/hooks';
 import { decodeOffline, cleanVin } from '../lib/vin';
-import { decodeVin } from '../lib/nhtsa';
+import { decodeVinLocal } from '../lib/vindb';
 import { fullName, vehicleName, isoDate } from '../lib/format';
 
 const blankCustomer = { firstName: '', lastName: '', company: '', phone: '', email: '', address: '', city: '', state: '', zip: '', notes: '', tags: [] };
@@ -74,7 +74,7 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
     setForm((f) => ({ ...f, vin: offline.vin, year: f.year || offline.year || '', make: f.make || offline.make || '' }));
     setDecode({ status: 'loading' });
     try {
-      const d = await decodeVin(offline.vin);
+      const d = await decodeVinLocal(offline.vin);
       setForm((f) => ({
         ...f,
         year: d.year || f.year,
@@ -83,7 +83,7 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
         trim: d.trim || f.trim,
         engine: d.engine || f.engine,
       }));
-      setDecode({ status: 'done', message: d.complete ? 'Decoded from NHTSA vPIC' : d.errorText || 'Partially decoded' });
+      setDecode({ status: 'done', message: d.complete ? 'Decoded from the on-device NHTSA database' : d.errorText || 'Partially decoded' });
     } catch (err) {
       setDecode({ status: 'offline', message: `${err.message}. Filled year & make from the VIN itself.` });
     }

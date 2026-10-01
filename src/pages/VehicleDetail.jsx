@@ -1,12 +1,17 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Plus, Pencil, ScanLine, Car, Trash2, MoreHorizontal } from 'lucide-react';
+import { Plus, Pencil, ScanLine, Car, Trash2, MoreHorizontal, Database, ChevronRight } from 'lucide-react';
 import { useShop, useUI, useTotals, useLookup } from '../store/hooks';
-import { PageHeader, Card, CardHeader, EmptyState, StatusLabel, KV, Mono, CopyButton, Menu, Modal } from '../components/ui';
+import { PageHeader, Card, CardHeader, EmptyState, StatusLabel, KV, Mono, CopyButton, Menu, Modal, Spinner } from '../components/ui';
 import { VehicleForm } from '../components/forms';
-import { RecallsCard, ComplaintsCard, SafetyCard, SpecsCard, ResourcesCard } from '../components/VehicleIntel';
+import { RecallsCard, ComplaintsCard, SafetyCard, ResourcesCard } from '../components/VehicleIntel';
+import { decodeVinLocal } from '../lib/vindb';
+import { usePromise } from '../lib/usePromise';
+import { loadMake, modelYearRows, buildOptions, slugify, catalogPath, enrichValues } from '../lib/catalog';
 import { money, fullName, dateShort, number } from '../lib/format';
 import { decodeOffline } from '../lib/vin';
+
+const VehicleKnowledge = lazy(() => import('../components/VehicleKnowledge'));
 
 export default function VehicleDetail() {
   const { id } = useParams();
@@ -102,10 +107,11 @@ export default function VehicleDetail() {
               <KV label="Owner">{owner ? <Link to={`/customers/${owner.id}`} className="link">{fullName(owner)}</Link> : '—'}</KV>
             </dl>
           </Card>
-          <SpecsCard year={v.year} make={v.make} model={v.model} />
           <ResourcesCard year={v.year} make={v.make} model={v.model} vin={v.vin} />
         </div>
       </div>
+
+      <TechnicalSection vehicle={v} />
 
       {editing && <VehicleForm open initial={v} onClose={() => setEditing(false)} />}
       <Modal
@@ -132,5 +138,59 @@ export default function VehicleDetail() {
         <p className="text-sm text-ink-2">Repair orders for this vehicle are kept for your records.</p>
       </Modal>
     </>
+  );
+}
+
+/** Configuration for a shop vehicle: decoded from its VIN, or matched in the catalog by year/make/model/engine. */
+async function configFor(v) {
+  if (v.vin && v.vin.length === 17) {
+    try {
+      const d = await decodeVinLocal(v.vin);
+      if (d.complete) return { values: await enrichValues(d.values, d.make), vehicleType: d.vehicleType, source: 'vin', year: d.year || v.year, make: d.make || v.make, model: d.model || v.model };
+    } catch {
+      // Fall through to the catalog match.
+    }
+  }
+  const make = await loadMake(slugify(v.make)).catch(() => null);
+  const want = slugify(v.model);
+  const model = make?.models.find((m) => m.slug === want) || make?.models.find((m) => want.startsWith(m.slug) || m.slug.startsWith(want));
+  if (!model) return null;
+  const options = buildOptions(modelYearRows(model, Number(v.year), make.shared), make.make, make.sizes);
+  const disp = parseFloat((String(v.engine || '').match(/(\d\.\d)\s*L?/i) || [])[1]);
+  const engine = options.engines.find((e) => disp && Math.abs(parseFloat(e.values.dispL) - disp) < 0.15) || (options.enginesShared ? null : options.engines[0]);
+  const values = { ...(engine?.values || {}) };
+  if (options.bodies[0]) values.body = options.bodies[0];
+  if (options.drives.length === 1) values.drive = options.drives[0];
+  return { values, source: 'catalog', year: Number(v.year), make: make.make, model: model.name, vehicleType: model.types[0] };
+}
+
+function TechnicalSection({ vehicle: v }) {
+  const state = usePromise(() => configFor(v), [v.vin, v.year, v.make, v.model, v.engine].join('|'));
+  const cfg = state.data || null;
+  return (
+    <section className="mt-10">
+      <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">Diagrams, parts & repair guides</h2>
+          <p className="text-sm text-ink-3">
+            {cfg ? (cfg.source === 'vin' ? 'Built from this vehicle’s VIN.' : `Matched by year, make and model${v.engine ? ' and engine' : ''} — add the VIN for an exact configuration.`) : 'Generated from data stored on this site.'}
+          </p>
+        </div>
+        <Link to={catalogPath(cfg || v)} className="btn-plain btn-sm text-accent">
+          <Database size={14} /> Open in Vehicle Database <ChevronRight size={14} />
+        </Link>
+      </div>
+      {state.status === 'loading' ? (
+        <div className="flex h-32 items-center justify-center text-ink-3">
+          <Spinner size={18} />
+        </div>
+      ) : cfg ? (
+        <Suspense fallback={<div className="flex h-32 items-center justify-center text-ink-3"><Spinner size={18} /></div>}>
+          <VehicleKnowledge year={cfg.year} make={cfg.make} model={cfg.model} values={cfg.values} vehicleType={cfg.vehicleType} />
+        </Suspense>
+      ) : (
+        <EmptyState icon={Database} title="Not found in the vehicle database" body="Check the make and model spelling, or add the VIN to decode the exact configuration." />
+      )}
+    </section>
   );
 }

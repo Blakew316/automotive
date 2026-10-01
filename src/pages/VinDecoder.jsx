@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { ScanLine, ClipboardPaste, Camera, CircleCheck, CircleAlert, Plus, Car, X, Info } from 'lucide-react';
+import { ScanLine, ClipboardPaste, Camera, CircleCheck, CircleAlert, Plus, Car, X, Info, Database, ChevronRight } from 'lucide-react';
 import { useShop } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Spinner, Modal, Mono, CopyButton, EmptyState } from '../components/ui';
 import { VehicleForm } from '../components/forms';
-import { RecallsCard, ComplaintsCard, SafetyCard, SpecsCard, ResourcesCard } from '../components/VehicleIntel';
+import { RecallsCard, ComplaintsCard, SafetyCard, ResourcesCard } from '../components/VehicleIntel';
+import VehicleKnowledge from '../components/VehicleKnowledge';
 import { decodeOffline, cleanVin, autocorrectVin, extractVin, VIN_SECTIONS } from '../lib/vin';
-import { decodeVin } from '../lib/nhtsa';
+import { decodeVinLocal } from '../lib/vindb';
+import { catalogPath, enrichValues } from '../lib/catalog';
 import { fullName, vehicleName } from '../lib/format';
 
 const RECENT_KEY = 'autoshop-pro:recent-vins';
@@ -41,7 +43,8 @@ export default function VinDecoder() {
     setParams({ vin: off.vin }, { replace: true });
     setLive({ status: 'loading' });
     try {
-      const data = await decodeVin(off.vin);
+      const data = await decodeVinLocal(off.vin);
+      if (data.complete) data.values = await enrichValues(data.values, data.make);
       setLive({ status: 'done', data });
       const entry = { vin: off.vin, label: [data.year, data.make, data.model, data.trim].filter(Boolean).join(' '), at: Date.now() };
       setRecent((prev) => {
@@ -81,7 +84,7 @@ export default function VinDecoder() {
 
   return (
     <>
-      <PageHeader title="VIN Decoder" subtitle="Live decode from NHTSA’s vPIC database — any vehicle sold in the U.S. since 1981 — plus recalls, complaints and crash ratings." />
+      <PageHeader title="VIN Decoder" subtitle="Decodes on this device from the NHTSA vPIC database stored with the app — any vehicle sold in the U.S. since 1981 — with diagrams, parts and repair guides for the exact configuration." />
 
       <Card className="p-5 sm:p-6">
         <form onSubmit={submit}>
@@ -203,7 +206,7 @@ export default function VinDecoder() {
                 <h2 className="mt-1 text-2xl font-bold tracking-tight">
                   {d ? [d.year, d.make, d.model].filter(Boolean).join(' ') || 'Unknown vehicle' : [result.year, result.make].filter(Boolean).join(' ') || 'Decoding…'}
                 </h2>
-                <p className="text-md text-ink-2">{d ? [d.trim, d.body].filter(Boolean).join(' · ') : live.status === 'loading' ? 'Contacting NHTSA…' : 'Offline decode'}</p>
+                <p className="text-md text-ink-2">{d ? [d.trim, d.body].filter(Boolean).join(' · ') : live.status === 'loading' ? 'Decoding…' : 'Partial decode'}</p>
               </div>
               <div className="flex gap-2">
                 {!onFile && (
@@ -226,7 +229,7 @@ export default function VinDecoder() {
             {d && !d.complete && d.errorText && (
               <div className="mx-5 mb-4 flex items-start gap-2 rounded-[9px] border border-line bg-raised px-3 py-2.5 text-sm text-ink-2">
                 <Info size={16} className="mt-0.5 shrink-0 text-ink-3" />
-                <span>NHTSA note: {d.errorText.replace(/^\d+ - /, '')}</span>
+                <span>{d.errorText.replace(/^\d+ - /, '')}</span>
               </div>
             )}
 
@@ -241,7 +244,7 @@ export default function VinDecoder() {
                 {(d?.specs || []).slice(split).map(([k, v]) => <Spec key={k} k={k} v={v} />)}
                 {live.status === 'loading' && (
                   <div className="flex items-center gap-2 py-3 text-sm text-ink-3">
-                    <Spinner size={14} /> Loading full specifications…
+                    <Spinner size={14} /> Loading specifications…
                   </div>
                 )}
               </dl>
@@ -261,18 +264,29 @@ export default function VinDecoder() {
             )}
           </Card>
 
+          {vehicle && (
+            <section>
+              <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
+                <div>
+                  <h2 className="text-xl font-semibold tracking-tight">Diagrams, parts & repair guides</h2>
+                  <p className="text-sm text-ink-3">Generated for this VIN’s configuration from data stored on this site.</p>
+                </div>
+                <Link to={catalogPath(vehicle)} className="btn-plain btn-sm text-accent">
+                  <Database size={14} /> Open in Vehicle Database <ChevronRight size={14} />
+                </Link>
+              </div>
+              <VehicleKnowledge year={vehicle.year} make={vehicle.make} model={vehicle.model} values={d.values} vehicleType={d.vehicleType} />
+            </section>
+          )}
           {!vehicle && result.make && live.status !== 'loading' && <ResourcesCard year={result.year} make={result.make} vin={result.vin} />}
           {vehicle && (
             <>
               <RecallsCard {...vehicle} vin={result.vin} />
               <div className="grid gap-6 lg:grid-cols-2">
-                <SpecsCard {...vehicle} />
-                <ResourcesCard {...vehicle} vin={result.vin} />
-              </div>
-              <div className="grid gap-6 lg:grid-cols-2">
                 <ComplaintsCard {...vehicle} />
                 <SafetyCard {...vehicle} />
               </div>
+              <ResourcesCard {...vehicle} vin={result.vin} />
             </>
           )}
         </div>

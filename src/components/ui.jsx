@@ -5,14 +5,14 @@ import { ArrowUpRight, Check, ChevronLeft, Copy, Search, X } from 'lucide-react'
 import { STATUS } from '../lib/workflow';
 import { initials } from '../lib/format';
 
-export function PageHeader({ title, subtitle, actions, back, eyebrow, children }) {
+export function PageHeader({ title, subtitle, actions, back, backText, eyebrow, children }) {
   const navigate = useNavigate();
   return (
     <header className="mb-6">
       {back && (
         <button onClick={() => (typeof back === 'string' ? navigate(back) : navigate(-1))} className="btn-plain -ml-2 mb-1 h-7 px-1.5 text-sm">
           <ChevronLeft size={17} strokeWidth={2} className="-mr-0.5" />
-          {typeof back === 'string' ? backLabel(back) : 'Back'}
+          {backText || (typeof back === 'string' ? backLabel(back) : 'Back')}
         </button>
       )}
       <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
@@ -28,7 +28,7 @@ export function PageHeader({ title, subtitle, actions, back, eyebrow, children }
   );
 }
 
-const BACK_LABELS = { '/orders': 'Repair Orders', '/customers': 'Customers', '/vehicles': 'Vehicles', '/workflow': 'Workflow', '/library': 'Library', '/parts': 'Parts' };
+const BACK_LABELS = { '/catalog': 'Vehicle Database', '/orders': 'Repair Orders', '/customers': 'Customers', '/vehicles': 'Vehicles', '/workflow': 'Workflow', '/library': 'Library', '/parts': 'Parts' };
 const backLabel = (path) => BACK_LABELS[path] || 'Back';
 
 export function Card({ className = '', children, ...rest }) {
