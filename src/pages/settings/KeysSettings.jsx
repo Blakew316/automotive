@@ -6,7 +6,8 @@ import { Sparkles, KeyRound, Check, Trash2, Lock } from 'lucide-react';
 import { useSync, useAccess, useUI } from '../../store/hooks';
 import { Card, CardHeader, Field, Spinner } from '../../components/ui';
 import { shopSecrets, shopAi } from '../../lib/sync/api';
-import { AI_MODELS, KEY_GROUPS } from '../../lib/ai';
+import { AI_MODELS, KEY_GROUPS, modelValue } from '../../lib/ai';
+import { Link } from 'react-router-dom';
 import { relTime } from '../../lib/format';
 
 export default function KeysSettings() {
@@ -77,7 +78,7 @@ export default function KeysSettings() {
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Model">
               {(id) => (
-                <select id={id} className="input" value={settings.ai_model || AI_MODELS[0].value} disabled={!owner} onChange={(e) => save('ai_model', e.target.value)}>
+                <select id={id} className="input" value={modelValue(settings.ai_model) || AI_MODELS[0].value} disabled={!owner} onChange={(e) => save('ai_model', e.target.value)}>
                   {AI_MODELS.map((m) => (
                     <option key={m.value} value={m.value}>{m.label}</option>
                   ))}
@@ -99,6 +100,9 @@ export default function KeysSettings() {
               <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
                 {g.title}
                 {!g.keys.some((k) => k.ready) && <span className="rounded-full bg-fill/[0.08] px-2 py-0.5 text-2xs font-medium text-ink-3">Used when this integration is turned on</span>}
+                {g.setup && g.keys.every((k) => keyOf(k.name)) && (
+                  <Link to={g.setup.to} className="link ml-auto text-xs font-normal">{g.setup.label}</Link>
+                )}
               </div>
               <div className="space-y-2.5">
                 {g.keys.map((k) => (

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Link2, Copy, MessageSquare, Mail, RefreshCw, Link2Off, Download, MonitorSmartphone, Cloud, Check, Settings2 } from 'lucide-react';
-import { useShop, useUI } from '../../store/hooks';
+import { useShop, useUI, usePhone } from '../../store/hooks';
 import { Modal, Spinner, Toggle } from '../../components/ui';
 import { buildReport } from '../../lib/report';
 import { cloudConfig, cloudSession, publishReport, revokeReport } from '../../lib/cloudShare';
@@ -12,6 +12,8 @@ import { smsHref, mailHref, vehicleName, relTime } from '../../lib/format';
 export default function ShareModal({ order, customer, vehicle, showPrices: initialPrices = true, onClose }) {
   const { state, setShare, addMessage } = useShop();
   const { toast } = useUI();
+  const line = usePhone();
+  const [texting, setTexting] = useState(false);
   const [showPrices, setShowPrices] = useState(initialPrices);
   const [includeVideo, setIncludeVideo] = useState(true);
   const [busy, setBusy] = useState(null);
@@ -121,14 +123,34 @@ export default function ShareModal({ order, customer, vehicle, showPrices: initi
                   </button>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <a
-                    href={customer?.phone ? smsHref(customer.phone, message(share.url)) : undefined}
-                    onClick={() => customer && addMessage({ customerId: customer.id, orderId: order.id, channel: 'sms', body: message(share.url) })}
-                    aria-disabled={!customer?.phone}
-                    className={`btn-primary ${customer?.phone ? '' : 'pointer-events-none opacity-50'}`}
-                  >
-                    <MessageSquare size={14} /> Text to customer
-                  </a>
+                  {line.ready && customer?.phone ? (
+                    <button
+                      className="btn-primary"
+                      disabled={texting || line.optedOut(customer.phone)}
+                      onClick={async () => {
+                        setTexting(true);
+                        try {
+                          await line.send({ customer, body: message(share.url), orderId: order.id });
+                          toast(`Link texted to ${customer.firstName || 'the customer'}`, { tone: 'success' });
+                        } catch (e) {
+                          toast(e.message || 'The text didn’t send', { tone: 'error' });
+                        } finally {
+                          setTexting(false);
+                        }
+                      }}
+                    >
+                      {texting ? <Spinner size={14} /> : <MessageSquare size={14} />} Text to customer
+                    </button>
+                  ) : (
+                    <a
+                      href={customer?.phone ? smsHref(customer.phone, message(share.url)) : undefined}
+                      onClick={() => customer && addMessage({ customerId: customer.id, orderId: order.id, channel: 'sms', body: message(share.url) })}
+                      aria-disabled={!customer?.phone}
+                      className={`btn-primary ${customer?.phone ? '' : 'pointer-events-none opacity-50'}`}
+                    >
+                      <MessageSquare size={14} /> Text to customer
+                    </a>
+                  )}
                   <a
                     href={customer?.email ? mailHref(customer.email, `Your ${vName} — ${shop.name}`, `${message(share.url)}\n\n${shop.name}\n${shop.phone}`) : undefined}
                     onClick={() => customer && addMessage({ customerId: customer.id, orderId: order.id, channel: 'email', body: message(share.url) })}

@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react';
-import { ShopContext, UIContext, SyncContext } from './context';
+import { ShopContext, UIContext, SyncContext, PhoneContext } from './context';
 import { totalsCalculator } from '../lib/pricing';
 import { canAccess } from '../lib/access';
 import { isMulti, siteList, scopeState } from '../lib/locations';
@@ -13,6 +13,12 @@ export function useShop() {
 /** Shared shop data: status and the join / upload / leave actions (see lib/sync/useShopSync). */
 export function useSync() {
   return useContext(SyncContext);
+}
+
+const NO_LINE = { status: null, connected: false, ready: false, optedOut: () => false, refresh: () => {}, send: null, call: null };
+/** The business phone line: texting & calls from the shop's number (components/PhoneLine.jsx). */
+export function usePhone() {
+  return useContext(PhoneContext) || NO_LINE;
 }
 
 export function useUI() {

@@ -111,3 +111,55 @@ export const shopAdmin = (cfg, action, args = {}) => call(cfg, '/functions/v1/sh
 // ---------------------------------------------------------------- Integration keys & AI (server functions)
 export const shopSecrets = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-secrets', { body: { action, ...args } });
 export const shopAi = (cfg, body) => call(cfg, '/functions/v1/shop-ai', { body });
+
+// ---------------------------------------------------------------- Business phone (Twilio through shop-phone)
+export const shopPhone = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-phone', { body: { action, ...args } });
+
+/** Texts, delivery receipts and calls the phone server recorded, oldest first. */
+export const phoneEvents = (cfg) => call(cfg, '/rest/v1/shop_phone_events?select=id,kind,sid,payload,final,created_at&order=id.asc&limit=200', { method: 'GET' });
+export const clearPhoneEvents = (cfg, ids) => (ids.length ? call(cfg, `/rest/v1/shop_phone_events?id=in.(${ids.map(Number).join(',')})`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }) : null);
+
+/** Live phone events (a call ringing, a text arriving); polling covers anything missed. */
+export function subscribePhoneEvents(cfg, onRow, onLive) {
+  let alive = true;
+  let client = null;
+  let refresh = null;
+  (async () => {
+    try {
+      const { createClient } = await import('@supabase/supabase-js');
+      if (!alive) return;
+      client = createClient(cfg.url, cfg.key, { auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false } });
+      const auth = async () => client.realtime.setAuth(await accessToken(cfg));
+      await auth();
+      refresh = setInterval(() => auth().catch(() => {}), 4 * 60_000);
+      client
+        .channel('shop-phone')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'shop_phone_events' }, (p) => p.new?.id && onRow(p.new))
+        .subscribe((status) => onLive(status === 'SUBSCRIBED'));
+    } catch {
+      onLive(false);
+    }
+  })();
+  return () => {
+    alive = false;
+    clearInterval(refresh);
+    client?.removeAllChannels?.();
+    onLive(false);
+  };
+}
+
+/** Appointment texts the server sends on its own (idempotent by key). */
+export const scheduleTexts = (cfg, items) => rpc(cfg, 'shop_outbox_schedule', { items });
+export const cancelTexts = (cfg, keys) => rpc(cfg, 'shop_outbox_cancel', { keys });
+export const scheduledTexts = (cfg) => call(cfg, '/rest/v1/shop_sms_outbox?select=key,to_phone,send_at,status,error,meta&key=like.appt-*&order=send_at.asc&limit=500', { method: 'GET' });
+
+/** A private shop file by its storage path (texted photos, voicemail). */
+export async function downloadPath(cfg, path) {
+  const res = await call(cfg, `/storage/v1/object/authenticated/${FILES_BUCKET}/${path.split('/').map(encodeURIComponent).join('/')}`, { method: 'GET', raw: true });
+  if (!res.ok) throw Object.assign(new Error(`File download failed (${res.status})`), { status: res.status });
+  return res.blob();
+}
+
+/** Save a small private JSON file (e.g. phone/profile.json for the phone server). */
+export const uploadPrivateJson = (cfg, path, data) =>
+  call(cfg, `/storage/v1/object/${FILES_BUCKET}/${path}`, { body: new Blob([JSON.stringify(data)], { type: 'application/json' }), headers: { 'Content-Type': 'application/json', 'x-upsert': 'true', 'cache-control': 'no-cache' } });

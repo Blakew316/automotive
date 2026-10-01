@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { BellRing, Undo2, HeartHandshake, Star, Megaphone, Send, Settings2, MessageSquare, Mail, Info, CalendarCheck, Workflow, Wrench } from 'lucide-react';
-import { useShop } from '../store/hooks';
+import { usePhone, useShop } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Tabs, EmptyState, Stat, Field, Segmented, IconTile, Toggle } from '../components/ui';
 import { AUTOMATIONS, automationStatus } from '../lib/automations';
 import ComposeModal from '../components/Compose';
 import SendQueue from '../components/SendQueue';
 import { serviceReminders, declinedWork, lapsedCustomers, reviewCandidates, campaignAudience } from '../lib/marketing';
+import { lineSettings } from '../lib/phone';
 import { bookingLink } from '../lib/booking';
 import { money, money0, date, dateShort, relTime, fullName, vehicleName, number } from '../lib/format';
 
@@ -25,7 +26,7 @@ const TABS = [
 export default function Marketing() {
   const { state } = useShop();
   const [params, setParams] = useSearchParams();
-  const tab = params.get('tab') || 'auto';
+  const tab = TABS.some((t) => t.value === params.get('tab')) ? params.get('tab') : 'auto';
   const now = useMemo(() => new Date(), []);
   const lists = useMemo(
     () => ({
@@ -344,6 +345,9 @@ const AUTO_ICON = { confirm: CalendarCheck, reminder: BellRing, review: Star, se
 /** Recipes that line up today's follow-ups; each sends from the shop's own phone or email. */
 function Automations({ onQueue }) {
   const { state, updateShop } = useShop();
+  const line = usePhone();
+  const pl = lineSettings(state.shop);
+  const setAuto = (id, v) => updateShop({ phoneLine: { ...pl, [id === 'confirm' ? 'autoConfirm' : 'autoReminder']: v, autoSince: pl.autoSince || new Date().toISOString() } });
   const now = useMemo(() => new Date(), []);
   const status = useMemo(() => automationStatus(state, now), [state, now]);
   const m = state.shop.marketing || {};
@@ -361,7 +365,7 @@ function Automations({ onQueue }) {
           <div>
             <div className="eyebrow mb-1.5">Today’s follow-ups</div>
             <div className="text-2xl font-semibold tracking-tight">{total ? `${total} message${total === 1 ? '' : 's'} ready to send` : 'All caught up'}</div>
-            <div className="text-sm text-ink-3">{sent30} sent in the last 30 days · texts open in your phone one tap at a time, emails can go as one message</div>
+            <div className="text-sm text-ink-3">{sent30} sent in the last 30 days · {line.ready ? 'texts go out from your business number in one pass' : 'texts open in your phone one tap at a time'}, emails can go as one message</div>
           </div>
           {ready[0] && (
             <button className="btn-primary" onClick={() => start(ready[0])}>
@@ -394,18 +398,36 @@ function Automations({ onQueue }) {
                   </span>
                 )}
               </div>
+              {line.connected && (a.id === 'confirm' || a.id === 'reminder') && (
+                <label className="mt-3 flex items-center justify-between gap-2 rounded-[10px] bg-fill/[0.05] px-3 py-2 text-xs">
+                  <span>
+                    <span className="block font-medium text-ink">Send automatically</span>
+                    <span className="text-ink-3">{a.id === 'confirm' ? 'Texted as soon as it’s booked' : `The day before at ${((pl.reminderHour + 11) % 12) + 1}:00 ${pl.reminderHour < 12 ? 'AM' : 'PM'}`}, from your business number</span>
+                  </span>
+                  <Toggle checked={st.auto} onChange={(v) => setAuto(a.id, v)} label={`Send ${a.title.toLowerCase()} automatically`} />
+                </label>
+              )}
               <div className="mt-3 flex items-center justify-between gap-2">
-                <span className={`pill ${st.due.length && on ? 'bg-accent/10 text-accent' : 'bg-fill/[0.1] text-ink-3'}`}>{st.due.length ? `${st.due.length} ready now` : 'Nothing due'}</span>
-                <button className="btn-secondary btn-sm" disabled={!on || !st.due.length} onClick={() => start(a)}>
-                  <Send size={13} /> Send
-                </button>
+                {st.auto ? (
+                  <span className="pill bg-ok/10 text-ok">Automatic</span>
+                ) : (
+                  <span className={`pill ${st.due.length && on ? 'bg-accent/10 text-accent' : 'bg-fill/[0.1] text-ink-3'}`}>{st.due.length ? `${st.due.length} ready now` : 'Nothing due'}</span>
+                )}
+                {!st.auto && (
+                  <button className="btn-secondary btn-sm" disabled={!on || !st.due.length} onClick={() => start(a)}>
+                    <Send size={13} /> Send
+                  </button>
+                )}
               </div>
             </Card>
           );
         })}
       </div>
       <p className="mt-4 text-xs text-ink-3">
-        Edit the wording of each message in <Link to="/settings?tab=messaging" className="link">Settings → Messaging</Link>. Fully automatic sending from a business number needs a texting service; until then each follow-up is lined up here so it takes seconds, not a morning.
+        Edit the wording of each message in <Link to="/settings?tab=messaging" className="link">Settings → Messaging</Link>.{' '}
+        {line.connected
+          ? 'Appointment confirmations and reminders can go out on their own; the rest are lined up here and sent in one pass.'
+          : 'Connect a business number (Settings → Messaging) to send them automatically; until then each follow-up is lined up here so it takes seconds, not a morning.'}
       </p>
     </>
   );

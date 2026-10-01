@@ -44,9 +44,11 @@ export function automationStatus(state, now = new Date()) {
   };
   const asRecipients = (rows, extra) => dedupe(rows).map((r) => ({ key: r.key, customer: r.customer, vehicle: r.vehicle, order: r.order || r.lastOrder, extra: extra ? extra(r) : undefined }));
 
+  // Sent by the phone server on its own (Settings → Messaging → Business texting & calls).
+  const line = state.shop.phoneLine || {};
   return {
-    confirm: { due: dedupe(confirmDue), upcoming: appts.filter((a) => new Date(a.start) < in30).length, sent: sent('confirm', 'appt') },
-    reminder: { due: dedupe(reminderDue), upcoming: appts.filter((a) => new Date(a.start) < in30).length, sent: sent('reminder', 'appt') },
+    confirm: { due: line.autoConfirm ? [] : dedupe(confirmDue), auto: Boolean(line.autoConfirm), upcoming: appts.filter((a) => new Date(a.start) < in30).length, sent: sent('confirm', 'appt') },
+    reminder: { due: line.autoReminder ? [] : dedupe(reminderDue), auto: Boolean(line.autoReminder), upcoming: appts.filter((a) => new Date(a.start) < in30).length, sent: sent('reminder', 'appt') },
     review: { due: asRecipients(reviews), upcoming: state.orders.filter((o) => ['approved', 'in_progress', 'waiting_parts', 'ready'].includes(o.status)).length, sent: sent('review', 'review') },
     service: { due: asRecipients(service, () => ({ service: 'an oil change' })), upcoming: null, sent: sent('service', 'service') },
     declined: { due: asRecipients(declined, (r) => ({ service: r.service.title.toLowerCase() })), upcoming: null, sent: sent('declined', 'declined') },

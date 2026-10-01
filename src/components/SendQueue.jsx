@@ -1,10 +1,11 @@
-// Sends one template to many customers without a bulk-messaging service: texts go out one tap at
-// a time from the shop's own phone (personalized), emails can go as one BCC message, and the list
-// can be exported for any bulk texting/email tool. Every send is logged to the customer's thread.
+// Sends one template to many customers. With the business line connected, texts all go out from
+// the shop's Twilio number in one pass; otherwise they go one tap at a time from the shop's own
+// phone. Emails can go as one BCC message, and the list can be exported for any bulk tool. Every
+// send is logged to the customer's thread.
 import { useMemo, useState } from 'react';
-import { MessageSquare, Mail, SkipForward, Download, Check, Users } from 'lucide-react';
-import { useShop, useUI } from '../store/hooks';
-import { Modal, Segmented, Avatar } from './ui';
+import { MessageSquare, Mail, SkipForward, Download, Check, Users, Send } from 'lucide-react';
+import { useShop, useUI, usePhone } from '../store/hooks';
+import { Modal, Segmented, Avatar, Spinner } from './ui';
 import { fillTemplate, messageContext, sendHref } from '../lib/messaging';
 import { downloadCsv } from '../lib/accounting';
 import { toCsv } from '../lib/serviceHistory';
@@ -13,6 +14,8 @@ import { fullName, mailHref, phone as fmtPhone, vehicleName } from '../lib/forma
 export default function SendQueue({ recipients, templateId, initialBody, name, automation, onClose }) {
   const { state, addMessage, logCampaign } = useShop();
   const { toast } = useUI();
+  const line = usePhone();
+  const [bulk, setBulk] = useState(null);
   const templates = state.shop.templates || [];
   const [body, setBody] = useState(initialBody ?? templates.find((t) => t.id === templateId)?.body ?? '');
   const [channel, setChannel] = useState(recipients.some((r) => r.customer.phone) ? 'sms' : 'email');
@@ -21,7 +24,8 @@ export default function SendQueue({ recipients, templateId, initialBody, name, a
   const [sent, setSent] = useState([]);
   const [started, setStarted] = useState(false);
 
-  const list = useMemo(() => recipients.filter((r) => (channel === 'sms' ? r.customer.phone && r.customer.textOptIn !== false : r.customer.email)), [recipients, channel]);
+  const list = useMemo(() => recipients.filter((r) => (channel === 'sms' ? r.customer.phone && r.customer.textOptIn !== false && !line.optedOut(r.customer.phone) : r.customer.email)), [recipients, channel, line]);
+  const viaLine = channel === 'sms' && line.ready;
   const personalize = (r) => fillTemplate(body, messageContext(state, { customer: r.customer, vehicle: r.vehicle, order: r.order, appointment: r.appointment, extra: r.extra }));
   const meta = (extra = {}) => (templateId || automation ? { ...(templateId ? { template: templateId } : {}), ...(automation ? { automation } : {}), ...extra } : Object.keys(extra).length ? extra : undefined);
   const current = list[index];
@@ -37,6 +41,25 @@ export default function SendQueue({ recipients, templateId, initialBody, name, a
     addMessage({ customerId: current.customer.id, orderId: current.order?.id || null, channel, body: text, meta: meta() });
     setSent((s) => [...s, current.customer.id]);
     setIndex((i) => i + 1);
+  };
+
+  // Business line: every text in one pass, from the shop's number.
+  const sendAll = async () => {
+    setStarted(true);
+    setBulk({ done: 0, failed: 0, total: list.length, running: true });
+    const ok = [];
+    for (const r of list) {
+      try {
+        await line.send({ customer: r.customer, body: personalize(r), orderId: r.order?.id || null, meta: meta() });
+        ok.push(r.customer.id);
+        setBulk((b) => ({ ...b, done: b.done + 1 }));
+      } catch {
+        setBulk((b) => ({ ...b, failed: b.failed + 1 }));
+      }
+    }
+    setSent(ok);
+    setIndex(list.length);
+    setBulk((b) => ({ ...b, running: false }));
   };
 
   const bcc = () => {
@@ -76,10 +99,20 @@ export default function SendQueue({ recipients, templateId, initialBody, name, a
                 <Users size={14} /> One email (BCC)
               </button>
             )}
-            <button className="btn-primary" disabled={!list.length || !body.trim()} onClick={() => setStarted(true)}>
-              {channel === 'sms' ? <MessageSquare size={14} /> : <Mail size={14} />} Send one by one
-            </button>
+            {viaLine ? (
+              <button className="btn-primary" disabled={!list.length || !body.trim()} onClick={sendAll}>
+                <Send size={14} /> Send {list.length} text{list.length === 1 ? '' : 's'}
+              </button>
+            ) : (
+              <button className="btn-primary" disabled={!list.length || !body.trim()} onClick={() => setStarted(true)}>
+                {channel === 'sms' ? <MessageSquare size={14} /> : <Mail size={14} />} Send one by one
+              </button>
+            )}
           </>
+        ) : bulk?.running ? (
+          <span className="mr-auto flex items-center gap-2 text-sm text-ink-3">
+            <Spinner size={14} /> Sending {bulk.done + bulk.failed + 1} of {bulk.total}…
+          </span>
         ) : done ? (
           <button className="btn-primary" onClick={() => finish()}>
             <Check size={14} /> Done
@@ -122,8 +155,18 @@ export default function SendQueue({ recipients, templateId, initialBody, name, a
             </p>
           )}
           <p className="text-xs text-ink-3">
-            Texts open in your Messages app one at a time so each comes from the shop’s number. To blast hundreds at once, export the list into a bulk texting or email service.
+            {viaLine
+              ? `Each text is personalized and sent from your business number ${line.status?.phone ? `(${fmtPhone(line.status.phone)})` : ''}; replies come back to Messages. Only text customers who agreed to hear from you.`
+              : 'Texts open in your Messages app one at a time so each comes from the shop’s number. To blast hundreds at once, export the list into a bulk texting or email service.'}
           </p>
+        </div>
+      ) : bulk?.running ? (
+        <div className="space-y-3 py-6 text-center">
+          <div className="text-md font-semibold">Sending texts…</div>
+          <div className="mx-auto h-1.5 max-w-xs overflow-hidden rounded-full bg-fill/[0.12]">
+            <div className="h-full bg-accent transition-all" style={{ width: `${((bulk.done + bulk.failed) / Math.max(1, bulk.total)) * 100}%` }} />
+          </div>
+          <p className="text-sm text-ink-3">{bulk.done} sent{bulk.failed ? ` · ${bulk.failed} didn’t go through` : ''}</p>
         </div>
       ) : done ? (
         <div className="py-6 text-center">
@@ -131,7 +174,7 @@ export default function SendQueue({ recipients, templateId, initialBody, name, a
             <Check size={22} />
           </span>
           <div className="text-md font-semibold">{sent.length} message{sent.length === 1 ? '' : 's'} sent</div>
-          <p className="text-sm text-ink-3">Logged to each customer’s conversation.</p>
+          <p className="text-sm text-ink-3">Logged to each customer’s conversation.{bulk?.failed ? ` ${bulk.failed} didn’t go through — check those numbers in Messages.` : ''}</p>
         </div>
       ) : (
         <div className="space-y-3">
