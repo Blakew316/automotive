@@ -37,6 +37,9 @@ const Import = lazy(() => import('./pages/Import'));
 const Book = lazy(() => import('./pages/Book'));
 const SignIn = lazy(() => import('./pages/SignIn'));
 const Track = lazy(() => import('./pages/Track'));
+const FleetPortal = lazy(() => import('./pages/FleetPortal'));
+const Accounts = lazy(() => import('./pages/Accounts'));
+const Statement = lazy(() => import('./pages/Statement'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -54,6 +57,7 @@ export default function App() {
             <Route path="/share/:id" element={<SharedReport />} />
             <Route path="/book" element={<Book />} />
             <Route path="/track/:id" element={<Track />} />
+            <Route path="/fleet/:id" element={<FleetPortal />} />
             <Route
               path="*"
               element={
@@ -63,6 +67,7 @@ export default function App() {
                       <Route path="/signin" element={<SignIn />} />
                       <Route path="/orders/:id/print" element={<PrintOrder />} />
                       <Route path="/orders/:id/report" element={<CustomerReport />} />
+                      <Route path="/customers/:id/statement" element={<Statement />} />
                       <Route element={<Layout />}>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/workflow" element={<Workflow />} />
@@ -80,6 +85,7 @@ export default function App() {
                         <Route path="/import" element={<Import />} />
                         <Route path="/customers" element={<Customers />} />
                         <Route path="/customers/:id" element={<CustomerDetail />} />
+                        <Route path="/accounts" element={<Accounts />} />
                         <Route path="/vehicles" element={<Vehicles />} />
                         <Route path="/vehicles/:id" element={<VehicleDetail />} />
                         <Route path="/vin" element={<VinDecoder />} />

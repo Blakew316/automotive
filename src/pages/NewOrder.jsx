@@ -17,8 +17,9 @@ export default function NewOrder() {
 
   const [customerId, setCustomerId] = useState(params.get('customer') || appt?.customerId || presetVehicle?.customerId || '');
   const [vehicleId, setVehicleId] = useState(presetVehicle?.id || '');
-  const [concern, setConcern] = useState(appt?.title && appt.title !== 'Service appointment' ? appt.title : '');
-  const [jobs, setJobs] = useState([]);
+  const [concern, setConcern] = useState(params.get('concern') || (appt?.title && appt.title !== 'Service appointment' ? appt.title : ''));
+  // Jobs can arrive preselected, e.g. the PM a fleet unit is due for.
+  const [jobs, setJobs] = useState(() => (params.get('jobs') || '').split(',').filter((j) => state.cannedJobs.some((x) => x.id === j)));
   const [newCustomer, setNewCustomer] = useState(false);
   const [newVehicle, setNewVehicle] = useState(false);
 
@@ -99,7 +100,7 @@ export default function NewOrder() {
                   >
                     <Car size={18} strokeWidth={1.6} className="shrink-0 text-ink-3" />
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-medium">{vehicleName(v, { trim: true })}</span>
+                      <span className="block truncate text-sm font-medium">{v.unit ? <span className="mr-1.5 text-ink-2">Unit {v.unit}</span> : null}{vehicleName(v, { trim: true })}</span>
                       <span className="block truncate font-mono text-[11.5px] text-ink-3">{v.plate ? `${v.plate} · ` : ''}{v.vin}</span>
                     </span>
                     {active && <CircleCheck size={17} className="shrink-0 text-accent" />}

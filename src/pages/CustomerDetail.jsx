@@ -1,10 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Phone, MessageSquare, Mail, Pencil, Plus, Car, Trash2, MoreHorizontal, CalendarPlus, Users, ChevronRight, History } from 'lucide-react';
+import { Phone, MessageSquare, Mail, Pencil, Plus, Car, Trash2, MoreHorizontal, CalendarPlus, Users, ChevronRight, History, Building2 } from 'lucide-react';
 import RecordHistory from '../components/RecordHistory';
 import ComposeModal from '../components/Compose';
 import { useShop, useUI, useTotals, useSync } from '../store/hooks';
-import { PageHeader, Card, CardHeader, Avatar, StatusLabel, EmptyState, Menu, Modal, ListRow, KV } from '../components/ui';
+import { PageHeader, Card, CardHeader, Avatar, StatusLabel, EmptyState, Menu, Modal, ListRow, KV, Tabs } from '../components/ui';
+import AccountForm from './customer/AccountForm';
+import { AccountCard, ContactsCard, PmPlansCard, UnitsCard, InvoicesCard, PortalCard } from './customer/AccountPanels';
+import { accountSummary, isAccount, termsLabel } from '../lib/accounts';
 import { CustomerForm, VehicleForm, AppointmentForm } from '../components/forms';
 import { money, money0, fullName, vehicleName, phone, telHref, mailHref, dateShort, date, number, time, relTime } from '../lib/format';
 
@@ -21,7 +24,11 @@ export default function CustomerDetail() {
   const [history, setHistory] = useState(false);
   const sync = useSync();
   const [composing, setComposing] = useState(null);
+  const [accountForm, setAccountForm] = useState(false);
+  const [tab, setTab] = useState('units');
   const c = state.customers.find((x) => x.id === id);
+  const business = isAccount(c);
+  const summary = useMemo(() => (business ? accountSummary(state, c) : null), [business, state, c]);
 
   const data = useMemo(() => {
     if (!c) return null;
@@ -53,7 +60,15 @@ export default function CustomerDetail() {
             <Avatar person={c} size={52} />
             <span className="min-w-0">
               {fullName(c)}
-              <span className="block text-md font-normal text-ink-2">{c.company || `Customer since ${date(c.createdAt)}`}</span>
+              <span className="block text-md font-normal text-ink-2">
+                {business ? (
+                  <span className="flex items-center gap-1.5">
+                    <Building2 size={15} className="text-ink-3" /> {c.company} · {termsLabel(c.account.terms)} account
+                  </span>
+                ) : (
+                  c.company || `Customer since ${date(c.createdAt)}`
+                )}
+              </span>
             </span>
           </span>
         }
@@ -70,6 +85,7 @@ export default function CustomerDetail() {
               )}
               items={[
                 { label: 'Edit customer', icon: Pencil, onClick: () => setEditing(true) },
+                { label: business ? 'Account settings' : 'Set up business account', icon: Building2, onClick: () => setAccountForm(true) },
                 sync?.enabled && { label: 'Change history', icon: History, onClick: () => setHistory(true) },
                 '-',
                 { label: 'Delete customer', icon: Trash2, danger: true, onClick: () => setConfirmDelete(true) },
@@ -80,98 +96,138 @@ export default function CustomerDetail() {
       />
 
       {history && <RecordHistory collection="customers" id={c.id} title={fullName(c)} onClose={() => setHistory(false)} />}
-      <Card className="mb-6 grid grid-cols-2 divide-line p-1 md:grid-cols-4 md:divide-x">
-        <Metric label="Lifetime spend" value={money0(data.spend)} />
-        <Metric label="Visits" value={data.visits} />
-        <Metric label="Average repair order" value={money0(data.aro)} />
-        <Metric label="Balance due" value={money(data.balance)} />
-      </Card>
+      {business ? (
+        <Card className="mb-6 grid grid-cols-2 divide-line p-1 md:grid-cols-4 md:divide-x">
+          <Metric label="Balance" value={money(summary.balance)} sub={`${summary.invoices.length} open invoice${summary.invoices.length === 1 ? '' : 's'}`} />
+          <Metric label="Past due" value={money(summary.pastDue)} sub={summary.pastDue > 0 ? `Oldest ${summary.oldest} days past due` : 'All current'} tone={summary.pastDue > 0 ? 'text-bad' : ''} />
+          <Metric label="Credit available" value={summary.creditLimit ? money0(summary.available) : 'No limit'} sub={summary.creditLimit ? `of ${money0(summary.creditLimit)}` : termsLabel(c.account.terms)} tone={summary.available != null && summary.available < 0 ? 'text-bad' : ''} />
+          <Metric label="Units" value={summary.units.length} sub={c.account.pmPlans?.length ? `${summary.pmOverdue + summary.pmDue} need maintenance` : `${money0(data.spend)} lifetime`} />
+        </Card>
+      ) : (
+        <Card className="mb-6 grid grid-cols-2 divide-line p-1 md:grid-cols-4 md:divide-x">
+          <Metric label="Lifetime spend" value={money0(data.spend)} />
+          <Metric label="Visits" value={data.visits} />
+          <Metric label="Average repair order" value={money0(data.aro)} />
+          <Metric label="Balance due" value={money(data.balance)} />
+        </Card>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="min-w-0 space-y-6">
-          <Card>
-            <CardHeader title="Vehicles" subtitle={`${data.vehicles.length} on file`} actions={<button className="btn-plain btn-sm" onClick={() => setAddingVehicle(true)}><Plus size={14} /> Add vehicle</button>} />
-            {data.vehicles.length === 0 ? (
-              <EmptyState icon={Car} title="No vehicles yet" body="Add one by VIN to decode it automatically." />
-            ) : (
-              <div className="divide-y divide-line/70">
-                {data.vehicles.map((v) => (
-                  <ListRow key={v.id} to={`/vehicles/${v.id}`}>
-                    <Car size={18} strokeWidth={1.6} className="shrink-0 text-ink-3" />
-                    <div className="min-w-0 flex-1">
-                      <div className="truncate text-sm font-medium">{vehicleName(v, { trim: true })}</div>
-                      <div className="truncate font-mono text-[11.5px] text-ink-3">{v.vin}</div>
-                    </div>
-                    <div className="hidden text-right text-sm sm:block">
-                      <div>{v.plate || '—'}</div>
-                      <div className="tabular text-xs text-ink-3">{number(v.mileage)} mi</div>
-                    </div>
-                  </ListRow>
-                ))}
-              </div>
-            )}
-          </Card>
-
-          <Card>
-            <CardHeader title="Service history" subtitle={`${data.orders.length} repair orders`} />
-            {data.orders.length === 0 ? (
-              <EmptyState title="No repair orders yet" />
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>RO</th>
-                      <th>Date</th>
-                      <th>Vehicle</th>
-                      <th className="hidden md:table-cell">Work</th>
-                      <th>Status</th>
-                      <th className="text-right">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {data.orders.map((o) => {
-                      const v = state.vehicles.find((x) => x.id === o.vehicleId);
-                      return (
-                        <tr key={o.id} className="row-link" onClick={() => navigate(`/orders/${o.id}`)}>
-                          <td className="tabular font-medium">#{o.number}</td>
-                          <td className="whitespace-nowrap text-ink-2">{dateShort(o.closedAt || o.createdAt)}</td>
-                          <td className="whitespace-nowrap">{v ? `${v.year} ${v.model}` : '—'}</td>
-                          <td className="hidden max-w-[260px] truncate text-ink-2 md:table-cell">{o.services.filter((s) => s.status !== 'declined').map((s) => s.title).join(', ')}</td>
-                          <td><StatusLabel status={o.status} /></td>
-                          <td className="tabular text-right">{money(totals(o).total)}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </Card>
-
-          {data.declined.length > 0 && (
+          {business && (
+            <Tabs
+              value={tab}
+              onChange={setTab}
+              tabs={[
+                { value: 'units', label: 'Units & maintenance', count: summary.units.length },
+                { value: 'billing', label: 'Invoices & payments', count: summary.invoices.length || null },
+                { value: 'history', label: 'Service history', count: data.orders.length },
+              ]}
+            />
+          )}
+          {business && tab === 'units' && (
+            <>
+              <UnitsCard customer={c} summary={summary} onAddUnit={() => setAddingVehicle(true)} />
+              <PmPlansCard customer={c} />
+            </>
+          )}
+          {business && tab === 'billing' && <InvoicesCard customer={c} summary={summary} />}
+          {!business && (
             <Card>
-              <CardHeader title="Declined work" subtitle="Follow-up opportunities — previously recommended but not approved" />
-              <ul className="divide-y divide-line/70">
-                {data.declined.slice(0, 8).map(({ s, o }) => {
-                  const v = state.vehicles.find((x) => x.id === o.vehicleId);
-                  return (
-                    <li key={s.id}>
-                      <Link to={`/orders/${o.id}`} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-fill/[0.04]">
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate">{s.title}</span>
-                          <span className="block text-xs text-ink-3">{v ? `${v.year} ${v.model}` : ''} · RO #{o.number} · {dateShort(o.createdAt)}</span>
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+              <CardHeader title="Vehicles" subtitle={`${data.vehicles.length} on file`} actions={<button className="btn-plain btn-sm" onClick={() => setAddingVehicle(true)}><Plus size={14} /> Add vehicle</button>} />
+              {data.vehicles.length === 0 ? (
+                <EmptyState icon={Car} title="No vehicles yet" body="Add one by VIN to decode it automatically." />
+              ) : (
+                <div className="divide-y divide-line/70">
+                  {data.vehicles.map((v) => (
+                    <ListRow key={v.id} to={`/vehicles/${v.id}`}>
+                      <Car size={18} strokeWidth={1.6} className="shrink-0 text-ink-3" />
+                      <div className="min-w-0 flex-1">
+                        <div className="truncate text-sm font-medium">{vehicleName(v, { trim: true })}</div>
+                        <div className="truncate font-mono text-[11.5px] text-ink-3">{v.vin}</div>
+                      </div>
+                      <div className="hidden text-right text-sm sm:block">
+                        <div>{v.plate || '—'}</div>
+                        <div className="tabular text-xs text-ink-3">{number(v.mileage)} mi</div>
+                      </div>
+                    </ListRow>
+                  ))}
+                </div>
+              )}
             </Card>
+          )}
+
+          {(!business || tab === 'history') && (
+            <>
+            <Card>
+              <CardHeader title="Service history" subtitle={`${data.orders.length} repair orders`} />
+              {data.orders.length === 0 ? (
+                <EmptyState title="No repair orders yet" />
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>RO</th>
+                        <th>Date</th>
+                        <th>Vehicle</th>
+                        <th className="hidden md:table-cell">Work</th>
+                        <th>Status</th>
+                        <th className="text-right">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.orders.map((o) => {
+                        const v = state.vehicles.find((x) => x.id === o.vehicleId);
+                        return (
+                          <tr key={o.id} className="row-link" onClick={() => navigate(`/orders/${o.id}`)}>
+                            <td className="tabular font-medium">#{o.number}</td>
+                            <td className="whitespace-nowrap text-ink-2">{dateShort(o.closedAt || o.createdAt)}</td>
+                            <td className="whitespace-nowrap">{v ? `${v.year} ${v.model}` : '—'}</td>
+                            <td className="hidden max-w-[260px] truncate text-ink-2 md:table-cell">{o.services.filter((s) => s.status !== 'declined').map((s) => s.title).join(', ')}</td>
+                            <td><StatusLabel status={o.status} /></td>
+                            <td className="tabular text-right">{money(totals(o).total)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </Card>
+  
+            {data.declined.length > 0 && (
+              <Card>
+                <CardHeader title="Declined work" subtitle="Follow-up opportunities — previously recommended but not approved" />
+                <ul className="divide-y divide-line/70">
+                  {data.declined.slice(0, 8).map(({ s, o }) => {
+                    const v = state.vehicles.find((x) => x.id === o.vehicleId);
+                    return (
+                      <li key={s.id}>
+                        <Link to={`/orders/${o.id}`} className="flex items-center gap-3 px-4 py-2.5 text-sm hover:bg-fill/[0.04]">
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate">{s.title}</span>
+                            <span className="block text-xs text-ink-3">{v ? `${v.year} ${v.model}` : ''} · RO #{o.number} · {dateShort(o.createdAt)}</span>
+                          </span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </Card>
+            )}
+            </>
           )}
         </div>
 
         <div className="space-y-6">
+          {business && (
+            <>
+              <AccountCard customer={c} summary={summary} onEdit={() => setAccountForm(true)} />
+              <PortalCard customer={c} />
+              <ContactsCard customer={c} />
+            </>
+          )}
           <Card className="px-4 py-2">
             <dl className="divide-y divide-line/70">
               <KV label="Mobile">{c.phone ? <a href={telHref(c.phone)} className="link">{phone(c.phone)}</a> : '—'}</KV>
@@ -214,6 +270,7 @@ export default function CustomerDetail() {
       </div>
 
       {editing && <CustomerForm open initial={c} onClose={() => setEditing(false)} />}
+      {accountForm && <AccountForm customer={c} onClose={() => setAccountForm(false)} />}
       {composing && <ComposeModal customer={c} templateId="update" {...composing} onClose={() => setComposing(null)} />}
       {addingVehicle && <VehicleForm open initial={{ customerId: c.id }} onClose={() => setAddingVehicle(false)} />}
       {booking && <AppointmentForm open initial={{ customerId: c.id, vehicleId: data.vehicles[0]?.id }} onClose={() => setBooking(false)} />}
@@ -244,11 +301,12 @@ export default function CustomerDetail() {
   );
 }
 
-function Metric({ label, value }) {
+function Metric({ label, value, sub, tone = '' }) {
   return (
     <div className="px-4 py-3.5">
       <div className="text-sm text-ink-2">{label}</div>
-      <div className="mt-1 text-2xl font-semibold tracking-tight">{value}</div>
+      <div className={`tabular mt-1 text-2xl font-semibold tracking-tight ${tone}`}>{value}</div>
+      {sub && <div className="mt-0.5 text-xs text-ink-3">{sub}</div>}
     </div>
   );
 }

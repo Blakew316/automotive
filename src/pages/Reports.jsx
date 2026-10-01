@@ -7,6 +7,7 @@ import { TechReport, EstimateReport, CustomerReport } from './reports/MoreReport
 import { GoalsReport, PeriodCompare } from './reports/GoalsReport';
 import { ColumnChart, MixBar, RankBars } from '../components/charts';
 import { money, money0, moneyShort, pct, startOfDay, addDays, dateShort, fullName, number } from '../lib/format';
+import { openInvoices, aging as agingBuckets } from '../lib/accounts';
 
 const TABS = [
   { value: 'overview', label: 'Sales & profit', icon: ChartColumn },
@@ -94,15 +95,10 @@ export default function Reports() {
     const payments = new Map();
     state.orders.forEach((o) => o.payments.forEach((p) => new Date(p.at) >= from && payments.set(p.method, (payments.get(p.method) || 0) + Number(p.amount))));
 
-    const unpaid = state.orders.filter((o) => (o.status === 'ready' || o.status === 'closed') && totals(o).balance > 0.004);
-    const aging = [
-      { label: '0–30 days', test: (d) => d <= 30 },
-      { label: '31–60 days', test: (d) => d > 30 && d <= 60 },
-      { label: '60+ days', test: (d) => d > 60 },
-    ].map((b) => {
-      const list = unpaid.filter((o) => b.test((now - new Date(o.invoicedAt)) / 86400000));
-      return { ...b, list, amount: list.reduce((s, o) => s + totals(o).balance, 0) };
-    });
+    // Aged by due date (business accounts on terms aren't late until their terms run out).
+    const open = openInvoices(state, { now });
+    const unpaid = [...open].sort((a, b) => b.pastDue - a.pastDue || b.balance - a.balance);
+    const aging = agingBuckets(open);
 
     return {
       revenue,
@@ -125,7 +121,7 @@ export default function Reports() {
       aging,
       unpaid,
     };
-  }, [state.orders, state.technicians, days, totals, now]);
+  }, [state, days, totals, now]);
 
   return (
     <>
@@ -206,19 +202,19 @@ export default function Reports() {
             </Card>
             <div className="space-y-6">
               <Card>
-                <CardHeader title="Receivables aging" subtitle={`${r.unpaid.length} unpaid invoices`} />
+                <CardHeader title="Receivables aging" subtitle={`${r.unpaid.length} unpaid invoices · by days past due`} actions={<Link to="/accounts" className="btn-plain btn-sm">All</Link>} />
                 <dl className="px-4 py-2">
                   {r.aging.map((b) => (
-                    <div key={b.label} className="flex justify-between border-b border-line/60 py-2 text-sm last:border-0">
-                      <dt className="text-ink-2">{b.label} <span className="text-ink-4">· {b.list.length}</span></dt>
+                    <div key={b.key} className="flex justify-between border-b border-line/60 py-2 text-sm last:border-0">
+                      <dt className="text-ink-2">{b.label} <span className="text-ink-4">· {b.count}</span></dt>
                       <dd className="tabular font-medium">{money(b.amount)}</dd>
                     </div>
                   ))}
                 </dl>
-                {r.unpaid.slice(0, 4).map((o) => (
-                  <Link key={o.id} to={`/orders/${o.id}`} className="flex justify-between border-t border-line/60 px-4 py-2 text-xs hover:bg-fill/[0.04]">
-                    <span className="text-ink-2">#{o.number} · {fullName(lookup.customer.get(o.customerId))}</span>
-                    <span className="tabular">{money(totals(o).balance)}</span>
+                {r.unpaid.slice(0, 4).map((i) => (
+                  <Link key={i.order.id} to={`/orders/${i.order.id}`} className="flex justify-between border-t border-line/60 px-4 py-2 text-xs hover:bg-fill/[0.04]">
+                    <span className="text-ink-2">#{i.order.number} · {i.customer?.account && i.customer.company ? i.customer.company : fullName(lookup.customer.get(i.order.customerId))}{i.pastDue > 0 ? <span className="text-bad"> · {i.pastDue}d past due</span> : ''}</span>
+                    <span className="tabular">{money(i.balance)}</span>
                   </Link>
                 ))}
               </Card>

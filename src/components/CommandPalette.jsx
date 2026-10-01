@@ -121,9 +121,9 @@ function Palette({ onClose }) {
     if (customers.length) out.push({ title: 'Customers', items: customers });
 
     const vehicles = state.vehicles
-      .filter((v) => match(`${vehicleName(v, { trim: true })} ${v.vin} ${v.plate || ''}`))
+      .filter((v) => match(`${vehicleName(v, { trim: true })} ${v.vin} ${v.plate || ''} ${v.unit ? `unit ${v.unit}` : ''}`))
       .slice(0, 5)
-      .map((v) => ({ key: v.id, label: vehicleName(v, { trim: true }), sub: `${v.plate || ''} · ${v.vin}`, icon: Car, to: `/vehicles/${v.id}` }));
+      .map((v) => ({ key: v.id, label: `${v.unit ? `Unit ${v.unit} · ` : ''}${vehicleName(v, { trim: true })}`, sub: `${v.plate || ''} · ${v.vin}`, icon: Car, to: `/vehicles/${v.id}` }));
     if (vehicles.length) out.push({ title: 'Vehicles', items: vehicles });
 
     if (catalog && query.length >= 2) {

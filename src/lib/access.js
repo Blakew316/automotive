@@ -9,7 +9,7 @@ export const ROLES = {
   tech: { label: 'Technician', desc: 'Tech clock, workflow, repair orders and technical info' },
 };
 
-const SHOP_FLOOR = ['/', '/workflow', '/orders', '/calendar', '/messages', '/customers', '/vehicles', '/marketing', '/tech', '/catalog', '/vin', '/parts', '/library'];
+const SHOP_FLOOR = ['/', '/workflow', '/orders', '/calendar', '/messages', '/customers', '/accounts', '/vehicles', '/marketing', '/tech', '/catalog', '/vin', '/parts', '/library'];
 const ALLOW = {
   owner: null, // everything
   manager: [...SHOP_FLOOR, '/team', '/reports', '/integrations', '/import', '/settings'],

@@ -92,7 +92,7 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
   const submit = (e) => {
     e?.preventDefault();
     if (!valid) return;
-    const id = saveVehicle({ ...form, vin: cleanVin(form.vin), year: Number(form.year), mileage: Number(String(form.mileage).replace(/\D/g, '')) || 0, customerId: form.customerId || null });
+    const id = saveVehicle({ ...form, vin: cleanVin(form.vin), year: Number(form.year), mileage: Number(String(form.mileage).replace(/\D/g, '')) || 0, customerId: form.customerId || null, ...(form.unit != null ? { unit: String(form.unit).trim() } : {}), ...(form.driver != null ? { driver: String(form.driver).trim() } : {}) });
     toast(initial?.id ? 'Vehicle updated' : `${vehicleName(form)} added`, { tone: 'success' });
     onSaved?.(id);
     onClose();
@@ -156,6 +156,12 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
             </select>
           )}
         </Field>
+        {state.customers.find((c) => c.id === form.customerId)?.account && (
+          <>
+            <Field label="Unit #" className="col-span-2" hint="The fleet’s own number">{(id) => <input id={id} className="input" value={form.unit || ''} onChange={set('unit')} />}</Field>
+            <Field label="Driver / department" className="col-span-4">{(id) => <input id={id} className="input" value={form.driver || ''} onChange={set('driver')} />}</Field>
+          </>
+        )}
         <Field label="Notes" className="col-span-6">{(id) => <textarea id={id} rows={2} className="input" value={form.notes} onChange={set('notes')} />}</Field>
         <button type="submit" className="hidden" />
       </form>

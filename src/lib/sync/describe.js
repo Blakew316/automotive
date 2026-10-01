@@ -32,6 +32,13 @@ const LABELS = {
   start: 'Time',
   duration: 'Length',
   status: 'Status',
+  po: 'PO number',
+  charge: 'Charged to account',
+  account: 'Business account',
+  company: 'Company',
+  unit: 'Unit #',
+  driver: 'Driver',
+  pm: 'Maintenance record',
 };
 const IGNORE = new Set(['updatedAt', 'id']);
 const titleOf = (x) => x?.title || x?.description || x?.text || x?.name || 'item';
@@ -66,7 +73,8 @@ export function describeChange(collection, prev, next) {
     if ((next.authorizations || []).length > (prev.authorizations || []).length) out.push('Customer authorization recorded');
     if ((next.notes || []).length !== (prev.notes || []).length) out.push(`Notes: ${(next.notes || []).length - (prev.notes || []).length > 0 ? 'added' : 'removed'}`);
     if ((next.media || []).length !== (prev.media || []).length) out.push(`Photos & video: ${(next.media || []).length} (was ${(prev.media || []).length})`);
-    for (const k of ['concern', 'promisedAt', 'techId', 'advisor', 'mileageIn', 'mileageOut', 'discount', 'taxExempt', 'inspection', 'share']) {
+    if (!prev.charge && next.charge) out.push('Charged to account');
+    for (const k of ['concern', 'promisedAt', 'techId', 'advisor', 'mileageIn', 'mileageOut', 'discount', 'taxExempt', 'po', 'inspection', 'share']) {
       if (!same(prev[k], next[k])) out.push(`${LABELS[k]} changed`);
     }
     return out.length ? out : ['Minor edit'];

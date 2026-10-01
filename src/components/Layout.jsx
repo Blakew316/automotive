@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package,
   BookOpen, ChartColumn, Settings, Search, Menu as MenuIcon, Sun, Moon, Monitor, Wrench, X, Database,
-  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock, CloudDownload,
+  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock, CloudDownload, Building2,
 } from 'lucide-react';
 import { useShop, useUI, useAccess, useSync } from '../store/hooks';
 import { ROLES, homeFor } from '../lib/access';
@@ -41,6 +41,7 @@ const NAV = [
     title: 'Customers',
     items: [
       { to: '/customers', label: 'Customers', icon: Users },
+      { to: '/accounts', label: 'Fleet & Accounts', icon: Building2 },
       { to: '/vehicles', label: 'Vehicles', icon: Car },
       { to: '/marketing', label: 'Marketing', icon: Megaphone },
     ],
