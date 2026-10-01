@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Trash2, MoreHorizontal, Wrench, Package, Receipt, Truck, Boxes, ArrowUpRight, Check, MessageSquareText, Camera, Disc3 } from 'lucide-react';
+import { Trash2, MoreHorizontal, Wrench, Package, Receipt, Truck, Boxes, ArrowUpRight, Check, MessageSquareText, Camera, Disc3, ShieldCheck } from 'lucide-react';
 import { useShop, useUI } from '../../store/hooks';
 import { Menu, NumInput, InlineText, Segmented, Spinner } from '../../components/ui';
-import { itemTotal, serviceTotal, serviceHours } from '../../lib/pricing';
+import { itemTotal, serviceTotal, serviceValue, serviceHours } from '../../lib/pricing';
+import { NO_CHARGE_REASONS, CORE_STATUS } from '../../lib/operations';
 import { money } from '../../lib/format';
 import { SUPPLIERS } from '../../lib/suppliers';
 import { jobProfit, profitTone, TONE_TEXT } from '../../lib/profit';
@@ -92,6 +93,7 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
               )}
               items={[
                 { label: story ? 'Hide cause & correction' : 'Add cause & correction', icon: MessageSquareText, onClick: () => setStory((s) => !s) },
+                { label: service.noCharge ? 'Charge for this service' : 'No charge (warranty, comeback…)', icon: ShieldCheck, onClick: () => up({ noCharge: service.noCharge ? null : order.comeback ? 'comeback' : 'warranty' }) },
                 ...(service.tires ? [] : [{ label: 'Quote tire options', icon: Disc3, onClick: () => up({ tires: newTireQuote() }) }]),
                 '-',
                 { label: 'Remove service', icon: Trash2, danger: true, onClick: () => removeService(order.id, service.id) },
@@ -102,6 +104,18 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
       </header>
 
       {service.note && <p className="border-b border-line/70 bg-raised px-4 py-2 text-xs text-ink-2">{service.note}</p>}
+      {service.noCharge && (
+        <div className="flex flex-wrap items-center gap-2 border-b border-line/70 bg-raised px-4 py-2 text-xs text-ink-2">
+          <ShieldCheck size={14} className="text-ink-3" />
+          <span className="font-medium text-ink">No charge</span>
+          <select value={service.noCharge} onChange={(e) => up({ noCharge: e.target.value })} disabled={!editable} className="h-6 rounded-[5px] border border-line bg-surface px-1 text-xs" aria-label="No-charge reason">
+            {Object.entries(NO_CHARGE_REASONS).map(([k, v]) => (
+              <option key={k} value={k}>{v}</option>
+            ))}
+          </select>
+          <span>The customer isn’t billed — parts and labor still count as the shop’s cost ({money(serviceValue(service))} at your prices).</span>
+        </div>
+      )}
 
       {service.items.length > 0 && (
         <div className="overflow-x-auto">
@@ -137,6 +151,24 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
                               <option key={k} value={k}>{v}</option>
                             ))}
                           </select>
+                          <span className="flex items-center gap-0.5 text-xs text-ink-3" title="Core charge the vendor refunds when the old part goes back">
+                            Core
+                            <NumInput
+                              value={item.core?.amount || ''}
+                              format={(v) => Number(v).toFixed(2)}
+                              placeholder="—"
+                              onCommit={(amount) => upItem(item.id, { core: amount > 0 ? { status: 'owed', ...(item.core || {}), amount } : null })}
+                              className="h-6 w-14 rounded-[5px] border border-transparent bg-transparent px-1 text-xs text-ink-2 outline-none hover:border-line focus:border-accent/60"
+                              aria-label="Core charge"
+                            />
+                          </span>
+                          {item.core?.amount > 0 && (
+                            <select value={item.core.status || 'owed'} onChange={(e) => upItem(item.id, { core: { ...item.core, status: e.target.value, ...(e.target.value === 'returned' && !item.core.returnedAt ? { returnedAt: new Date().toISOString() } : {}) } })} className="h-6 rounded-[5px] border border-transparent bg-transparent px-1 text-xs text-ink-2 outline-none hover:border-line" aria-label="Core status">
+                              {Object.entries(CORE_STATUS).map(([k, v]) => (
+                                <option key={k} value={k}>{v}</option>
+                              ))}
+                            </select>
+                          )}
                           <Menu
                             align="left"
                             trigger={({ toggle }) => (
@@ -244,7 +276,7 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
           </PickButton>
         )}
         <div className="flex items-baseline gap-3 pr-1 text-sm">
-          {total > 0 && !declined && (
+          {total > 0 && !declined && !service.noCharge && (
             <span className="tabular hidden items-baseline gap-2 font-mono text-2xs text-ink-3 sm:flex" title="Gross profit after parts, sublet and technician pay">
               <span>
                 GP <b className={TONE_TEXT[tone]}>{Math.round(profit.gpPct * 100)}%</b>
@@ -254,7 +286,14 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
             </span>
           )}
           {hours > 0 && <span className="text-xs text-ink-3">{hours.toFixed(1)} hr</span>}
-          <span className="tabular font-semibold">{money(total)}</span>
+          {service.noCharge ? (
+            <span className="flex items-baseline gap-2">
+              <span className="tabular text-xs text-ink-4 line-through">{money(serviceValue(service))}</span>
+              <span className="font-semibold">No charge</span>
+            </span>
+          ) : (
+            <span className="tabular font-semibold">{money(total)}</span>
+          )}
         </div>
       </footer>
 

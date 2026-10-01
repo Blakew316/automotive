@@ -40,6 +40,10 @@ const Track = lazy(() => import('./pages/Track'));
 const FleetPortal = lazy(() => import('./pages/FleetPortal'));
 const Accounts = lazy(() => import('./pages/Accounts'));
 const Statement = lazy(() => import('./pages/Statement'));
+const CheckIn = lazy(() => import('./pages/CheckIn'));
+const FrontDesk = lazy(() => import('./pages/FrontDesk'));
+const Lobby = lazy(() => import('./pages/Lobby'));
+const CheckinSign = lazy(() => import('./pages/CheckinSign'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -58,6 +62,7 @@ export default function App() {
             <Route path="/book" element={<Book />} />
             <Route path="/track/:id" element={<Track />} />
             <Route path="/fleet/:id" element={<FleetPortal />} />
+            <Route path="/checkin" element={<CheckIn />} />
             <Route
               path="*"
               element={
@@ -68,6 +73,8 @@ export default function App() {
                       <Route path="/orders/:id/print" element={<PrintOrder />} />
                       <Route path="/orders/:id/report" element={<CustomerReport />} />
                       <Route path="/customers/:id/statement" element={<Statement />} />
+                      <Route path="/lobby" element={<Lobby />} />
+                      <Route path="/frontdesk/sign" element={<CheckinSign />} />
                       <Route element={<Layout />}>
                         <Route path="/" element={<Dashboard />} />
                         <Route path="/workflow" element={<Workflow />} />
@@ -86,6 +93,7 @@ export default function App() {
                         <Route path="/customers" element={<Customers />} />
                         <Route path="/customers/:id" element={<CustomerDetail />} />
                         <Route path="/accounts" element={<Accounts />} />
+                        <Route path="/frontdesk" element={<FrontDesk />} />
                         <Route path="/vehicles" element={<Vehicles />} />
                         <Route path="/vehicles/:id" element={<VehicleDetail />} />
                         <Route path="/vin" element={<VinDecoder />} />

@@ -4,8 +4,9 @@
 // the booking page's open times whenever the calendar changes.
 import { useEffect, useRef, useState } from 'react';
 import { useShop } from '../store/hooks';
-import { cloudConfig, cloudSession, fetchInbox, clearInbox, publishBooking, isStaffSession } from './cloudShare';
+import { cloudConfig, cloudSession, fetchInbox, clearInbox, publishBooking, publishPublicJson, isStaffSession } from './cloudShare';
 import { bookingConfig } from './booking';
+import { checkinConfig } from './operations';
 
 const POLL_MS = 60000;
 
@@ -97,11 +98,31 @@ export function useCloudSync() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fingerprint]);
 
+  // ---------------------------------------------------------------- Self check-in page
+  // Publishes site/checkin.json whenever what the page shows changes; the fingerprint is saved with
+  // the shop's settings so other signed-in devices don't publish it again.
+  const checkinFp = staff ? JSON.stringify(checkinConfig(state)) : '';
+  const savedFp = state.shop.frontDesk?.checkin?.fp;
+  useEffect(() => {
+    if (!checkinFp || checkinFp === savedFp) return undefined;
+    const t = setTimeout(async () => {
+      try {
+        await publishPublicJson(cfg, 'site/checkin.json', checkinConfig(latest.current.state), 60);
+        const fd = latest.current.state.shop.frontDesk;
+        latest.current.updateShop({ frontDesk: { ...fd, checkin: { ...fd.checkin, fp: checkinFp, published: new Date().toISOString() } } });
+      } catch {
+        // Next change (or sign-in) retries.
+      }
+    }, 2500);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [checkinFp, savedFp]);
+
   return { enabled: signedIn, ...status };
 }
 
 /** Turn inbox rows into bookings, approvals and messages. Returns the ids that were handled. */
-function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, addWebsiteMessage, selectTire }) {
+function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, addWebsiteMessage, addCheckin, selectTire }) {
   const handled = [];
   const bookings = [];
   for (const row of rows) {
@@ -125,6 +146,12 @@ function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, ad
           customerId: null,
         });
       }
+      handled.push(row.id);
+      continue;
+    }
+    // Self check-in and key drop.
+    if (row.kind === 'checkin') {
+      if ((p.name || p.phone) && (p.vehicle || p.plate || p.vin)) addCheckin(row);
       handled.push(row.id);
       continue;
     }

@@ -35,8 +35,14 @@ export function itemCost(item, techRate = 0) {
   return (Number(item.qty) || 0) * (Number(item.cost) || 0);
 }
 
-export function serviceTotal(service) {
+/** What the work is worth at the shop's prices (shown struck through when it's done at no charge). */
+export function serviceValue(service) {
   return round2((service.items || []).reduce((s, i) => s + itemTotal(i), 0));
+}
+
+/** What the customer pays for a service: nothing for warranty, comeback or goodwill work. */
+export function serviceTotal(service) {
+  return service.noCharge ? 0 : serviceValue(service);
 }
 
 export const serviceHours = (service) =>
@@ -48,11 +54,18 @@ export const serviceHours = (service) =>
  */
 export function orderTotals(order, shop) {
   const active = (order.services || []).filter((s) => s.status !== 'declined');
-  const sums = { labor: 0, parts: 0, fees: 0, sublet: 0, hours: 0, cost: 0, partsCost: 0 };
+  const sums = { labor: 0, parts: 0, fees: 0, sublet: 0, hours: 0, cost: 0, partsCost: 0, ncValue: 0, ncCost: 0 };
   const techRate = Number(shop?.techPayRate) || 0;
   for (const s of active) {
     for (const i of s.items || []) {
       const t = itemTotal(i);
+      // No-charge work (warranty, comeback, goodwill) costs the shop but isn't billed.
+      if (s.noCharge) {
+        sums.ncValue += t;
+        sums.ncCost += itemCost(i, techRate);
+        sums.cost += itemCost(i, techRate);
+        continue;
+      }
       if (i.type === 'labor') {
         sums.labor += t;
         sums.hours += Number(i.hours) || 0;
@@ -99,6 +112,8 @@ export function orderTotals(order, shop) {
     grossProfit,
     gpPct: revenue > 0 ? grossProfit / revenue : 0,
     pending: active.filter((s) => s.status === 'pending').length,
+    noCharge: round2(sums.ncValue),
+    noChargeCost: round2(sums.ncCost),
     declined: round2((order.services || []).filter((s) => s.status === 'declined').reduce((sum, s) => sum + serviceTotal(s), 0)),
   };
 }

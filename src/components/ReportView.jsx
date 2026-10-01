@@ -381,7 +381,7 @@ function ServiceRow(props) {
             </div>
           </div>
         </div>
-        {showPrices && total != null && <div className="tabular shrink-0 text-md font-semibold text-ink">{money(total)}</div>}
+        {showPrices && total != null && (s.noCharge ? <div className="shrink-0 text-md font-semibold text-ink">No charge</div> : <div className="tabular shrink-0 text-md font-semibold text-ink">{money(total)}</div>)}
       </div>
       {(s.cause || s.correction) && (
         <dl className="mt-2 space-y-1 pl-[26px] text-sm">

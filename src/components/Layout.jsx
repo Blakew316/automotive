@@ -3,7 +3,7 @@ import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package,
   BookOpen, ChartColumn, Settings, Search, Menu as MenuIcon, Sun, Moon, Monitor, Wrench, X, Database,
-  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock, CloudDownload, Building2,
+  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock, CloudDownload, Building2, ConciergeBell,
 } from 'lucide-react';
 import { useShop, useUI, useAccess, useSync } from '../store/hooks';
 import { ROLES, homeFor } from '../lib/access';
@@ -24,6 +24,7 @@ function useNavCounts() {
     lowStock: state.inventory.filter((p) => Number(p.qty) <= Number(p.min)).length,
     unread: state.messages.filter((m) => m.dir === 'in' && !m.read).length,
     requests: state.bookingRequests.filter((b) => b.status === 'new').length,
+    checkins: state.orders.filter((o) => o.checkin && o.status === 'estimate' && new Date(o.checkin.at).toDateString() === new Date().toDateString()).length,
   };
 }
 
@@ -34,6 +35,7 @@ const NAV = [
       { to: '/workflow', label: 'Workflow', icon: SquareKanban, count: 'workflow' },
       { to: '/orders', label: 'Repair Orders', icon: ClipboardList, count: 'orders' },
       { to: '/calendar', label: 'Calendar', icon: CalendarDays, count: 'requests', badge: true },
+      { to: '/frontdesk', label: 'Front Desk', icon: ConciergeBell, count: 'checkins', badge: true },
       { to: '/messages', label: 'Messages', icon: MessageSquare, count: 'unread', badge: true },
     ],
   },

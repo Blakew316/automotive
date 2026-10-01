@@ -4,6 +4,7 @@ import { withCheckDigit } from '../lib/vin';
 import { DEFAULT_MATRIX, priceFromMatrix, orderTotals } from '../lib/pricing';
 import { INSPECTION_TEMPLATE } from '../lib/workflow';
 import { seedExtras } from './seedExtras';
+import { FRONT_DESK_DEFAULTS } from '../lib/operations';
 
 export const DEFAULT_SHOP = {
   name: 'Main Street Auto Service',
@@ -764,6 +765,43 @@ export function createSeed(now = new Date()) {
     return [mitchell.id, okafor.id];
   })();
   void fleetAccounts;
+
+  // Front desk: two loaners (one out today), a customer waiting in the lobby, a shuttle ride, a
+  // comeback on no charge, and core charges on batteries.
+  shop.frontDesk = {
+    ...FRONT_DESK_DEFAULTS,
+    loaners: [
+      { id: 'loan-1', name: 'Loaner 1 — 2022 Toyota Corolla', plate: 'MSA 101', mileage: 21450, fuel: '3/4', active: true },
+      { id: 'loan-2', name: 'Loaner 2 — 2021 Honda Civic', plate: 'MSA 102', mileage: 33870, fuel: 'F', active: true },
+    ],
+    lobby: { ...FRONT_DESK_DEFAULTS.lobby, wifiName: 'MainStreet-Guest', wifiPassword: 'tuneup2026' },
+  };
+  {
+    const busyNow = orders.filter((o) => ['approved', 'in_progress', 'waiting_parts'].includes(o.status) && !o.vehicleId?.startsWith('veh_ci'));
+    const custOf = (o) => customers.find((c) => c.id === o.customerId);
+    if (busyNow[0]) busyNow[0].transport = 'waiting';
+    if (busyNow[1]) Object.assign(busyNow[1], { transport: 'loaner', loaner: { id: 'loan-1', name: 'Loaner 1 — 2022 Toyota Corolla', outAt: at(0, 8, 5), outMiles: 21450, outFuel: '3/4', notes: 'Small scuff rear bumper', signature: null, by: [custOf(busyNow[1])?.firstName, custOf(busyNow[1])?.lastName].join(' ') } });
+    if (busyNow[2]) {
+      const addr = `${custOf(busyNow[2])?.address || ''}, Springfield`;
+      Object.assign(busyNow[2], { transport: 'shuttle', shuttle: { dropoff: { at: at(0, 8, 20), address: addr, done: true }, pickup: { at: at(0, 16, 30), address: addr, done: false } } });
+    }
+    const back = busyNow.slice(3).find((o) => orders.some((p) => p.vehicleId === o.vehicleId && p.status === 'closed'));
+    if (back) {
+      const prev = orders.filter((p) => p.vehicleId === back.vehicleId && p.status === 'closed').sort((a, b) => b.closedAt.localeCompare(a.closedAt))[0];
+      back.comeback = { of: prev.id, ofNumber: prev.number, techId: prev.techId, reason: 'Noise came back after the last repair', at: back.createdAt };
+      back.services.slice(0, 1).forEach((sv) => (sv.noCharge = 'comeback'));
+    }
+    orders.forEach((o) =>
+      o.services.forEach((sv) =>
+        sv.items.forEach((it) => {
+          if (it.type !== 'part' || !/battery/i.test(it.description || '') || o.status === 'estimate') return;
+          // Recent cores are still in the back room; older ones went back and were credited.
+          const age = (now - new Date(o.invoicedAt || o.createdAt)) / 86400000;
+          it.core = { amount: 18, status: age < 10 ? 'owed' : age < 24 ? 'returned' : 'credited', ...(age >= 10 ? { returnedAt: new Date(new Date(o.invoicedAt || o.createdAt).getTime() + 5 * 86400000).toISOString() } : {}) };
+        }),
+      ),
+    );
+  }
   orders.sort((a, b) => a.number - b.number);
 
   const finalOrders = orders.map((o) => ({ ...o, techId: tech(o.techId) }));
@@ -772,7 +810,7 @@ export function createSeed(now = new Date()) {
   return {
     version: 2,
     seededAt: now.toISOString(),
-    shop: { ...shop, ...extras.shopExtras },
+    shop: { ...shop, ...extras.shopExtras, frontDesk: shop.frontDesk },
     technicians: extras.technicians,
     customers,
     vehicles,

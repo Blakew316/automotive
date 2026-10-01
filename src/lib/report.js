@@ -46,6 +46,7 @@ export function buildReport(order, state, { showPrices = true } = {}) {
       cause: s.cause || '',
       correction: s.correction || '',
       total: showPrices ? serviceTotal(s) : null,
+      noCharge: Boolean(s.noCharge),
       lines: (s.items || [])
         .filter((i) => i.description)
         .map((i) => ({ type: i.type, description: i.description, qty: i.type === 'labor' ? null : Number(i.qty) || 1, total: showPrices ? itemTotal(i) : null })),
