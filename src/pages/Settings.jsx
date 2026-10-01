@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive, Store, Wrench, CreditCard, MessageSquareText, CalendarCheck, Cloud, ChevronRight, Globe, ConciergeBell } from 'lucide-react';
+import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive, Store, Wrench, CreditCard, MessageSquareText, CalendarCheck, Cloud, ChevronRight, Globe, ConciergeBell, KeyRound } from 'lucide-react';
 import { useShop, useUI, useSync, useAccess } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Field, Toggle, Modal, NumInput, InlineText, Tabs } from '../components/ui';
 import { priceFromMatrix, DEFAULT_MATRIX } from '../lib/pricing';
@@ -15,6 +15,7 @@ import InstallSection from './settings/InstallSection';
 import WebsiteSettings from './settings/WebsiteSettings';
 import FrontDeskSettings from './settings/FrontDeskSettings';
 import LocationsSection from './settings/LocationsSection';
+import KeysSettings from './settings/KeysSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
 
@@ -27,6 +28,7 @@ const TABS = [
   { value: 'frontdesk', label: 'Front desk', icon: ConciergeBell },
   { value: 'website', label: 'Website', icon: Globe },
   { value: 'cloud', label: 'Shop Cloud', icon: Cloud },
+  { value: 'keys', label: 'Keys & AI', icon: KeyRound },
   { value: 'data', label: 'Data', icon: HardDrive },
 ];
 
@@ -108,6 +110,7 @@ export default function Settings() {
         {tab === 'booking' && <BookingSettings />}
         {tab === 'frontdesk' && <FrontDeskSettings />}
         {tab === 'website' && <WebsiteSettings />}
+        {tab === 'keys' && <KeysSettings />}
         {tab === 'cloud' && (
           <>
             <SharingSection />

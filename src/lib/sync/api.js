@@ -107,3 +107,7 @@ export async function downloadFile(cfg, id, which) {
 // ---------------------------------------------------------------- Team logins (shop-admin function)
 
 export const shopAdmin = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-admin', { body: { action, ...args } });
+
+// ---------------------------------------------------------------- Integration keys & AI (server functions)
+export const shopSecrets = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-secrets', { body: { action, ...args } });
+export const shopAi = (cfg, body) => call(cfg, '/functions/v1/shop-ai', { body });
