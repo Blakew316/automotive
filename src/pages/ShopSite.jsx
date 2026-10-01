@@ -69,7 +69,7 @@ function Site({ config, bookHref }) {
       {/* Top bar */}
       <header className="glass sticky top-0 z-20 border-b border-line/70 bg-surface/85">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4">
-          <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-gradient-to-br from-sky to-accent text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-accent text-on-accent">
             <Wrench size={16} />
           </span>
           <span className="truncate font-semibold">{shop.name}</span>
@@ -89,14 +89,11 @@ function Site({ config, bookHref }) {
       </header>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-graphite text-white">
-        <div aria-hidden className="bg-grid absolute inset-0 opacity-70 [--grid:150_180_230]" />
-        <div aria-hidden className="absolute -right-24 top-0 h-96 w-96 rounded-full bg-brand/35 blur-3xl" />
-        <div aria-hidden className="absolute -bottom-40 left-10 h-80 w-80 rounded-full bg-sky/20 blur-3xl" />
-        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:py-24">
+      <section className="bg-graphite text-white">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24">
           {site.since && (
             <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-mono text-[11px] font-semibold uppercase tracking-[0.14em] text-white/80 ring-1 ring-white/15">
-              <span className="h-1.5 w-1.5 rounded-full bg-sky" /> In business since {site.since}
+              <span className="h-1.5 w-1.5 rounded-full bg-white/70" /> In business since {site.since}
             </span>
           )}
           <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight sm:text-5xl">
@@ -106,7 +103,7 @@ function Site({ config, bookHref }) {
           {site.tagline && <p className="mt-4 max-w-2xl text-lg text-white/75">{site.tagline}</p>}
           {site.rating && (
             <div className="mt-5 flex items-center gap-2 text-sm text-white/85">
-              <span className="flex text-[rgb(255_196_61)]">
+              <span className="flex text-white">
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star key={i} size={17} fill={i < Math.round(site.rating) ? 'currentColor' : 'none'} />
                 ))}
@@ -117,7 +114,7 @@ function Site({ config, bookHref }) {
           )}
           <div className="mt-8 flex flex-wrap gap-3">
             {canBook && (
-              <Link to={bookHref} className="btn-primary btn-lg h-12 px-6 text-md">
+              <Link to={bookHref} className="btn btn-lg h-12 bg-white px-6 text-md text-[rgb(16_33_62)] hover:bg-white/90">
                 <CalendarCheck size={18} /> Book an appointment
               </Link>
             )}
@@ -167,8 +164,8 @@ function Site({ config, bookHref }) {
               const key = iconKey(s.title);
               const Icon = SERVICE_ICONS[key === 'other' || key === 'maintenance' ? iconKey(s.items[0] || s.title) : key];
               return (
-                <div key={s.title} className="card chamfer group relative flex flex-col p-5 transition-shadow [--cut:18px] hover:shadow-pop">
-                  <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-[11px] bg-gradient-to-br from-brand to-accent text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.2)]">
+                <div key={s.title} className="card group relative flex flex-col p-5 transition-shadow hover:shadow-pop">
+                  <span className="mb-4 flex h-11 w-11 items-center justify-center rounded-[11px] bg-accent/[0.09] text-accent">
                     <Icon size={22} strokeWidth={1.8} />
                   </span>
                   <h3 className="font-semibold">{s.title}</h3>
@@ -237,7 +234,7 @@ function Site({ config, bookHref }) {
                     <Quote size={20} className="text-accent/60" />
                     <blockquote className="mt-2 text-md text-ink">{t.text}</blockquote>
                     <figcaption className="mt-3 flex items-center gap-2 text-sm text-ink-3">
-                      <span className="flex text-[rgb(245_170_20)]">
+                      <span className="flex text-accent">
                         {[0, 1, 2, 3, 4].map((k) => (
                           <Star key={k} size={13} fill="currentColor" />
                         ))}

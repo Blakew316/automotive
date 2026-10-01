@@ -3,7 +3,7 @@
 // the booking page's open times whenever the calendar changes.
 import { useEffect, useRef, useState } from 'react';
 import { useShop } from '../store/hooks';
-import { cloudConfig, cloudSession, fetchInbox, clearInbox, publishBooking } from './cloudShare';
+import { cloudConfig, cloudSession, fetchInbox, clearInbox, publishBooking, isStaffSession } from './cloudShare';
 import { bookingConfig } from './booking';
 
 const POLL_MS = 60000;
@@ -56,6 +56,24 @@ export function useCloudSync() {
   // ---------------------------------------------------------------- Booking page open times
   const published = state.shop.booking?.published;
   const bookingOn = state.shop.booking?.enabled;
+  const staff = signedIn && isStaffSession(cloudSession());
+
+  // First staff sign-in with booking on: publish the booking page and website so their links work.
+  useEffect(() => {
+    if (!staff || !bookingOn || published) return;
+    let alive = true;
+    publishBooking(cfg, bookingConfig(latest.current.state, { includeBusy: true, includeSite: true }))
+      .then(() => {
+        if (alive) latest.current.updateShop({ booking: { ...latest.current.state.shop.booking, published: new Date().toISOString() } });
+      })
+      .catch(() => {
+        // Settings → Online booking → Publish retries with the error shown.
+      });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [staff, bookingOn, published, cfg?.url]);
   const fingerprint = signedIn && published && bookingOn ? JSON.stringify({ ...bookingConfig(state, { includeBusy: true, includeSite: true }), publishedAt: null }) : '';
   const lastFingerprint = useRef('');
   useEffect(() => {

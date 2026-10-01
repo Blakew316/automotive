@@ -126,12 +126,12 @@ function Sidebar({ onNavigate }) {
                 >
                   {({ isActive }) => (
                     <>
-                      {isActive && <span className="absolute -left-3 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-sky" />}
-                      <item.icon size={17} strokeWidth={1.75} className={isActive ? 'text-sky' : 'text-sidebar-ink-2 group-hover:text-sidebar-ink'} />
+                      {isActive && <span className="absolute -left-3 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-sidebar-ink/80" />}
+                      <item.icon size={17} strokeWidth={1.75} className={isActive ? 'text-white' : 'text-sidebar-ink-2 group-hover:text-sidebar-ink'} />
                       <span className="flex-1 truncate">{item.label}</span>
                       {item.count && counts[item.count] > 0 &&
                         (item.badge ? (
-                          <span className="tabular flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1.5 text-2xs font-semibold text-white">{counts[item.count]}</span>
+                          <span className="tabular flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-sidebar-ink px-1.5 text-2xs font-semibold text-sidebar">{counts[item.count]}</span>
                         ) : (
                           <span className="tabular text-xs text-sidebar-ink-2">{counts[item.count]}</span>
                         ))}
@@ -146,7 +146,7 @@ function Sidebar({ onNavigate }) {
 
       <div className="border-t border-sidebar-line px-3 py-3">
         <button onClick={() => setSwitching(true)} className="mb-2.5 flex w-full items-center gap-2.5 rounded-[9px] px-1.5 py-1.5 text-left transition-colors hover:bg-white/[0.05]" title="Switch user">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-slate to-graphite text-xs font-semibold text-white ring-1 ring-sidebar-line">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sidebar-2 text-xs font-semibold text-sidebar-ink ring-1 ring-sidebar-line">
             {user.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
           </span>
           <span className="min-w-0 flex-1 text-xs leading-4">
@@ -199,11 +199,11 @@ function NoAccess() {
   );
 }
 
-/** App mark: a wrench on a blue tile. */
+/** App mark: a navy wrench on a white tile. */
 export function Logo({ size = 28 }) {
   return (
     <span
-      className="flex shrink-0 items-center justify-center rounded-[9px] bg-gradient-to-br from-sky to-accent text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.25),0_2px_6px_rgb(31_99_212/0.35)]"
+      className="flex shrink-0 items-center justify-center rounded-[9px] bg-white text-[rgb(16_33_62)] shadow-[0_1px_2px_rgb(0_0_0/0.12)] ring-1 ring-black/[0.06]"
       style={{ width: size, height: size }}
     >
       <Wrench size={Math.round(size * 0.52)} strokeWidth={2.2} />
@@ -253,8 +253,6 @@ export default function Layout() {
           </button>
         </header>
         <main id="main-scroll" className="relative flex-1 overflow-y-auto">
-          {/* Faint blueprint grid that fades out below the page header. */}
-          <div aria-hidden className="bg-grid pointer-events-none absolute inset-x-0 top-0 h-[420px] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
           <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-6 sm:px-6 lg:px-10 lg:pt-9">
             {can(location.pathname) ? <Outlet /> : <NoAccess />}
           </div>

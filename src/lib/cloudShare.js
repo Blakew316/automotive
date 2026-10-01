@@ -1,7 +1,7 @@
-// Optional cloud sharing for vehicle reports, photos and video, using Supabase Storage. The site
-// itself is static, so links that work on a customer's phone need the files hosted somewhere:
-// the shop connects its own Supabase project (Settings → Shop Cloud), signs in as a
-// staff user, and published reports live at unguessable URLs in a public bucket.
+// Cloud sharing for vehicle reports, photos and video, using Supabase Storage. The site itself is
+// static, so links that work on a customer's phone need the files hosted somewhere: the shop's
+// Supabase project (Settings → Shop Cloud), where signed-in staff publish reports to unguessable
+// URLs in a public bucket and read the customer inbox.
 import { getFile } from './media';
 
 const SESSION_KEY = 'autoshop-pro:cloud-session';
@@ -46,6 +46,29 @@ async function authRequest(cfg, grant, body) {
 }
 
 export const signIn = (cfg, email, password) => authRequest(cfg, 'password', { email, password });
+
+/** Claims inside a session's access token (app_metadata carries the staff flag). */
+export function sessionClaims(session) {
+  try {
+    const part = session.access.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(decodeURIComponent(escape(atob(part))));
+  } catch {
+    return {};
+  }
+}
+export const isStaffSession = (session) => Boolean(sessionClaims(session)?.app_metadata?.autoshop_staff);
+
+/** Change the signed-in staff member's password. */
+export async function changePassword(cfg, password) {
+  const token = await accessToken(cfg);
+  const res = await fetch(`${cfg.url}/auth/v1/user`, {
+    method: 'PUT',
+    headers: { apikey: cfg.key, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password }),
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.msg || data.error_description || data.message || `Couldn’t change the password (${res.status})`);
+}
 
 async function accessToken(cfg) {
   const s = readSession();

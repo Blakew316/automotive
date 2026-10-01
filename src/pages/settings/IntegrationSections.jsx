@@ -1,39 +1,52 @@
 import { useState } from 'react';
-import { Cloud, LogIn, LogOut, PlugZap, Download, FileClock, Copy, Check } from 'lucide-react';
+import { Cloud, LogIn, LogOut, PlugZap, Download, FileClock, Copy, Check, KeyRound, ShieldCheck, TriangleAlert } from 'lucide-react';
 import { useShop, useUI } from '../../store/hooks';
 import { Card, CardHeader, Field, InlineText, Spinner, ExternalLink } from '../../components/ui';
-import { cloudConfig, cloudSession, signIn, signOut, testConnection } from '../../lib/cloudShare';
+import { cloudConfig, cloudSession, signIn, signOut, testConnection, isStaffSession, changePassword } from '../../lib/cloudShare';
+import { SHOP_CLOUD } from '../../lib/cloudDefaults';
 import { serviceHistory, toCsv, HISTORY_COLUMNS } from '../../lib/serviceHistory';
 import { isoDate, addDays, number } from '../../lib/format';
 
-const policySql = (bucket) => `-- Run once in Supabase → SQL Editor.
--- 1) Storage: signed-in shop staff manage files in the "${bucket}" bucket;
---    customers only read them through public links.
-create policy "Shop staff can upload" on storage.objects
-  for insert to authenticated with check (bucket_id = '${bucket}');
-create policy "Shop staff can replace" on storage.objects
-  for update to authenticated using (bucket_id = '${bucket}');
-create policy "Shop staff can read" on storage.objects
-  for select to authenticated using (bucket_id = '${bucket}');
-create policy "Shop staff can delete" on storage.objects
-  for delete to authenticated using (bucket_id = '${bucket}');
+const policySql = (bucket, email = 'you@yourshop.com') => `-- Run once in Supabase → SQL Editor.
+-- Staff are accounts with a flag only the database owner can set.
+create or replace function public.is_shop_staff() returns boolean
+language sql stable set search_path = '' as $$
+  select coalesce((auth.jwt() -> 'app_metadata' ->> 'autoshop_staff')::boolean, false);
+$$;
 
--- 2) Inbox: customers can drop booking requests, approvals and messages in;
---    only signed-in staff can read or clear them.
+-- 1) Storage: staff manage files in "${bucket}"; customers only read them through public links.
+create policy "AutoShop staff upload" on storage.objects
+  for insert to authenticated with check (bucket_id = '${bucket}' and public.is_shop_staff());
+create policy "AutoShop staff replace" on storage.objects
+  for update to authenticated using (bucket_id = '${bucket}' and public.is_shop_staff());
+create policy "AutoShop staff read" on storage.objects
+  for select to authenticated using (bucket_id = '${bucket}' and public.is_shop_staff());
+create policy "AutoShop staff delete" on storage.objects
+  for delete to authenticated using (bucket_id = '${bucket}' and public.is_shop_staff());
+
+-- 2) Inbox: customers can only add booking requests, approvals and messages;
+--    only staff can read or clear them.
 create table if not exists public.shop_inbox (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   kind text not null check (kind in ('booking', 'approval', 'message')),
-  ref text,
+  ref text check (ref is null or char_length(ref) <= 64),
   payload jsonb not null check (octet_length(payload::text) < 20000)
 );
 alter table public.shop_inbox enable row level security;
 create policy "Customers can submit" on public.shop_inbox
   for insert to anon, authenticated with check (true);
 create policy "Staff can read" on public.shop_inbox
-  for select to authenticated using (true);
+  for select to authenticated using (public.is_shop_staff());
 create policy "Staff can clear" on public.shop_inbox
-  for delete to authenticated using (true);`;
+  for delete to authenticated using (public.is_shop_staff());
+revoke update on public.shop_inbox from anon, authenticated;
+revoke select, delete on public.shop_inbox from anon;
+
+-- 3) Make your staff account(s) staff (repeat per person).
+update auth.users
+  set raw_app_meta_data = coalesce(raw_app_meta_data, '{}'::jsonb) || '{"autoshop_staff": true}'::jsonb
+  where email = '${email}';`;
 
 export function SharingSection() {
   const { state, updateShop } = useShop();
@@ -46,9 +59,13 @@ export function SharingSection() {
   const [busy, setBusy] = useState(null);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState(false);
-  const bucket = cloud.bucket || 'shop-media';
+  const bucket = cloud.bucket || SHOP_CLOUD.bucket;
   const signedIn = Boolean(cfg && session && session.url === cfg.url);
-  const set = (k) => ({ value: cloud[k] || '', onCommit: (v) => updateShop({ cloud: { bucket: 'shop-media', ...cloud, [k]: v.trim() } }) });
+  const builtIn = cfg?.url === SHOP_CLOUD.url;
+  const staff = signedIn && isStaffSession(session);
+  const [newPassword, setNewPassword] = useState('');
+  const [changing, setChanging] = useState(false);
+  const set = (k) => ({ value: cloud[k] || '', onCommit: (v) => updateShop({ cloud: { bucket: SHOP_CLOUD.bucket, ...cloud, [k]: v.trim() } }) });
 
   const run = async (label, fn) => {
     setError('');
@@ -66,41 +83,92 @@ export function SharingSection() {
     <Card id="sharing" className="scroll-mt-6">
       <CardHeader icon={Cloud} title="Shop Cloud" subtitle="Share links, online booking, online approvals and customer messages — powered by your own Supabase project" />
       <div className="space-y-4 p-4">
-        <p className="text-sm text-ink-2">
-          Everything works on this device without it. Connecting your shop’s own <ExternalLink href="https://supabase.com/dashboard">Supabase</ExternalLink> project (free tier available) adds:
-          share links customers open on their phone, live availability on your booking page, and booking requests, approvals and messages from customers arriving in your inbox automatically.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Project URL" className="sm:col-span-2" hint="Supabase → Project Settings → API, e.g. https://abcd1234.supabase.co">
-            {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder="https://xxxxxxxx.supabase.co" {...set('url')} />}
-          </Field>
-          <Field label="Anon / publishable key" hint="The public key — never the service-role key">
-            {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder="eyJhbGciOi…" {...set('key')} />}
-          </Field>
-          <Field label="Storage bucket" hint="A public bucket">
-            {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder="shop-media" value={cloud.bucket || ''} onCommit={(v) => updateShop({ cloud: { ...cloud, bucket: v.trim() || 'shop-media' } })} />}
-          </Field>
-        </div>
+        {builtIn ? (
+          <div className="flex items-start gap-3 rounded-[10px] border border-line bg-raised p-3">
+            <ShieldCheck size={18} className="mt-0.5 shrink-0 text-accent" />
+            <div className="text-sm">
+              <div className="font-medium">Connected to the AutoShop Pro cloud</div>
+              <div className="text-ink-2">
+                Your shop’s own Supabase project with a private-write <code className="font-mono text-xs">{bucket}</code> bucket and customer inbox. Sign in once on each device to publish share links, keep your booking page’s open times current, and receive bookings, approvals and messages.
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-ink-2">
+            Everything works on this device without it. Connecting your shop’s own <ExternalLink href="https://supabase.com/dashboard">Supabase</ExternalLink> project (free tier available) adds:
+            share links customers open on their phone, live availability on your booking page, and booking requests, approvals and messages from customers arriving in your inbox automatically.
+          </p>
+        )}
+        <details className="rounded-[10px] border border-line px-3 py-2.5 text-sm" open={!cfg}>
+          <summary className="cursor-pointer select-none font-medium">Connection details</summary>
+          <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <Field label="Project URL" className="sm:col-span-2" hint="Supabase → Project Settings → API, e.g. https://abcd1234.supabase.co">
+              {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder="https://xxxxxxxx.supabase.co" {...set('url')} />}
+            </Field>
+            <Field label="Anon / publishable key" hint="The public key — never the service-role key">
+              {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder="eyJhbGciOi…" {...set('key')} />}
+            </Field>
+            <Field label="Storage bucket" hint="A public bucket">
+              {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder={SHOP_CLOUD.bucket} value={cloud.bucket || ''} onCommit={(v) => updateShop({ cloud: { ...cloud, bucket: v.trim() || SHOP_CLOUD.bucket } })} />}
+            </Field>
+          </div>
+          {!builtIn && (
+            <button className="btn-plain btn-sm mt-2" onClick={() => updateShop({ cloud: { ...SHOP_CLOUD } })}>
+              Use the AutoShop Pro cloud
+            </button>
+          )}
+        </details>
 
         {cfg && (
           <div className="rounded-[10px] border border-line p-3">
             {signedIn ? (
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="flex-1 text-sm text-ink-2">
-                  Signed in as <span className="font-medium text-ink">{session.email}</span> on this device.
-                </span>
-                <button className="btn-secondary btn-sm" disabled={Boolean(busy)} onClick={() => run('Testing…', async () => (await testConnection(cfg), toast('Connected — uploads and public links work', { tone: 'success' })))}>
-                  <PlugZap size={13} /> Test
-                </button>
-                <button
-                  className="btn-plain btn-sm"
-                  onClick={() => {
-                    signOut();
-                    setSession(null);
-                  }}
-                >
-                  <LogOut size={13} /> Sign out
-                </button>
+              <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="flex-1 text-sm text-ink-2">
+                    Signed in as <span className="font-medium text-ink">{session.email}</span> on this device.
+                    {!staff && (
+                      <span className="mt-1 flex items-center gap-1.5 text-warn">
+                        <TriangleAlert size={13} /> This account isn’t marked as shop staff, so uploads and the inbox are blocked. Run step 3 of the setup SQL for it.
+                      </span>
+                    )}
+                  </span>
+                  <button className="btn-secondary btn-sm" onClick={() => setChanging((c) => !c)}>
+                    <KeyRound size={13} /> Change password
+                  </button>
+                  <button className="btn-secondary btn-sm" disabled={Boolean(busy)} onClick={() => run('Testing…', async () => (await testConnection(cfg), toast('Connected — uploads and public links work', { tone: 'success' })))}>
+                    <PlugZap size={13} /> Test
+                  </button>
+                  <button
+                    className="btn-plain btn-sm"
+                    onClick={() => {
+                      signOut();
+                      setSession(null);
+                    }}
+                  >
+                    <LogOut size={13} /> Sign out
+                  </button>
+                </div>
+                {changing && (
+                  <form
+                    className="flex flex-wrap items-end gap-2"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      run('Saving password…', async () => {
+                        await changePassword(cfg, newPassword);
+                        setNewPassword('');
+                        setChanging(false);
+                        toast('Password changed — use it next time you sign in', { tone: 'success' });
+                      });
+                    }}
+                  >
+                    <Field label="New password" hint="At least 10 characters" className="min-w-[220px] flex-1">
+                      {(id) => <input id={id} type="password" autoComplete="new-password" className="input" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />}
+                    </Field>
+                    <button type="submit" className="btn-primary" disabled={newPassword.length < 10 || Boolean(busy)}>
+                      Save password
+                    </button>
+                  </form>
+                )}
               </div>
             ) : (
               <form
@@ -108,9 +176,11 @@ export function SharingSection() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   run('Signing in…', async () => {
-                    setSession(await signIn(cfg, email.trim(), password));
+                    const next = await signIn(cfg, email.trim(), password);
+                    setSession(next);
                     setPassword('');
-                    toast('Signed in', { tone: 'success' });
+                    if (isStaffSession(next)) toast('Signed in — sharing and the customer inbox are on for this device', { tone: 'success' });
+                    else toast('Signed in, but this account isn’t marked as shop staff yet', { tone: 'error' });
                   });
                 }}
               >
@@ -135,23 +205,23 @@ export function SharingSection() {
         )}
 
         <details className="rounded-[10px] border border-line px-3 py-2.5 text-sm">
-          <summary className="cursor-pointer select-none font-medium">One-time setup (about 5 minutes)</summary>
+          <summary className="cursor-pointer select-none font-medium">{builtIn ? 'Setting up a different Supabase project' : 'One-time setup (about 5 minutes)'}</summary>
           <ol className="mt-3 list-decimal space-y-2 pl-5 text-ink-2">
             <li>Create a project at supabase.com. In Project Settings → API, copy the Project URL and the anon (publishable) key into the fields above.</li>
             <li>
               Storage → New bucket → name it <code className="rounded bg-fill/[0.1] px-1 font-mono text-xs">{bucket}</code> and turn on <b>Public bucket</b>. Set the file size limit
               high enough for your videos (the free plan allows up to 50 MB per file).
             </li>
-            <li>Authentication → Users → Add user with a staff email and password (auto-confirm). Then turn off “Allow new users to sign up” so only your staff accounts exist.</li>
+            <li>Authentication → Users → Add user with a staff email and password (auto-confirm). Optionally turn off “Allow new users to sign up” — accounts without the staff flag can’t see anything either way.</li>
             <li>
               SQL Editor → run:
               <div className="relative mt-2">
-                <pre className="overflow-x-auto rounded-[8px] bg-fill/[0.08] p-3 font-mono text-[11.5px] leading-5 text-ink">{policySql(bucket)}</pre>
+                <pre className="max-h-72 overflow-auto rounded-[8px] bg-fill/[0.08] p-3 font-mono text-[11.5px] leading-5 text-ink">{policySql(bucket, email || undefined)}</pre>
                 <button
                   className="btn-secondary btn-sm absolute right-2 top-2"
                   onClick={async () => {
                     try {
-                      await navigator.clipboard.writeText(policySql(bucket));
+                      await navigator.clipboard.writeText(policySql(bucket, email || undefined));
                       setCopied(true);
                       setTimeout(() => setCopied(false), 1500);
                     } catch {

@@ -82,21 +82,18 @@ export default function Dashboard() {
 
   return (
     <>
-      <section className="chamfer relative mb-6 overflow-hidden rounded-xl bg-graphite text-white shadow-pop [--cut:28px]">
-        <div aria-hidden className="bg-grid absolute inset-0 opacity-60 [--grid:150_180_230]" />
-        <div aria-hidden className="absolute -right-24 -top-28 h-72 w-72 rounded-full bg-brand/30 blur-3xl" />
-        <div aria-hidden className="absolute -bottom-32 left-1/3 h-64 w-64 rounded-full bg-sky/15 blur-3xl" />
-        <div className="relative flex flex-wrap items-end justify-between gap-4 px-5 pb-5 pt-6 sm:px-7 sm:pt-7">
+      <section className="card mb-6 overflow-hidden">
+        <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-5 pt-6 sm:px-7 sm:pt-7">
           <div className="min-w-0">
-            <div className="eyebrow eyebrow-on-dark mb-2">{now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
+            <div className="eyebrow mb-2">{now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
             <h1 className="text-3xl font-bold tracking-tight">{greeting}</h1>
-            <p className="mt-1 text-md text-white/70">
+            <p className="mt-1 text-md text-ink-2">
               {data.wip.length} in the shop · {appointments.length} appointment{appointments.length === 1 ? '' : 's'} today
               {data.estimates.length ? ` · ${data.estimates.length} estimate${data.estimates.length === 1 ? '' : 's'} out` : ''}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            <button className="btn bg-white/10 text-white ring-1 ring-white/15 hover:bg-white/15" onClick={() => setBooking(true)}>
+            <button className="btn-outline" onClick={() => setBooking(true)}>
               <CalendarPlus size={15} /> Book appointment
             </button>
             <Link to="/orders/new" className="btn-primary">
@@ -104,7 +101,7 @@ export default function Dashboard() {
             </Link>
           </div>
         </div>
-        <div className="relative grid grid-cols-2 gap-px border-t border-white/10 bg-white/10 sm:grid-cols-3 lg:grid-cols-5 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1">
+        <div className="grid grid-cols-2 gap-px border-t border-line bg-line sm:grid-cols-3 lg:grid-cols-5 [&>*:last-child]:col-span-2 sm:[&>*:last-child]:col-span-1">
           <HeroStat icon={Wrench} tone="blue" label="In the shop" value={data.wip.length} sub={`${data.inShop.length} on the lot`} to="/workflow" />
           <HeroStat icon={Receipt} tone="teal" label="Billed today" value={money0(data.billedToday)} sub={`${data.invoicedTodayCount} invoice${data.invoicedTodayCount === 1 ? '' : 's'}`} to="/orders?status=ready" />
           <HeroStat icon={FileText} tone="sky" label="Awaiting approval" value={money0(data.estimateValue)} sub={`${data.estimates.length} open estimates`} to="/orders?status=estimate" />
@@ -296,12 +293,12 @@ export default function Dashboard() {
 
 function HeroStat({ icon, tone, label, value, sub, to }) {
   return (
-    <Link to={to} className="group flex items-start gap-3 bg-graphite px-5 py-4 transition-colors hover:bg-[rgb(var(--graphite)/0.85)] sm:px-6">
+    <Link to={to} className="group flex items-start gap-3 bg-surface px-5 py-4 transition-colors hover:bg-raised sm:px-6">
       <IconTile icon={icon} tone={tone} size={30} className="mt-0.5" />
       <div className="min-w-0">
-        <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-white/55">{label}</div>
-        <div className="tabular mt-0.5 text-[24px] font-semibold leading-7 tracking-tight">{value}</div>
-        <div className="truncate text-xs text-white/55 group-hover:text-white/75">{sub}</div>
+        <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.12em] text-ink-3">{label}</div>
+        <div className="tabular mt-0.5 text-[24px] font-semibold leading-7 tracking-tight text-ink">{value}</div>
+        <div className="truncate text-xs text-ink-3 group-hover:text-ink-2">{sub}</div>
       </div>
     </Link>
   );
@@ -332,7 +329,7 @@ function ModuleStrip() {
   return (
     <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
       {tiles.filter((t) => can(t.to.split('?')[0])).map((t) => (
-        <Link key={t.to} to={t.to} className="card chamfer group flex items-center gap-3 px-3.5 py-3 transition-shadow [--cut:14px] hover:shadow-pop">
+        <Link key={t.to} to={t.to} className="card group flex items-center gap-3 px-3.5 py-3 transition-shadow hover:shadow-pop">
           <IconTile icon={t.icon} tone={t.tone} size={34} />
           <div className="min-w-0">
             <div className="truncate text-sm font-semibold">{t.title}</div>

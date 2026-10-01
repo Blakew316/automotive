@@ -4,6 +4,7 @@ import { useShop, useUI } from '../store/hooks';
 import { PageHeader, Card } from '../components/ui';
 import { HistorySection } from './settings/IntegrationSections';
 import { cloudConfig, cloudSession } from '../lib/cloudShare';
+import { SHOP_CLOUD } from '../lib/cloudDefaults';
 import { PAY_PROVIDERS } from '../lib/messaging';
 import { B2B_PLATFORMS } from '../lib/suppliers';
 import { appointmentsIcs } from '../lib/ics';
@@ -41,7 +42,7 @@ export default function Integrations() {
         {
           icon: Cloud,
           name: 'Shop Cloud',
-          by: 'Supabase (your own free account)',
+          by: cfg?.url === SHOP_CLOUD.url ? 'AutoShop Pro cloud · Supabase' : 'Supabase (your own project)',
           body: 'Share links for reports, photos and video; online approvals with e-signature; customer replies; and the online booking inbox.',
           status: signedIn ? ['on', 'Connected'] : cfg ? ['setup', 'Sign in on this device'] : ['setup', 'Not set up'],
           action: <Link to="/settings?tab=cloud" className="btn-secondary btn-sm">{cfg ? 'Manage' : 'Set up'}</Link>,

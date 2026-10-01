@@ -206,13 +206,13 @@ function Palette({ onClose }) {
                     onClick={() => go(item)}
                     className={`flex w-full items-center gap-3 rounded-[8px] px-3 py-2 text-left transition-colors ${sel ? 'bg-accent text-on-accent' : 'text-ink'}`}
                   >
-                    {Icon && <Icon size={16} strokeWidth={1.8} className={`shrink-0 ${sel ? 'text-white' : 'text-ink-3'}`} />}
+                    {Icon && <Icon size={16} strokeWidth={1.8} className={`shrink-0 ${sel ? 'text-on-accent' : 'text-ink-3'}`} />}
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm font-medium">{item.label}</span>
-                      {item.sub && <span className={`block truncate text-xs ${sel ? 'text-white/75' : 'text-ink-3'}`}>{item.sub}</span>}
+                      {item.sub && <span className={`block truncate text-xs ${sel ? 'text-on-accent/75' : 'text-ink-3'}`}>{item.sub}</span>}
                     </span>
                     {item.status && !sel && <StatusLabel status={item.status} className="text-xs" />}
-                    {sel && <CornerDownLeft size={14} className="shrink-0 text-white/80" />}
+                    {sel && <CornerDownLeft size={14} className="shrink-0 text-on-accent/80" />}
                   </button>
                 );
               })}
