@@ -3,9 +3,9 @@
 // "customer view" and public share links. `Media` renders one photo/video from wherever it lives.
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Phone, MessageSquare, Check, X, ChevronLeft, ChevronRight, Play, CircleCheck, CircleAlert, TriangleAlert, Wrench, Images, Clock, CreditCard } from 'lucide-react';
+import { Phone, MessageSquare, Check, X, ChevronLeft, ChevronRight, Play, CircleCheck, CircleAlert, TriangleAlert, Wrench, Images, Clock, CreditCard, Disc3 } from 'lucide-react';
 import { money, date, dateTime, phone as fmtPhone, telHref, smsHref, number } from '../lib/format';
-import { approvalText } from '../lib/report';
+import { approvalText, totalWithChoice } from '../lib/report';
 import { formatDuration } from '../lib/media';
 
 const RATING = {
@@ -89,7 +89,7 @@ export default function ReportView({ report, Media, onDecision, decisions = {}, 
         <Block title="Needs your approval" subtitle={onDecision ? 'Choose for each item, then sign to send your decision' : 'Reply by text or call us to approve'} accent>
           <ul className="divide-y divide-line/70">
             {pending.map((s) => (
-              <ServiceRow key={s.id} s={s} showPrices={report.showPrices} media={byService(s.id)} Media={Media} onOpen={openMedia}>
+              <ServiceRow key={s.id} s={s} showPrices={report.showPrices} media={byService(s.id)} Media={Media} onOpen={openMedia} decisions={decisions} onDecision={onDecision}>
                 {onDecision ? (
                   <div className="mt-3 flex gap-2" role="radiogroup" aria-label={`Decision for ${s.title}`}>
                     <button
@@ -315,10 +315,58 @@ function Row({ k, v, strong }) {
   );
 }
 
+const TIER_LABEL = { good: 'Good', better: 'Better', best: 'Best' };
+
+/** Side-by-side tire options; tappable when the customer is choosing. */
+function TireChoice({ s, showPrices, decisions = {}, onDecision }) {
+  const q = s.tires;
+  const chosen = decisions[`tire:${s.id}`] || q.selectedId;
+  const canPick = onDecision && s.status === 'pending';
+  return (
+    <div className="mt-3 pl-[26px]">
+      <div className="mb-2 flex items-center gap-1.5 text-xs text-ink-3">
+        <Disc3 size={13} /> {q.qty} tires{q.size ? ` · ${q.size}` : ''}
+        {canPick && ' — tap the option you’d like'}
+      </div>
+      <div className="grid gap-2 sm:grid-cols-3">
+        {q.options.map((o) => {
+          const on = o.id === chosen;
+          const Tag = canPick ? 'button' : 'div';
+          return (
+            <Tag
+              key={o.id}
+              {...(canPick ? { type: 'button', onClick: () => onDecision(`tire:${s.id}`, o.id), 'aria-pressed': on } : {})}
+              className={`relative rounded-[10px] border p-3 text-left transition-colors ${on ? 'border-accent bg-accent/[0.05] ring-1 ring-accent/30' : 'border-line bg-surface'} ${canPick ? 'hover:border-accent/50' : ''}`}
+            >
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-2xs font-semibold uppercase tracking-wide text-ink-3">{TIER_LABEL[o.tier] || o.tier}</span>
+                {on && (
+                  <span className="flex items-center gap-1 text-2xs font-semibold text-accent">
+                    <Check size={12} /> Selected
+                  </span>
+                )}
+              </div>
+              <div className="mt-1 text-xs text-ink-3">{o.brand}</div>
+              <div className="font-semibold text-ink">{o.model || o.brand}</div>
+              <div className="mt-0.5 text-xs text-ink-3">{[q.size, o.spec].filter(Boolean).join(' ')}{o.warranty ? ` · ${o.warranty} mi warranty` : ''}</div>
+              {showPrices && o.each != null && (
+                <div className="mt-2">
+                  <span className="tabular text-lg font-semibold text-ink">{money(o.each)}</span> <span className="text-xs text-ink-3">each · {money(o.set)} set</span>
+                </div>
+              )}
+            </Tag>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 function ServiceRow(props) {
-  const { s, showPrices, media, onOpen, children } = props;
+  const { s, showPrices, media, onOpen, children, decisions, onDecision } = props;
   const Media = props.Media;
   const declined = s.status === 'declined';
+  const total = totalWithChoice(s, decisions);
   return (
     <li className={`px-4 py-3.5 ${declined ? 'opacity-60' : ''}`}>
       <div className="flex items-start justify-between gap-3">
@@ -331,7 +379,7 @@ function ServiceRow(props) {
             </div>
           </div>
         </div>
-        {showPrices && s.total != null && <div className="tabular shrink-0 text-md font-semibold text-ink">{money(s.total)}</div>}
+        {showPrices && total != null && <div className="tabular shrink-0 text-md font-semibold text-ink">{money(total)}</div>}
       </div>
       {(s.cause || s.correction) && (
         <dl className="mt-2 space-y-1 pl-[26px] text-sm">
@@ -362,6 +410,7 @@ function ServiceRow(props) {
           ))}
         </ul>
       )}
+      {s.tires && <TireChoice s={s} showPrices={showPrices} decisions={decisions} onDecision={onDecision} />}
       {media.length > 0 && (
         <div className="mt-3 pl-[26px]">
           <MediaGrid Media={Media} onOpen={onOpen} items={media} />

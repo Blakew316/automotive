@@ -1,15 +1,16 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Search, Plus, Minus, Package, Boxes, Droplets, ArrowUpRight, Download, Pencil, Trash2, Store, ClipboardList } from 'lucide-react';
+import { Search, Plus, Minus, Package, Boxes, Droplets, ArrowUpRight, Download, Pencil, Trash2, Store, ClipboardList, Disc3, BatteryCharging, Wrench } from 'lucide-react';
 import PurchaseOrders from './parts/PurchaseOrders';
-import { onOrderByItem } from '../lib/purchasing';
+import TireLog from './parts/TireLog';
+import { inventoryStatus, GROUPS, STOCK_STATUS } from '../lib/inventory';
 import { useShop, useUI } from '../store/hooks';
-import { PageHeader, Card, CardHeader, Tabs, SearchInput, Segmented, EmptyState, Modal, Field, Mono, ExternalLink, Dot } from '../components/ui';
+import { PageHeader, Card, CardHeader, Tabs, SearchInput, Segmented, EmptyState, Modal, Field, Mono, ExternalLink, IconTile } from '../components/ui';
 import { SUPPLIERS, B2B_PLATFORMS, OEM_PARTS, oemPartsFor } from '../lib/suppliers';
 import { priceFromMatrix } from '../lib/pricing';
 import { vehicleSpecs } from '../data/vehicleSpecs';
 import { freeDocuments } from '../data/serviceInfo';
-import { money, vehicleName, fullName } from '../lib/format';
+import { money, money0, vehicleName, fullName, dateShort, number } from '../lib/format';
 
 const QUICK = ['Oil filter', 'Engine air filter', 'Cabin air filter', 'Front brake pads', 'Front brake rotors', 'Rear brake pads', 'Battery', 'Wiper blades', 'Spark plugs', 'Serpentine belt', 'Wheel hub bearing', 'Alternator', 'Starter', 'Thermostat', 'Water pump', 'O2 sensor'];
 
@@ -29,12 +30,14 @@ export default function Parts() {
           { value: 'catalog', label: 'Supplier lookup', icon: Search },
           { value: 'inventory', label: 'Inventory', icon: Boxes, count: low ? `${low} low` : state.inventory.length },
           { value: 'orders', label: 'Purchase orders', icon: ClipboardList, count: state.purchaseOrders.filter((p) => ['draft', 'ordered', 'partial'].includes(p.status)).length || null },
+          { value: 'tires', label: 'Tires', icon: Disc3 },
           { value: 'specs', label: 'Maintenance specs', icon: Droplets, count: vehicleSpecs.length },
         ]}
       />
       {tab === 'catalog' && <Catalog />}
       {tab === 'inventory' && <Inventory />}
       {tab === 'orders' && <PurchaseOrders />}
+      {tab === 'tires' && <TireLog />}
       {tab === 'specs' && <Specs />}
     </>
   );
@@ -157,7 +160,9 @@ function Catalog() {
   );
 }
 
-const blankPart = { sku: '', partNumber: '', brand: '', description: '', category: 'Filters', location: '', qty: 0, min: 0, cost: 0, vendor: '' };
+const blankPart = { sku: '', partNumber: '', brand: '', description: '', category: 'Filters', location: '', qty: 0, min: 0, max: 0, cost: 0, vendor: '' };
+const GROUP_ICON = { parts: Wrench, tires: Disc3, batteries: BatteryCharging, fluids: Droplets };
+const GROUP_TONE = { parts: 'blue', tires: 'slate', batteries: 'teal', fluids: 'sky' };
 
 function Inventory() {
   const { state, adjustInventory, saveInventoryItem, deleteInventoryItem } = useShop();
@@ -168,21 +173,30 @@ function Inventory() {
   const filter = params.get('filter') || 'all';
   const categories = useMemo(() => [...new Set(state.inventory.map((p) => p.category))].sort(), [state.inventory]);
   const [cat, setCat] = useState('all');
-  const onOrder = useMemo(() => onOrderByItem(state.purchaseOrders), [state.purchaseOrders]);
+  const status = useMemo(() => inventoryStatus(state), [state]);
+  const [group, setGroup] = useState('all');
 
   const rows = useMemo(() => {
     const query = q.toLowerCase();
     return state.inventory
-      .filter((p) => filter !== 'low' || Number(p.qty) <= Number(p.min))
+      .filter((p) => filter !== 'low' || ['reorder', 'low'].includes(status.get(p.id)?.status))
       .filter((p) => cat === 'all' || p.category === cat)
+      .filter((p) => group === 'all' || status.get(p.id)?.group === group)
       .filter((p) => !query || `${p.sku} ${p.partNumber} ${p.brand} ${p.description} ${p.location} ${p.vendor}`.toLowerCase().includes(query));
-  }, [state.inventory, q, filter, cat]);
+  }, [state.inventory, q, filter, cat, group, status]);
 
   const value = state.inventory.reduce((s, p) => s + p.qty * p.cost, 0);
+  const byGroup = GROUPS.map((g) => {
+    const items = state.inventory.filter((p) => status.get(p.id)?.group === g.key);
+    return { ...g, items: items.length, units: items.reduce((s, p) => s + (Number(p.qty) || 0), 0), value: items.reduce((s, p) => s + p.qty * p.cost, 0) };
+  });
 
   const exportCsv = () => {
-    const header = ['SKU', 'Part #', 'Brand', 'Description', 'Category', 'Location', 'On hand', 'Min', 'Cost', 'Sell', 'Vendor'];
-    const lines = state.inventory.map((p) => [p.sku, p.partNumber, p.brand, p.description, p.category, p.location, p.qty, p.min, p.cost, priceFromMatrix(p.cost, state.shop.matrix), p.vendor]);
+    const header = ['SKU', 'Part #', 'Brand', 'Description', 'Category', 'Location', 'On hand', 'On jobs', 'On order', 'Min', 'Max', 'Cost', 'Sell', 'Vendor', 'Last used'];
+    const lines = state.inventory.map((p) => {
+      const st = status.get(p.id);
+      return [p.sku, p.partNumber, p.brand, p.description, p.category, p.location, p.qty, st.onJobs, st.ordered, p.min, p.max || '', p.cost, priceFromMatrix(p.cost, state.shop.matrix), p.vendor, st.lastUsed ? st.lastUsed.slice(0, 10) : ''];
+    });
     const csv = [header, ...lines].map((r) => r.map((x) => `"${String(x ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
@@ -193,6 +207,23 @@ function Inventory() {
 
   return (
     <>
+      <Card className="mb-5 grid grid-cols-2 divide-line p-1 lg:grid-cols-5 lg:divide-x">
+        <div className="col-span-2 px-4 py-3.5 lg:col-span-1">
+          <div className="section-label">Total inventory</div>
+          <div className="tabular mt-1 text-[24px] font-semibold leading-8 tracking-tight">{money0(value)}</div>
+          <div className="text-xs text-ink-3">{number(state.inventory.reduce((s, p) => s + (Number(p.qty) || 0), 0))} units · {state.inventory.length} SKUs</div>
+        </div>
+        {byGroup.map((g) => (
+          <button key={g.key} onClick={() => setGroup(group === g.key ? 'all' : g.key)} className={`flex items-start gap-3 rounded-[10px] px-4 py-3.5 text-left transition-colors ${group === g.key ? 'bg-accent/[0.06] ring-1 ring-accent/30' : 'hover:bg-fill/[0.05]'}`}>
+            <IconTile icon={GROUP_ICON[g.key]} tone={GROUP_TONE[g.key]} size={30} className="mt-0.5" />
+            <div className="min-w-0">
+              <div className="section-label">{g.label}</div>
+              <div className="tabular text-lg font-semibold">{money0(g.value)}</div>
+              <div className="text-xs text-ink-3">{number(g.units)} units</div>
+            </div>
+          </button>
+        ))}
+      </Card>
       <div className="mb-4 flex flex-wrap items-center gap-3">
         <SearchInput value={q} onChange={setQ} placeholder="Part #, SKU, brand, description, bin" className="w-full sm:w-72" />
         <Segmented size="sm" value={filter} onChange={(f) => setParams({ tab: 'inventory', ...(f === 'low' ? { filter: 'low' } : {}) })} options={[{ value: 'all', label: 'All' }, { value: 'low', label: 'Low stock' }]} />
@@ -216,8 +247,11 @@ function Inventory() {
                   <th>Part</th>
                   <th className="hidden md:table-cell">Category</th>
                   <th className="hidden sm:table-cell">Bin</th>
-                  <th className="text-center">On hand</th>
-                  <th className="hidden text-right lg:table-cell">Min</th>
+                  <th className="text-center">In stock</th>
+                  <th className="hidden text-right md:table-cell" title="Pulled onto open repair orders">On jobs</th>
+                  <th className="hidden text-right md:table-cell" title="On open purchase orders">Ordered</th>
+                  <th className="hidden text-right lg:table-cell">Min / max</th>
+                  <th>Status</th>
                   <th className="text-right">Cost</th>
                   <th className="hidden text-right sm:table-cell">Sell</th>
                   <th className="w-20" />
@@ -225,31 +259,32 @@ function Inventory() {
               </thead>
               <tbody>
                 {rows.map((p) => {
-                  const isLow = Number(p.qty) <= Number(p.min);
+                  const st = status.get(p.id);
+                  const pill = STOCK_STATUS[st.status];
                   return (
                     <tr key={p.id} className="group">
                       <td>
                         <div className="font-medium">{p.description}</div>
                         <div className="text-xs text-ink-3">
                           {p.brand} {p.partNumber ? <Mono className="text-ink-2">{p.partNumber}</Mono> : <span className="text-ink-4">{p.sku}</span>}
+                          {st.lastUsed && <span className="text-ink-4"> · used {dateShort(st.lastUsed)}</span>}
                         </div>
                       </td>
                       <td className="hidden text-ink-2 md:table-cell">{p.category}</td>
-                      <td className="hidden whitespace-nowrap text-ink-2 sm:table-cell">{p.location}</td>
+                      <td className="hidden whitespace-nowrap font-mono text-xs text-ink-2 sm:table-cell">{p.location}</td>
                       <td>
                         <div className="flex items-center justify-center gap-1">
                           <button className="btn-ghost btn-icon h-6 w-6" onClick={() => adjustInventory(p.id, -1)} aria-label="Decrease"><Minus size={12} /></button>
-                          <span className="tabular inline-flex w-12 flex-col items-center justify-center font-medium">
-                            <span className="inline-flex items-center gap-1.5">
-                              {isLow && !onOrder.get(p.id) && <Dot className="bg-warn" size={6} />}
-                              {p.qty}
-                            </span>
-                            {onOrder.get(p.id) > 0 && <span className="whitespace-nowrap text-2xs font-normal text-info">+{onOrder.get(p.id)} on order</span>}
-                          </span>
+                          <span className="tabular w-9 text-center font-semibold">{p.qty}</span>
                           <button className="btn-ghost btn-icon h-6 w-6" onClick={() => adjustInventory(p.id, 1)} aria-label="Increase"><Plus size={12} /></button>
                         </div>
                       </td>
-                      <td className="tabular hidden text-right text-ink-3 lg:table-cell">{p.min}</td>
+                      <td className="tabular hidden text-right text-ink-2 md:table-cell">{st.onJobs || <span className="text-ink-4">0</span>}</td>
+                      <td className="tabular hidden text-right md:table-cell">{st.ordered ? <span className="font-medium text-accent">+{st.ordered}</span> : <span className="text-ink-4">0</span>}</td>
+                      <td className="tabular hidden text-right text-ink-3 lg:table-cell">{p.min}{p.max ? ` / ${p.max}` : ''}</td>
+                      <td>
+                        <span className={`pill ${pill.className}`}>{pill.label}</span>
+                      </td>
                       <td className="tabular text-right text-ink-2">{money(p.cost)}</td>
                       <td className="tabular hidden text-right sm:table-cell">{money(priceFromMatrix(p.cost, state.shop.matrix))}</td>
                       <td className="text-right">
@@ -270,7 +305,7 @@ function Inventory() {
           </div>
         )}
         <div className="border-t border-line px-4 py-2.5 text-xs text-ink-3">
-          {state.inventory.length} SKUs · {money(value)} on hand at cost · sell prices from your markup matrix
+          {rows.length} of {state.inventory.length} SKUs · values at cost · sell prices from your markup matrix · “On jobs” are parts already pulled onto open repair orders
         </div>
       </Card>
       {editing && (
@@ -323,7 +358,8 @@ function PartForm({ initial, onClose, onSave, onDelete }) {
         <Field label="Bin location">{(id) => <input id={id} className="input" value={f.location} onChange={set('location')} />}</Field>
         <Field label="Vendor">{(id) => <input id={id} className="input" value={f.vendor} onChange={set('vendor')} />}</Field>
         <Field label="On hand">{(id) => <input id={id} type="number" className="input" value={f.qty} onChange={set('qty', true)} />}</Field>
-        <Field label="Reorder at">{(id) => <input id={id} type="number" className="input" value={f.min} onChange={set('min', true)} />}</Field>
+        <Field label="Reorder at (min)">{(id) => <input id={id} type="number" className="input" value={f.min} onChange={set('min', true)} />}</Field>
+        <Field label="Max stock" hint="Flags overstock">{(id) => <input id={id} type="number" className="input" value={f.max || 0} onChange={set('max', true)} />}</Field>
         <Field label="Unit cost" hint={`Sells for ${money(priceFromMatrix(f.cost, state.shop.matrix))} with your matrix`}>{(id) => <input id={id} type="number" step="0.01" className="input" value={f.cost} onChange={set('cost', true)} />}</Field>
       </div>
     </Modal>

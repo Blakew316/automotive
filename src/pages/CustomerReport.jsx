@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft, Share2, Eye } from 'lucide-react';
+import { ChevronLeft, Share2, Eye, CircleCheck } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
 import { EmptyState, Toggle } from '../components/ui';
 import ReportView, { MediaFallback } from '../components/ReportView';
@@ -21,7 +21,7 @@ export function LocalMedia({ media, variant, className }) {
 /** The customer-facing report, shown in the shop (counter screen, tablet hand-off). */
 export default function CustomerReport() {
   const { id } = useParams();
-  const { state, authorize } = useShop();
+  const { state, authorize, selectTire } = useShop();
   const { toast } = useUI();
   const [showPrices, setShowPrices] = useState(true);
   const [sharing, setSharing] = useState(false);
@@ -51,6 +51,17 @@ export default function CustomerReport() {
           </button>
         </div>
       </div>
+      {done && report.services.every((sv) => sv.status !== 'pending') && (
+        <div className="mx-auto max-w-[760px] px-4 pt-5">
+          <div className="flex items-start gap-2.5 rounded-[12px] bg-ok/[0.08] px-4 py-3 text-sm ring-1 ring-ok/25">
+            <CircleCheck size={18} className="mt-0.5 shrink-0 text-ok" />
+            <div>
+              <div className="font-semibold text-ink">Thank you — your decision was recorded.</div>
+              <div className="text-ink-2">{done}</div>
+            </div>
+          </div>
+        </div>
+      )}
       <ReportView
         report={report}
         Media={LocalMedia}
@@ -66,6 +77,9 @@ export default function CustomerReport() {
             onSubmit={({ name, signature }) => {
               const serviceIds = Object.keys(decisions).filter((k) => decisions[k] === 'approved');
               const declineIds = Object.keys(decisions).filter((k) => decisions[k] === 'declined');
+              Object.keys(decisions)
+                .filter((k) => k.startsWith('tire:') && decisions[k])
+                .forEach((k) => selectTire(order.id, k.slice(5), decisions[k]));
               authorize(order.id, { serviceIds, declineIds, method: 'in-person', by: name, signature });
               setDecisions({});
               setDone(`${serviceIds.length} approved${declineIds.length ? `, ${declineIds.length} declined` : ''}. Your service advisor has it.`);

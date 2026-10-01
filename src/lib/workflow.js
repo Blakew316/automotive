@@ -1,11 +1,11 @@
 // Repair-order lifecycle. An RO starts as an estimate and becomes the invoice once work is done.
 export const STATUSES = [
-  { id: 'estimate', label: 'Estimate', short: 'Estimate', dot: 'bg-ink-4', hint: 'Waiting on customer approval' },
-  { id: 'approved', label: 'Approved', short: 'Approved', dot: 'bg-info', hint: 'Authorized — ready to dispatch' },
-  { id: 'in_progress', label: 'In Progress', short: 'In progress', dot: 'bg-violet', hint: 'Tech is working on it' },
-  { id: 'waiting_parts', label: 'Waiting on Parts', short: 'Parts', dot: 'bg-warn', hint: 'Blocked on parts delivery' },
-  { id: 'ready', label: 'Ready for Pickup', short: 'Ready', dot: 'bg-ok', hint: 'Invoiced — awaiting payment/pickup' },
-  { id: 'closed', label: 'Closed', short: 'Closed', dot: 'bg-ink-3', hint: 'Paid and picked up' },
+  { id: 'estimate', label: 'Estimate', short: 'Estimate', dot: 'bg-slate', tone: 'slate', hint: 'Waiting on customer approval' },
+  { id: 'approved', label: 'Approved', short: 'Approved', dot: 'bg-sky', tone: 'sky', hint: 'Authorized — ready to dispatch' },
+  { id: 'in_progress', label: 'In Progress', short: 'In progress', dot: 'bg-accent', tone: 'accent', hint: 'Tech is working on it' },
+  { id: 'waiting_parts', label: 'Waiting on Parts', short: 'Parts', dot: 'bg-warn', tone: 'warn', hint: 'Blocked on parts delivery' },
+  { id: 'ready', label: 'Ready for Pickup', short: 'Ready', dot: 'bg-ok', tone: 'ok', hint: 'Invoiced — awaiting payment/pickup' },
+  { id: 'closed', label: 'Closed', short: 'Closed', dot: 'bg-ink-4', tone: 'ink-4', hint: 'Paid and picked up' },
 ];
 
 export const STATUS = Object.fromEntries(STATUSES.map((s) => [s.id, s]));

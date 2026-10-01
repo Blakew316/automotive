@@ -8,8 +8,27 @@ import { decodeConfig, slotsForDay, bookableDays } from '../lib/booking';
 import { parseShareSource, submitToInbox } from '../lib/cloudShare';
 import { usePromise } from '../lib/usePromise';
 import { smsHref, mailHref, time, phone as fmtPhone, telHref } from '../lib/format';
+import { SERVICE_ICONS, iconKey } from '../lib/serviceIcons';
 
 const OTHER = 'Something else / diagnose a problem';
+const ME_KEY = 'autoshop-book:me';
+
+// Customers who booked before on this phone get their details filled in.
+function readMe() {
+  try {
+    return JSON.parse(localStorage.getItem(ME_KEY)) || null;
+  } catch {
+    return null;
+  }
+}
+function saveMe(me) {
+  try {
+    if (me) localStorage.setItem(ME_KEY, JSON.stringify(me));
+    else localStorage.removeItem(ME_KEY);
+  } catch {
+    // Remembering is a convenience only.
+  }
+}
 
 async function loadConfig(c, from) {
   if (c) return decodeConfig(c);
@@ -47,7 +66,8 @@ function Booking({ config }) {
   const [services, setServices] = useState([]);
   const [day, setDay] = useState(null);
   const [slot, setSlot] = useState(null);
-  const [f, setF] = useState({ name: '', phone: '', email: '', vehicle: '', notes: '' });
+  const [me, setMe] = useState(readMe);
+  const [f, setF] = useState(() => ({ name: '', phone: '', email: '', vehicle: '', ...(readMe() || {}), notes: '' }));
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
@@ -78,6 +98,7 @@ function Booking({ config }) {
     setError('');
     try {
       await submitToInbox(config.inbox, 'booking', null, { name: f.name.trim(), phone: f.phone.trim(), email: f.email.trim(), vehicle: f.vehicle.trim(), services, start: slot.toISOString(), duration: minutes, notes: f.notes.trim(), at: new Date().toISOString() });
+      remember();
       setDone(true);
     } catch (e) {
       setError(`${e.message}. You can send the request by text or email instead.`);
@@ -87,31 +108,57 @@ function Booking({ config }) {
   };
 
   const address = [shop.address, [shop.city, shop.state].filter(Boolean).join(', '), shop.zip].filter(Boolean).join(' ');
+  const remember = () => saveMe({ name: f.name.trim(), phone: f.phone.trim(), email: f.email.trim(), vehicle: f.vehicle.trim() });
 
   return (
     <div className="min-h-screen bg-canvas">
-      <header className="border-b border-line/80 bg-surface">
-        <div className="mx-auto flex max-w-xl items-center gap-3 px-4 py-4">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-ink text-canvas">
-            <Wrench size={18} />
-          </span>
-          <div className="min-w-0">
-            <h1 className="truncate text-lg font-semibold">{shop.name}</h1>
-            <div className="flex flex-wrap gap-x-3 text-xs text-ink-3">
-              {address && (
-                <span>
-                  <MapPin size={11} className="mr-0.5 inline" />
-                  {address}
-                </span>
-              )}
-              {shop.phone && (
-                <a href={telHref(shop.phone)} className="hover:text-ink">
-                  <Phone size={11} className="mr-0.5 inline" />
-                  {fmtPhone(shop.phone)}
-                </a>
-              )}
+      <header className="relative overflow-hidden bg-graphite text-white">
+        <div aria-hidden className="bg-grid absolute inset-0 opacity-70 [--grid:150_180_230]" />
+        <div aria-hidden className="absolute -right-16 -top-24 h-64 w-64 rounded-full bg-brand/35 blur-3xl" />
+        <div className="relative mx-auto max-w-xl px-4 pb-6 pt-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-gradient-to-br from-sky to-accent text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.25)]">
+              <Wrench size={18} />
+            </span>
+            <div className="min-w-0">
+              <div className="truncate font-semibold">{shop.name}</div>
+              <div className="flex flex-wrap gap-x-3 text-xs text-white/60">
+                {address && (
+                  <span>
+                    <MapPin size={11} className="mr-0.5 inline" />
+                    {address}
+                  </span>
+                )}
+                {shop.phone && (
+                  <a href={telHref(shop.phone)} className="hover:text-white">
+                    <Phone size={11} className="mr-0.5 inline" />
+                    {fmtPhone(shop.phone)}
+                  </a>
+                )}
+              </div>
             </div>
           </div>
+          {!done && (
+            <div className="mt-6">
+              <h1 className="text-2xl font-bold tracking-tight">Schedule your visit</h1>
+              <p className="text-sm text-white/65">Takes about 2 minutes — we’ll confirm by text.</p>
+            </div>
+          )}
+          {me && !done && (
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs ring-1 ring-white/15">
+              Welcome back, {me.name.split(' ')[0]}
+              <button
+                className="text-white/60 underline hover:text-white"
+                onClick={() => {
+                  saveMe(null);
+                  setMe(null);
+                  setF({ name: '', phone: '', email: '', vehicle: '', notes: f.notes });
+                }}
+              >
+                Not you?
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -142,8 +189,9 @@ function Booking({ config }) {
                         onClick={() => setServices(on ? services.filter((x) => x !== t) : [...services, t])}
                         className={`flex w-full items-center gap-3 rounded-[12px] border px-4 py-3 text-left transition-colors ${on ? 'border-accent bg-accent/[0.06]' : 'border-line bg-surface hover:bg-fill/[0.04]'}`}
                       >
-                        <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${on ? 'border-accent bg-accent text-white' : 'border-ink-4'}`}>{on && <Check size={12} strokeWidth={3} />}</span>
+                        <ServiceIcon title={t} on={on} />
                         <span className="flex-1 text-[15px]">{t}</span>
+                        <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${on ? 'border-accent bg-accent text-on-accent' : 'border-ink-4'}`}>{on && <Check size={12} strokeWidth={3} />}</span>
                         {mins && <span className="text-xs text-ink-3">~{mins >= 60 ? `${Math.round((mins / 60) * 10) / 10} hr` : `${mins} min`}</span>}
                       </button>
                     );
@@ -170,7 +218,7 @@ function Booking({ config }) {
                           setDay(d.getTime());
                           setSlot(null);
                         }}
-                        className={`flex w-[62px] shrink-0 flex-col items-center rounded-[12px] border py-2 transition-colors disabled:opacity-35 ${on ? 'border-accent bg-accent text-white' : 'border-line bg-surface hover:bg-fill/[0.04]'}`}
+                        className={`flex w-[62px] shrink-0 flex-col items-center rounded-[12px] border py-2 transition-colors disabled:opacity-35 ${on ? 'border-accent bg-accent text-on-accent' : 'border-line bg-surface hover:bg-fill/[0.04]'}`}
                       >
                         <span className={`text-2xs uppercase ${on ? 'text-white/80' : 'text-ink-3'}`}>{d.toLocaleDateString('en-US', { weekday: 'short' })}</span>
                         <span className="text-lg font-semibold leading-6">{d.getDate()}</span>
@@ -186,7 +234,7 @@ function Booking({ config }) {
                       {activeDay.slots.map((s) => {
                         const on = slot?.getTime() === s.getTime();
                         return (
-                          <button key={s.toISOString()} onClick={() => setSlot(s)} className={`h-10 rounded-[10px] border text-sm font-medium transition-colors ${on ? 'border-accent bg-accent text-white' : 'border-line bg-surface hover:bg-fill/[0.04]'}`}>
+                          <button key={s.toISOString()} onClick={() => setSlot(s)} className={`h-10 rounded-[10px] border text-sm font-medium transition-colors ${on ? 'border-accent bg-accent text-on-accent' : 'border-line bg-surface hover:bg-fill/[0.04]'}`}>
                             {time(s.toISOString())}
                           </button>
                         );
@@ -225,12 +273,12 @@ function Booking({ config }) {
                 ) : (
                   <div className="mt-6 grid gap-2">
                     {shop.phone && (
-                      <a href={contactOk ? smsHref(shop.phone, summary()) : undefined} onClick={() => contactOk && setDone(true)} aria-disabled={!contactOk} className={`btn-primary h-11 text-[15px] ${contactOk ? '' : 'pointer-events-none opacity-50'}`}>
+                      <a href={contactOk ? smsHref(shop.phone, summary()) : undefined} onClick={() => contactOk && (remember(), setDone(true))} aria-disabled={!contactOk} className={`btn-primary h-11 text-[15px] ${contactOk ? '' : 'pointer-events-none opacity-50'}`}>
                         <MessageSquare size={16} /> Send request by text
                       </a>
                     )}
                     {shop.email && (
-                      <a href={contactOk ? mailHref(shop.email, `Appointment request — ${f.name.trim()}`, summary()) : undefined} onClick={() => contactOk && setDone(true)} aria-disabled={!contactOk} className={`btn-secondary h-11 text-[15px] ${contactOk ? '' : 'pointer-events-none opacity-50'}`}>
+                      <a href={contactOk ? mailHref(shop.email, `Appointment request — ${f.name.trim()}`, summary()) : undefined} onClick={() => contactOk && (remember(), setDone(true))} aria-disabled={!contactOk} className={`btn-secondary h-11 text-[15px] ${contactOk ? '' : 'pointer-events-none opacity-50'}`}>
                         <Mail size={16} /> Send by email
                       </a>
                     )}
@@ -243,6 +291,15 @@ function Booking({ config }) {
         )}
       </main>
     </div>
+  );
+}
+
+function ServiceIcon({ title, on }) {
+  const Icon = SERVICE_ICONS[title === OTHER ? 'inspect' : iconKey(title)];
+  return (
+    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] transition-colors ${on ? 'bg-accent text-white' : 'bg-accent/10 text-accent'}`}>
+      <Icon size={18} strokeWidth={1.9} />
+    </span>
   );
 }
 

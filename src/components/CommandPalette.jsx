@@ -6,7 +6,7 @@ import {
   CalendarDays, Package, BookOpen, ChartColumn, Settings, CircleAlert, CornerDownLeft, FileText, Database,
   MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Upload, Receipt, Truck, Globe,
 } from 'lucide-react';
-import { useShop, useUI, useLookup } from '../store/hooks';
+import { useShop, useUI, useLookup, useAccess } from '../store/hooks';
 import { fullName, vehicleName } from '../lib/format';
 import { cleanVin } from '../lib/vin';
 import { loadIndex, searchIndex } from '../lib/catalog';
@@ -46,7 +46,11 @@ const ACTIONS = [
   { label: 'New message', to: '/messages', icon: MessageSquare, keywords: 'text sms email customer' },
   { label: 'Add expense', to: '/accounting?tab=expenses', icon: Receipt, keywords: 'bill cost accounting' },
   { label: 'Clock in / start a job', to: '/tech', icon: Timer, keywords: 'time clock punch' },
-  { label: 'Online booking settings', to: '/settings?tab=booking', icon: Globe, keywords: 'schedule book online website' },
+  { label: 'Online booking settings', to: '/settings?tab=booking', icon: Globe, keywords: 'schedule book online' },
+  { label: 'Shop website', to: '/settings?tab=website', icon: Globe, keywords: 'website site google seo reviews' },
+  { label: 'Tire registration log', to: '/parts?tab=tires', icon: Package, keywords: 'tires dot tin registration recall' },
+  { label: 'Goals & growth planner', to: '/reports?tab=goals', icon: ChartColumn, keywords: 'targets scorecard roi calculator' },
+  { label: 'Marketing automations', to: '/marketing', icon: Megaphone, keywords: 'reminders follow up review request automation' },
 ];
 
 export default function CommandPalette() {
@@ -57,6 +61,7 @@ export default function CommandPalette() {
 
 function Palette({ onClose }) {
   const { state } = useShop();
+  const { can } = useAccess();
   const lookup = useLookup();
   const navigate = useNavigate();
   const [q, setQ] = useState('');
@@ -74,8 +79,8 @@ function Palette({ onClose }) {
     const query = q.trim().toLowerCase();
     const out = [];
     if (!query) {
-      out.push({ title: 'Actions', items: ACTIONS.map((a) => ({ ...a, key: a.label })) });
-      out.push({ title: 'Go to', items: PAGES.map((p) => ({ ...p, key: p.to })) });
+      out.push({ title: 'Actions', items: ACTIONS.filter((a) => can(a.to.split('?')[0])).map((a) => ({ ...a, key: a.label })) });
+      out.push({ title: 'Go to', items: PAGES.filter((p) => can(p.to.split('?')[0])).map((p) => ({ ...p, key: p.to })) });
       return out;
     }
     const words = query.split(/\s+/);
@@ -132,10 +137,10 @@ function Palette({ onClose }) {
       if (hits.length) out.push({ title: 'Vehicle database', items: hits });
     }
 
-    const pages = [...ACTIONS, ...PAGES].filter((p) => match(`${p.label} ${p.keywords || ''}`)).map((p) => ({ ...p, key: p.to + p.label }));
+    const pages = [...ACTIONS, ...PAGES].filter((p) => can(p.to.split('?')[0]) && match(`${p.label} ${p.keywords || ''}`)).map((p) => ({ ...p, key: p.to + p.label }));
     if (pages.length) out.push({ title: 'Go to', items: pages });
     return out;
-  }, [q, state, lookup, dtc, catalog]);
+  }, [q, state, lookup, dtc, catalog, can]);
 
   const flat = groups.flatMap((g) => g.items);
   const current = Math.min(active, Math.max(0, flat.length - 1));
@@ -199,7 +204,7 @@ function Palette({ onClose }) {
                     data-idx={i}
                     onMouseMove={() => setActive(i)}
                     onClick={() => go(item)}
-                    className={`flex w-full items-center gap-3 rounded-[8px] px-3 py-2 text-left transition-colors ${sel ? 'bg-accent text-white' : 'text-ink'}`}
+                    className={`flex w-full items-center gap-3 rounded-[8px] px-3 py-2 text-left transition-colors ${sel ? 'bg-accent text-on-accent' : 'text-ink'}`}
                   >
                     {Icon && <Icon size={16} strokeWidth={1.8} className={`shrink-0 ${sel ? 'text-white' : 'text-ink-3'}`} />}
                     <span className="min-w-0 flex-1">

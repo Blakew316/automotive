@@ -66,6 +66,14 @@ export const CANNED_JOBS = [
   { id: 'cj-valvecover', title: 'Valve cover gasket replacement', category: 'Engine', items: [L('Replace valve cover gasket & spark plug tube seals, clean & inspect', 2.1), P('Valve cover gasket set', 1, 46.0)] },
   { id: 'cj-cv', title: 'CV axle replacement', category: 'Suspension', items: [L('Replace front CV axle shaft, check fluid level', 1.4), P('CV axle shaft assembly', 1, 96.0)] },
   { id: 'cj-arms', title: 'Front lower control arms (pair)', category: 'Suspension', items: [L('Replace front lower control arms with ball joints & bushings', 2.2), P('Lower control arm with ball joint', 2, 82.0)] },
+  { id: 'cj-tires', title: 'Tire installation (set of 4)', category: 'Tires', tires: true, items: [L('Mount & balance four tires, TPMS relearn, torque lug nuts', 1.0), P('Rubber valve stem', 4, 1.2), F('Tire disposal (4)', 16)] },
+];
+
+// Tire quotes used by the demo: size and good / better / best [tier, brand, model, cost, price each].
+const TIRE_SETS = [
+  { size: '225/65R17', options: [['good', 'Cooper', 'Endeavor', 118, 155], ['better', 'Continental', 'TrueContact Tour', 149, 194], ['best', 'Michelin', 'CrossClimate2', 182, 236]] },
+  { size: '215/55R17', options: [['good', 'Hankook', 'Kinergy PT', 98, 129], ['better', 'Bridgestone', 'Turanza QuietTrack', 139, 181], ['best', 'Michelin', 'Defender2', 161, 209]] },
+  { size: '245/75R17', options: [['good', 'Cooper', 'Discoverer AT3 4S', 176, 229], ['better', 'BFGoodrich', 'Trail-Terrain T/A', 191, 249], ['best', 'Michelin', 'Defender LTX M/S2', 226, 294]] },
 ];
 
 export const INVENTORY = [
@@ -97,6 +105,9 @@ export const INVENTORY = [
   { sku: 'WB-22', partNumber: '22A', brand: 'Bosch ICON', description: 'Beam wiper blade, 22 in', category: 'Wipers', location: 'E1-22', qty: 6, min: 4, cost: 16.5, vendor: 'Local jobber' },
   { sku: 'WB-26', partNumber: '26A', brand: 'Bosch ICON', description: 'Beam wiper blade, 26 in', category: 'Wipers', location: 'E1-26', qty: 5, min: 4, cost: 17.5, vendor: 'Local jobber' },
   { sku: 'WB-18', partNumber: '18A', brand: 'Bosch ICON', description: 'Beam wiper blade, 18 in', category: 'Wipers', location: 'E1-18', qty: 1, min: 4, cost: 15.5, vendor: 'Local jobber' },
+  { sku: 'TIRE-2256517-CE', partNumber: '', brand: 'Cooper', description: 'Endeavor 225/65R17 tire', category: 'Tires', location: 'Tire rack A1', qty: 8, min: 4, max: 12, cost: 118.0, vendor: 'Tire distributor' },
+  { sku: 'TIRE-2155517-HK', partNumber: '', brand: 'Hankook', description: 'Kinergy PT 215/55R17 tire', category: 'Tires', location: 'Tire rack A2', qty: 4, min: 4, max: 8, cost: 98.0, vendor: 'Tire distributor' },
+  { sku: 'TIRE-2457517-CD', partNumber: '', brand: 'Cooper', description: 'Discoverer AT3 4S 245/75R17 tire', category: 'Tires', location: 'Tire rack B1', qty: 2, min: 4, max: 8, cost: 176.0, vendor: 'Tire distributor' },
   { sku: 'TPMS-UNI', partNumber: '', brand: 'Programmable', description: 'TPMS sensor, 315/433 MHz programmable', category: 'Tires', location: 'F1-01', qty: 8, min: 6, cost: 34.0, vendor: 'Tire distributor' },
   { sku: 'VS-TR413', partNumber: 'TR413', brand: 'Generic', description: 'Snap-in valve stem', category: 'Tires', location: 'F1-02', qty: 90, min: 50, cost: 0.45, vendor: 'Tire distributor' },
   { sku: 'SUP-BRKCLN', partNumber: '', brand: 'Generic', description: 'Brake parts cleaner, 14 oz', category: 'Shop supplies', location: 'Supply room', qty: 30, min: 24, cost: 3.4, vendor: 'Local jobber' },
@@ -230,9 +241,17 @@ export function createSeed(now = new Date()) {
       if (it.type === 'part') return { ...base, price: it.price ?? priceFromMatrix(it.cost, matrix), partStatus: 'received' };
       return base;
     });
+  const tireQuote = (set = pick(TIRE_SETS)) => ({
+    size: set.size,
+    qty: 4,
+    selectedId: null,
+    dots: [],
+    registered: false,
+    options: set.options.map(([tier, brand, model, cost, price]) => ({ id: id('tire'), tier, brand, model, spec: '', warranty: '', cost, price })),
+  });
   const svc = (jobId, status = 'approved', extra = {}) => {
     const job = CANNED_JOBS.find((j) => j.id === jobId);
-    return { id: id('svc'), title: job.title, status, techId: null, done: false, items: makeItems(job.items), ...extra };
+    return { id: id('svc'), title: job.title, status, techId: null, done: false, items: makeItems(job.items), ...(job.tires ? { tires: tireQuote() } : {}), ...extra };
   };
   const custom = (title, items, status = 'approved', extra = {}) => ({ id: id('svc'), title, status, techId: null, done: false, items: makeItems(items), ...extra });
 
@@ -360,7 +379,7 @@ export function createSeed(now = new Date()) {
   const JOB_MIX = [
     ['cj-oil', 18], ['cj-rotate', 8], ['cj-filters', 7], ['cj-wipers', 4], ['cj-fbrakes', 9], ['cj-rbrakes', 6], ['cj-bfluid', 4], ['cj-battery', 5], ['cj-diag', 8], ['cj-elec', 3],
     ['cj-align', 6], ['cj-balance', 4], ['cj-coolant', 3], ['cj-trans', 3], ['cj-plugs', 4], ['cj-ac', 4], ['cj-tpms', 3], ['cj-belt', 3], ['cj-struts', 3], ['cj-hub', 3],
-    ['cj-waterpump', 3], ['cj-timing', 3], ['cj-valvecover', 4], ['cj-cv', 3], ['cj-arms', 3],
+    ['cj-waterpump', 3], ['cj-timing', 3], ['cj-valvecover', 4], ['cj-cv', 3], ['cj-arms', 3], ['cj-tires', 3],
   ];
   const mixTotal = JOB_MIX.reduce((a, [, w]) => a + w, 0);
   const pickJob = () => {
@@ -407,7 +426,11 @@ export function createSeed(now = new Date()) {
       if (!services.length) continue; // fully booked — the car comes back another day
       if (rand() < 0.3) services.push({ ...svc(pick(['cj-fbrakes', 'cj-struts', 'cj-coolant', 'cj-trans', 'cj-align', 'cj-arms', 'cj-valvecover']), 'declined') });
       const mileageIn = Math.max(1000, V(vi).mileage - Math.round(daysAgo * 38));
+      // How the visit was booked — online booking grows as the shop promotes it.
+      const pOnline = 0.12 + 0.3 * (1 - daysAgo / 150);
+      const r = rand();
       const o = order(vi, 'closed', {
+        source: r < pOnline ? 'online' : r < pOnline + (1 - pOnline) * 0.62 ? 'phone' : 'walk-in',
         techId: services[0].techId,
         services,
         mileageIn,
@@ -478,7 +501,7 @@ export function createSeed(now = new Date()) {
     services: [
       custom('Front track bar & steering stabilizer', [L('Replace front track bar and steering stabilizer, torque to spec', 1.6), P('Adjustable front track bar', 1, 142.0), P('Steering stabilizer', 1, 64.0)], 'pending'),
       { ...svc('cj-align', 'pending') },
-      { ...svc('cj-balance', 'pending') },
+      { ...svc('cj-tires', 'pending'), tires: tireQuote(TIRE_SETS[2]), note: 'Front tires cupped from the shake — customer asked for options.' },
     ],
   });
   const ready1 = order(0, 'ready', {
@@ -536,6 +559,25 @@ export function createSeed(now = new Date()) {
     services: [custom('Oil leak diagnosis (UV dye)', [L('Add UV dye, clean, road test & inspect for oil leaks', 0.8), P('Oil UV dye', 1, 7.0)], 'pending')],
   });
 
+  // Installed tires on completed work: the option chosen, its line on the RO, and DOT numbers.
+  orders.forEach((o) => {
+    if (o.status !== 'closed') return;
+    o.services.forEach((sv) => {
+      const q = sv.tires;
+      if (!q || sv.status === 'declined') return;
+      const opt = q.options[rand() < 0.25 ? 0 : rand() < 0.65 ? 1 : 2];
+      q.selectedId = opt.id;
+      const plant = pick(['4D', 'HY', 'B7', 'CU', 'U9', 'MD']);
+      const batch = Math.floor(rand() * 9000 + 1000).toString(36).toUpperCase().padStart(4, 'X').slice(0, 4);
+      // Made 3–40 weeks before they were installed (DOT date code = week + year).
+      const made = new Date(new Date(o.invoicedAt).getTime() - (21 + Math.floor(rand() * 260)) * 86400000);
+      const week = String(Math.min(52, Math.floor((made - new Date(made.getFullYear(), 0, 1)) / (7 * 86400000)) + 1)).padStart(2, '0');
+      q.dots = Array.from({ length: q.qty }, () => `DOT ${plant} ${batch} ${week}${String(made.getFullYear()).slice(2)}`);
+      q.registered = rand() < 0.7;
+      sv.items.push({ id: id('itm'), type: 'part', tireLine: true, partNumber: '', partStatus: 'received', description: `${opt.brand} ${opt.model} ${q.size}`, brand: opt.brand, qty: q.qty, cost: opt.cost, price: opt.price, autoPrice: false });
+    });
+  });
+
   // Parts on estimates and not-yet-started work haven't been pulled or ordered yet.
   orders.forEach((o) => {
     if (o.status !== 'estimate' && o.status !== 'approved') return;
@@ -581,7 +623,7 @@ export function createSeed(now = new Date()) {
   appt(4, 4, 9, 0, 120, 'Transmission fluid service', { techId: 't3' });
   appt(6, 6, 10, 30, 45, 'Tire rotation', {});
 
-  const inventory = INVENTORY.map((p) => ({ id: id('inv'), ...p }));
+  const inventory = INVENTORY.map((p) => ({ id: id('inv'), max: p.min * 3, ...p }));
 
   const activity = [
     { id: id('act'), at: rel(-0.3), text: `Estimate #${number} created for ${V(13).year} ${V(13).make} ${V(13).model}` },

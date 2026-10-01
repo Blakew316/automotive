@@ -2,6 +2,15 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UIContext } from './context';
 
 const THEME_KEY = 'autoshop-pro:theme';
+const USER_KEY = 'autoshop-pro:user';
+
+function readUser() {
+  try {
+    return localStorage.getItem(USER_KEY) || null;
+  } catch {
+    return null;
+  }
+}
 
 function readTheme() {
   try {
@@ -16,6 +25,16 @@ export default function UIProvider({ children }) {
   const [theme, setTheme] = useState(readTheme);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+  const [userId, setUserIdState] = useState(readUser);
+  const setUserId = useCallback((id) => {
+    setUserIdState(id);
+    try {
+      if (id) localStorage.setItem(USER_KEY, id);
+      else localStorage.removeItem(USER_KEY);
+    } catch {
+      // Remembered for this session only.
+    }
+  }, []);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -51,8 +70,8 @@ export default function UIProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ toasts, toast, dismiss, theme, setTheme, paletteOpen, setPaletteOpen, navOpen, setNavOpen }),
-    [toasts, toast, dismiss, theme, paletteOpen, navOpen],
+    () => ({ toasts, toast, dismiss, theme, setTheme, paletteOpen, setPaletteOpen, navOpen, setNavOpen, userId, setUserId }),
+    [toasts, toast, dismiss, theme, paletteOpen, navOpen, userId, setUserId],
   );
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
 }

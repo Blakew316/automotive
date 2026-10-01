@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ShopContext } from './context';
 import { createSeed, CANNED_JOBS } from '../data/seed';
 import { migrate } from './defaults';
+import { newTireQuote, tireLabel } from '../lib/tires';
 import { priceFromMatrix, orderTotals } from '../lib/pricing';
 import { STATUS } from '../lib/workflow';
 import { uid, fullName, vehicleName } from '../lib/format';
@@ -139,7 +140,7 @@ export default function ShopProvider({ children }) {
             mileageOut: null,
             services: jobIds.map((jid) => {
               const job = s.cannedJobs.find((j) => j.id === jid);
-              return { id: uid('svc'), title: job.title, status: 'pending', techId: null, done: false, items: materialize(s, job.items) };
+              return { id: uid('svc'), title: job.title, status: 'pending', techId: null, done: false, items: materialize(s, job.items), ...(job.tires ? { tires: newTireQuote() } : {}) };
             }),
             inspection: {},
             notes: [],
@@ -155,8 +156,11 @@ export default function ShopProvider({ children }) {
           s.orders.push(o);
           if (appointmentId) {
             const a = s.appointments.find((x) => x.id === appointmentId);
-            if (a) Object.assign(a, { orderId: o.id, status: 'arrived' });
-          }
+            if (a) {
+              Object.assign(a, { orderId: o.id, status: 'arrived' });
+              o.source = a.source === 'online' ? 'online' : 'phone';
+            }
+          } else o.source = 'walk-in';
           log(s, `Repair order #${o.number} opened${v ? ` — ${vehicleName(v)}` : ''}`, o.id);
           return o;
         }),
@@ -200,6 +204,7 @@ export default function ShopProvider({ children }) {
             techId: o.techId,
             done: false,
             items: materialize(s, job ? job.items : items),
+            ...(job?.tires ? { tires: newTireQuote() } : {}),
           };
           o.services.push(svc);
           o.updatedAt = now();
@@ -228,6 +233,20 @@ export default function ShopProvider({ children }) {
           if ('cost' in patch && item.type === 'part' && !('price' in patch) && item.autoPrice !== false) {
             item.price = priceFromMatrix(item.cost, s.shop.matrix);
           }
+        }),
+      // Customer or advisor picks one of the quoted tires: the service's tire line follows it.
+      selectTire: (orderId, serviceId, optionId) =>
+        update((s) => {
+          const svc = findService(findOrder(s, orderId), serviceId);
+          const q = svc?.tires;
+          const opt = q?.options.find((x) => x.id === optionId);
+          if (!opt) return;
+          q.selectedId = optionId;
+          const fields = { description: tireLabel(opt, q.size), brand: opt.brand, qty: Number(q.qty) || 4, cost: Number(opt.cost) || 0, price: Number(opt.price) || priceFromMatrix(Number(opt.cost) || 0, s.shop.matrix), autoPrice: false };
+          const line = svc.items.find((i) => i.tireLine);
+          if (line) Object.assign(line, fields);
+          else svc.items.push({ id: uid('itm'), type: 'part', partNumber: '', partStatus: 'needed', tireLine: true, ...fields });
+          findOrder(s, orderId).updatedAt = now();
         }),
       removeItem: (orderId, serviceId, itemId) =>
         update((s) => {

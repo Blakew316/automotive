@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Cloud, Landmark, Package, FileClock, CreditCard, HandCoins, MessageSquare, Star, CalendarDays, ScanLine, Upload, Download, ExternalLink as ExtIcon, ArrowRight, Smartphone } from 'lucide-react';
+import { Cloud, Landmark, Package, FileClock, CreditCard, HandCoins, MessageSquare, Star, CalendarDays, ScanLine, Upload, Download, ExternalLink as ExtIcon, ArrowRight, Smartphone, Globe } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
 import { PageHeader, Card } from '../components/ui';
 import { HistorySection } from './settings/IntegrationSections';
@@ -7,7 +7,7 @@ import { cloudConfig, cloudSession } from '../lib/cloudShare';
 import { PAY_PROVIDERS } from '../lib/messaging';
 import { B2B_PLATFORMS } from '../lib/suppliers';
 import { appointmentsIcs } from '../lib/ics';
-import { bookingLink } from '../lib/booking';
+import { bookingLink, websiteLink } from '../lib/booking';
 
 const STATUS_STYLE = {
   on: 'border-ok/40 bg-ok/[0.08] text-ok',
@@ -53,6 +53,21 @@ export default function Integrations() {
           body: 'A booking page for your website, Google Business Profile and texts. Requests land in Calendar for you to confirm.',
           status: shop.booking?.enabled ? ['on', bookingLink(state) && shop.booking?.published ? 'Live' : 'On'] : ['setup', 'Off'],
           action: <Link to="/settings?tab=booking" className="btn-secondary btn-sm">Settings</Link>,
+        },
+        {
+          icon: Globe,
+          name: 'Shop website',
+          by: 'Built in',
+          body: 'A one-page website with your services, reviews, hours, directions and online booking — ready for your Google Business Profile.',
+          status: ['builtin', 'Ready'],
+          action: (
+            <span className="flex gap-1.5">
+              <a href={websiteLink(state)} target="_blank" rel="noopener noreferrer" className="btn-secondary btn-sm">
+                Open <ExtIcon size={12} />
+              </a>
+              <Link to="/settings?tab=website" className="btn-plain btn-sm">Edit</Link>
+            </span>
+          ),
         },
         {
           icon: Star,

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive, Store, Wrench, CreditCard, MessageSquareText, CalendarCheck, Cloud, ChevronRight } from 'lucide-react';
+import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive, Store, Wrench, CreditCard, MessageSquareText, CalendarCheck, Cloud, ChevronRight, Globe } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Field, Toggle, Modal, NumInput, InlineText, Tabs } from '../components/ui';
 import { priceFromMatrix, DEFAULT_MATRIX } from '../lib/pricing';
@@ -12,6 +12,7 @@ import { TemplatesSection, MarketingSettings } from './settings/CommsSettings';
 import BookingSettings from './settings/BookingSettings';
 import InspectionTemplates from './settings/InspectionTemplates';
 import InstallSection from './settings/InstallSection';
+import WebsiteSettings from './settings/WebsiteSettings';
 
 const TABS = [
   { value: 'general', label: 'General', icon: Store },
@@ -19,6 +20,7 @@ const TABS = [
   { value: 'payments', label: 'Payments & financing', icon: CreditCard },
   { value: 'messaging', label: 'Messaging', icon: MessageSquareText },
   { value: 'booking', label: 'Online booking', icon: CalendarCheck },
+  { value: 'website', label: 'Website', icon: Globe },
   { value: 'cloud', label: 'Shop Cloud', icon: Cloud },
   { value: 'data', label: 'Data', icon: HardDrive },
 ];
@@ -98,6 +100,7 @@ export default function Settings() {
           </>
         )}
         {tab === 'booking' && <BookingSettings />}
+        {tab === 'website' && <WebsiteSettings />}
         {tab === 'cloud' && <SharingSection />}
         {tab === 'data' && (
           <>

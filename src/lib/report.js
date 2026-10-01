@@ -1,7 +1,7 @@
 // Customer-facing snapshot of a repair order: what the customer (or anyone with the link) sees.
 // Deliberately excludes internal data — costs, margins, technician pay, internal notes, and any
 // photo or video marked internal.
-import { orderTotals, serviceTotal, itemTotal } from './pricing';
+import { priceFromMatrix, orderTotals, serviceTotal, itemTotal } from './pricing';
 import { STATUS } from './workflow';
 import { payLink } from './messaging';
 import { financingOffer } from './financing';
@@ -40,6 +40,7 @@ export function buildReport(order, state, { showPrices = true } = {}) {
     services: order.services.map((s) => ({
       id: s.id,
       title: s.title,
+      tires: tireQuoteFor(s, shop, showPrices),
       status: s.status,
       done: Boolean(s.done),
       cause: s.cause || '',
@@ -71,6 +72,28 @@ export function buildReport(order, state, { showPrices = true } = {}) {
       createdAt,
     })),
   };
+}
+
+function tireQuoteFor(s, shop, showPrices) {
+  const q = s.tires;
+  if (!q) return null;
+  const qty = Number(q.qty) || 4;
+  const options = q.options
+    .filter((o) => o.brand || o.model)
+    .map((o) => {
+      const each = Number(o.price) || priceFromMatrix(Number(o.cost) || 0, shop.matrix);
+      return { id: o.id, tier: o.tier, brand: o.brand, model: o.model, spec: o.spec || '', warranty: o.warranty || '', each: showPrices ? each : null, set: showPrices ? each * qty : null };
+    });
+  if (!options.length) return null;
+  const current = options.find((o) => o.id === q.selectedId);
+  return { size: q.size, qty, selectedId: current ? q.selectedId : null, options, base: showPrices ? serviceTotal(s) - (current?.set || 0) : null };
+}
+
+/** A service's total with the customer's tire choice applied (decisions key `tire:<serviceId>`). */
+export function totalWithChoice(s, decisions = {}) {
+  if (!s.tires || s.total == null) return s.total;
+  const pick = s.tires.options.find((o) => o.id === (decisions[`tire:${s.id}`] || s.tires.selectedId));
+  return s.tires.base + (pick?.set || 0);
 }
 
 /** Text a customer can send back to approve pending work. */
