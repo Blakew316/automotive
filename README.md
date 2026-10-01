@@ -2,7 +2,7 @@
 
 Shop management for independent auto repair — estimates with fast customer authorization, repair orders through to paid invoice, a drag-and-drop workflow board, digital inspections, two-way customer messaging, online booking, a tech time clock with team pay and productivity, purchase orders, payments, accounting with QuickBooks exports, marketing, a built-in vehicle database (every make and model NHTSA has VIN data for, with system diagrams, parts lists and repair guides), on-device VIN decoding, parts lookup across suppliers, and a technical library with OEM service information, wiring references and trouble codes.
 
-Built with React, Vite and Tailwind. It runs entirely in the browser: shop data is stored locally (localStorage) and can be exported/imported as a JSON backup from **Settings → Data**. It installs to phones, tablets and computers as an app and works offline. Features that need to reach customers' phones (share links, online approvals, customer replies and the online booking inbox) use the shop's own free Supabase project — see [Shop Cloud](#shop-cloud).
+Built with React, Vite and Tailwind. It installs to phones, tablets and computers as an app and works offline: each device keeps the shop in IndexedDB, and with **shared shop data** turned on every device stays in sync through the shop's Supabase project — live updates, offline edits that sync later, merged concurrent edits, a change history on every record and nightly backups. Features that reach customers' phones (share links, online approvals, customer replies and the online booking inbox) use the same project — see [Shop Cloud](#shop-cloud).
 
 The repo also holds the shop's public website (`website/`), published alongside the app:
 
@@ -81,6 +81,17 @@ update auth.users
 
 Turning off “Allow new users to sign up” (Authentication → Sign In / Providers) is recommended; accounts without the flag can’t see or change anything either way.
 
+### Shared shop data
+
+Settings → Shop Cloud → **Shared shop data** puts the whole shop in the cloud so the front counter, bay tablets and the owner's phone all work on the same repair orders, customers and schedule.
+
+- **Turning it on.** The owner signs in on the device that has the shop's data and chooses *Use this device's data* (or *Start with an empty shop*, which keeps settings, rates, the service menu and the team). Other devices go to `/app/signin`, sign in, and the shop loads automatically.
+- **Logins.** Team → Staff & access → **Logins**: the owner gives each person their own login (a temporary password to hand over; they choose their own at first sign-in), resets passwords and removes access. A login is linked to a staff profile, so signing in also switches the device to that person. Logins are managed by the `shop-admin` Edge Function (`supabase/functions/shop-admin`).
+- **How sync works.** Each record (repair order, customer, vehicle …) is a row in `shop_records` with a version. Devices write through `push_records()`, which only accepts an edit based on the current version; otherwise it returns the current copy and the device merges the two (`src/lib/sync/merge.js`: changes to different fields — and lines added to the same repair order — are all kept; if both changed the same field, the later edit wins) and retries. Changes arrive over Supabase Realtime, with polling as a fallback and a periodic version check so nothing is missed. Edits made offline or while signed out are kept on the device (and survive reloads) until they can be sent. Repair order and PO numbers created offline on two devices are renumbered the same way everywhere.
+- **Photos and video** from each device upload to the private `autoshop-files` bucket (staff-only) and download on other devices when opened. Files over the free plan's 50 MB limit stay on the device that took them.
+- **Change history.** Every version of every record is kept in `shop_record_history` (six months): *Change history* on a repair order, customer or vehicle shows who changed what, when and from which device, with one-click restore.
+- **Backups.** `snapshot_shop()` runs nightly at 3:15 AM Central (pg_cron) and keeps the last 14; Settings → Data → **Cloud backups** downloads any of them as a regular backup file, and the owner can restore the whole shop to one (the current state is backed up first).
+
 **Using a different Supabase project** (e.g. one per shop): open *Connection details* in **Settings → Shop Cloud**, paste the Project URL and anon key, create the bucket, and run the setup SQL shown there — it creates the same staff function, storage policies and inbox table.
 
 With it connected:
@@ -96,7 +107,7 @@ Without Shop Cloud, shops can still show reports on a counter tablet, send the d
 
 - **Shop details** (phone, email, address, hours, social links) live in `website/business.json`. Edit it, then run `node website/scripts/sync.mjs` to update every page, the structured data, `sitemap.xml` and `robots.txt`; `node website/scripts/check.mjs` validates the pages.
 - **Forms → AutoShop Pro.** `shopInbox` in `business.json` points the booking, contact and fleet forms at the Shop Cloud inbox (the public anon key; customers can only add). Staff signed in to the app receive them automatically. If the inbox can't be reached, the visitor is offered a pre-filled email or the phone number instead.
-- **Staff sign-in** in the site footer links to the app (`staffAppUrl`).
+- **Staff sign-in** in the footer goes to `/app/signin`.
 - **Hosting.** `npm run build:pages` (`scripts/pages.mjs`) builds the app into `dist/app/` and copies the website to `dist/`. GitHub Pages serves one `404.html` for every missing path; it is the app shell, so deep links into the app load directly, and a small script forwards old links from before the app moved under `app/` (e.g. `/automotive/orders`) and sends unknown pages to the website's not-found page. A self-removing `sw.js` at the root retires the service worker from the old layout.
 - **Own domain.** Point the domain at the site, set `siteUrl`, `basePath` (`"/"` at a domain root) and `staffAppUrl` in `business.json`, run the sync script, build with that base (`node scripts/pages.mjs /`), and enter the address under **Settings → Website** in the app.
 

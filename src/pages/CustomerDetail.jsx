@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Phone, MessageSquare, Mail, Pencil, Plus, Car, Trash2, MoreHorizontal, CalendarPlus, Users, ChevronRight } from 'lucide-react';
+import { Phone, MessageSquare, Mail, Pencil, Plus, Car, Trash2, MoreHorizontal, CalendarPlus, Users, ChevronRight, History } from 'lucide-react';
+import RecordHistory from '../components/RecordHistory';
 import ComposeModal from '../components/Compose';
-import { useShop, useUI, useTotals } from '../store/hooks';
+import { useShop, useUI, useTotals, useSync } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Avatar, StatusLabel, EmptyState, Menu, Modal, ListRow, KV } from '../components/ui';
 import { CustomerForm, VehicleForm, AppointmentForm } from '../components/forms';
 import { money, money0, fullName, vehicleName, phone, telHref, mailHref, dateShort, date, number, time, relTime } from '../lib/format';
@@ -17,6 +18,8 @@ export default function CustomerDetail() {
   const [addingVehicle, setAddingVehicle] = useState(false);
   const [booking, setBooking] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [history, setHistory] = useState(false);
+  const sync = useSync();
   const [composing, setComposing] = useState(null);
   const c = state.customers.find((x) => x.id === id);
 
@@ -67,6 +70,7 @@ export default function CustomerDetail() {
               )}
               items={[
                 { label: 'Edit customer', icon: Pencil, onClick: () => setEditing(true) },
+                sync?.enabled && { label: 'Change history', icon: History, onClick: () => setHistory(true) },
                 '-',
                 { label: 'Delete customer', icon: Trash2, danger: true, onClick: () => setConfirmDelete(true) },
               ]}
@@ -75,6 +79,7 @@ export default function CustomerDetail() {
         }
       />
 
+      {history && <RecordHistory collection="customers" id={c.id} title={fullName(c)} onClose={() => setHistory(false)} />}
       <Card className="mb-6 grid grid-cols-2 divide-line p-1 md:grid-cols-4 md:divide-x">
         <Metric label="Lifetime spend" value={money0(data.spend)} />
         <Metric label="Visits" value={data.visits} />

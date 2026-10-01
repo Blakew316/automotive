@@ -1,6 +1,6 @@
 // Photos and videos attached to repair orders. Files live in IndexedDB on this device (they are far
 // too large for localStorage); the RO itself only stores metadata in `order.media`.
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import { uid } from './format';
 
 const DB_NAME = 'autoshop-media';
@@ -28,14 +28,50 @@ const tx = async (mode, fn) => {
   return new Promise((resolve, reject) => {
     const t = d.transaction(STORE, mode);
     const out = fn(t.objectStore(STORE));
-    t.oncomplete = () => resolve(out?.result ?? out);
+    t.oncomplete = () => resolve(out && typeof out === 'object' && 'result' in out ? out.result : out);
     t.onerror = () => reject(t.error);
     t.onabort = () => reject(t.error || new Error('Storage quota exceeded'));
   });
 };
 
-/** { blob, thumb } for a media id, or null. */
-export const getFile = (id) => tx('readonly', (s) => s.get(id)).then((r) => r || null);
+const getLocal = (id) => tx('readonly', (s) => s.get(id)).then((r) => r || null);
+
+// With shared shop data on, photos taken on another device are fetched from the shop's cloud the
+// first time they're needed and kept here afterwards.
+let remoteFetcher = null;
+const fetching = new Map();
+// Pictures that came up empty before the cloud was ready get another try when it is.
+let fetcherVersion = 0;
+const fetcherListeners = new Set();
+const subscribeFetcher = (fn) => {
+  fetcherListeners.add(fn);
+  return () => fetcherListeners.delete(fn);
+};
+export function setRemoteFetcher(fn) {
+  remoteFetcher = fn;
+  if (typeof window !== 'undefined') window.__autoshopMediaSource = Boolean(fn);
+  fetcherVersion += 1;
+  fetcherListeners.forEach((l) => l());
+}
+
+/** { blob, thumb } for a media id, or null. `localOnly` skips the cloud. */
+export async function getFile(id, { localOnly = false } = {}) {
+  const local = await getLocal(id);
+  if (local || localOnly || !remoteFetcher) return local;
+  if (!fetching.has(id)) {
+    fetching.set(
+      id,
+      remoteFetcher(id)
+        .then(async (rec) => {
+          if (rec?.blob) await putFile(id, rec).catch(() => {});
+          return rec || null;
+        })
+        .catch(() => null)
+        .finally(() => fetching.delete(id)),
+    );
+  }
+  return fetching.get(id);
+}
 export const putFile = (id, record) => tx('readwrite', (s) => s.put(record, id));
 export const removeFiles = (ids = []) => (ids.length ? tx('readwrite', (s) => ids.forEach((id) => s.delete(id))) : Promise.resolve());
 
@@ -61,8 +97,13 @@ export function forgetUrls(ids = []) {
 }
 
 /** React hook: object URL for a stored file (thumbnail by default). */
-export function useMediaUrl(id, which = 'thumb') {
+/**
+ * React hook: object URL for a stored file (thumbnail by default). `rev` (e.g. the media record's
+ * upload status) retries a file that isn't on this device yet once another device has uploaded it.
+ */
+export function useMediaUrl(id, which = 'thumb', rev = '') {
   const [state, setState] = useState({ key: null, url: null });
+  const source = useSyncExternalStore(subscribeFetcher, () => fetcherVersion, () => 0);
   const key = id ? `${id}:${which}` : null;
   useEffect(() => {
     if (!key) return undefined;
@@ -74,7 +115,7 @@ export function useMediaUrl(id, which = 'thumb') {
     return () => {
       alive = false;
     };
-  }, [key, id, which]);
+  }, [key, id, which, rev, source]);
   return state.key === key ? state.url : null;
 }
 
@@ -222,6 +263,8 @@ export async function ingestFiles(files, extra = {}) {
       skipped.push(`${file.name}: ${e?.name === 'QuotaExceededError' ? 'device storage is full' : e?.message || 'could not be saved'}`);
     }
   }
+  // Shared shop data uploads new files to the cloud in the background.
+  if (added.length && typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('autoshop:media'));
   return { added, skipped };
 }
 

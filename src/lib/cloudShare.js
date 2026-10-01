@@ -28,6 +28,8 @@ function writeSession(s) {
   } catch {
     // Session is a convenience; the user can sign in again.
   }
+  // Lets the app react to sign-in, sign-out and token refresh (sync, sidebar status).
+  if (typeof window !== 'undefined') window.dispatchEvent(new CustomEvent('autoshop:session'));
 }
 export const cloudSession = () => readSession();
 export const signOut = () => writeSession(null);
@@ -40,7 +42,16 @@ async function authRequest(cfg, grant, body) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error_description || data.msg || data.message || `Sign-in failed (${res.status})`);
-  const session = { url: cfg.url, email: data.user?.email, access: data.access_token, refresh: data.refresh_token, expires: Date.now() + (data.expires_in || 3600) * 1000 };
+  const session = {
+    url: cfg.url,
+    email: data.user?.email,
+    userId: data.user?.id,
+    name: data.user?.user_metadata?.name || '',
+    mustChange: Boolean(data.user?.user_metadata?.must_change_password),
+    access: data.access_token,
+    refresh: data.refresh_token,
+    expires: Date.now() + (data.expires_in || 3600) * 1000,
+  };
   writeSession(session);
   return session;
 }
@@ -58,23 +69,38 @@ export function sessionClaims(session) {
 }
 export const isStaffSession = (session) => Boolean(sessionClaims(session)?.app_metadata?.autoshop_staff);
 
-/** Change the signed-in staff member's password. */
+/** Change the signed-in staff member's password (and clear a "change your temporary password" flag). */
 export async function changePassword(cfg, password) {
   const token = await accessToken(cfg);
   const res = await fetch(`${cfg.url}/auth/v1/user`, {
     method: 'PUT',
     headers: { apikey: cfg.key, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password }),
+    body: JSON.stringify({ password, data: { must_change_password: false } }),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.msg || data.error_description || data.message || `Couldn’t change the password (${res.status})`);
+  const s = readSession();
+  if (s) writeSession({ ...s, mustChange: false });
 }
 
-async function accessToken(cfg) {
+let refreshing = null;
+/** A valid access token for the signed-in staff member, refreshed when it is about to expire. */
+export async function accessToken(cfg) {
   const s = readSession();
-  if (!s || s.url !== cfg.url) throw new Error('Sign in under Settings → Shop Cloud first.');
+  if (!s || s.url !== cfg.url) throw Object.assign(new Error('Sign in under Settings → Shop Cloud first.'), { status: 401 });
   if (s.expires - Date.now() > 60_000) return s.access;
-  return (await authRequest(cfg, 'refresh_token', { refresh_token: s.refresh })).access;
+  // One refresh at a time: refresh tokens are single-use.
+  refreshing ||= authRequest(cfg, 'refresh_token', { refresh_token: s.refresh })
+    .then((n) => ({ ...n, name: n.name || s.name }))
+    .then((n) => (writeSession(n), n.access))
+    .catch((e) => {
+      if (/invalid|not found|revoked|expired/i.test(e.message)) writeSession(null);
+      throw Object.assign(e, { status: 401 });
+    })
+    .finally(() => {
+      refreshing = null;
+    });
+  return refreshing;
 }
 
 // ---------------------------------------------------------------- Storage

@@ -1,79 +1,164 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ShopContext } from './context';
+import { produce, setAutoFreeze, isDraft, current } from 'immer';
+import { ShopContext, SyncContext } from './context';
 import { createSeed, CANNED_JOBS } from '../data/seed';
 import { migrate } from './defaults';
 import { newTireQuote, tireLabel } from '../lib/tires';
 import { priceFromMatrix, orderTotals } from '../lib/pricing';
 import { STATUS } from '../lib/workflow';
 import { uid, fullName, vehicleName } from '../lib/format';
+import { loadSaved, createSaver } from '../lib/persist';
+import { diffStates, applyToDraft } from '../lib/sync/records';
+import { useShopSync } from '../lib/sync/useShopSync';
+import { useUI } from './hooks';
+import { Spinner } from '../components/ui';
 
-const STORAGE_KEY = 'autoshop-pro:v2';
+// State is replaced, never mutated in place, and unchanged records keep their identity between
+// versions — that is what lets saving and syncing touch only what changed.
+setAutoFreeze(false);
 
-function load() {
+const LEGACY_KEY = 'autoshop-pro:v2';
+
+/** Shop data on this device: IndexedDB, or the older localStorage copy (moved over on first load). */
+async function loadStore() {
+  let saved = { state: null, sync: null };
+  let idb = true;
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const data = JSON.parse(raw);
-      if (data?.version === 2) return migrate(data);
-    }
+    saved = await loadSaved();
   } catch {
-    // Corrupt or unavailable storage: fall back to demo data.
+    idb = false;
   }
-  return migrate(createSeed());
+  let stored = saved.state;
+  let legacy = false;
+  if (!stored) {
+    try {
+      const raw = localStorage.getItem(LEGACY_KEY);
+      const data = raw && JSON.parse(raw);
+      if (data?.version === 2) {
+        stored = data;
+        legacy = true;
+      }
+    } catch {
+      // Unreadable: start from demo data.
+    }
+  }
+  return { state: migrate(stored || createSeed()), sync: saved.sync, idb, legacy, fromIdb: Boolean(saved.state) };
 }
 
 const now = () => new Date().toISOString();
 
-function persist(data) {
+function persistLocal(data) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.setItem(LEGACY_KEY, JSON.stringify(data));
   } catch {
     // Quota exceeded or storage blocked — the session keeps working in memory.
   }
 }
 
 export default function ShopProvider({ children }) {
-  const [state, setState] = useState(load);
+  const [boot, setBoot] = useState(null);
+  useEffect(() => {
+    let alive = true;
+    loadStore().then((b) => alive && setBoot(b));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  if (!boot) {
+    return (
+      <div className="flex h-[100dvh] items-center justify-center bg-canvas text-ink-3">
+        <Spinner size={22} />
+      </div>
+    );
+  }
+  return <ShopStore boot={boot}>{children}</ShopStore>;
+}
+
+function ShopStore({ boot, children }) {
+  const [state, setState] = useState(boot.state);
   // Authoritative copy for synchronous reads inside actions (so e.g. createOrder can return the new RO).
   const stateRef = useRef(state);
+  const syncRef = useRef(null);
   const saveTimer = useRef();
+  // What IndexedDB already holds: nothing yet on a new device (or one moving from localStorage), so
+  // the first save writes everything.
+  const [saver] = useState(() => (boot.idb ? createSaver(boot.fromIdb ? boot.state : null) : null));
+  const syncMetaRef = useRef(null);
+
+  const flush = useCallback(() => {
+    clearTimeout(saveTimer.current);
+    if (!saver) return persistLocal(stateRef.current);
+    saver.flush(stateRef.current).then(() => {
+      if (boot.legacy) {
+        try {
+          localStorage.removeItem(LEGACY_KEY);
+        } catch {
+          // Harmless: the IndexedDB copy is used from now on.
+        }
+      }
+    });
+  }, [saver, boot]);
 
   useEffect(() => {
     clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => persist(state), 250);
+    saveTimer.current = setTimeout(flush, 250);
     return () => clearTimeout(saveTimer.current);
-  }, [state]);
+  }, [state, flush]);
 
-  // Flush immediately when the tab is hidden or closed so a debounced save is never lost.
+  // A closing or hidden tab saves synchronously too, so the last edits are never lost.
   useEffect(() => {
-    const flush = () => {
+    const hide = () => {
       clearTimeout(saveTimer.current);
-      persist(stateRef.current);
+      if (!saver) return persistLocal(stateRef.current);
+      const meta = syncMetaRef.current?.();
+      saver.journal(stateRef.current, meta ? { sync: meta } : {});
     };
-    const onVisibility = () => document.visibilityState === 'hidden' && flush();
-    window.addEventListener('pagehide', flush);
+    const onVisibility = () => document.visibilityState === 'hidden' && hide();
+    window.addEventListener('pagehide', hide);
     document.addEventListener('visibilitychange', onVisibility);
     return () => {
-      window.removeEventListener('pagehide', flush);
+      window.removeEventListener('pagehide', hide);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, []);
+  }, [saver]);
 
-  const commit = useCallback((next) => {
+  /** Replace the state. Local edits are reported to sync; changes that came from the cloud are not. */
+  const commit = useCallback((next, { remote = false } = {}) => {
+    const prev = stateRef.current;
+    if (next === prev) return;
     stateRef.current = next;
     setState(next);
+    if (!remote) syncRef.current?.noteLocal(diffStates(prev, next));
   }, []);
 
-  /** Apply a mutation to a deep copy of state. Keeps action code short and readable. */
+  /** Apply a mutation to a draft of the state (Immer). Keeps action code short and readable. */
   const update = useCallback(
     (mutator) => {
-      const draft = structuredClone(stateRef.current);
-      const result = mutator(draft);
-      commit(draft);
+      let result;
+      const next = produce(stateRef.current, (draft) => {
+        result = mutator(draft);
+        if (isDraft(result)) result = current(result);
+      });
+      commit(next);
       return result;
     },
     [commit],
   );
+
+  /** Records from the cloud: [[collection, id, data|null], …]. */
+  const applyRemote = useCallback(
+    (changes) => commit(produce(stateRef.current, (d) => applyToDraft(d, changes)), { remote: true }),
+    [commit],
+  );
+
+  // Who made a change, for the change history: the person using this device.
+  const { userId } = useUI();
+  const staffList = state.shop.staff;
+  const actor = useMemo(() => {
+    const list = staffList || [];
+    return (list.find((p) => p.id === userId) || list.find((p) => p.role === 'owner') || list[0])?.name || '';
+  }, [staffList, userId]);
+  const sync = useShopSync({ stateRef, cloud: state.shop.cloud, commit, update, applyRemote, syncRef, syncMetaRef, bootSync: boot.sync, migrate, actor });
 
   const actions = useMemo(() => {
     const log = (s, text, ref) => {
@@ -548,6 +633,15 @@ export default function ShopProvider({ children }) {
           s.technicians.push({ ...t, id: uid('tech') });
         }),
 
+      /** Put a record back to an earlier version (from the change history). */
+      restoreRecord: (collection, id, data) =>
+        update((s) => {
+          if (!Array.isArray(s[collection]) || !data) return;
+          const i = s[collection].findIndex((x) => x.id === id);
+          if (i >= 0) s[collection][i] = data;
+          else s[collection].push(data);
+        }),
+
       resetDemo: () => commit(migrate(createSeed())),
       clearAll: () => {
         const prev = stateRef.current;
@@ -579,6 +673,15 @@ export default function ShopProvider({ children }) {
     };
   }, [update, commit]);
 
+  // Handle for support and automated checks: read the live state or apply a change from the console.
+  useEffect(() => {
+    window.__autoshop = { state: () => stateRef.current, update, sync: () => syncRef.current, flush };
+  }, [update, flush]);
+
   const value = useMemo(() => ({ state, ...actions }), [state, actions]);
-  return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
+  return (
+    <ShopContext.Provider value={value}>
+      <SyncContext.Provider value={sync}>{children}</SyncContext.Provider>
+    </ShopContext.Provider>
+  );
 }
