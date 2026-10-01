@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UIContext } from './context';
 
-const THEME_KEY = 'autoshop-pro:theme';
+// Appearance: light by default. (The old key saved "system" automatically, so only an explicit dark carries over.)
+const THEME_KEY = 'autoshop-pro:appearance';
+const OLD_THEME_KEY = 'autoshop-pro:theme';
 const USER_KEY = 'autoshop-pro:user';
 
 function readUser() {
@@ -14,9 +16,11 @@ function readUser() {
 
 function readTheme() {
   try {
-    return localStorage.getItem(THEME_KEY) || 'system';
+    const t = localStorage.getItem(THEME_KEY);
+    if (t === 'light' || t === 'dark' || t === 'system') return t;
+    return localStorage.getItem(OLD_THEME_KEY) === 'dark' ? 'dark' : 'light';
   } catch {
-    return 'system';
+    return 'light';
   }
 }
 
@@ -40,6 +44,8 @@ export default function UIProvider({ children }) {
     const root = document.documentElement;
     if (theme === 'system') root.removeAttribute('data-theme');
     else root.setAttribute('data-theme', theme);
+    const dark = theme === 'dark' || (theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0b1019' : '#eff1f4');
     try {
       localStorage.setItem(THEME_KEY, theme);
     } catch {
