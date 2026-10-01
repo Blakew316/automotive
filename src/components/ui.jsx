@@ -144,13 +144,25 @@ export function Segmented({ options, value, onChange, className = '', size = 'md
 
 /** Underline tabs for page sections. */
 export function Tabs({ tabs, value, onChange, className = '' }) {
+  const ref = useRef(null);
+  // Keep the selected tab visible when the bar scrolls (e.g. opened by a link to a later tab).
+  useEffect(() => {
+    const box = ref.current;
+    const el = box?.querySelector('[data-active="true"]');
+    if (!el) return;
+    const b = box.getBoundingClientRect();
+    const r = el.getBoundingClientRect();
+    if (r.left < b.left) box.scrollLeft += r.left - b.left - 12;
+    else if (r.right > b.right) box.scrollLeft += r.right - b.right + 12;
+  }, [value]);
   return (
-    <div className={`flex gap-5 overflow-x-auto border-b border-line ${className}`}>
+    <div ref={ref} className={`flex gap-5 overflow-x-auto border-b border-line ${className}`}>
       {tabs.map((t) => {
         const active = t.value === value;
         return (
           <button
             key={t.value}
+            data-active={active}
             onClick={() => onChange(t.value)}
             className={`relative -mb-px flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 pb-2.5 pt-1 text-sm font-medium transition-colors ${
               active ? 'border-accent text-ink' : 'border-transparent text-ink-3 hover:text-ink'

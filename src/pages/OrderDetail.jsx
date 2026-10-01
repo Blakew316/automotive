@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   Printer, Send, MoreHorizontal, Plus, Trash2, MessageSquare, Mail, Check, ClipboardCheck, Wrench, StickyNote,
   CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2, PenLine, HandCoins,
-  History, Activity, Building2, Undo2,
+  History, Activity, Building2, Undo2, Sparkles,
 } from 'lucide-react';
 import { useShop, useUI, useLookup, useTotals, useSync } from '../store/hooks';
 import RecordHistory from '../components/RecordHistory';
@@ -15,6 +15,8 @@ import InspectionPanel from './order/InspectionPanel';
 import OrderSidebar, { PaymentModal } from './order/OrderSidebar';
 import ChargeModal from './order/ChargeModal';
 import ComebackModal from './order/ComebackModal';
+import AiAssistant from '../components/AiAssistant';
+import { orderContext, AI_TASKS } from '../lib/ai';
 import { hasTerms } from '../lib/accounts';
 import MediaPanel, { MediaViewer } from './order/MediaPanel';
 import { useMediaViewer } from '../lib/useMedia';
@@ -36,7 +38,7 @@ const NEXT = {
 
 export default function OrderDetail() {
   const { id } = useParams();
-  const { state, setOrderStatus, deleteOrder, updateOrder, addNote } = useShop();
+  const { state, setOrderStatus, deleteOrder, updateOrder, addNote, updateService } = useShop();
   const { toast } = useUI();
   const lookup = useLookup();
   const totals = useTotals();
@@ -47,6 +49,7 @@ export default function OrderDetail() {
   const [paying, setPaying] = useState(false);
   const [charging, setCharging] = useState(false);
   const [comeback, setComeback] = useState(false);
+  const [assist, setAssist] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [authorizing, setAuthorizing] = useState(false);
@@ -139,6 +142,9 @@ export default function OrderDetail() {
                 { label: 'Print or save PDF', icon: Printer, onClick: () => navigate(`/orders/${order.id}/print`) },
               ]}
             />
+            <button className="btn-secondary" onClick={() => setAssist(true)} title="AI assistant">
+              <Sparkles size={15} /> Assistant
+            </button>
             <Link to={`/orders/${order.id}/print`} className="btn-secondary btn-icon" aria-label="Print">
               <Printer size={15} />
             </Link>
@@ -273,6 +279,28 @@ export default function OrderDetail() {
       {addingService && <AddServiceModal order={order} onClose={() => setAddingService(false)} />}
       {paying && <PaymentModal order={order} customer={customer} onClose={() => setPaying(false)} onReceipt={(amount) => setComposing({ templateId: 'receipt', extra: { amount } })} />}
       {comeback && <ComebackModal order={order} onClose={() => setComeback(false)} />}
+      {assist && (
+        <AiAssistant
+          title={`Assistant · RO #${order.number}`}
+          tasks={['explain', 'update', 'diagnose', 'story', 'ask']}
+          services={order.services.filter((s) => s.status !== 'declined')}
+          buildContext={(task, { serviceId }) => orderContext(state, order, task === 'story' ? { serviceId } : {})}
+          onUseMessage={(text) => {
+            setAssist(false);
+            setComposing({ initialBody: text, channel: customer?.phone ? 'sms' : 'email' });
+          }}
+          onSaveNote={(text, task) => {
+            addNote(order.id, `${AI_TASKS[task].short} (AI draft):\n${text}`, true);
+            toast('Saved to the RO notes', { tone: 'success' });
+          }}
+          onApplyStory={(serviceId, story) => {
+            updateService(order.id, serviceId, story);
+            toast('Cause & correction added to the service', { tone: 'success' });
+            setAssist(false);
+          }}
+          onClose={() => setAssist(false)}
+        />
+      )}
       {charging && customer?.account && <ChargeModal order={order} customer={customer} onClose={() => setCharging(false)} />}
       {authorizing && <AuthorizeModal order={order} customer={customer} onClose={() => setAuthorizing(false)} />}
       {composing && customer && <ComposeModal customer={customer} order={order} {...composing} onClose={() => setComposing(null)} />}

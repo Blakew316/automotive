@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { MessageSquare, Mail, Globe, NotebookPen, ChevronLeft, PenSquare, Inbox, Phone, ArrowDownLeft } from 'lucide-react';
+import { MessageSquare, Mail, Globe, NotebookPen, ChevronLeft, PenSquare, Inbox, Phone, ArrowDownLeft, Sparkles } from 'lucide-react';
 import { useShop, useUI } from '../store/hooks';
 import { PageHeader, Card, SearchInput, Avatar, Segmented, EmptyState, Modal } from '../components/ui';
 import { CustomerPicker } from '../components/forms';
 import ComposeModal from '../components/Compose';
+import AiAssistant from '../components/AiAssistant';
+import { threadContext } from '../lib/ai';
 import { fullName, vehicleName, relTime, time, date, telHref, phone as fmtPhone } from '../lib/format';
 import { STATUS } from '../lib/workflow';
 
@@ -113,6 +115,7 @@ function Thread({ customer, onBack }) {
   const { toast } = useUI();
   const [composing, setComposing] = useState(null);
   const [reply, setReply] = useState('');
+  const [assist, setAssist] = useState(false);
   const end = useRef(null);
   const list = useMemo(() => state.messages.filter((m) => m.customerId === customer.id).sort((a, b) => a.at.localeCompare(b.at)), [state.messages, customer.id]);
   const orders = state.orders.filter((o) => o.customerId === customer.id);
@@ -190,6 +193,9 @@ function Thread({ customer, onBack }) {
 
       <footer className="border-t border-line/70 p-3">
         <div className="mb-2 flex flex-wrap gap-1.5">
+          <button className="chip h-6 text-xs hover:border-accent/50" onClick={() => setAssist(true)}>
+            <Sparkles size={11} /> Suggest reply
+          </button>
           {['update', 'estimate', 'ready', 'pay', 'appt', 'service'].map((id) => {
             const t = state.shop.templates.find((x) => x.id === id);
             if (!t) return null;
@@ -228,6 +234,18 @@ function Thread({ customer, onBack }) {
           </div>
         </div>
       </footer>
+      {assist && (
+        <AiAssistant
+          title={`Assistant · ${fullName(customer)}`}
+          tasks={['reply', 'ask']}
+          buildContext={() => threadContext(state, customer.id)}
+          onUseMessage={(text) => {
+            setReply(text);
+            setAssist(false);
+          }}
+          onClose={() => setAssist(false)}
+        />
+      )}
       {composing && (
         <ComposeModal
           customer={customer}

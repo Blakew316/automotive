@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Phone, MessageSquare, Mail, Pencil, Plus, Car, Trash2, MoreHorizontal, CalendarPlus, Users, ChevronRight, History, Building2 } from 'lucide-react';
+import { Phone, MessageSquare, Mail, Pencil, Plus, Car, Trash2, MoreHorizontal, CalendarPlus, Users, ChevronRight, History, Building2, Sparkles } from 'lucide-react';
 import RecordHistory from '../components/RecordHistory';
 import ComposeModal from '../components/Compose';
 import { useShop, useUI, useTotals, useSync } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Avatar, StatusLabel, EmptyState, Menu, Modal, ListRow, KV, Tabs } from '../components/ui';
 import AccountForm from './customer/AccountForm';
+import AiAssistant from '../components/AiAssistant';
+import { customerContext } from '../lib/ai';
 import { AccountCard, ContactsCard, PmPlansCard, UnitsCard, InvoicesCard, PortalCard } from './customer/AccountPanels';
 import { accountSummary, isAccount, termsLabel } from '../lib/accounts';
 import { CustomerForm, VehicleForm, AppointmentForm } from '../components/forms';
@@ -25,6 +27,7 @@ export default function CustomerDetail() {
   const sync = useSync();
   const [composing, setComposing] = useState(null);
   const [accountForm, setAccountForm] = useState(false);
+  const [assist, setAssist] = useState(false);
   const [tab, setTab] = useState('units');
   const c = state.customers.find((x) => x.id === id);
   const business = isAccount(c);
@@ -85,6 +88,7 @@ export default function CustomerDetail() {
               )}
               items={[
                 { label: 'Edit customer', icon: Pencil, onClick: () => setEditing(true) },
+                { label: 'Summarize with AI', icon: Sparkles, onClick: () => setAssist(true) },
                 { label: business ? 'Account settings' : 'Set up business account', icon: Building2, onClick: () => setAccountForm(true) },
                 sync?.enabled && { label: 'Change history', icon: History, onClick: () => setHistory(true) },
                 '-',
@@ -271,6 +275,7 @@ export default function CustomerDetail() {
 
       {editing && <CustomerForm open initial={c} onClose={() => setEditing(false)} />}
       {accountForm && <AccountForm customer={c} onClose={() => setAccountForm(false)} />}
+      {assist && <AiAssistant title={`Assistant · ${fullName(c)}`} tasks={['summary', 'ask']} buildContext={() => customerContext(state, c)} onClose={() => setAssist(false)} />}
       {composing && <ComposeModal customer={c} templateId="update" {...composing} onClose={() => setComposing(null)} />}
       {addingVehicle && <VehicleForm open initial={{ customerId: c.id }} onClose={() => setAddingVehicle(false)} />}
       {booking && <AppointmentForm open initial={{ customerId: c.id, vehicleId: data.vehicles[0]?.id }} onClose={() => setBooking(false)} />}
