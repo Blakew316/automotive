@@ -1,29 +1,34 @@
 import { useState } from 'react';
-import { Globe, Copy, Check, ExternalLink as ExtIcon, Plus, Trash2, Star } from 'lucide-react';
+import { Globe, Copy, Check, ExternalLink as ExtIcon, CalendarCheck, MessageSquare, FileCode2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useShop } from '../../store/hooks';
-import { Field, InlineText, NumInput } from '../../components/ui';
-import { websiteLink } from '../../lib/booking';
+import { Field, InlineText } from '../../components/ui';
+import { websiteLink, websitePage, defaultWebsite } from '../../lib/booking';
 import { cloudConfig } from '../../lib/cloudShare';
 import Section from './Section';
 
-/** Content for the shop's public website page. */
+const PAGES = [
+  ['Home', ''],
+  ['Book a service', 'appointment.html'],
+  ['Services', 'services.html'],
+  ['Specials', 'specials.html'],
+  ['Contact', 'contact.html'],
+];
+
+/** The shop's public website (website/ in the repo) and how its forms reach the app. */
 export default function WebsiteSettings() {
   const { state, updateShop } = useShop();
   const w = state.shop.website || {};
-  const set = (patch) => updateShop({ website: { ...w, ...patch } });
   const link = websiteLink(state);
-  const cfg = cloudConfig(state.shop);
+  const cloud = Boolean(cloudConfig(state.shop));
   const [copied, setCopied] = useState(false);
-  const highlights = [...(w.highlights || []), '', '', '', ''].slice(0, 4);
-  const testimonials = w.testimonials || [];
-  const setT = (i, patch) => set({ testimonials: testimonials.map((t, k) => (k === i ? { ...t, ...patch } : t)) });
 
   return (
-    <>
-      <Section id="website" icon={Globe} title="Shop website" subtitle="A one-page site with your services, reviews, hours and online booking">
-        <div className="space-y-4">
+    <Section id="website" icon={Globe} title="Shop website" subtitle="Your public website — services, specials, FAQ, contact and a booking form">
+      <div className="space-y-4">
+        {link ? (
           <div className="rounded-[10px] border border-line p-3">
-            <div className="field-label">Your website link</div>
+            <div className="field-label">Your website</div>
             <div className="flex gap-2">
               <input readOnly value={link} onFocus={(e) => e.target.select()} className="input flex-1 font-mono text-xs" aria-label="Website link" />
               <button
@@ -44,63 +49,49 @@ export default function WebsiteSettings() {
                 <ExtIcon size={14} /> Open
               </a>
             </div>
-            <p className="mt-2 text-xs text-ink-3">
-              Put it on your Google Business Profile, social pages and business cards, or point your own domain at it.
-              {cfg ? ' With Shop Cloud published, the link stays short and updates whenever you publish.' : ' Connect Shop Cloud (Settings → Shop Cloud) for a short link that updates itself.'}
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_120px]">
-            <Field label="Tagline">{(id) => <InlineText id={id} className="input" value={w.tagline || ''} onCommit={(tagline) => set({ tagline })} />}</Field>
-            <Field label="In business since">{(id) => <NumInput id={id} align="left" className="input" value={w.since || ''} onCommit={(since) => set({ since: Math.round(since) || null })} />}</Field>
-          </div>
-          <Field label="About the shop">{(id) => <InlineText id={id} multiline rows={3} className="input" value={w.about || ''} onCommit={(about) => set({ about })} />}</Field>
-          <div className="grid gap-3 sm:grid-cols-2">
-            <Field label="Star rating" hint="Your average rating on Google (e.g. 4.8)">{(id) => <NumInput id={id} align="left" className="input" value={w.rating || ''} onCommit={(rating) => set({ rating: Math.max(0, Math.min(5, rating)) || null })} />}</Field>
-            <Field label="Number of reviews">{(id) => <NumInput id={id} align="left" className="input" value={w.reviews || ''} onCommit={(reviews) => set({ reviews: Math.round(reviews) || null })} />}</Field>
-          </div>
-          <div>
-            <span className="field-label">Highlights</span>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {highlights.map((h, i) => (
-                <InlineText
-                  key={i}
-                  className="input"
-                  placeholder={['ASE-certified technicians', 'Warranty on parts & labor', 'Digital inspections with photos', 'Shuttle / loaner available'][i]}
-                  value={h}
-                  onCommit={(v) => {
-                    const next = [...highlights];
-                    next[i] = v;
-                    set({ highlights: next.filter(Boolean) });
-                  }}
-                />
+            <div className="mt-2.5 flex flex-wrap gap-1.5">
+              {PAGES.map(([label, page]) => (
+                <a key={label} href={websitePage(state, page)} target="_blank" rel="noopener noreferrer" className="chip hover:border-accent/40 hover:text-accent">
+                  {label}
+                </a>
               ))}
             </div>
+            <p className="mt-2 text-xs text-ink-3">Put it on your Google Business Profile, social pages and business cards.</p>
           </div>
-        </div>
-      </Section>
-      <Section
-        icon={Star}
-        title="Customer reviews"
-        subtitle="Quotes shown on your website — use real reviews customers have given you"
-        actions={
-          <button className="btn-plain btn-sm" onClick={() => set({ testimonials: [...testimonials, { name: '', text: '' }] })}>
-            <Plus size={14} /> Add review
-          </button>
-        }
-      >
-        <div className="space-y-3">
-          {testimonials.map((t, i) => (
-            <div key={i} className="grid gap-2 rounded-[10px] border border-line p-3 sm:grid-cols-[160px_minmax(0,1fr)_auto]">
-              <InlineText className="input" placeholder="Name (e.g. Megan R.)" value={t.name} onCommit={(name) => setT(i, { name })} />
-              <InlineText className="input" multiline rows={2} placeholder="What they said" value={t.text} onCommit={(text) => setT(i, { text })} />
-              <button className="btn-ghost btn-icon self-start" onClick={() => set({ testimonials: testimonials.filter((_, k) => k !== i) })} aria-label="Remove review">
-                <Trash2 size={14} />
-              </button>
-            </div>
-          ))}
-          {!testimonials.length && <p className="text-sm text-ink-3">No reviews added yet.</p>}
-        </div>
-      </Section>
-    </>
+        ) : (
+          <p className="text-sm text-ink-2">The website is published together with AutoShop Pro. Enter its address below if it’s hosted somewhere else.</p>
+        )}
+
+        <Field label="Website address" hint={`Leave blank to use the site published with AutoShop Pro${defaultWebsite() ? ` (${defaultWebsite()})` : ''}. Enter your own domain once it points at the site.`}>
+          {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder={defaultWebsite() || 'https://www.yourshop.com'} value={w.url || ''} onCommit={(url) => updateShop({ website: { ...w, url: url.trim() } })} />}
+        </Field>
+
+        <ul className="divide-y divide-line/70 rounded-[10px] border border-line text-sm">
+          <li className="flex gap-3 px-3 py-2.5">
+            <CalendarCheck size={16} className="mt-0.5 shrink-0 text-accent" />
+            <span className="text-ink-2">
+              <b className="font-medium text-ink">Book a service</b> requests arrive in <Link to="/calendar" className="link">Calendar</Link> with the customer’s preferred day and time of day, ready to confirm.
+            </span>
+          </li>
+          <li className="flex gap-3 px-3 py-2.5">
+            <MessageSquare size={16} className="mt-0.5 shrink-0 text-accent" />
+            <span className="text-ink-2">
+              <b className="font-medium text-ink">Contact and fleet</b> messages arrive in <Link to="/messages" className="link">Messages</Link>; new people are added as customers.
+            </span>
+          </li>
+          <li className="flex gap-3 px-3 py-2.5">
+            <FileCode2 size={16} className="mt-0.5 shrink-0 text-ink-3" />
+            <span className="text-ink-2">
+              Phone, address, hours and pages are edited in the <code className="font-mono text-xs">website/</code> folder — shop details live in <code className="font-mono text-xs">website/business.json</code>; run <code className="font-mono text-xs">node website/scripts/sync.mjs</code> after changing them.
+            </span>
+          </li>
+        </ul>
+        {!cloud && (
+          <p className="text-xs text-warn">
+            Website requests travel through Shop Cloud. Connect it in <Link to="/settings?tab=cloud" className="link">Settings → Shop Cloud</Link> and sign in so they reach this app.
+          </p>
+        )}
+      </div>
+    </Section>
   );
 }

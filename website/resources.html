@@ -1,0 +1,1548 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Car Care Guides &amp; Warning Light Decoder | Clinton Complete Auto Care</title>
+<meta name="description" content="Decode dashboard warning lights, see what maintenance typically comes due by mileage, and get seasonal checklists for your car, mower and snow blower.">
+<meta property="og:title" content="Car Care Guides &amp; Warning Light Decoder | Clinton Complete Auto Care">
+<meta property="og:description" content="Tap a warning light to see what it means, roll the odometer to see what&rsquo;s typically due, and grab seasonal checklists for cars and small engines.">
+<!-- @partial head -->
+<script>document.documentElement.classList.add("js")</script>
+<meta name="theme-color" content="#FAF8F5">
+<meta name="color-scheme" content="light">
+<meta name="form-endpoint" content="">
+<meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
+<meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/site.js" defer></script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"selector_matches":"[target=_blank]"}}]},"eagerness":"moderate"}]}</script>
+<link rel="canonical" href="https://blakew316.github.io/automotive/resources.html">
+<meta property="og:url" content="https://blakew316.github.io/automotive/resources.html">
+<meta property="og:site_name" content="Clinton Complete Auto Care">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<!-- @end head -->
+<!-- @partial jsonld -->
+<script type="application/ld+json" id="business-data">{"@context":"https://schema.org","@type":"AutoRepair","name":"Clinton Complete Auto Care","description":"Complete auto care and small engine repair: maintenance, diagnostics, brakes, engines, A/C, tires and more.","url":"https://blakew316.github.io/automotive/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png","telephone":"+15555550123","email":"service@example.com","address":{"@type":"PostalAddress","streetAddress":"123 Main Street","addressLocality":"Clinton","addressRegion":"ST","postalCode":"00000","addressCountry":"US"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Saturday"],"opens":"08:00","closes":"13:00"}]}</script>
+<!-- @end jsonld -->
+<style>
+  /* Leave room for the sticky header plus the in-page sub-nav when jumping to a section */
+  html { scroll-padding-top: calc(var(--header-h) + 84px); }
+
+  /* Comfortable touch targets for the text links and small buttons on this page */
+  main .link-arrow { min-height: 44px; }
+  .miles-foot .btn-sm { min-height: 44px; }
+
+  /* ---------- Hero: instrument cluster ---------- */
+  .page-hero-art svg.cluster-art { width: min(100%, 460px); }
+  .cluster-art .spd-num { font: 650 11.5px/1 var(--font); letter-spacing: -.01em; fill: var(--ink-2); }
+  .cluster-art .spd-unit { font: 650 8.5px/1 var(--font); letter-spacing: .16em; fill: var(--ink-3); }
+  .cluster-art .odo-text { font: 600 9.5px/1 var(--font-mono); fill: var(--ink-2); }
+  .cluster-art .g-label { font: 700 10px/1 var(--font); fill: var(--ink-3); }
+  .cluster-art .g-icon { color: var(--ink-3); }
+  .cluster-art .g-red { fill: none; stroke: #d9534a; stroke-width: 3; stroke-linecap: round; opacity: .55; }
+  .cluster-art .hub-dot { fill: var(--ink); }
+  .cluster-art .spd-needle path { fill: var(--accent); }
+  .cluster-art .spd-needle { transform-box: view-box; transform-origin: 220px 176px; transform: rotate(-120deg); animation: spd-drive 10s var(--ease-in-out) infinite; }
+  .cluster-art .fuel-needle { transform-box: view-box; transform-origin: 74px 192px; transform: rotate(-60deg); animation: fuel-rise 10s var(--ease) infinite; }
+  .cluster-art .temp-needle { transform-box: view-box; transform-origin: 366px 192px; transform: rotate(-60deg); animation: temp-warm 10s var(--ease-in-out) infinite; }
+  .cluster-art .lamp-off { color: var(--ink-4); opacity: .32; }
+  .cluster-art .lamp-on, .cluster-art .lamp-glow { opacity: 0; animation: lamp-seq 10s linear infinite; animation-delay: calc(var(--i) * .28s); }
+  .cluster-art .lamp-on.is-red { color: #d9534a; }
+  .cluster-art .lamp-on.is-amber { color: #e3a13b; }
+  .cluster-art .turn-off { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; stroke-opacity: .32; }
+  .cluster-art .turn-on { fill: #34a064; opacity: 0; animation: blink-left 10s steps(1, end) infinite; }
+  .cluster-art .turn-glow { opacity: 0; animation: blink-left 10s steps(1, end) infinite; }
+  @keyframes spd-drive {
+    0%, 3% { transform: rotate(-120deg); }
+    15% { transform: rotate(120deg); }
+    27%, 32% { transform: rotate(-120deg); }
+    50% { transform: rotate(-4deg); }
+    58% { transform: rotate(-11deg); }
+    67% { transform: rotate(-2deg); }
+    77% { transform: rotate(-8deg); }
+    86% { transform: rotate(-4deg); }
+    98%, 100% { transform: rotate(-120deg); }
+  }
+  @keyframes fuel-rise { 0%, 4% { transform: rotate(-60deg); } 20%, 92% { transform: rotate(32deg); } 100% { transform: rotate(-60deg); } }
+  @keyframes temp-warm { 0%, 30% { transform: rotate(-60deg); } 72%, 92% { transform: rotate(-4deg); } 100% { transform: rotate(-60deg); } }
+  @keyframes lamp-seq { 0%, 3% { opacity: 0; } 4.5%, 22% { opacity: 1; } 24%, 100% { opacity: 0; } }
+  @keyframes blink-left { 0% { opacity: 0; } 56% { opacity: 1; } 59.5% { opacity: 0; } 63% { opacity: 1; } 66.5% { opacity: 0; } 70% { opacity: 1; } 73.5% { opacity: 0; } 100% { opacity: 0; } }
+  .page-hero-art .note-a { top: 2%; left: 0; }
+  .page-hero-art .note-b { bottom: 4%; right: 0; animation-delay: 1.2s, 2.4s; }
+  @media (prefers-reduced-motion: reduce) {
+    .cluster-art .spd-needle { animation: none; transform: rotate(-28deg); }
+    .cluster-art .fuel-needle { animation: none; transform: rotate(32deg); }
+    .cluster-art .temp-needle { animation: none; transform: rotate(-4deg); }
+    .cluster-art .lamp-on, .cluster-art .lamp-glow, .cluster-art .turn-on, .cluster-art .turn-glow { animation: none; opacity: 0; }
+  }
+
+  /* ---------- In-page sub-nav (sticky pills) ---------- */
+  .subnav {
+    position: sticky; top: var(--header-h); z-index: 40;
+    background: rgba(250, 248, 245, .88);
+    -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+    border-block: 1px solid var(--line);
+  }
+  .subnav .subnav-list {
+    position: relative; list-style: none; margin: 0 calc(var(--gutter) * -1); padding: 9px var(--gutter);
+    display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
+  }
+  .subnav-list::-webkit-scrollbar { display: none; }
+  .subnav-list li { flex: none; }
+  @media (min-width: 1080px) { .subnav-list li:first-child { margin-left: auto; } .subnav-list li:last-child { margin-right: auto; } }
+  @media (max-width: 1079.98px) {
+    /* Fade the edges so it's clear the pill row scrolls sideways */
+    .subnav .subnav-list { -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--gutter), #000 calc(100% - var(--gutter) - 8px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, #000 var(--gutter), #000 calc(100% - var(--gutter) - 8px), transparent 100%); }
+  }
+  .subnav-link {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px;
+    border-radius: var(--pill); border: 1px solid transparent;
+    font-size: .93rem; font-weight: 600; letter-spacing: -0.01em; color: var(--ink-3); text-decoration: none; white-space: nowrap;
+    transition: color var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .subnav-link .icon { width: 1.05em; height: 1.05em; color: var(--accent); }
+  .subnav-link:hover { color: var(--ink); background: rgba(43, 37, 34, .045); }
+  .subnav-link[aria-current="true"] { color: var(--ink); background: var(--paper); border-color: var(--line); box-shadow: var(--shadow-1); }
+  @media (max-width: 639.98px) { .subnav-link { padding: 8px 14px; font-size: .9rem; } }
+
+  /* ---------- Warning light decoder ---------- */
+  .decoder { display: grid; gap: 24px; align-items: start; }
+  .decoder > * { min-width: 0; }
+  @media (min-width: 960px) {
+    .decoder { grid-template-columns: minmax(0, 1.06fr) minmax(0, .94fr); gap: clamp(28px, 1rem + 2vw, 56px); }
+  }
+  .decoder [data-color="red"] { --lamp: #e5483b; }
+  .decoder [data-color="amber"] { --lamp: #f09a12; }
+  .decoder [data-color="green"] { --lamp: #1f9f57; }
+  .decoder [data-color="blue"] { --lamp: #2f80e8; }
+
+  /* A daytime instrument panel: light glass, unlit symbols in warm grey, lit ones glow in their color */
+  .dash {
+    position: relative; isolation: isolate;
+    padding: clamp(12px, .5rem + 1.2vw, 24px); border-radius: var(--r-xl);
+    background: linear-gradient(180deg, var(--paper) 0%, var(--stone-50) 100%);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-2), inset 0 1px 0 #fff;
+    color: var(--ink);
+  }
+  .dash::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; background: radial-gradient(90% 46% at 50% 0%, rgba(223, 229, 253, .6), transparent 72%); pointer-events: none; }
+  .dash-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 2px 6px 14px; font-size: .74rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-4); }
+  .dash-ign { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-3); }
+  .dash-ign::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #34a064; box-shadow: 0 0 0 3px rgba(52, 160, 100, .16), 0 0 8px rgba(52, 160, 100, .55); }
+  .dash-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: clamp(6px, .2rem + .5vw, 10px); }
+  .lamp {
+    --lamp: #f09a12;
+    position: relative; display: grid; justify-items: center; align-content: center; gap: 7px;
+    min-height: clamp(84px, 3.5rem + 3vw, 104px); padding: 12px 3px 10px; border-radius: 16px;
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, var(--paper), #fbfaf8);
+    box-shadow: var(--shadow-1);
+    color: #bdb3aa;
+    transition: color .25s var(--ease), border-color .25s var(--ease), background-color .25s var(--ease), box-shadow .25s var(--ease), transform var(--dur-1) var(--ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .lamp svg { width: clamp(30px, 1.2rem + 1.5vw, 46px); height: auto; aspect-ratio: 1; overflow: visible; transition: filter .3s var(--ease); }
+  .lamp-label { max-width: 100%; font-size: .74rem; font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink-3); text-align: center; overflow-wrap: anywhere; transition: color .25s var(--ease); }
+  .lamp:hover { color: var(--ink-4); border-color: var(--line-strong); }
+  .lamp:active { transform: scale(.96); }
+  .lamp:focus-visible { border-radius: 16px; }
+  .lamp[aria-pressed="true"] {
+    color: var(--lamp);
+    border-color: color-mix(in srgb, var(--lamp) 42%, var(--line));
+    background: radial-gradient(90% 72% at 50% 34%, color-mix(in srgb, var(--lamp) 15%, transparent), transparent 74%), var(--paper);
+    box-shadow: 0 12px 24px -16px color-mix(in srgb, var(--lamp) 80%, transparent), var(--shadow-1);
+  }
+  .lamp[aria-pressed="true"] svg { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--lamp) 50%, transparent)); animation: lamp-flicker .5s linear; }
+  .lamp[aria-pressed="true"] .lamp-label, .lamp.is-check .lamp-label { color: var(--ink); }
+  .lamp.is-check { color: var(--lamp); }
+  .lamp.is-check svg { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--lamp) 50%, transparent)); }
+  .dash-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 18px; margin-top: 16px; padding: 16px 6px 2px; border-top: 1px solid var(--line); }
+  .dash-foot p { flex: 1 1 220px; font-size: .84rem; line-height: 1.4; color: var(--ink-3); }
+  .dash-check {
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border-radius: var(--pill);
+    border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink);
+    font-size: .9rem; font-weight: 600; letter-spacing: -0.01em; box-shadow: var(--shadow-1);
+    transition: background-color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .dash-check .icon { color: #e0900f; }
+  .dash-check:hover { border-color: var(--ink-4); }
+  .dash-check:active { transform: scale(.97); }
+  .dash-check[aria-disabled="true"] { opacity: .6; }
+  @keyframes lamp-flicker { 0% { opacity: .2; } 20% { opacity: 1; } 32% { opacity: .45; } 48%, 100% { opacity: 1; } }
+  .dash-divider { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; margin: 6px 4px 0; font-size: .7rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-4); }
+  .dash-divider::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .dash .dash-legend { grid-column: span 2; list-style: none; margin: 0; padding: 6px 8px; display: grid; align-content: center; gap: 7px; font-size: .74rem; line-height: 1.2; color: var(--ink-3); }
+  .dash-legend li { display: flex; align-items: center; gap: 8px; }
+  .dash-legend .dots { flex: none; display: inline-flex; gap: 3px; }
+  .dash-legend li:not(:last-child) .dot { margin-right: 12px; }
+  .dash-legend .dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 16%, transparent), 0 0 6px color-mix(in srgb, var(--c) 60%, transparent); }
+
+  .lamp-detail { padding: clamp(20px, 1rem + 1vw, 30px); border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2); }
+  .ld-head { display: flex; align-items: center; gap: 16px; }
+  .ld-lamp {
+    flex: none; display: grid; place-items: center; width: 68px; height: 68px; border-radius: 20px;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--lamp) 18%, transparent), transparent), linear-gradient(180deg, var(--paper), var(--stone-50));
+    border: 1px solid color-mix(in srgb, var(--lamp) 30%, var(--line));
+    color: var(--lamp); box-shadow: var(--shadow-1);
+    transition: border-color .3s var(--ease);
+  }
+  .ld-lamp svg { width: 40px; height: 40px; overflow: visible; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--lamp) 50%, transparent)); }
+  .ld-lamp.is-on svg { animation: lamp-flicker .5s linear; }
+  .ld-sev { display: inline-flex; align-items: center; gap: 8px; font-size: .78rem; font-weight: 650; letter-spacing: .02em; line-height: 1.25; color: var(--ink-3); }
+  .ld-sev::before { content: ""; flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--sev); box-shadow: 0 0 0 3px color-mix(in srgb, var(--sev) 18%, transparent); }
+  .ld-live[data-level="red"] { --sev: #d9534a; --sev-ink: var(--stop); }
+  .ld-live[data-level="amber"] { --sev: var(--warn-light); --sev-ink: var(--warn); }
+  .ld-live[data-level="info"] { --sev: #34a064; --sev-ink: var(--ok); }
+  .ld-live .ld-sev { color: var(--sev-ink); }
+  .ld-name { margin-top: 4px; font-size: clamp(1.35rem, 1.1rem + .8vw, 1.7rem); }
+  .sev-meter { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 20px; }
+  .sev-meter span { display: grid; gap: 7px; font-size: .74rem; font-weight: 600; color: var(--ink-4); }
+  .sev-meter span::before { content: ""; height: 6px; border-radius: 3px; background: var(--stone-200); transition: background-color .4s var(--ease), box-shadow .4s var(--ease); }
+  .sev-meter[data-level="info"] [data-l="info"], .sev-meter[data-level="amber"] [data-l="amber"], .sev-meter[data-level="red"] [data-l="red"] { color: var(--ink); }
+  .sev-meter[data-level="info"] [data-l="info"]::before { background: #34a064; }
+  .sev-meter[data-level="amber"] [data-l="amber"]::before { background: var(--warn-light); }
+  .sev-meter[data-level="red"] [data-l="red"]::before { background: #d9534a; }
+  .ld-live h4 { margin-top: 20px; font-size: .76rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+  .ld-live h4 + p { margin-top: 6px; color: var(--ink-2); }
+  .ld-flag { margin-top: 18px; font-size: .95rem; }
+  .ld-flag[hidden] { display: none; }
+  .ld-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .ld-actions .btn { min-height: 44px; }
+  .ld-note { display: flex; gap: 10px; align-items: flex-start; margin-top: 16px; font-size: .86rem; color: var(--ink-3); }
+  .ld-note .icon { color: var(--accent); margin-top: 1px; }
+
+  .lamp-jump {
+    position: fixed; z-index: 45; left: 50%; bottom: calc(var(--tabbar-h) + 14px);
+    display: inline-flex; align-items: center; gap: 8px; min-height: 44px; max-width: calc(100vw - 32px); padding: 10px 18px;
+    border-radius: var(--pill); background: var(--ink); color: var(--ivory); text-decoration: none;
+    font-size: .92rem; font-weight: 600; white-space: nowrap; box-shadow: var(--shadow-3);
+    transform: translateX(-50%); animation: jump-in .4s var(--spring) both;
+  }
+  .lamp-jump span { overflow: hidden; text-overflow: ellipsis; }
+  .lamp-jump .icon { width: 1.1em; height: 1.1em; }
+  .lamp-jump[hidden] { display: none; }
+  @keyframes jump-in { from { opacity: 0; transform: translate(-50%, 16px) scale(.94); } }
+  @media (min-width: 960px) { .lamp-jump { display: none !important; } }
+
+  @media (max-width: 639.98px) {
+    .lamp { min-height: 84px; padding: 10px 2px 8px; border-radius: 14px; gap: 6px; }
+    .lamp-label { font-size: .68rem; }
+    .dash .dash-legend { font-size: .7rem; padding: 4px; }
+  }
+
+  /* ---------- Maintenance by the mile ---------- */
+  .miles-card { padding: 0; overflow: hidden; }
+  .miles-pad { padding-inline: clamp(18px, .8rem + 1.6vw, 36px); }
+  .miles-top { display: grid; gap: 18px 36px; align-items: center; padding-block: clamp(22px, 1rem + 1.4vw, 36px) 8px; background: linear-gradient(180deg, var(--stone-50), var(--paper)); }
+  @media (min-width: 760px) { .miles-top { grid-template-columns: auto minmax(0, 1fr); } }
+  .odo-block { display: grid; gap: 10px; justify-items: start; }
+  .odo-caption { display: inline-flex; align-items: center; gap: 8px; font-size: .74rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+  .odo-caption .icon { color: var(--accent); }
+  .mile-odo { font-size: clamp(1.75rem, 1rem + 2.4vw, 2.5rem); }
+  .mile-odo .odo-strip { transition-duration: 1.3s; }
+  .mile-odo .is-tenth .odo-strip { transition: none; animation: odo-tenth 12s linear infinite; }
+  @keyframes odo-tenth { to { transform: translateY(calc(-1.28em * 10)); } }
+  .odo-unit { align-self: center; padding: 0 6px 0 7px; font-family: var(--font); font-size: .4em; font-weight: 650; letter-spacing: .04em; color: var(--stone-300); }
+  .odo-fallback { padding: 0 8px; }
+  .miles-heading h3 { margin-top: 10px; font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); }
+  .miles-heading p:last-child { margin-top: 6px; color: var(--ink-3); }
+  .miles-track { --pos: .4167; position: relative; height: 40px; margin-top: 14px; }
+  .miles-track-inner { position: relative; height: 100%; }
+  .miles-road { position: absolute; left: 0; right: 0; bottom: 6px; height: 10px; border-radius: 6px; background: var(--stone-200); overflow: hidden; }
+  .miles-road::before { content: ""; position: absolute; inset: 0; transform-origin: left center; transform: scaleX(var(--pos)); background: linear-gradient(90deg, var(--accent), var(--accent-2)); transition: transform 1.2s var(--ease); }
+  .miles-road::after { content: ""; position: absolute; left: 0; right: 0; top: 4px; height: 2px; background: repeating-linear-gradient(90deg, rgba(255, 255, 255, .95) 0 14px, transparent 14px 28px); }
+  .miles-stop { position: absolute; bottom: 5px; left: calc(var(--x) * 100%); width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; background: var(--paper); border: 2px solid var(--stone-300); transition: border-color .4s var(--ease), transform .4s var(--spring); }
+  .miles-stop.is-reached { border-color: var(--accent); }
+  .miles-stop.is-here { transform: scale(1.25); border-color: var(--ink); }
+  .miles-car { position: absolute; bottom: 15px; left: calc(var(--pos) * 100%); width: 42px; height: 19px; margin-left: -21px; color: var(--ink); transition: left 1.2s var(--ease); }
+  .miles-picker { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; padding-block: 12px clamp(22px, 1rem + 1.4vw, 32px); }
+  @media (max-width: 639.98px) { .miles-picker { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .mile-btn {
+    display: grid; justify-items: center; align-content: center; gap: 2px; min-height: 56px; padding: 8px 4px;
+    border-radius: 15px; border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink-2);
+    font-size: .98rem; font-weight: 650; letter-spacing: -0.015em; line-height: 1.1; font-variant-numeric: tabular-nums;
+    transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), transform var(--dur-1) var(--ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .mile-btn small { font-size: .72rem; font-weight: 550; letter-spacing: 0; color: var(--ink-4); }
+  .mile-btn:hover { border-color: var(--ink-4); transform: translateY(-1px); }
+  .mile-btn:active { transform: scale(.97); }
+  .mile-btn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--ivory); box-shadow: 0 10px 22px -12px rgba(43, 37, 34, .65); }
+  .mile-btn[aria-pressed="true"] small { color: rgba(250, 248, 245, .62); }
+  .miles-body { display: grid; gap: 24px; padding-block: clamp(22px, 1rem + 1.4vw, 34px); border-top: 1px solid var(--line); }
+  .miles-list { grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px 32px; }
+  .miles-list li { animation: rise-in .5s var(--ease) both; animation-delay: calc(var(--i, 0) * 45ms); }
+  .miles-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 28px; padding-top: 20px; border-top: 1px dashed var(--line-strong); }
+  .miles-note { display: flex; gap: 10px; align-items: flex-start; max-width: 46em; font-size: .9rem; color: var(--ink-3); }
+  .miles-note strong { color: var(--ink-2); font-weight: 620; }
+  .miles-note .icon { color: var(--accent); margin-top: 2px; }
+
+  /* ---------- Seasonal checklists ---------- */
+  .season-tabs { display: grid; justify-items: center; }
+  .season-tabs .tabs-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); width: min(100%, 560px); }
+  .season-tabs [role="tab"] { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding-inline: 12px; }
+  .season-tabs [role="tab"] .icon { width: 1.1em; height: 1.1em; color: var(--accent); }
+  .tab-now { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  @media (max-width: 479.98px) { .season-tabs [role="tab"] .icon { display: none; } .season-tabs [role="tab"] { padding-inline: 6px; font-size: .9rem; } }
+  .season-tabs [role="tabpanel"] { width: 100%; }
+  .season-tabs [role="tabpanel"]:focus-visible { outline-offset: 6px; border-radius: var(--r-lg); }
+  .season-grid { display: grid; gap: clamp(14px, .8rem + .6vw, 24px); grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); }
+  .season-card-head { display: flex; align-items: center; gap: 14px; margin-bottom: 20px; }
+  .season-card-head h3 { font-size: 1.2rem; }
+  .season-card-head p { font-size: .92rem; color: var(--ink-3); }
+  .season-card .checklist { gap: 13px; }
+  .season-foot { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px 24px; margin-top: 28px; }
+
+  /* ---------- Small engine storage ---------- */
+  .storage { display: grid; gap: clamp(32px, 2rem + 2vw, 64px); }
+  .storage > * { min-width: 0; }
+  @media (min-width: 960px) { .storage { grid-template-columns: .86fr 1.14fr; align-items: start; } }
+  @media (min-width: 960px) and (min-height: 880px) { .storage-head { position: sticky; top: calc(var(--header-h) + 96px); } }
+  .storage-head .lead { margin-top: 16px; }
+  .storage-head .eyebrow { margin-bottom: 14px; }
+  .can-art { width: min(100%, 320px); height: auto; margin-top: 22px; overflow: visible; }
+  .can-art .drop { fill: var(--accent); opacity: 0; animation: drip 2.6s var(--ease-in-out) infinite; }
+  .can-art .drop.d2 { animation-delay: 1.3s; }
+  .can-art .bottle { transform-box: view-box; transform-origin: 102px 56px; animation: pour 5.2s var(--ease-in-out) infinite; }
+  @keyframes drip { 0%, 10% { opacity: 0; transform: translate(0, 0); } 18% { opacity: 1; } 70% { opacity: 1; transform: translate(10px, 19px); } 80%, 100% { opacity: 0; transform: translate(11px, 21px); } }
+  @media (max-width: 639.98px) { .can-art { display: none; } }
+  @media (min-width: 640px) and (max-width: 959.98px) {
+    .storage-head { display: grid; grid-template-columns: minmax(0, 1fr) clamp(200px, 30vw, 260px); column-gap: clamp(24px, 4vw, 48px); align-items: start; }
+    .storage-head > * { grid-column: 1 / -1; }
+    .storage-head > .eyebrow, .storage-head > h2, .storage-head > .lead { grid-column: 1; }
+    .storage-head > .eyebrow { justify-self: start; }
+    .storage-head .can-art { grid-column: 2; grid-row: 1 / span 3; align-self: center; width: 100%; margin-top: 0; }
+    .tips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @keyframes pour { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-4deg); } }
+  .tips { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
+  .tip { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start; padding: clamp(18px, .8rem + .8vw, 24px); border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); }
+  .tip h3 { font-size: 1.1rem; }
+  .tip p { margin-top: 6px; color: var(--ink-3); font-size: .97rem; }
+  .tip:hover .icon-tile { transform: rotate(-6deg); background: var(--foil); }
+  @media (max-width: 959.98px) {
+    /* Phones and the 2-up tablet grid: icon sits beside the title and the copy uses the full card width */
+    .tip { gap: 10px 14px; align-items: center; align-content: start; padding: 16px 18px; }
+    .tip > div { display: contents; }
+    .tip .icon-tile { width: 40px; height: 40px; border-radius: 12px; }
+    .tip .icon-tile .icon { width: 20px; height: 20px; }
+    .tip p { grid-column: 1 / -1; margin-top: 0; }
+  }
+
+  /* ---------- Call us right away ---------- */
+  .urgent {
+    position: relative; display: grid; gap: clamp(28px, 1.5rem + 2vw, 56px);
+    padding: clamp(24px, 1rem + 2.6vw, 56px); border-radius: var(--r-xl);
+    background: linear-gradient(150deg, color-mix(in srgb, var(--warn-soft) 40%, var(--paper)) 10%, var(--warn-soft) 100%); border: 1px solid rgba(154, 93, 18, .14); overflow: hidden;
+  }
+  .urgent::after { content: ""; position: absolute; right: -12%; top: -40%; width: 55%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, .55), transparent); pointer-events: none; }
+  .urgent > * { position: relative; z-index: 1; min-width: 0; }
+  @media (min-width: 960px) { .urgent { grid-template-columns: .9fr 1.1fr; align-items: start; } }
+  .urgent .eyebrow { color: var(--warn); margin-top: 18px; }
+  .urgent h2 { margin-top: 12px; font-size: clamp(1.9rem, 1.25rem + 2vw, 2.75rem); }
+  .urgent .lead { margin-top: 16px; }
+  .hazard { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 15px; background: var(--paper); color: #d9534a; box-shadow: inset 0 0 0 1px rgba(154, 93, 18, .16), var(--shadow-1); }
+  .hazard svg { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linejoin: round; animation: hazard 1.2s steps(1, end) infinite; }
+  @keyframes hazard { 0% { color: #d9534a; filter: drop-shadow(0 0 5px rgba(217, 83, 74, .55)); } 50% { color: var(--ink-4); filter: none; } }
+  .urgent-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  @media (max-width: 479.98px) { .urgent-actions .btn { flex: 1 1 100%; } }
+  .urgent-911 { display: flex; gap: 10px; align-items: flex-start; margin-top: 20px; font-size: .9rem; color: var(--ink-2); }
+  .urgent-911 .icon { color: var(--warn); margin-top: 2px; }
+  .urgent .signal-list li { border-color: rgba(154, 93, 18, .12); }
+  @media (max-width: 639.98px) { .urgent .signal-list { gap: 8px; } .urgent .signal-list li { padding: 11px 14px; font-size: .95rem; line-height: 1.4; } .urgent .signal-list li::before { margin-top: 6px; } }
+</style>
+</head>
+<body data-page="resources" id="top">
+<!-- @partial icons -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-brake" viewBox="0 0 24 24"><circle cx="11" cy="13" r="8"/><circle cx="11" cy="13" r="2.4"/><path d="M11 6.9v.6M17.1 13h-.6M11 19.1v-.6M4.9 13h.6"/><path d="M15.4 3.7a9.6 9.6 0 0 1 4.9 4.9" stroke-width="3.2"/></symbol>
+  <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3.5c3 3.6 5.5 6.6 5.5 9.6a5.5 5.5 0 0 1-11 0c0-3 2.5-6 5.5-9.6z"/><path d="M9.4 14a2.6 2.6 0 0 0 2.6 2.6"/></symbol>
+  <symbol id="i-diagnostics" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M6.5 12.5l2.4-3 2.5 2.2 3-4.2 3.1 3.6"/><path d="M8.5 20.5h7M12 17v3.5"/></symbol>
+  <symbol id="i-engine" viewBox="0 0 24 24"><path d="M9.5 5.5h5M12 5.5v2.5"/><path d="M6 10.5V9a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l1.8 1.8h1.8a1 1 0 0 1 1 1v1.4h1v4h-1v1.3a1 1 0 0 1-1 1h-2.8L14.9 20H8.6l-2.6-2.6"/><path d="M6 10.5H4.5v7H6zM4.5 14H2.5M2.5 12v4"/></symbol>
+  <symbol id="i-transmission" viewBox="0 0 24 24"><circle cx="5" cy="5" r="1.7"/><circle cx="12" cy="5" r="1.7"/><circle cx="19" cy="5" r="1.7"/><circle cx="5" cy="19" r="1.7"/><circle cx="12" cy="19" r="1.7"/><path d="M5 6.7v10.6M12 6.7v10.6M19 6.7V12H5"/></symbol>
+  <symbol id="i-ac" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.6 4.4 12 6.3l2.4-1.9M9.6 19.6 12 17.7l2.4 1.9M4.4 10.6l2.8-1.2-.4-3M17.2 17.6l-.4-3 2.8-1.2M4.4 13.4l2.8 1.2-.4 3M17.2 6.4l-.4 3 2.8 1.2"/></symbol>
+  <symbol id="i-tire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+  <symbol id="i-suspension" viewBox="0 0 24 24"><path d="M12 2.5v2.5M12 19v2.5"/><path d="M8 5h8M8 19h8"/><path d="M8.5 5l7 2.3-7 2.3 7 2.4-7 2.3 7 2.4-7 .3"/></symbol>
+  <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12.5" rx="2.2"/><path d="M6.5 7V5h3v2M14.5 7V5h3v2"/><path d="M6.5 13.2h3.2M8.1 11.6v3.2M14.3 13.2h3.2"/></symbol>
+  <symbol id="i-mower" viewBox="0 0 24 24"><path d="M20.5 3.5l-5.2 8.5"/><path d="M4 12h11.8l1.7 3.8H3z"/><path d="M6 12V9.6h6.5l1 2.4"/><circle cx="6.5" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></symbol>
+  <symbol id="i-inspection" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2.2"/><path d="M9 4.5V3.2h6v1.3"/><path d="M8.6 12.6l2.3 2.3 4.6-4.8"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.2 3.8h3l1.6 4.1-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4.1 1.6v3a2 2 0 0 1-2.1 2A14.8 14.8 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2 2 4-4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.3V12l3.1 2"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7.2 12 13l8.2-5.8"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.6 2.6 5-5.2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 3.5a4.6 4.6 0 0 0-4.3 6L3.9 16.3a2 2 0 0 0 2.8 2.8l6.8-6.8a4.6 4.6 0 0 0 6-4.4c0-.5 0-.9-.2-1.3l-2.5 2.5-2.5-.6-.6-2.5 2.5-2.5c-.4-.1-.8-.1-1.2-.1z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.4c0 4.4-3 7.9-7 9.6-4-1.7-7-5.2-7-9.6V6z"/><path d="M8.8 12.1l2.2 2.2 4.3-4.4"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M2.5 15.6v-2.8a1.5 1.5 0 0 1 1-1.4l2.3-.8 2.4-3.3a2 2 0 0 1 1.6-.8h4.8a2 2 0 0 1 1.5.7l3 3.6 1.9.5a1.5 1.5 0 0 1 1.1 1.5v2.8"/><path d="M2.5 15.6h2.2M9.3 15.6h5.4M19.3 15.6h2.2"/><circle cx="7" cy="16" r="2.3"/><circle cx="17" cy="16" r="2.3"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 15.8V9.6a1 1 0 0 1 1-1h3.2l1.8-2.8h4.3a1 1 0 0 1 1 1v2.8h5.1a1.6 1.6 0 0 1 1.5 1.1l1.1 3.2v1.9"/><path d="M2.5 15.8h2M9 15.8h6M19.5 15.8h2"/><path d="M6.7 8.6h6.9"/><circle cx="6.8" cy="16.2" r="2.2"/><circle cx="17.2" cy="16.2" r="2.2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M6 9.6V20h12V9.6"/><path d="M10 20v-5.2h4V20"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 17h-9.5l-4.8 3.6V17H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 5z"/><path d="M7.5 10h9M7.5 13h5.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.4 2.9 17.3a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.5M12 17v.3"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24"><path d="M6.5 3h7.8l4.2 4.2V21h-12z"/><path d="M14 3v4.5h4.5M9.2 12h5.6M9.2 15.8h5.6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.5a1 1 0 0 1 1-1h7.8l8.2 8.2a1.5 1.5 0 0 1 0 2.1l-6.2 6.2a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7.5 4.5 3.5 4.5v14c4 0 6.5.5 8.5 2 2-1.5 4.5-2 8.5-2v-14c-4 0-6.5.5-8.5 2z"/><path d="M12 6.5v14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17.5 14.6c1.8.7 3 2.4 3.5 4.9"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.8-2.5 2.3-2.5 3.9M12 17v.3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.4 17.5a8.6 8.6 0 1 1 15.2 0"/><path d="M12 13.5l4.2-4.2"/><circle cx="12" cy="13.5" r="1.3"/><path d="M6.8 9.6l.9.6M12 6.4v1.1M17.2 9.6l-.9.6"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7.2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></symbol>
+  <symbol id="i-steering" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M3.3 10.6c3.1.6 5.6.8 6.6 1.1M20.7 10.6c-3.1.6-5.6.8-6.6 1.1M12 14.2V21"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M5.5 18.5l1.4-1.4M17.1 6.9l1.4-1.4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13.5 14.5-14-.3 9.6-5.8 14.5-13.2 14.5"/><path d="M5 19c3-4 6-6.5 9.5-8.5"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15.5a4.5 4.5 0 0 1-.4-9 5.5 5.5 0 0 1 10.6 1.4A3.8 3.8 0 0 1 17 15.5z"/><path d="M8.5 18.2l-.8 2M12.5 18.2l-.8 2M16.5 18.2l-.8 2"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9.2 14.2v-2.5a1 1 0 0 1 1-1h5M13.5 8.7l2 2-2 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2.5 8.5 6 6.5l3.2 1.2M21.5 8.5 18 6.5l-4.8 1.6-3.3 2.7a1.3 1.3 0 0 0 1.6 2l2.4-1.6 4.3 3.9"/><path d="M2.5 14.2l2 .1 4.8 4a1.4 1.4 0 0 0 2-1.9M8 15.5l2.8 2.3a1.4 1.4 0 0 0 2-1.9M11.6 13.4l3 2.6a1.4 1.4 0 0 0 1.9-2M21.5 14.2h-3.3"/></symbol>
+  <symbol id="i-fuel" viewBox="0 0 24 24"><path d="M4.5 20.5V5.5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20.5h13M4.5 10.5h10"/><path d="M14.5 8.5l3 .1 1.5 1.6v7.3a1.3 1.3 0 0 0 2.6 0V9.5L19 6.8"/></symbol>
+  <symbol id="i-car-mini" viewBox="0 0 32 14"><path d="M2 10.8V8.6c0-.6.4-1.1 1-1.3l4-1.2L10.4 2.7c.4-.4 1-.7 1.6-.7h7.3c.6 0 1.2.3 1.6.7L24 6.1l4.8.9c.7.1 1.2.7 1.2 1.4v2.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--ivory, #faf8f5)" stroke-width="1.2"/><circle cx="23.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--ivory, #faf8f5)" stroke-width="1.2"/></symbol>
+</svg>
+<!-- @end icons -->
+<!-- @partial header -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="Clinton Complete Auto Care home">
+      <span class="brand-badge"><img src="assets/img/logo-mark-white.webp" alt="" width="480" height="207" decoding="async"></span>
+      <span class="brand-text" aria-hidden="true"><span class="brand-line1">Complete Auto Care</span><span class="brand-line2">&amp; Small Engine Repair</span></span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li><a class="nav-link" href="index.html" data-nav="home">Home</a></li>
+        <li class="has-menu" data-menu>
+          <a class="nav-link" href="services.html" data-nav="services">Services</a>
+          <button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega-services" aria-label="Show all services"><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+          <div class="mega" id="mega-services">
+            <div class="mega-grid">
+              <a class="mega-item" href="services/brakes.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-brake"/></svg></span><span class="mega-text"><strong>Brakes</strong><small>Pads, rotors, fluid &amp; ABS</small></span></a>
+              <a class="mega-item" href="services/oil-change.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg></span><span class="mega-text"><strong>Oil &amp; Maintenance</strong><small>Oil, filters, fluids &amp; factory service</small></span></a>
+              <a class="mega-item" href="services/diagnostics.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span><span class="mega-text"><strong>Diagnostics</strong><small>Warning lights &amp; drivability</small></span></a>
+              <a class="mega-item" href="services/engine-repair.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-engine"/></svg></span><span class="mega-text"><strong>Engine &amp; Cooling</strong><small>Gaskets, timing, radiators &amp; more</small></span></a>
+              <a class="mega-item" href="services/transmission.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-transmission"/></svg></span><span class="mega-text"><strong>Transmission</strong><small>Fluid service, clutches &amp; axles</small></span></a>
+              <a class="mega-item" href="services/heating-ac.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-ac"/></svg></span><span class="mega-text"><strong>A/C &amp; Heating</strong><small>Recharge, leaks, blower &amp; heater</small></span></a>
+              <a class="mega-item" href="services/tires-alignment.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg></span><span class="mega-text"><strong>Tires &amp; Alignment</strong><small>Mount, balance, rotate &amp; align</small></span></a>
+              <a class="mega-item" href="services/suspension-steering.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-suspension"/></svg></span><span class="mega-text"><strong>Suspension &amp; Steering</strong><small>Shocks, struts &amp; steering</small></span></a>
+              <a class="mega-item" href="services/electrical-battery.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-battery"/></svg></span><span class="mega-text"><strong>Battery &amp; Electrical</strong><small>Batteries, alternators &amp; wiring</small></span></a>
+              <a class="mega-item" href="services/inspections.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="mega-text"><strong>Inspections</strong><small>Pre-purchase &amp; road-trip checks</small></span></a>
+              <a class="mega-item" href="services/small-engine-repair.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span><span class="mega-text"><strong>Small Engine Repair</strong><small>Mowers, generators &amp; power equipment</small></span></a>
+            </div>
+            <div class="mega-foot">
+              <p class="mega-note"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg> Not sure what you need? Describe the symptom and we&rsquo;ll diagnose it.</p>
+              <div class="mega-actions">
+                <a class="link-arrow" href="services.html">All services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                <a class="btn btn-primary btn-sm" href="appointment.html">Book a service</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="services/small-engine-repair.html" data-nav="small-engine">Small Engine</a></li>
+        <li><a class="nav-link" href="about.html" data-nav="about">About</a></li>
+        <li><a class="nav-link" href="fleet.html" data-nav="fleet">Fleet</a></li>
+        <li><a class="nav-link is-active" href="resources.html" data-nav="resources" aria-current="page"><span class="nav-pill" aria-hidden="true"></span>Car Care</a></li>
+        <li><a class="nav-link" href="contact.html" data-nav="contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-call" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span class="visually-hidden">Call </span><span class="header-call-num">(555) 555-0123</span></a>
+      <a class="btn btn-primary btn-sm header-book" href="appointment.html" data-nav="appointment">Book Service</a>
+    </div>
+  </div>
+  <div class="road-progress" aria-hidden="true"><span class="road-progress-lane"></span><svg class="road-progress-car"><use href="#i-car-mini"/></svg></div>
+</header>
+<!-- @end header -->
+
+<main id="main">
+
+  <!-- Warning-light symbols used by the hero cluster and the decoder -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="wl-engine" viewBox="0 0 48 48"><path fill="currentColor" d="M14 15h6v-3h-4V8.5h14V12h-4v3h7l3 3h3v-3.5h4v20h-4V31h-3v5l-4 4H18l-4-4v-3.5H9.5V37H5.5V20h4v4.5H14z"/></symbol>
+    <symbol id="wl-oil" viewBox="0 0 48 48"><path fill="currentColor" d="M12 19.5h6v-3.2h-4v-3.6h12.5v3.6h-4v3.2h8l4.6 3.8 9.4-5.1 1.9 2.6-13.3 14H12z"/><path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" d="M12 22.5H5.8v6.4l6.2 2.8"/><path fill="currentColor" d="M41.8 28.2s-2.9 3.7-2.9 5.6a2.9 2.9 0 0 0 5.8 0c0-1.9-2.9-5.6-2.9-5.6z"/></symbol>
+    <symbol id="wl-battery" viewBox="0 0 48 48"><path fill="currentColor" fill-rule="evenodd" d="M11 10h7v4h12v-4h7v4h4a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V16a2 2 0 0 1 2-2h4zM11 23.5v3h8v-3zM29 23.5v3h2.5V29h3v-2.5H37v-3h-2.5V21h-3v2.5z"/></symbol>
+    <symbol id="wl-temp" viewBox="0 0 48 48"><path fill="currentColor" d="M21.8 7.5a2.2 2.2 0 0 1 4.4 0v18.2a5.4 5.4 0 1 1-4.4 0z"/><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M28.5 10.5h5M28.5 15.5h5M28.5 20.5h5M6.5 39c2.9-2.6 5.8-2.6 8.7 0s5.8 2.6 8.7 0 5.8-2.6 8.7 0 5.8 2.6 8.7 0M6.5 44c2.9-2.6 5.8-2.6 8.7 0s5.8 2.6 8.7 0 5.8-2.6 8.7 0 5.8 2.6 8.7 0"/></symbol>
+    <symbol id="wl-brake" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="24" cy="24" r="12"/><path d="M10.2 12.5a18 18 0 0 0 0 23M37.8 12.5a18 18 0 0 1 0 23"/></g><rect x="22.4" y="16.5" width="3.2" height="10" rx="1.6" fill="currentColor"/><circle cx="24" cy="30.4" r="2" fill="currentColor"/></symbol>
+    <symbol id="wl-abs" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="24" cy="24" r="12"/><path d="M10.2 12.5a18 18 0 0 0 0 23M37.8 12.5a18 18 0 0 1 0 23"/></g><text x="24" y="27.6" text-anchor="middle" fill="currentColor" font-family="-apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="9.6" font-weight="800" letter-spacing="-.3">ABS</text></symbol>
+    <symbol id="wl-tpms" viewBox="0 0 48 48"><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M14.5 9.5C8.8 17 8.6 28.6 13.5 36.5h21c4.9-7.9 4.7-19.5-1-27M16.5 36.5v4M21.5 36.5v4M26.5 36.5v4M31.5 36.5v4"/><rect x="22.4" y="14" width="3.2" height="12" rx="1.6" fill="currentColor"/><circle cx="24" cy="30.6" r="2" fill="currentColor"/></symbol>
+    <symbol id="wl-airbag" viewBox="0 0 48 48"><circle cx="15.5" cy="9.5" r="4.3" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="5.6" stroke-linecap="round" stroke-linejoin="round" d="M15 18.5l2.4 11h11.4l2.6 10.5"/><path fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" d="M17 21.5l7 3.5"/><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M8.5 16.5l2.8 17.5h6"/><circle cx="33.5" cy="17.5" r="8" fill="currentColor"/></symbol>
+    <symbol id="wl-traction" viewBox="0 0 48 48"><path fill="currentColor" fill-rule="evenodd" d="M14.6 9.5h18.8a2 2 0 0 1 1.9 1.4l2.4 8.1H39a2 2 0 0 1 2 2V29a1 1 0 0 1-1 1h-2v3a1 1 0 0 1-1 1h-3.5a1 1 0 0 1-1-1v-3h-17v3a1 1 0 0 1-1 1H11a1 1 0 0 1-1-1v-3H8a1 1 0 0 1-1-1v-7.9a2 2 0 0 1 2-2h1.3l2.4-8.1a2 2 0 0 1 1.9-1.4zM15.9 12.8l-1.8 6.2h19.8l-1.8-6.2zM11 22.5v3h4.5v-3zM32.5 22.5v3H37v-3z"/><path fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" d="M15.5 36c-4.2 2.7 3.8 4.9-1 8.8M33.5 36c-4.2 2.7 3.8 4.9-1 8.8"/></symbol>
+    <symbol id="wl-steering" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="20.5" cy="24" r="13.5"/><path d="M7.5 21.2c4.6 1 8.4 1.7 10.4 2.3M33.5 21.2c-4.6 1-8.4 1.7-10.4 2.3M20.5 28.5v9"/></g><circle cx="20.5" cy="24.8" r="3.4" fill="currentColor"/><rect x="39.4" y="13" width="3.2" height="13" rx="1.6" fill="currentColor"/><circle cx="41" cy="31" r="2" fill="currentColor"/></symbol>
+    <symbol id="wl-fuel" viewBox="0 0 48 48"><path fill="currentColor" fill-rule="evenodd" d="M11.5 7.5h15a2 2 0 0 1 2 2v28H9.5v-28a2 2 0 0 1 2-2zM13.5 11.5v8h11v-8zM7 38.5h24v3.5H7z"/><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M28.5 20.5h3.2a2.3 2.3 0 0 1 2.3 2.3v10.4a2.5 2.5 0 0 0 5 0V17l-4.3-5.2"/></symbol>
+    <symbol id="wl-wrench" viewBox="0 0 48 48"><path fill="currentColor" d="M31.2 6.5a9.2 9.2 0 0 0-8.9 11.7L8.4 32.1a4 4 0 1 0 5.6 5.6l13.9-13.9a9.2 9.2 0 0 0 11.8-8.8c0-1-.1-1.8-.4-2.6l-5 5-5-1.2-1.2-5 5-5c-.8-.3-1.7-.4-2.6-.4z"/></symbol>
+    <symbol id="wl-highbeam" viewBox="0 0 48 48"><path fill="currentColor" d="M26 11.5c8.6 0 14.5 5.4 14.5 12.5S34.6 36.5 26 36.5a2 2 0 0 1-2-2v-21a2 2 0 0 1 2-2z"/><path fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" d="M7.5 14h11.5M7.5 19.3h11.5M7.5 24.6h11.5M7.5 29.9h11.5M7.5 35.2h11.5"/></symbol>
+    <symbol id="wl-cruise" viewBox="0 0 48 48"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M11.2 35.5a15.5 15.5 0 1 1 25.6 0"/><path d="M24 29l7.5-9"/><path d="M26.2 19.4l5.5.3.2 5.6"/></g><circle cx="24" cy="29" r="3.2" fill="currentColor"/><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M14.3 26.5l2.2.8M24 13.5v2.3M33.7 26.5l-2.2.8"/></symbol>
+  </svg>
+
+  <section class="page-hero" aria-labelledby="page-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li><span aria-current="page">Car Care</span></li>
+          </ol>
+        </nav>
+        <p class="eyebrow mt-3"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Car care guides</p>
+        <h1 id="page-title"><span class="nowrap">Know your car.</span> <span class="nowrap">Spot trouble early.</span></h1>
+        <p class="lead">Plain-English help with the lights on your dash, the maintenance that comes due as the miles add up, and the seasonal care that keeps your car, mower and snow blower starting when you need them.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#decoder"><svg class="icon" aria-hidden="true"><use href="#i-gauge"/></svg>Decode a warning light</a>
+          <a class="btn btn-secondary btn-lg" href="tel:+15555550123" data-biz-href="tel"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span data-biz="phone">(555) 555-0123</span></a>
+        </div>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Dashboard lights</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Mileage milestones</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Seasonal checklists</span>
+        </div>
+      </div>
+
+      <div class="page-hero-art" aria-hidden="true">
+        <svg class="cluster-art" viewBox="0 0 440 380">
+          <defs>
+            <linearGradient id="art-foil" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#dde4ff"/><stop offset=".5" stop-color="#efe6ff"/><stop offset="1" stop-color="#dff1ff"/>
+            </linearGradient>
+            <radialGradient id="glow-red"><stop offset="0" stop-color="#e5594c" stop-opacity=".42"/><stop offset="1" stop-color="#e5594c" stop-opacity="0"/></radialGradient>
+            <radialGradient id="glow-amber"><stop offset="0" stop-color="#f0a53a" stop-opacity=".48"/><stop offset="1" stop-color="#f0a53a" stop-opacity="0"/></radialGradient>
+            <radialGradient id="cluster-shadow"><stop offset="0" stop-color="#2b2522" stop-opacity=".16"/><stop offset="1" stop-color="#2b2522" stop-opacity="0"/></radialGradient>
+            <radialGradient id="glow-green"><stop offset="0" stop-color="#3fbf73" stop-opacity=".45"/><stop offset="1" stop-color="#3fbf73" stop-opacity="0"/></radialGradient>
+            <line id="spd-tick" x1="220" y1="84" x2="220" y2="95"/>
+            <line id="spd-tick-s" x1="220" y1="84" x2="220" y2="90"/>
+            <line id="g-tick-l" x1="74" y1="158" x2="74" y2="164"/>
+            <line id="g-tick-r" x1="366" y1="158" x2="366" y2="164"/>
+          </defs>
+
+          <!-- housing -->
+          <ellipse cx="220" cy="352" rx="176" ry="10" fill="url(#cluster-shadow)"/>
+          <path class="art-ink art-paper" d="M14 162C14 92 118 48 220 48s206 44 206 114v106a64 64 0 0 1-64 64H78a64 64 0 0 1-64-64z" style="stroke-width: 2.2"/>
+          <path class="art-ink art-thin" d="M26 162c0-62 98-102 194-102s194 40 194 102v106a52 52 0 0 1-52 52H78a52 52 0 0 1-52-52z" stroke-opacity=".25"/>
+
+          <!-- turn signals -->
+          <circle class="turn-glow" cx="80" cy="124" r="20" fill="url(#glow-green)"/>
+          <path class="turn-off" d="M67 124l12-10v6h14v8H79v6z"/>
+          <path class="turn-on" d="M67 124l12-10v6h14v8H79v6z"/>
+          <path class="turn-off" d="M373 124l-12-10v6h-14v8h14v6z"/>
+
+          <!-- fuel gauge -->
+          <path class="art-ink" d="M44.6 175a34 34 0 0 1 58.8 0"/>
+          <path class="g-red" d="M44.6 175a34 34 0 0 1 9.6-10.5"/>
+          <g class="art-ink art-thin" stroke-opacity=".7">
+            <use href="#g-tick-l" transform="rotate(-30 74 192)"/><use href="#g-tick-l"/><use href="#g-tick-l" transform="rotate(30 74 192)"/>
+          </g>
+          <text class="g-label" x="40" y="191" text-anchor="middle">E</text>
+          <text class="g-label" x="108" y="191" text-anchor="middle">F</text>
+          <use class="g-icon" href="#wl-fuel" x="65" y="202" width="18" height="18"/>
+          <g class="fuel-needle"><line class="art-ink art-accent" x1="74" y1="192" x2="74" y2="164" style="stroke-width: 2.4"/></g>
+          <circle class="art-ink art-paper" cx="74" cy="192" r="4.5"/>
+
+          <!-- temperature gauge -->
+          <path class="art-ink" d="M336.6 175a34 34 0 0 1 58.8 0"/>
+          <path class="g-red" d="M385.8 164.5a34 34 0 0 1 9.6 10.5"/>
+          <g class="art-ink art-thin" stroke-opacity=".7">
+            <use href="#g-tick-r" transform="rotate(-30 366 192)"/><use href="#g-tick-r"/><use href="#g-tick-r" transform="rotate(30 366 192)"/>
+          </g>
+          <text class="g-label" x="332" y="191" text-anchor="middle">C</text>
+          <text class="g-label" x="400" y="191" text-anchor="middle">H</text>
+          <use class="g-icon" href="#wl-temp" x="357" y="202" width="18" height="18"/>
+          <g class="temp-needle"><line class="art-ink art-accent" x1="366" y1="192" x2="366" y2="164" style="stroke-width: 2.4"/></g>
+          <circle class="art-ink art-paper" cx="366" cy="192" r="4.5"/>
+
+          <!-- speedometer -->
+          <circle class="art-ink art-foil" cx="220" cy="176" r="92" style="stroke-width: 2.2"/>
+          <circle class="art-ink art-thin" cx="220" cy="176" r="56" stroke-opacity=".2"/>
+          <g class="art-ink" style="stroke-width: 1.8">
+            <use href="#spd-tick" transform="rotate(-120 220 176)"/><use href="#spd-tick" transform="rotate(-100 220 176)"/><use href="#spd-tick" transform="rotate(-80 220 176)"/><use href="#spd-tick" transform="rotate(-60 220 176)"/><use href="#spd-tick" transform="rotate(-40 220 176)"/><use href="#spd-tick" transform="rotate(-20 220 176)"/><use href="#spd-tick"/>
+            <use href="#spd-tick" transform="rotate(20 220 176)"/><use href="#spd-tick" transform="rotate(40 220 176)"/><use href="#spd-tick" transform="rotate(60 220 176)"/><use href="#spd-tick" transform="rotate(80 220 176)"/><use href="#spd-tick" transform="rotate(100 220 176)"/><use href="#spd-tick" transform="rotate(120 220 176)"/>
+          </g>
+          <g class="art-ink art-thin" stroke-opacity=".5">
+            <use href="#spd-tick-s" transform="rotate(-110 220 176)"/><use href="#spd-tick-s" transform="rotate(-90 220 176)"/><use href="#spd-tick-s" transform="rotate(-70 220 176)"/><use href="#spd-tick-s" transform="rotate(-50 220 176)"/><use href="#spd-tick-s" transform="rotate(-30 220 176)"/><use href="#spd-tick-s" transform="rotate(-10 220 176)"/>
+            <use href="#spd-tick-s" transform="rotate(10 220 176)"/><use href="#spd-tick-s" transform="rotate(30 220 176)"/><use href="#spd-tick-s" transform="rotate(50 220 176)"/><use href="#spd-tick-s" transform="rotate(70 220 176)"/><use href="#spd-tick-s" transform="rotate(90 220 176)"/><use href="#spd-tick-s" transform="rotate(110 220 176)"/>
+          </g>
+          <g text-anchor="middle">
+            <text class="spd-num" x="161.1" y="214">0</text>
+            <text class="spd-num" x="153" y="168.2">20</text>
+            <text class="spd-num" x="176.3" y="127.9">40</text>
+            <text class="spd-num" x="220" y="112">60</text>
+            <text class="spd-num" x="263.7" y="127.9">80</text>
+            <text class="spd-num" x="287" y="168.2">100</text>
+            <text class="spd-num" x="278.9" y="214">120</text>
+            <text class="spd-unit" x="220" y="150">MPH</text>
+          </g>
+          <rect class="art-ink art-thin art-paper" x="184" y="213" width="72" height="20" rx="7"/>
+          <text class="odo-text" x="220" y="226.5" text-anchor="middle">48,213 mi</text>
+          <g class="spd-needle"><path d="M220 189L216.8 176 220 98l3.2 78z"/></g>
+          <circle class="art-ink art-paper" cx="220" cy="176" r="9"/>
+          <circle class="hub-dot" cx="220" cy="176" r="3"/>
+
+          <!-- warning lamps (bulb check sequence) -->
+          <g style="--i: 0">
+            <circle class="lamp-glow" cx="160" cy="294" r="18" fill="url(#glow-red)"/>
+            <use class="lamp-off" href="#wl-oil" x="148" y="282" width="24" height="24"/>
+            <use class="lamp-on is-red" href="#wl-oil" x="148" y="282" width="24" height="24"/>
+          </g>
+          <g style="--i: 1">
+            <circle class="lamp-glow" cx="190" cy="294" r="18" fill="url(#glow-red)"/>
+            <use class="lamp-off" href="#wl-battery" x="178" y="282" width="24" height="24"/>
+            <use class="lamp-on is-red" href="#wl-battery" x="178" y="282" width="24" height="24"/>
+          </g>
+          <g style="--i: 2">
+            <circle class="lamp-glow" cx="220" cy="294" r="18" fill="url(#glow-red)"/>
+            <use class="lamp-off" href="#wl-brake" x="208" y="282" width="24" height="24"/>
+            <use class="lamp-on is-red" href="#wl-brake" x="208" y="282" width="24" height="24"/>
+          </g>
+          <g style="--i: 3">
+            <circle class="lamp-glow" cx="250" cy="294" r="18" fill="url(#glow-amber)"/>
+            <use class="lamp-off" href="#wl-engine" x="238" y="282" width="24" height="24"/>
+            <use class="lamp-on is-amber" href="#wl-engine" x="238" y="282" width="24" height="24"/>
+          </g>
+          <g style="--i: 4">
+            <circle class="lamp-glow" cx="280" cy="294" r="18" fill="url(#glow-amber)"/>
+            <use class="lamp-off" href="#wl-tpms" x="268" y="282" width="24" height="24"/>
+            <use class="lamp-on is-amber" href="#wl-tpms" x="268" y="282" width="24" height="24"/>
+          </g>
+
+        </svg>
+        <div class="float-note note-a"><span class="dot is-ok"></span><span><strong>Bulb check passed</strong><small>Every warning light lit, then cleared.</small></span></div>
+        <div class="float-note note-b"><span class="dot"></span><span><strong>Oil life: 15%</strong><small>Book a service in the next 500 miles.</small></span></div>
+      </div>
+    </div>
+  </section>
+
+  <nav class="subnav" aria-label="On this page">
+    <div class="container">
+      <ul class="subnav-list" role="list">
+        <li><a class="subnav-link" href="#decoder"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>Warning lights</a></li>
+        <li><a class="subnav-link" href="#miles"><svg class="icon" aria-hidden="true"><use href="#i-gauge"/></svg>Maintenance by the mile</a></li>
+        <li><a class="subnav-link" href="#seasons"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg>Seasonal checklists</a></li>
+        <li><a class="subnav-link" href="#storage"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small engine storage</a></li>
+        <li><a class="subnav-link" href="#urgent"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>When to call us</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- (a) Warning light decoder -->
+  <section class="section" id="decoder" aria-labelledby="decoder-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Dashboard warning lights</p>
+        <h2 id="decoder-title">What&rsquo;s that light on my dash?</h2>
+        <p class="lead">Tap a symbol to see what it usually means, how urgent it is and what to do next. Symbols and colors vary by make, so your owner&rsquo;s manual has the final word.</p>
+      </div>
+
+      <div class="decoder">
+        <div class="dash" data-reveal="scale">
+          <div class="dash-head" aria-hidden="true"><span class="dash-ign">Ignition on</span><span>Tap a light</span></div>
+          <div class="dash-grid" role="group" aria-label="Dashboard warning lights">
+            <button class="lamp" type="button" data-lamp="engine" data-color="amber" aria-pressed="true" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-engine"/></svg><span class="lamp-label">Check engine</span></button>
+            <button class="lamp" type="button" data-lamp="oil" data-color="red" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-oil"/></svg><span class="lamp-label">Oil pressure</span></button>
+            <button class="lamp" type="button" data-lamp="battery" data-color="red" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-battery"/></svg><span class="lamp-label">Battery</span></button>
+            <button class="lamp" type="button" data-lamp="temp" data-color="red" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-temp"/></svg><span class="lamp-label">Engine temp</span></button>
+            <button class="lamp" type="button" data-lamp="brake" data-color="red" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-brake"/></svg><span class="lamp-label">Brake</span></button>
+            <button class="lamp" type="button" data-lamp="abs" data-color="amber" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-abs"/></svg><span class="lamp-label">ABS</span></button>
+            <button class="lamp" type="button" data-lamp="tpms" data-color="amber" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-tpms"/></svg><span class="lamp-label">Tire pressure</span></button>
+            <button class="lamp" type="button" data-lamp="airbag" data-color="red" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-airbag"/></svg><span class="lamp-label">Airbag</span></button>
+            <button class="lamp" type="button" data-lamp="traction" data-color="amber" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-traction"/></svg><span class="lamp-label">Traction</span></button>
+            <button class="lamp" type="button" data-lamp="steering" data-color="amber" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-steering"/></svg><span class="lamp-label">Steering</span></button>
+            <button class="lamp" type="button" data-lamp="fuel" data-color="amber" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-fuel"/></svg><span class="lamp-label">Low fuel</span></button>
+            <button class="lamp" type="button" data-lamp="wrench" data-color="amber" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-wrench"/></svg><span class="lamp-label">Service due</span></button>
+            <p class="dash-divider" aria-hidden="true">Indicators</p>
+            <button class="lamp" type="button" data-lamp="highbeam" data-color="blue" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-highbeam"/></svg><span class="lamp-label">High beams</span></button>
+            <button class="lamp" type="button" data-lamp="cruise" data-color="green" aria-pressed="false" aria-controls="lamp-detail"><svg aria-hidden="true" focusable="false"><use href="#wl-cruise"/></svg><span class="lamp-label">Cruise</span></button>
+            <ul class="dash-legend" role="list" aria-label="What the colors mean">
+              <li><span class="dot" style="--c: #e5483b" aria-hidden="true"></span>Red: stop safely soon</li>
+              <li><span class="dot" style="--c: #f09a12" aria-hidden="true"></span>Amber: check soon</li>
+              <li><span class="dots" aria-hidden="true"><span class="dot" style="--c: #1f9f57"></span><span class="dot" style="--c: #2f80e8"></span></span>Green or blue: info</li>
+            </ul>
+          </div>
+          <div class="dash-foot">
+            <p>Every warning light should glow for a moment when you start the car. That&rsquo;s the bulb check.</p>
+            <button class="dash-check" type="button" data-bulb-check><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg>Run bulb check</button>
+          </div>
+          <p class="visually-hidden" aria-live="polite" data-bulb-status></p>
+        </div>
+
+        <div class="lamp-detail" id="lamp-detail-card" data-reveal="right">
+          <div class="ld-live" id="lamp-detail" aria-live="polite" aria-atomic="true" data-level="amber">
+            <div class="ld-head">
+              <span class="ld-lamp" data-ld="lamp" data-color="amber" aria-hidden="true"><svg focusable="false"><use href="#wl-engine"/></svg></span>
+              <div>
+                <p class="ld-sev" data-ld="sev">Amber: get it checked soon</p>
+                <h3 class="ld-name" data-ld="name">Check engine</h3>
+              </div>
+            </div>
+            <div class="sev-meter" data-ld="meter" data-level="amber" aria-hidden="true"><span data-l="info">Info</span><span data-l="amber">Check soon</span><span data-l="red">Stop safely</span></div>
+            <h4>What it means</h4>
+            <p data-ld="means">The engine computer has spotted a problem in the engine, fuel, ignition or emissions systems and stored a trouble code. The cause can be as small as a loose gas cap or as serious as a misfire.</p>
+            <h4>What to do</h4>
+            <p data-ld="todo">If the light is steady and the car drives normally, it&rsquo;s usually okay to drive for now, but book a diagnosis soon. Make sure the gas cap clicks tight, and note any changes in how the car runs.</p>
+            <div class="callout callout-warn ld-flag" data-ld="flag"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><p data-ld="flag-text">Flashing? That usually means a severe misfire, which can overheat the catalytic converter. Ease off, avoid heavy loads and have it checked right away.</p></div>
+          </div>
+          <div class="ld-actions">
+            <a class="btn btn-secondary btn-sm" data-ld="svc" href="services/diagnostics.html"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span data-ld="svc-label">Diagnostics</span></a>
+            <a class="link-arrow" data-ld="book" href="appointment.html?service=diagnostics">Book a check <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+          <p class="ld-note"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg><span>Don&rsquo;t see your light here? Look it up in your owner&rsquo;s manual, or give us a call and describe it.</span></p>
+        </div>
+      </div>
+      <a class="lamp-jump" href="#lamp-detail-card" data-ld="jump" hidden><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg><span>What it means: <strong data-ld="jump-name">Check engine</strong></span></a>
+    </div>
+  </section>
+
+  <!-- (b) Maintenance by the mile -->
+  <section class="section section-tint" id="miles" aria-labelledby="miles-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Maintenance by the mile</p>
+        <h2 id="miles-title">What&rsquo;s typically due, and when.</h2>
+        <p class="lead">Pick a milestone to roll the odometer and see the service items that commonly come due. Every vehicle is different, so treat this as a guide and your owner&rsquo;s manual as the rulebook.</p>
+      </div>
+
+      <div class="card miles-card" data-reveal>
+        <div class="miles-top miles-pad">
+          <div class="odo-block">
+            <p class="odo-caption"><svg class="icon" aria-hidden="true"><use href="#i-gauge"/></svg>Odometer</p>
+            <span class="odometer mile-odo" id="mile-odo" role="img" aria-label="Odometer: 30,000 miles"><span class="odo-fallback">030000</span></span>
+          </div>
+          <div class="miles-heading">
+            <span class="badge">Typical intervals</span>
+            <h3 id="miles-heading" data-mi="title">Around 30,000 miles</h3>
+            <p data-mi="sub">The first big checkup. Often includes:</p>
+          </div>
+        </div>
+
+        <div class="miles-track miles-pad" aria-hidden="true">
+          <div class="miles-track-inner">
+            <div class="miles-road"></div>
+            <span class="miles-stop is-reached" style="--x: .0833"></span>
+            <span class="miles-stop is-reached" style="--x: .25"></span>
+            <span class="miles-stop is-reached is-here" style="--x: .4167"></span>
+            <span class="miles-stop" style="--x: .5833"></span>
+            <span class="miles-stop" style="--x: .75"></span>
+            <span class="miles-stop" style="--x: .9167"></span>
+            <svg class="miles-car" viewBox="0 0 32 14"><use href="#i-car-mini"/></svg>
+          </div>
+        </div>
+
+        <div class="miles-picker miles-pad" role="group" aria-label="Choose a mileage milestone">
+          <button class="mile-btn" type="button" data-mile="0" aria-pressed="false" aria-controls="miles-panel">Oil change<small>each time</small></button>
+          <button class="mile-btn" type="button" data-mile="1" aria-pressed="false" aria-controls="miles-panel">15,000<small>miles</small></button>
+          <button class="mile-btn" type="button" data-mile="2" aria-pressed="true" aria-controls="miles-panel">30,000<small>miles</small></button>
+          <button class="mile-btn" type="button" data-mile="3" aria-pressed="false" aria-controls="miles-panel">60,000<small>miles</small></button>
+          <button class="mile-btn" type="button" data-mile="4" aria-pressed="false" aria-controls="miles-panel">90,000<small>miles</small></button>
+          <button class="mile-btn" type="button" data-mile="5" aria-pressed="false" aria-controls="miles-panel">100,000+<small>miles</small></button>
+        </div>
+
+        <div class="miles-body miles-pad" id="miles-panel" role="region" aria-labelledby="miles-heading">
+          <ul class="checklist miles-list" data-mi="list">
+            <li>Replace the engine and cabin air filters</li>
+            <li>Test the brake fluid; many makers call for new fluid every 2 to 3 years</li>
+            <li>Check coolant condition and the cooling-system hoses</li>
+            <li>Inspect the transmission fluid, and service it if your schedule calls for it</li>
+            <li>Battery test (many batteries last about 3 to 5 years)</li>
+            <li>Spark plugs on some older engines</li>
+          </ul>
+          <div class="miles-foot">
+            <p class="miles-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span><strong>Typical intervals only. Always follow your owner&rsquo;s manual.</strong> Towing, lots of short trips, dusty roads and extreme heat or cold often call for the severe-service schedule.</span></p>
+            <div class="cluster">
+              <a class="btn btn-primary btn-sm" href="appointment.html?service=oil-change"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book maintenance</a>
+              <a class="link-arrow" href="services/oil-change.html">Oil &amp; Maintenance <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            </div>
+          </div>
+        </div>
+        <p class="visually-hidden" aria-live="polite" data-mi="status"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- (c) Seasonal checklists -->
+  <section class="section" id="seasons" aria-labelledby="seasons-title">
+    <div class="container">
+      <div class="section-head center" data-reveal>
+        <p class="eyebrow">Seasonal checklists</p>
+        <h2 id="seasons-title">A little seasonal prep goes a long way.</h2>
+        <p class="lead">For the car in the driveway and the equipment in the shed. Work through the list yourself, or bring it all in and we&rsquo;ll check it for you.</p>
+      </div>
+
+      <div class="season-tabs" data-tabs data-reveal>
+        <div class="tabs-list" role="tablist" aria-label="Seasons">
+          <button type="button" role="tab" id="tab-spring" aria-selected="true" aria-controls="panel-spring"><svg class="icon" aria-hidden="true"><use href="#i-rain"/></svg>Spring</button>
+          <button type="button" role="tab" id="tab-summer" aria-selected="false" aria-controls="panel-summer" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg>Summer</button>
+          <button type="button" role="tab" id="tab-fall" aria-selected="false" aria-controls="panel-fall" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-leaf"/></svg>Fall</button>
+          <button type="button" role="tab" id="tab-winter" aria-selected="false" aria-controls="panel-winter" tabindex="-1"><svg class="icon" aria-hidden="true"><use href="#i-snow"/></svg>Winter</button>
+        </div>
+
+        <div role="tabpanel" id="panel-spring" aria-labelledby="tab-spring" tabindex="0">
+          <div class="season-grid">
+            <div class="card season-card">
+              <div class="season-card-head"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span><div><h3>Your car</h3><p>Shake off winter</p></div></div>
+              <ul class="checklist">
+                <li>Rinse road salt from the underbody and wheel wells</li>
+                <li>Check tire pressure and tread, and swap off winter tires once temperatures stay mild</li>
+                <li>Replace wiper blades worn down by ice and snow</li>
+                <li>Pothole check: pulling, a crooked steering wheel or new vibrations can mean alignment or suspension damage</li>
+                <li>Test the A/C before the first hot day</li>
+                <li>Top off the washer fluid</li>
+              </ul>
+            </div>
+            <div class="card season-card">
+              <div class="season-card-head"><span class="icon-tile icon-tile-ink"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span><div><h3>Mowers &amp; small engines</h3><p>Tune-up time</p></div></div>
+              <ul class="checklist">
+                <li>Mower tune-up: fresh oil, a new spark plug and a clean air filter</li>
+                <li>Sharpen and balance the mower blade</li>
+                <li>Start with fresh fuel, and drain any gas that sat all winter untreated</li>
+                <li>Charge or replace the riding mower battery</li>
+                <li>Check belts, cables and tire pressure on riding mowers</li>
+                <li>Service trimmers and blowers: line, filters and the right fuel mix</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="panel-summer" aria-labelledby="tab-summer" tabindex="0" hidden>
+          <div class="season-grid">
+            <div class="card season-card">
+              <div class="season-card-head"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span><div><h3>Your car</h3><p>Beat the heat</p></div></div>
+              <ul class="checklist">
+                <li>Check the coolant level with the engine cold, and look for leaks</li>
+                <li>A/C blowing warm? Have it checked before a small leak becomes a bigger repair</li>
+                <li>Heat is hard on batteries, so test yours before a road trip</li>
+                <li>Check tire pressures, including the spare, before long drives</li>
+                <li>Pack water, a phone charger and a basic emergency kit</li>
+                <li>Check the oil more often if you tow or carry heavy loads</li>
+              </ul>
+            </div>
+            <div class="card season-card">
+              <div class="season-card-head"><span class="icon-tile icon-tile-ink"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span><div><h3>Mowers &amp; small engines</h3><p>Peak mowing season</p></div></div>
+              <ul class="checklist">
+                <li>Keep the mower deck clean and the blade sharp</li>
+                <li>Change the mower oil as your manual suggests, often every 25 to 50 hours</li>
+                <li>Clean the air filter more often in dry, dusty weather</li>
+                <li>Run the generator with something plugged in for about 20 minutes each month so it&rsquo;s storm-ready</li>
+                <li>Buy only as much fuel as you&rsquo;ll use in about a month</li>
+                <li>Never run a generator indoors, in a garage or near open windows</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="panel-fall" aria-labelledby="tab-fall" tabindex="0" hidden>
+          <div class="season-grid">
+            <div class="card season-card">
+              <div class="season-card-head"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span><div><h3>Your car</h3><p>Get ready for the cold</p></div></div>
+              <ul class="checklist">
+                <li>Test the battery before the first cold snap</li>
+                <li>Check the heater, defroster and rear defrost</li>
+                <li>Make sure the coolant has the freeze protection your winters need</li>
+                <li>Check wipers, headlights and taillights as the days get shorter</li>
+                <li>Inspect the brakes and tire tread, and consider winter tires</li>
+                <li>Put an ice scraper and a blanket back in the car</li>
+              </ul>
+            </div>
+            <div class="card season-card">
+              <div class="season-card-head"><span class="icon-tile icon-tile-ink"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span><div><h3>Mowers &amp; small engines</h3><p>Put summer away, wake up winter</p></div></div>
+              <ul class="checklist">
+                <li>Winterize the mower: stabilize the fuel and run it, or run the carburetor dry</li>
+                <li>Change the oil and clean the deck before storage</li>
+                <li>Charge the riding mower battery and keep it on a maintainer</li>
+                <li>Snow blower prep: fresh oil, a new spark plug and stabilized fuel</li>
+                <li>Check shear pins, the auger belt and skid shoes</li>
+                <li>Start the snow blower once before the first storm</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="panel-winter" aria-labelledby="tab-winter" tabindex="0" hidden>
+          <div class="season-grid">
+            <div class="card season-card">
+              <div class="season-card-head"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span><div><h3>Your car</h3><p>Cold-weather ready</p></div></div>
+              <ul class="checklist">
+                <li>Winter battery test: cold weather cuts a battery&rsquo;s starting power</li>
+                <li>Check tire pressure often, since it falls roughly 1 psi with each 10&deg;F drop in temperature</li>
+                <li>Use washer fluid rated for freezing temperatures</li>
+                <li>Keep the gas tank at least half full</li>
+                <li>Carry jumper cables, a flashlight, a blanket and a scraper</li>
+                <li>Stuck in snow? Clear the tailpipe before you run the engine to stay warm</li>
+              </ul>
+            </div>
+            <div class="card season-card">
+              <div class="season-card-head"><span class="icon-tile icon-tile-ink"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span><div><h3>Snow blowers &amp; generators</h3><p>Storm season</p></div></div>
+              <ul class="checklist">
+                <li>Use fresh, stabilized fuel in the snow blower</li>
+                <li>Clear clogs with a clean-out tool and the engine off, never by hand</li>
+                <li>Keep spare shear pins and a spark plug on hand</li>
+                <li>Run the generator monthly and keep stabilized fuel ready</li>
+                <li>Keep generators outside, well away from doors, windows and vents</li>
+                <li>Book the mower tune-up early, before the spring rush</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="season-foot" data-reveal>
+        <a class="btn btn-secondary" href="appointment.html?service=inspections"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Book a seasonal check</a>
+        <a class="link-arrow" href="appointment.html?service=small-engine-repair">Book a small engine tune-up <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- (d) Small engine storage & fuel -->
+  <section class="section section-tint" id="storage" aria-labelledby="storage-title">
+    <div class="container">
+      <div class="storage">
+        <div class="storage-head" data-reveal="left">
+          <p class="eyebrow"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small engine storage &amp; fuel</p>
+          <h2 id="storage-title">Store it right, and it starts right up.</h2>
+          <p class="lead">A lot of spring no-starts come down to fuel that sat all winter. A few minutes of prep now can save a carburetor cleaning later.</p>
+          <svg class="can-art" viewBox="0 0 260 210" aria-hidden="true">
+            <path class="art-ink art-thin" d="M16 200h228" stroke-opacity=".4"/>
+            <rect class="art-ink art-foil" x="104" y="98" width="116" height="100" rx="16"/>
+            <rect class="art-ink art-thin" x="116" y="110" width="92" height="76" rx="10" stroke-opacity=".35"/>
+            <path class="art-ink art-thin" d="M128 120l68 56M196 120l-68 56" stroke-opacity=".3"/>
+            <path class="art-ink art-paper" d="M160 98V84a8 8 0 0 1 8-8h36a8 8 0 0 1 8 8v14"/>
+            <rect class="art-ink art-thin" x="170" y="83" width="32" height="8" rx="4"/>
+            <path class="art-ink art-lilac" d="M110 98l-4-16h22l-4 16z"/>
+            <ellipse class="art-ink art-paper" cx="117" cy="82" rx="11" ry="3.4"/>
+            <circle class="drop" cx="106" cy="61" r="3.6"/>
+            <circle class="drop d2" cx="106" cy="61" r="3.6"/>
+            <g class="bottle">
+              <g transform="translate(102 56) rotate(120) scale(1.3) translate(-17 -4)">
+                <rect vector-effect="non-scaling-stroke" class="art-ink art-paper" x="0" y="16" width="34" height="46" rx="9"/>
+                <rect vector-effect="non-scaling-stroke" class="art-ink art-soft" x="5" y="29" width="24" height="20" rx="4"/>
+                <path vector-effect="non-scaling-stroke" class="art-ink art-thin" d="M11 36h12M11 42h8" stroke-opacity=".55"/>
+                <rect vector-effect="non-scaling-stroke" class="art-ink art-lilac" x="10" y="4" width="14" height="13" rx="3"/>
+              </g>
+            </g>
+            <g transform="translate(228 64)"><path class="art-pulse" d="M8 0c.7 4.6 2.9 6.8 7.5 7.5-4.6.7-6.8 2.9-7.5 7.5-.7-4.6-2.9-6.8-7.5-7.5C5.1 6.8 7.3 4.6 8 0z" fill="#4d56bf"/></g>
+            <g transform="translate(40 146)"><path class="art-pulse" d="M5 0c.5 3 1.9 4.5 5 5-3.1.5-4.5 2-5 5-.5-3-1.9-4.5-5-5 3.1-.5 4.5-2 5-5z" fill="#7a5cc4" style="animation-delay: 1.1s"/></g>
+          </svg>
+          <div class="callout callout-warn mt-3">
+            <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+            <p><strong>Safety first:</strong> disconnect the spark plug wire before touching the blade or reaching under the deck. When you tip a mower, keep the air filter and carburetor side up so oil and fuel don&rsquo;t soak the filter.</p>
+          </div>
+          <div class="cluster mt-3">
+            <a class="btn btn-primary" href="services/small-engine-repair.html">Small engine services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            <a class="link-arrow" href="appointment.html?service=small-engine-repair">Book a tune-up <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+
+        <ol class="tips" role="list" data-reveal-stagger>
+          <li class="tip">
+            <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-fuel"/></svg></span>
+            <div><h3>Buy fresh, buy small</h3><p>Most pump gas is E10, with up to 10% ethanol. Ethanol attracts moisture, and fuel can start going stale in about a month, leaving gummy varnish in tiny carburetor passages. Buy what you&rsquo;ll use in about 30 days, and never use E15 or higher in small engines.</p></div>
+          </li>
+          <li class="tip">
+            <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
+            <div><h3>Stabilize when you fill the can</h3><p>Add fuel stabilizer at the pump, not just in the fall. Then run the engine for a few minutes so treated fuel reaches the carburetor.</p></div>
+          </li>
+          <li class="tip">
+            <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span>
+            <div><h3>Store it full, or run it dry</h3><p>For the off-season, either fill the tank with stabilized fuel or drain it and run the carburetor dry. Your equipment manual says which it prefers, and some carburetors have a bowl drain that makes it easy.</p></div>
+          </li>
+          <li class="tip">
+            <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg></span>
+            <div><h3>Change the oil before storage</h3><p>Used oil carries acids and moisture that sit on engine parts all winter. Change it while the engine is warm, and check the level before every use.</p></div>
+          </li>
+          <li class="tip">
+            <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span>
+            <div><h3>Clean the deck</h3><p>With the spark plug wire disconnected, scrape packed grass from under the deck. Buildup holds moisture, rusts the deck and hurts the cut.</p></div>
+          </li>
+          <li class="tip">
+            <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+            <div><h3>Sharpen and balance the blade</h3><p>A sharp blade cuts cleanly; a dull one tears grass and leaves brown tips. Sharpen it once or twice a season and balance it so the mower doesn&rsquo;t shake. We&rsquo;re happy to do it for you.</p></div>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- (e) Call us right away if... -->
+  <section class="section" id="urgent" aria-labelledby="urgent-title">
+    <div class="container">
+      <div class="urgent" data-reveal>
+        <div class="urgent-copy">
+          <span class="hazard" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3.2 21.6 20H2.4z"/><path d="M12 9.6 16.2 17H7.8z"/></svg></span>
+          <p class="eyebrow">Don&rsquo;t wait</p>
+          <h2 id="urgent-title">Call us <span class="nowrap">right away if&hellip;</span></h2>
+          <p class="lead">These can mean damage is happening right now. Pull over when it&rsquo;s safe, turn off the engine and give us a call. We&rsquo;ll help you decide whether to drive it in or have it towed.</p>
+          <div class="urgent-actions">
+            <a class="btn btn-primary btn-lg" href="tel:+15555550123" data-biz-href="tel"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span data-biz="phone">(555) 555-0123</span></a>
+            <a class="btn btn-secondary btn-lg" href="contact.html"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Hours &amp; directions</a>
+          </div>
+          <p class="urgent-911"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>See flames or heavy smoke? Get everyone out, move well away from the vehicle and call 911 first.</span></p>
+        </div>
+        <ul class="signal-list" role="list" data-reveal-stagger>
+          <li class="is-critical">Your check engine light is flashing</li>
+          <li class="is-critical">A red oil pressure or engine temperature light comes on</li>
+          <li class="is-critical">The brake pedal feels soft or sinks, or the red brake light stays on</li>
+          <li class="is-critical">You smell something burning: hot oil, rubber or wiring</li>
+          <li class="is-critical">Steam or smoke is coming from under the hood (don&rsquo;t open a hot radiator cap)</li>
+          <li class="is-critical">You smell gas, or fuel is leaking from a car, mower or generator</li>
+          <li>Steering suddenly gets heavy, or the car pulls hard to one side</li>
+          <li>A new loud grinding, knocking or clunking noise</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- @partial cta -->
+<section class="cta-road" aria-labelledby="cta-road-title">
+  <div class="container cta-road-inner">
+    <div class="cta-road-copy" data-reveal>
+      <p class="eyebrow">Ready when you are</p>
+      <h2 id="cta-road-title">Let&rsquo;s get you back on the road.</h2>
+      <p class="lead">Request an appointment in about a minute, or give us a call. We&rsquo;ll confirm a time and take it from there.</p>
+    </div>
+    <div class="cta-road-actions" data-reveal>
+      <a class="btn btn-primary btn-lg" href="appointment.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book a service</a>
+      <a class="btn btn-secondary btn-lg" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>(555) 555-0123</a>
+    </div>
+  </div>
+  <div class="road" aria-hidden="true">
+    <div class="road-surface"><span class="road-dashes"></span></div>
+    <svg class="road-car" viewBox="0 0 32 14"><use href="#i-car-mini"/></svg>
+  </div>
+</section>
+<!-- @end cta -->
+<!-- @partial footer -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="mini-card" href="index.html" aria-label="Clinton Complete Auto Care home">
+        <img src="assets/img/logo-white-sm.webp" alt="" width="640" height="349" loading="lazy" decoding="async">
+        <span class="mini-card-foil">And Small Engine Repair</span>
+      </a>
+      <p class="footer-blurb">Honest repair and maintenance for cars, trucks and the small engines that keep your home and business running.</p>
+      <p><span class="open-status" data-open-status>Shop hours</span></p>
+    </div>
+    <nav class="footer-col" aria-labelledby="footer-services">
+      <h2 id="footer-services">Services</h2>
+      <ul>
+        <li><a href="services/brakes.html">Brakes</a></li>
+        <li><a href="services/oil-change.html">Oil &amp; Maintenance</a></li>
+        <li><a href="services/diagnostics.html">Diagnostics</a></li>
+        <li><a href="services/engine-repair.html">Engine &amp; Cooling</a></li>
+        <li><a href="services/transmission.html">Transmission</a></li>
+        <li><a href="services/heating-ac.html">A/C &amp; Heating</a></li>
+        <li><a href="services/tires-alignment.html">Tires &amp; Alignment</a></li>
+        <li><a href="services/suspension-steering.html">Suspension &amp; Steering</a></li>
+        <li><a href="services/electrical-battery.html">Battery &amp; Electrical</a></li>
+        <li><a href="services/inspections.html">Inspections</a></li>
+        <li><a href="services/small-engine-repair.html">Small Engine Repair</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul>
+        <li><a href="about.html">About us</a></li>
+        <li><a href="fleet.html">Fleet services</a></li>
+        <li><a href="specials.html">Specials</a></li>
+        <li><a href="brands.html">Makes we service</a></li>
+        <li><a href="careers.html">Careers</a></li>
+      </ul>
+      <h2 class="footer-subhead">Help</h2>
+      <ul>
+        <li><a href="appointment.html">Book a service</a></li>
+        <li><a href="resources.html" aria-current="page">Car care guides</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col footer-visit">
+      <h2>Visit the shop</h2>
+      <address>
+        <a class="footer-contact" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>123 Main Street<br>Clinton, ST 00000</span></a>
+        <a class="footer-contact" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>(555) 555-0123</span></a>
+        <a class="footer-contact" href="mailto:service@example.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>service@example.com</span></a>
+      </address>
+      <ul class="hours-list">
+        <li data-days="Mo Tu We Th Fr"><span>Mon – Fri</span><span>8:00 AM – 5:30 PM</span></li>
+        <li data-days="Sa"><span>Sat</span><span>8:00 AM – 1:00 PM</span></li>
+        <li data-days="Su"><span>Sun</span><span>Closed</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span data-year>2026</span> Clinton Complete Auto Care. All rights reserved.</p>
+    <p class="footer-links"><a href="privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a><span aria-hidden="true">&middot;</span><a href="https://blakew316.github.io/automotive/app/">Staff sign-in</a></p>
+  </div>
+</footer>
+<!-- @end footer -->
+<!-- @partial tabbar -->
+<nav class="tabbar" aria-label="Quick navigation">
+  <a class="tab" href="index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+  <a class="tab" href="services.html" data-nav="services"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span>Services</span></a>
+  <a class="tab tab-book" href="appointment.html" data-nav="appointment"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Book</span></a>
+  <a class="tab" href="contact.html" data-nav="contact"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Contact</span></a>
+  <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>More</span></button>
+</nav>
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="more-sheet-title">Menu</h2>
+      <button class="icon-btn" type="button" data-close-sheet aria-label="Close menu" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <p class="sheet-status"><span class="open-status" data-open-status>Shop hours</span></p>
+    <div class="sheet-quick">
+      <a class="quick-action" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>Call</span></a>
+      <a class="quick-action" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-directions"/></svg><span>Directions</span></a>
+      <a class="quick-action" href="mailto:service@example.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>Email</span></a>
+    </div>
+    <h3 class="sheet-label">Explore</h3>
+    <ul class="sheet-grid">
+      <li><a href="index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a></li>
+      <li><a href="services.html" data-nav="services"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg>Services</a></li>
+      <li><a href="services/small-engine-repair.html" data-nav="small-engine"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small Engine</a></li>
+      <li><a href="about.html" data-nav="about"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>About</a></li>
+      <li><a href="fleet.html" data-nav="fleet"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet</a></li>
+      <li><a href="specials.html" data-nav="specials"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Specials</a></li>
+      <li><a href="brands.html" data-nav="brands"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg>Makes We Service</a></li>
+      <li><a class="is-active" href="resources.html" data-nav="resources" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Car Care</a></li>
+      <li><a href="faq.html" data-nav="faq"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+      <li><a href="careers.html" data-nav="careers"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"/></svg>Careers</a></li>
+      <li><a href="contact.html" data-nav="contact"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Contact</a></li>
+      <li><a href="appointment.html" data-nav="appointment"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book Service</a></li>
+    </ul>
+    <h3 class="sheet-label">Services</h3>
+    <ul class="sheet-list">
+      <li><a href="services/brakes.html"><svg class="icon" aria-hidden="true"><use href="#i-brake"/></svg>Brakes<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/oil-change.html"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg>Oil &amp; Maintenance<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/diagnostics.html"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg>Diagnostics<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/engine-repair.html"><svg class="icon" aria-hidden="true"><use href="#i-engine"/></svg>Engine &amp; Cooling<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/transmission.html"><svg class="icon" aria-hidden="true"><use href="#i-transmission"/></svg>Transmission<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/heating-ac.html"><svg class="icon" aria-hidden="true"><use href="#i-ac"/></svg>A/C &amp; Heating<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/tires-alignment.html"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg>Tires &amp; Alignment<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/suspension-steering.html"><svg class="icon" aria-hidden="true"><use href="#i-suspension"/></svg>Suspension &amp; Steering<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/electrical-battery.html"><svg class="icon" aria-hidden="true"><use href="#i-battery"/></svg>Battery &amp; Electrical<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/inspections.html"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspections<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/small-engine-repair.html"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small Engine Repair<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+    </ul>
+  </div>
+</dialog>
+<!-- @end tabbar -->
+<script>
+(() => {
+  "use strict";
+  const d = document;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+  const $ = (s, c = d) => c.querySelector(s);
+  const $$ = (s, c = d) => Array.from(c.querySelectorAll(s));
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+  /* ------------------------------------------------------------------
+     Seasonal tabs: open the current season (runs before site.js wires
+     up [data-tabs], which honours the tab marked aria-selected).
+     ------------------------------------------------------------------ */
+  const m = new Date().getMonth();
+  const season = m >= 2 && m <= 4 ? "spring" : m >= 5 && m <= 7 ? "summer" : m >= 8 && m <= 10 ? "fall" : "winter";
+  $$('.season-tabs [role="tab"]').forEach((tab) => {
+    const on = tab.id === "tab-" + season;
+    tab.setAttribute("aria-selected", String(on));
+    tab.tabIndex = on ? 0 : -1;
+    if (on) tab.insertAdjacentHTML("beforeend", '<span class="tab-now" aria-hidden="true"></span><span class="visually-hidden"> (this season)</span>');
+  });
+  $$('.season-tabs [role="tabpanel"]').forEach((p) => (p.hidden = p.id !== "panel-" + season));
+
+  /* ------------------------------------------------------------------
+     Dashboard warning-light decoder
+     ------------------------------------------------------------------ */
+  const SERVICES = {
+    brakes: "Brakes",
+    "oil-change": "Oil & Maintenance",
+    diagnostics: "Diagnostics",
+    "engine-repair": "Engine & Cooling",
+    "suspension-steering": "Suspension & Steering",
+    "electrical-battery": "Battery & Electrical",
+    "tires-alignment": "Tires & Alignment",
+  };
+  const LAMPS = {
+    engine: {
+      name: "Check engine", color: "amber", level: "amber", sev: "Amber: get it checked soon", svc: "diagnostics",
+      means: "The engine computer has spotted a problem in the engine, fuel, ignition or emissions systems and stored a trouble code. The cause can be as small as a loose gas cap or as serious as a misfire.",
+      todo: "If the light is steady and the car drives normally, it’s usually okay to drive for now, but book a diagnosis soon. Make sure the gas cap clicks tight, and note any changes in how the car runs.",
+      flag: "Flashing? That usually means a severe misfire, which can overheat the catalytic converter. Ease off, avoid heavy loads and have it checked right away.",
+    },
+    oil: {
+      name: "Oil pressure", color: "red", level: "red", sev: "Red: stop safely soon", svc: "oil-change",
+      means: "Oil pressure has dropped too low to protect the engine. It isn’t the same as an oil-change reminder. Low oil, a leak or a failing oil pump can all cause it.",
+      todo: "Pull over when it’s safe and turn the engine off. After a few minutes, check the oil level and top it off if it’s low. If it’s still on once the engine is running again, don’t keep driving. Call us and we’ll help you decide whether to drive it in or have it towed.",
+    },
+    battery: {
+      name: "Battery / charging", color: "red", level: "red", sev: "Red: get somewhere safe, then call", svc: "electrical-battery",
+      means: "The charging system isn’t keeping the battery charged. The alternator, its drive belt, the wiring or the battery itself could be the cause. It’s normal for this light to glow briefly before the engine starts.",
+      todo: "Turn off anything you don’t need, like heated seats, rear defrost and the radio, and head somewhere safe. The car is running on battery power alone and can stall when it runs down, so avoid shutting it off until you’re where you can get help. If the temperature gauge climbs too, pull over: on some engines the same belt drives the water pump.",
+    },
+    temp: {
+      name: "Engine temperature", color: "red", level: "red", sev: "Red: stop safely soon", svc: "engine-repair",
+      means: "The engine is running hotter than it should. Low coolant, a leak, a stuck thermostat, or a failed fan or water pump are common causes. Some cars show a blue version of this light while the engine is still cold, which is normal.",
+      todo: "Switch off the A/C and run the heater on full to shed a little heat, then pull over when it’s safe and turn the engine off. Never open the radiator or coolant cap while it’s hot: the coolant is under pressure and can scald. Let it cool, then call us.",
+    },
+    brake: {
+      name: "Brake system", color: "red", level: "red", sev: "Red: get it checked right away", svc: "brakes",
+      means: "Most often the parking brake is still on. If it’s fully released and the light stays on, the brake fluid may be low or there may be a problem in the hydraulic system. On some cars it also lights up with an ABS fault.",
+      todo: "Check that the parking brake is all the way off. If the light stays on, have the brakes checked right away.",
+      flag: "Soft, spongy or sinking pedal? Don’t drive it. Call us and we’ll help you figure out the safest way to get it here.",
+    },
+    abs: {
+      name: "ABS", color: "amber", level: "amber", sev: "Amber: get it checked soon", svc: "brakes",
+      means: "The anti-lock brake system has found a fault, often a wheel-speed sensor or its wiring. Your regular brakes usually still work, but the wheels may lock up in a hard stop.",
+      todo: "Drive gently, leave extra following distance and have it checked soon. If the red brake light comes on at the same time, treat it as urgent.",
+    },
+    tpms: {
+      name: "Tire pressure (TPMS)", color: "amber", level: "amber", sev: "Amber: check your tires soon", svc: "tires-alignment",
+      means: "At least one tire is well below its recommended pressure. If the light flashes for a minute or so at start-up and then stays on, the monitoring system itself usually has a fault, such as a worn-out sensor battery.",
+      todo: "Check all four tires with a gauge while they’re cold, and fill them to the pressure on the sticker inside the driver’s door, not the number on the sidewall. A cold snap can set it off, but a tire that keeps losing air likely has a leak or a nail.",
+    },
+    airbag: {
+      name: "Airbag (SRS)", color: "red", level: "amber", sev: "Red or amber: have it checked promptly", svc: "diagnostics",
+      means: "The airbag system has found a fault. Until it’s repaired, the airbags, and on many cars the seat-belt pretensioners, may not work in a crash.",
+      todo: "The car will usually drive normally, but have it checked promptly. Don’t try to test or unplug airbag parts yourself; they need careful handling.",
+    },
+    traction: {
+      name: "Traction / stability control", color: "amber", level: "amber", sev: "Amber: flickering is normal, steady means check soon", svc: "diagnostics",
+      means: "If it flickers while you’re driving, the system is doing its job: a wheel started to slip and it stepped in. If it stays on, the system has been switched off or has a fault. On many cars it shares sensors with the ABS.",
+      todo: "When it flickers, ease off the gas and drive for the conditions. If it stays on, make sure it wasn’t switched off with the traction or stability button, then have it checked soon.",
+    },
+    steering: {
+      name: "Power steering", color: "amber", level: "amber", sev: "Red or amber: drive gently, check soon", svc: "suspension-steering",
+      means: "There’s a problem with the power steering. Most newer cars use electric power steering, so it’s often an electrical fault; on hydraulic systems it can mean low fluid or a leak. The steering may suddenly feel much heavier.",
+      todo: "Slow down and keep a firm grip. You can still steer, it just takes more effort, especially at parking-lot speeds. Have it checked soon, and call us if the steering becomes very heavy.",
+    },
+    fuel: {
+      name: "Low fuel", color: "amber", level: "amber", sev: "Amber: fill up soon", svc: "diagnostics",
+      means: "You’re running on the reserve. How far you can go varies a lot from one vehicle to the next, so don’t count on a set number of miles.",
+      todo: "Fill up soon. Running the tank very low again and again is hard on the in-tank fuel pump, which relies on fuel to stay cool. If the gauge or light seems wrong, we can track down why.",
+    },
+    wrench: {
+      name: "Maintenance due", color: "amber", level: "amber", sev: "Amber: a reminder to book service", svc: "oil-change",
+      means: "A reminder, not a fault. Your car’s service reminder or oil-life monitor says scheduled maintenance, usually an oil change, is coming due. It may show as a wrench, a message or “MAINT REQD.”",
+      todo: "Book service in the next few hundred miles. After the work, the reminder needs to be reset, and we’ll take care of that for you.",
+    },
+    highbeam: {
+      name: "High beams", color: "blue", level: "info", sev: "Blue: information only", svc: "electrical-battery",
+      means: "Your high beams are on. Blue and green lights are indicators: they just confirm that a system is on.",
+      todo: "Switch to low beams when there’s oncoming traffic or you’re following another car. If a headlight looks dim or a bulb is out, we can check your lighting.",
+    },
+    cruise: {
+      name: "Cruise control", color: "green", level: "info", sev: "Green: information only", svc: "diagnostics",
+      means: "Cruise control is on or set. Many cars show it in white when it’s ready and green once a speed is set.",
+      todo: "Nothing to fix. Skip cruise control on wet, icy or slippery roads. If it won’t set or keeps dropping out, a brake-switch or sensor fault is a common cause.",
+    },
+  };
+
+  const lamps = $$(".lamp");
+  const live = $("#lamp-detail");
+  const part = (k) => $(`[data-ld="${k}"]`);
+  const P = {
+    lamp: part("lamp"), sev: part("sev"), name: part("name"), meter: part("meter"),
+    means: part("means"), todo: part("todo"), flag: part("flag"), flagText: part("flag-text"),
+    svc: part("svc"), svcLabel: part("svc-label"), book: part("book"), jump: part("jump"), jumpName: part("jump-name"),
+  };
+  const detailCard = $(".lamp-detail");
+  let detailInView = false;
+  let decoderInView = false;
+
+  const showLamp = (key, fromUser) => {
+    const L = LAMPS[key];
+    if (!L || !live) return;
+    lamps.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.lamp === key)));
+    live.dataset.level = L.level;
+    P.meter.dataset.level = L.level;
+    P.lamp.dataset.color = L.color;
+    $("use", P.lamp).setAttribute("href", "#wl-" + key);
+    P.lamp.classList.remove("is-on");
+    void P.lamp.offsetWidth;
+    P.lamp.classList.add("is-on");
+    P.sev.textContent = L.sev;
+    P.name.textContent = L.name;
+    P.means.textContent = L.means;
+    P.todo.textContent = L.todo;
+    P.flag.hidden = !L.flag;
+    P.flagText.textContent = L.flag || "";
+    P.svc.href = `services/${L.svc}.html`;
+    P.svcLabel.textContent = SERVICES[L.svc];
+    P.book.href = `appointment.html?service=${L.svc}`;
+    if (fromUser && P.jump) {
+      P.jumpName.textContent = L.name;
+      P.jump.hidden = detailInView || innerWidth >= 960;
+    }
+  };
+
+  lamps.forEach((b) => b.addEventListener("click", () => showLamp(b.dataset.lamp, true)));
+
+  // Arrow keys move between lights like a grid (4 columns).
+  const grid = $(".dash-grid");
+  if (grid) grid.addEventListener("keydown", (e) => {
+    const i = lamps.indexOf(e.target);
+    if (i < 0) return;
+    const map = { ArrowRight: i + 1, ArrowLeft: i - 1, ArrowDown: i + 4, ArrowUp: i - 4, Home: 0, End: lamps.length - 1 };
+    if (!(e.key in map)) return;
+    e.preventDefault();
+    lamps[Math.max(0, Math.min(lamps.length - 1, map[e.key]))].focus();
+  });
+
+  // Bulb check: light every symbol in a quick wave, like turning the key.
+  const bulbBtn = $("[data-bulb-check]");
+  const bulbStatus = $("[data-bulb-status]");
+  let bulbRunning = false;
+  const bulbCheck = (announce) => {
+    if (bulbRunning) return;
+    bulbRunning = true;
+    if (bulbBtn) bulbBtn.setAttribute("aria-disabled", "true");
+    const step = reduce.matches ? 0 : 55;
+    const hold = reduce.matches ? 900 : 1100;
+    if (announce && bulbStatus) bulbStatus.textContent = "Bulb check: every light is on.";
+    lamps.forEach((b, i) => setTimeout(() => b.classList.add("is-check"), i * step));
+    lamps.forEach((b, i) => setTimeout(() => b.classList.remove("is-check"), lamps.length * step + hold + i * step));
+    setTimeout(() => {
+      bulbRunning = false;
+      if (bulbBtn) bulbBtn.removeAttribute("aria-disabled");
+      if (announce && bulbStatus) bulbStatus.textContent = "Bulb check done. All lights are off.";
+    }, lamps.length * step * 2 + hold + 100);
+  };
+  if (bulbBtn) bulbBtn.addEventListener("click", () => bulbCheck(true));
+  const dash = $(".dash");
+  if (dash && "IntersectionObserver" in window && !reduce.matches) {
+    const firstView = new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting) return;
+      firstView.disconnect();
+      setTimeout(() => bulbCheck(false), 450);
+    }, { threshold: 0.5 });
+    firstView.observe(dash);
+  }
+
+  if (P.jump && "IntersectionObserver" in window) {
+    // The card only counts as "in view" once its top clears the bottom ~220px
+    // (tab bar plus a comfortable reading margin), so a sliver peeking in still gets the pill.
+    new IntersectionObserver((entries) => {
+      detailInView = entries[0].isIntersecting;
+      if (detailInView) P.jump.hidden = true;
+    }, { rootMargin: "0px 0px -220px 0px" }).observe(detailCard);
+    new IntersectionObserver((entries) => {
+      decoderInView = entries[0].isIntersecting;
+      if (!decoderInView) P.jump.hidden = true;
+    }).observe($("#decoder"));
+    P.jump.addEventListener("click", () => setTimeout(() => (P.jump.hidden = true), 50));
+  }
+
+  /* ------------------------------------------------------------------
+     Maintenance by the mile: odometer + milestone checklist
+     ------------------------------------------------------------------ */
+  const MILES = [
+    { value: 5000, title: "Every oil change", sub: "Roughly every 5,000 to 10,000 miles on many newer cars, or whenever your oil-life monitor says so.", items: [
+      "Engine oil and filter, using the oil grade your manual specifies",
+      "Top off the coolant, brake, power steering and washer fluids",
+      "Check tire pressures, including the spare, and look at the tread",
+      "Tire rotation, often every 5,000 to 7,500 miles",
+      "Look over the wipers, lights, belts and hoses",
+      "Check underneath for leaks and loose or damaged parts",
+    ] },
+    { value: 15000, title: "Around 15,000 miles", sub: "Everything from an oil change, plus:", items: [
+      "Inspect the engine air filter and replace it if it’s dirty",
+      "Cabin air filter on many vehicles (often every 15,000 to 30,000 miles)",
+      "Brake inspection: pads, rotors, hoses and fluid level",
+      "Check steering and suspension parts for wear",
+      "Inspect the exhaust system and heat shields",
+      "New wiper blades if they streak or chatter",
+    ] },
+    { value: 30000, title: "Around 30,000 miles", sub: "The first big checkup. Often includes:", items: [
+      "Replace the engine and cabin air filters",
+      "Test the brake fluid; many makers call for new fluid every 2 to 3 years",
+      "Check coolant condition and the cooling-system hoses",
+      "Inspect the transmission fluid, and service it if your schedule calls for it",
+      "Battery test (many batteries last about 3 to 5 years)",
+      "Spark plugs on some older engines",
+    ] },
+    { value: 60000, title: "Around 60,000 miles", sub: "Often includes:", items: [
+      "Spark plugs on some engines (long-life plugs often last 100,000 miles or more)",
+      "Brake fluid exchange, if it hasn’t been done",
+      "Transmission fluid service on many vehicles",
+      "Drive belt and hoses: replace if cracked, glazed or soft",
+      "Coolant exchange on some vehicles",
+      "Shocks, struts and suspension bushings inspection",
+    ] },
+    { value: 90000, title: "Around 90,000 miles", sub: "Often includes:", items: [
+      "Timing belt on many belt-driven engines (often due between 60,000 and 105,000 miles)",
+      "Water pump, commonly replaced along with the timing belt",
+      "Spark plugs, if they haven’t been replaced",
+      "Differential and transfer case fluids on 4WD and AWD vehicles",
+      "Fuel filter on vehicles that have a serviceable one",
+      "PCV valve and throttle body check",
+    ] },
+    { value: 100000, title: "100,000 miles and beyond", sub: "Keep it going strong:", items: [
+      "Long-life spark plugs, often due around 100,000 miles",
+      "Long-life coolant, often first due between 100,000 and 150,000 miles",
+      "Timing belt, if it hasn’t been done yet",
+      "Engine and transmission mounts, ball joints and bushings",
+      "Gaskets and seals: catch small oil leaks early",
+      "Oxygen sensors and a fuel-economy check",
+    ] },
+  ];
+
+  const odo = $("#mile-odo");
+  const mi = (k) => $(`[data-mi="${k}"]`);
+  const track = $(".miles-track");
+  const stops = $$(".miles-stop");
+  const mileBtns = $$(".mile-btn");
+  const strips = [];
+  let digits = [0, 0, 0, 0, 0, 0];
+  let current = 2;
+
+  if (odo) {
+    odo.textContent = "";
+    const cell = (n, cls) => {
+      const c = d.createElement("span");
+      c.className = "odo-digit" + (cls ? " " + cls : "");
+      c.setAttribute("aria-hidden", "true");
+      const s = d.createElement("span");
+      s.className = "odo-strip";
+      s.innerHTML = Array.from({ length: n }, (_, k) => `<span>${k % 10}</span>`).join("");
+      c.append(s);
+      odo.append(c);
+      return s;
+    };
+    for (let i = 0; i < 6; i++) {
+      const s = cell(30);
+      s.style.setProperty("--d", `${i * 0.06}s`);
+      s.style.transform = "translateY(calc(-1.28em * 10))";
+      s.addEventListener("transitionend", (e) => {
+        if (e.propertyName !== "transform" || !s.dataset.rest) return;
+        s.style.transition = "none";
+        s.style.transform = `translateY(calc(-1.28em * ${s.dataset.rest}))`;
+        void s.offsetHeight;
+        s.style.transition = "";
+      });
+      strips.push(s);
+    }
+    cell(11, "is-tenth");
+    const unit = d.createElement("span");
+    unit.className = "odo-unit";
+    unit.setAttribute("aria-hidden", "true");
+    unit.textContent = "mi";
+    odo.append(unit);
+  }
+
+  const setOdo = (value, animate) => {
+    if (!strips.length) return;
+    const next = String(value).padStart(6, "0").split("").map(Number);
+    let first = next.findIndex((n, i) => n !== digits[i]);
+    if (first < 0) first = 6;
+    strips.forEach((s, i) => {
+      const n = next[i];
+      const was = digits[i];
+      let target = 10 + n;
+      // Odometers only roll forward; wheels to the right of the first change spin a full turn.
+      if (animate && i >= first) target = n > was ? 10 + n : 20 + n;
+      s.dataset.rest = 10 + n;
+      if (!animate) s.style.transition = "none";
+      s.style.transform = `translateY(calc(-1.28em * ${target}))`;
+      if (!animate) { void s.offsetHeight; s.style.transition = ""; }
+    });
+    digits = next;
+    odo.setAttribute("aria-label", `Odometer: ${value.toLocaleString("en-US")} miles`);
+  };
+
+  const selectMile = (i, animate, announce) => {
+    const M = MILES[i];
+    if (!M) return;
+    current = i;
+    mileBtns.forEach((b, k) => b.setAttribute("aria-pressed", String(k === i)));
+    const pos = (i + 0.5) / MILES.length;
+    if (track) track.style.setProperty("--pos", pos.toFixed(4));
+    stops.forEach((s, k) => { s.classList.toggle("is-reached", k <= i); s.classList.toggle("is-here", k === i); });
+    setOdo(M.value, animate);
+    mi("title").textContent = M.title;
+    mi("sub").textContent = M.sub;
+    mi("list").innerHTML = M.items.map((t, k) => `<li style="--i: ${k}">${esc(t)}</li>`).join("");
+    if (announce) mi("status").textContent = `${M.title}: ${M.items.length} typical items.`;
+  };
+
+  mileBtns.forEach((b) => b.addEventListener("click", () => selectMile(Number(b.dataset.mile), !reduce.matches, true)));
+
+  // Start at zero, then roll up to the default milestone the first time the card scrolls into view.
+  if (odo) {
+    const card = $(".miles-card");
+    if ("IntersectionObserver" in window && !reduce.matches) {
+      setOdo(0, false);
+      const io = new IntersectionObserver((entries) => {
+        if (!entries[0].isIntersecting) return;
+        io.disconnect();
+        setOdo(MILES[current].value, true);
+      }, { threshold: 0.35 });
+      io.observe(card);
+    } else {
+      setOdo(MILES[current].value, false);
+    }
+  }
+
+  /* ------------------------------------------------------------------
+     Sticky sub-nav: highlight the section you're reading
+     ------------------------------------------------------------------ */
+  const list = $(".subnav-list");
+  const links = $$(".subnav-link");
+  const targets = links.map((a) => d.getElementById(a.hash.slice(1))).filter(Boolean);
+  const showing = new Set();
+  let active = null;
+  const setActive = (id) => {
+    if (id === active) return;
+    active = id;
+    if (!id && list && targets[0] && targets[0].getBoundingClientRect().top > 0) list.scrollTo({ left: 0, behavior: reduce.matches ? "auto" : "smooth" });
+    links.forEach((a) => {
+      const on = a.hash === "#" + id;
+      if (on) a.setAttribute("aria-current", "true");
+      else a.removeAttribute("aria-current");
+      if (on && list && list.scrollWidth > list.clientWidth) {
+        list.scrollTo({ left: a.offsetLeft - (list.clientWidth - a.offsetWidth) / 2, behavior: reduce.matches ? "auto" : "smooth" });
+      }
+    });
+  };
+  if ("IntersectionObserver" in window && targets.length) {
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach((en) => (en.isIntersecting ? showing.add(en.target) : showing.delete(en.target)));
+      const first = targets.find((t) => showing.has(t));
+      setActive(first ? first.id : null);
+    }, { rootMargin: "-180px 0px -50% 0px" });
+    targets.forEach((t) => spy.observe(t));
+  }
+  links.forEach((a) => a.addEventListener("click", () => setActive(a.hash.slice(1))));
+  // Back at the hero: scroll the pill row back to its start.
+  const hero = $(".page-hero");
+  if (hero && list && "IntersectionObserver" in window) {
+    new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && !active) list.scrollTo({ left: 0, behavior: reduce.matches ? "auto" : "smooth" });
+    }, { threshold: 0.2 }).observe(hero);
+  }
+})();
+</script>
+</body>
+</html>

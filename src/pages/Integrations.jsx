@@ -24,6 +24,7 @@ export default function Integrations() {
   const signedIn = Boolean(cfg && cloudSession()?.url === cfg.url);
   const pay = PAY_PROVIDERS.find((p) => p.value === shop.payments?.provider);
   const payOn = pay && pay.value !== 'none' && (shop.payments.link || shop.payments.handle);
+  const site = websiteLink(state);
 
   const downloadIcs = () => {
     const url = URL.createObjectURL(new Blob([appointmentsIcs(state)], { type: 'text/calendar' }));
@@ -58,15 +59,17 @@ export default function Integrations() {
         {
           icon: Globe,
           name: 'Shop website',
-          by: 'Built in',
-          body: 'A one-page website with your services, reviews, hours, directions and online booking — ready for your Google Business Profile.',
-          status: ['builtin', 'Ready'],
+          by: 'Your public website',
+          body: 'Services, specials, FAQ and contact pages for your shop. Its booking form sends requests to Calendar and its contact and fleet forms to Messages.',
+          status: site ? ['on', 'Live'] : ['setup', 'Add address'],
           action: (
             <span className="flex gap-1.5">
-              <a href={websiteLink(state)} target="_blank" rel="noopener noreferrer" className="btn-secondary btn-sm">
-                Open <ExtIcon size={12} />
-              </a>
-              <Link to="/settings?tab=website" className="btn-plain btn-sm">Edit</Link>
+              {site && (
+                <a href={site} target="_blank" rel="noopener noreferrer" className="btn-secondary btn-sm">
+                  Open <ExtIcon size={12} />
+                </a>
+              )}
+              <Link to="/settings?tab=website" className="btn-plain btn-sm">{site ? 'Details' : 'Set up'}</Link>
             </span>
           ),
         },

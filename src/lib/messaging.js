@@ -81,4 +81,4 @@ export function sendHref(channel, customer, body, subject = '') {
   return customer?.phone ? smsHref(customer.phone, body) : null;
 }
 
-export const CHANNEL_LABEL = { sms: 'Text', email: 'Email', portal: 'Customer portal', call: 'Call', note: 'Note' };
+export const CHANNEL_LABEL = { sms: 'Text', email: 'Email', portal: 'Customer portal', web: 'Website', call: 'Call', note: 'Note' };

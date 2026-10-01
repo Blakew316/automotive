@@ -29,20 +29,8 @@ export const SHOP_DEFAULTS = {
   financing: { enabled: false, provider: '', url: '', apr: 9.99, terms: [6, 12, 24], minAmount: 300 },
   booking: { enabled: true, slotMinutes: 30, leadHours: 2, daysAhead: 21, capacity: 2, jobIds: ['cj-oil', 'cj-rotate', 'cj-fbrakes', 'cj-diag', 'cj-align', 'cj-ac', 'cj-battery', 'cj-inspect'], note: 'We’ll confirm your appointment by text.' },
   marketing: { reviewUrl: '', oilMonths: 6, oilMiles: 5000, milesPerDay: 35, winbackMonths: 9 },
-  // Public shop website (Settings → Website). Rating and reviews are what the shop enters.
-  website: {
-    tagline: 'Honest, dealer-quality repair for every make and model.',
-    since: 1998,
-    about: 'Family-owned and ASE-certified. We show you photos of what we find, explain your options, and never start work without your OK.',
-    rating: 4.9,
-    reviews: 212,
-    testimonials: [
-      { name: 'Megan R.', text: 'They texted me photos of my brakes and explained exactly what was needed. Fair price and done the same day.' },
-      { name: 'Chris D.', text: 'Booked online at 10pm, dropped the truck off at 7:30, picked it up at lunch. Easiest shop I’ve used.' },
-      { name: 'Laura N.', text: 'Honest advice — they told me what could wait. That’s why I keep coming back.' },
-    ],
-    highlights: ['ASE-certified technicians', '24-month / 24,000-mile warranty', 'Digital inspections with photos', 'Text updates & online approval'],
-  },
+  // Public shop website (website/ in the repo). Blank url = the copy published with the app.
+  website: { url: '' },
   // Monthly scorecard targets (Reports → Goals). GP% also colors job profitability on ROs.
   goals: { carCount: 150, aro: 600, gpPct: 55, partsMargin: 50, elr: 135, closeRate: 65 },
   templates: MESSAGE_TEMPLATES,
@@ -54,7 +42,8 @@ const TECH_DEFAULTS = { payType: 'hourly', laborCommissionPct: 0, partsCommissio
 export function migrate(data) {
   const d = { ...data };
   d.shop = { ...SHOP_DEFAULTS, ...d.shop };
-  for (const k of ['payments', 'financing', 'booking', 'marketing', 'goals', 'website']) d.shop[k] = { ...SHOP_DEFAULTS[k], ...(d.shop[k] || {}) };
+  for (const k of ['payments', 'financing', 'booking', 'marketing', 'goals']) d.shop[k] = { ...SHOP_DEFAULTS[k], ...(d.shop[k] || {}) };
+  d.shop.website = { url: d.shop.website?.url || '' };
   if (!Array.isArray(d.shop.templates) || !d.shop.templates.length) d.shop.templates = MESSAGE_TEMPLATES;
   else {
     // Keep the shop's edits; add any templates introduced since.

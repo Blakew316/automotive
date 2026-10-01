@@ -1,0 +1,50 @@
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="mini-card" href="{{root}}index.html" aria-label="{{name}} home">
+        <img src="{{root}}assets/img/logo-white-sm.webp" alt="" width="640" height="349" loading="lazy" decoding="async">
+        <span class="mini-card-foil">And Small Engine Repair</span>
+      </a>
+      <p class="footer-blurb">Honest repair and maintenance for cars, trucks and the small engines that keep your home and business running.</p>
+      <p><span class="open-status" data-open-status>Shop hours</span></p>
+    </div>
+    <nav class="footer-col" aria-labelledby="footer-services">
+      <h2 id="footer-services">Services</h2>
+      <ul>
+{{servicesFooter}}
+      </ul>
+    </nav>
+    <nav class="footer-col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul>
+        <li><a href="{{root}}about.html">About us</a></li>
+        <li><a href="{{root}}fleet.html">Fleet services</a></li>
+        <li><a href="{{root}}specials.html">Specials</a></li>
+        <li><a href="{{root}}brands.html">Makes we service</a></li>
+        <li><a href="{{root}}careers.html">Careers</a></li>
+      </ul>
+      <h2 class="footer-subhead">Help</h2>
+      <ul>
+        <li><a href="{{root}}appointment.html">Book a service</a></li>
+        <li><a href="{{root}}resources.html">Car care guides</a></li>
+        <li><a href="{{root}}faq.html">FAQ</a></li>
+        <li><a href="{{root}}contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col footer-visit">
+      <h2>Visit the shop</h2>
+      <address>
+        <a class="footer-contact" href="{{mapsUrl}}" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>{{street}}<br>{{cityLine}}</span></a>
+        <a class="footer-contact" href="tel:{{tel}}"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>{{phone}}</span></a>
+        <a class="footer-contact" href="mailto:{{email}}"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>{{email}}</span></a>
+      </address>
+      <ul class="hours-list">
+{{hoursList}}
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span data-year>{{year}}</span> {{name}}. All rights reserved.</p>
+    <p class="footer-links"><a href="{{root}}privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="{{root}}faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>{{staffLink}}</p>
+  </div>
+</footer>

@@ -1,0 +1,13 @@
+{
+  "name": "clinton-complete-auto-care",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static multi-page website for Clinton Complete Auto Care & Small Engine Repair.",
+  "scripts": {
+    "sync": "node scripts/sync.mjs",
+    "check": "node scripts/check.mjs",
+    "serve": "npx --yes serve . -l 8080",
+    "build": "node scripts/sync.mjs && node scripts/check.mjs"
+  },
+  "engines": { "node": ">=18" }
+}

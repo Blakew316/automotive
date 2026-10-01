@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:pages": "node scripts/pages.mjs /automotive/",
     "lint": "eslint .",
     "preview": "vite preview",
     "data:vehicles": "python3 scripts/vpic/build_data.py \"$(bash scripts/vpic/fetch_db.sh)\" public/data"

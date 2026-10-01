@@ -8,6 +8,9 @@ import ComposeModal from '../../components/Compose';
 import { relTime, isoDate, phone as fmtPhone } from '../../lib/format';
 
 const fmt = (iso) => new Date(iso).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+const fmtDay = (iso) => new Date(iso).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+// Website requests name a day and a time of day; the shop picks the exact time when confirming.
+const when = (b) => (b.window ? `${fmtDay(b.start)} · ${b.window === 'Flexible' ? 'any time' : b.window.toLowerCase()} (preferred)` : `${fmt(b.start)} · ${b.duration} min`);
 
 export default function BookingRequests() {
   const { state, declineBooking } = useShop();
@@ -38,11 +41,11 @@ export default function BookingRequests() {
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-baseline gap-x-2">
                       <span className="font-semibold">{b.name}</span>
-                      <span className="text-xs text-ink-3">requested {relTime(b.createdAt)}</span>
+                      <span className="text-xs text-ink-3">{b.source === 'website' ? 'from your website · ' : ''}requested {relTime(b.createdAt)}</span>
                     </div>
                     <div className="mt-0.5 text-sm text-ink-2">
                       <CalendarCheck size={13} className="mr-1 inline text-accent" />
-                      {fmt(b.start)} · {b.duration} min{clash ? <span className="text-warn"> · {clash} other appointment{clash === 1 ? '' : 's'} then</span> : ''}
+                      {when(b)}{clash ? <span className="text-warn"> · {clash} other appointment{clash === 1 ? '' : 's'} then</span> : ''}
                     </div>
                     <div className="mt-0.5 text-sm">{b.services.join(', ') || 'General service'}</div>
                     <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5 text-xs text-ink-3">
@@ -65,7 +68,7 @@ export default function BookingRequests() {
                         </span>
                       )}
                     </div>
-                    {b.notes && <p className="mt-1.5 rounded-[8px] bg-fill/[0.06] px-2.5 py-1.5 text-sm">“{b.notes}”</p>}
+                    {b.notes && <p className="mt-1.5 whitespace-pre-line rounded-[8px] bg-fill/[0.06] px-2.5 py-1.5 text-sm">{b.notes}</p>}
                   </div>
                   <div className="flex gap-2">
                     <button

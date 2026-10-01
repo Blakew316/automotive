@@ -4,6 +4,13 @@ Shop management for independent auto repair — estimates with fast customer aut
 
 Built with React, Vite and Tailwind. It runs entirely in the browser: shop data is stored locally (localStorage) and can be exported/imported as a JSON backup from **Settings → Data**. It installs to phones, tablets and computers as an app and works offline. Features that need to reach customers' phones (share links, online approvals, customer replies and the online booking inbox) use the shop's own free Supabase project — see [Shop Cloud](#shop-cloud).
 
+The repo also holds the shop's public website (`website/`), published alongside the app:
+
+| URL | What |
+| --- | --- |
+| https://blakew316.github.io/automotive/ | Public website — Clinton Complete Auto Care |
+| https://blakew316.github.io/automotive/app/ | AutoShop Pro staff app |
+
 ## Features
 
 **Shop workflow**
@@ -34,7 +41,7 @@ Built with React, Vite and Tailwind. It runs entirely in the browser: shop data 
 - **Reports** — sales & profit (revenue, car count, ARO, gross profit, hours sold, effective labor rate, sales mix, close rate, top services, receivables aging, and a period-over-period table with hours presented vs sold), goals & growth (a monthly scorecard against your targets and a what-if growth planner), technicians (efficiency, productivity, labor sales, commission), estimates & approvals (quoted vs approved vs declined, time to approve, approval methods, most-declined services) and customers (returning rate, new customers, online bookings, messages, top customers).
 - **Accounting** — profit & loss (income by type, parts and sublet cost, tech pay from the time clock, operating expenses by category, net income), an expense ledger, deposits by day and payment method (tips and surcharges separated), sales tax by month, and CSV exports in QuickBooks Online’s import layouts (invoices, payments, expenses, a balanced daily sales journal, customers).
 - **Marketing** — automations that line up today’s follow-ups (appointment confirmations, day-before reminders, review requests, service due, declined work, win-back) with sent and coming-up counts; vehicles due for an oil service (by time or projected mileage), declined work to follow up, lapsed customers to win back, review requests after closed visits, and custom campaigns by tag, make or last visit. Send personalized texts one tap at a time from the shop phone, one BCC email, or export the list for a bulk texting/email service.
-- **Shop website** — a one-page public site (Settings → Website) with your services, reviews, highlights, warranty, financing, hours, directions and online booking, ready for your Google Business Profile.
+- **Shop website** — the shop's public site ([Public website](#public-website)). Its *Book a service* form drops requests into **Calendar → Requests** with the customer's preferred day and time of day, and its contact and fleet forms arrive in **Messages** (new people are added as customers).
 - **Roles & access** — staff profiles for owner, shop manager, service advisor and technician with optional 4-digit PINs; each role sees only the pages it needs (switch people from the sidebar).
 - **Integrations** — Shop Cloud, online booking, Google reviews, QuickBooks exports, payment links, financing, PartsTech / Nexpart / WORLDPAC ordering with POs, NHTSA, calendar (.ics) export for Google/Apple/Outlook, CARFAX service history, and data import.
 - **Data migration** — import customers & vehicles or parts inventory from CSV (or paste from a spreadsheet) exported from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks or Excel: columns are matched automatically, previewed, and de-duplicated by phone, email, VIN and part number.
@@ -62,7 +69,7 @@ Built with React, Vite and Tailwind. It runs entirely in the browser: shop data 
 
 Shop data and photos live on the device (localStorage and IndexedDB), so everything works offline and costs nothing. Anything that has to open on a customer’s phone needs to be online, so it uses a [Supabase](https://supabase.com) project dedicated to AutoShop Pro.
 
-**It comes preconfigured.** The app ships connected to the *AutoShop Pro* project (`src/lib/cloudDefaults.js`): a public-read `autoshop-media` Storage bucket (photos, video and report files, 50 MB per file) and a `shop_inbox` table. Customers can only *add* booking requests, approvals and messages to the inbox; reading or clearing it, and uploading, replacing or deleting files, require a signed-in account whose `app_metadata.autoshop_staff` flag is set (checked by `public.is_shop_staff()` in every policy). Staff just sign in under **Settings → Shop Cloud** on each device; the first staff sign-in publishes the booking page and website, and passwords can be changed from the same screen. A signed-in account without the staff flag is warned and gets no access.
+**It comes preconfigured.** The app ships connected to the *AutoShop Pro* project (`src/lib/cloudDefaults.js`): a public-read `autoshop-media` Storage bucket (photos, video and report files, 50 MB per file) and a `shop_inbox` table. Customers can only *add* booking requests, approvals and messages to the inbox; reading or clearing it, and uploading, replacing or deleting files, require a signed-in account whose `app_metadata.autoshop_staff` flag is set (checked by `public.is_shop_staff()` in every policy). Staff just sign in under **Settings → Shop Cloud** on each device; the first staff sign-in publishes the booking page, and passwords can be changed from the same screen. A signed-in account without the staff flag is warned and gets no access.
 
 To add another staff login: create the user under Authentication → Users, then run
 
@@ -82,6 +89,16 @@ With it connected:
 - **Online booking** shows real open times (business hours minus booked appointments, up to the capacity you set) and requests arrive in Calendar without the customer texting. The booking page republishes itself when the calendar changes.
 
 Without Shop Cloud, shops can still show reports on a counter tablet, send the downloadable report file, and take booking requests by text or email from the booking page.
+
+## Public website
+
+`website/` is the shop's static, multi-page website (copied from the `automotiverepair` repo): home, services and 11 service pages, about, makes, fleet, specials, car care guides, FAQ, contact, careers and a multi-step *Book a service* form. Every page is a standalone HTML file with no build step; see `website/README.md` for editing.
+
+- **Shop details** (phone, email, address, hours, social links) live in `website/business.json`. Edit it, then run `node website/scripts/sync.mjs` to update every page, the structured data, `sitemap.xml` and `robots.txt`; `node website/scripts/check.mjs` validates the pages.
+- **Forms → AutoShop Pro.** `shopInbox` in `business.json` points the booking, contact and fleet forms at the Shop Cloud inbox (the public anon key; customers can only add). Staff signed in to the app receive them automatically. If the inbox can't be reached, the visitor is offered a pre-filled email or the phone number instead.
+- **Staff sign-in** in the site footer links to the app (`staffAppUrl`).
+- **Hosting.** `npm run build:pages` (`scripts/pages.mjs`) builds the app into `dist/app/` and copies the website to `dist/`. GitHub Pages serves one `404.html` for every missing path; it is the app shell, so deep links into the app load directly, and a small script forwards old links from before the app moved under `app/` (e.g. `/automotive/orders`) and sends unknown pages to the website's not-found page. A self-removing `sw.js` at the root retires the service worker from the old layout.
+- **Own domain.** Point the domain at the site, set `siteUrl`, `basePath` (`"/"` at a domain root) and `staffAppUrl` in `business.json`, run the sync script, build with that base (`node scripts/pages.mjs /`), and enter the address under **Settings → Website** in the app.
 
 ## Getting service records onto CARFAX
 
@@ -124,7 +141,8 @@ npm run data:vehicles   # downloads the database (≈60 MB, cached in scripts/vp
 npm install
 npm run dev      # http://localhost:5173
 npm run lint
-npm run build
+npm run build          # app only, into dist/
+npm run build:pages    # website + app as deployed (dist/ and dist/app/)
 ```
 
-Deploys to GitHub Pages via `.github/workflows/deploy.yml`.
+Deploys to GitHub Pages via `.github/workflows/deploy.yml` (`npm run build:pages`).

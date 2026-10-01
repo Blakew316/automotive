@@ -1,0 +1,1349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Request an Appointment | Clinton Complete Auto Care</title>
+<meta name="description" content="Request a service appointment for your car, truck or small engine in about a minute. Pick your services and a preferred time, and we’ll confirm with you.">
+<meta property="og:title" content="Request an Appointment | Clinton Complete Auto Care">
+<meta property="og:description" content="Four quick steps: your vehicle or equipment, the services you need, a preferred time and how to reach you. We'll confirm with you.">
+<!-- @partial head -->
+<script>document.documentElement.classList.add("js")</script>
+<meta name="theme-color" content="#FAF8F5">
+<meta name="color-scheme" content="light">
+<meta name="form-endpoint" content="">
+<meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
+<meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="stylesheet" href="assets/css/site.css">
+<script src="assets/js/site.js" defer></script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"selector_matches":"[target=_blank]"}}]},"eagerness":"moderate"}]}</script>
+<link rel="canonical" href="https://blakew316.github.io/automotive/appointment.html">
+<meta property="og:url" content="https://blakew316.github.io/automotive/appointment.html">
+<meta property="og:site_name" content="Clinton Complete Auto Care">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<!-- @end head -->
+<!-- @partial jsonld -->
+<script type="application/ld+json" id="business-data">{"@context":"https://schema.org","@type":"AutoRepair","name":"Clinton Complete Auto Care","description":"Complete auto care and small engine repair: maintenance, diagnostics, brakes, engines, A/C, tires and more.","url":"https://blakew316.github.io/automotive/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png","telephone":"+15555550123","email":"service@example.com","address":{"@type":"PostalAddress","streetAddress":"123 Main Street","addressLocality":"Clinton","addressRegion":"ST","postalCode":"00000","addressCountry":"US"},"openingHoursSpecification":[{"@type":"OpeningHoursSpecification","dayOfWeek":["Monday","Tuesday","Wednesday","Thursday","Friday"],"opens":"08:00","closes":"17:30"},{"@type":"OpeningHoursSpecification","dayOfWeek":["Saturday"],"opens":"08:00","closes":"13:00"}]}</script>
+<!-- @end jsonld -->
+<style>
+  /* site.css sets display on .form and .form-success, which would override the hidden attribute */
+  .form[hidden], .form-success[hidden] { display: none !important; }
+
+  /* ---------- Compact hero with a service key tag swinging on its hook ---------- */
+  .appt-hero { padding-bottom: clamp(8px, .2rem + 1vw, 20px); }
+  .appt-hero + .booking { padding-top: clamp(16px, .5rem + 1.6vw, 40px); }
+  .hero-call { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; margin-top: 22px; font-size: .95rem; color: var(--ink-3); }
+  .hero-call a { font-weight: 600; }
+  .appt-hero .page-hero-art { min-height: 0; }
+  .appt-hero .page-hero-art svg { width: min(100%, 430px); }
+  @media (max-width: 959.98px) { .appt-hero .page-hero-art { display: none; } }
+  .keytag-art .swing { transform-box: view-box; transform-origin: 220px 56px; animation: tag-swing 5.6s var(--ease-in-out) infinite alternate; }
+  .keytag-art .fob { transform-box: view-box; transform-origin: 206px 100px; animation: tag-sway 3.9s var(--ease-in-out) .3s infinite alternate-reverse; }
+  .keytag-art .tag { transform-box: view-box; transform-origin: 236px 100px; animation: tag-sway 4.4s var(--ease-in-out) .6s infinite alternate; }
+  @keyframes tag-swing { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+  @keyframes tag-sway { from { transform: rotate(-3.5deg); } to { transform: rotate(3.5deg); } }
+  .keytag-art .tag-check { --len: 30; animation-duration: .9s; animation-delay: 1.2s; }
+  @media (prefers-reduced-motion: reduce) { .keytag-art .tag-check { animation-delay: 0s !important; } }
+  .keytag-art .tag-text { font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .22em; fill: var(--ink-2); }
+  /* Notes sit in the empty lanes: left of the key fob, and under the service tag */
+  .page-hero-art .note-a { top: 38%; left: 0; }
+  .page-hero-art .note-b { bottom: -12%; right: -2%; animation-delay: 1.2s, 2.4s; }
+  @media (max-width: 1199.98px) { .page-hero-art .note-a { left: -5%; } .page-hero-art .note-b { right: -4%; } }
+
+  /* ---------- Booking layout ---------- */
+  .booking-layout { display: grid; gap: clamp(20px, 1rem + 1.5vw, 36px); align-items: start; }
+  @media (min-width: 1000px) { .booking-layout { grid-template-columns: minmax(0, 1fr) 340px; } }
+  @media (min-width: 1000px) and (min-height: 720px) { .booking-aside { position: sticky; top: calc(var(--header-h) + 24px); } }
+  .booking-card { padding: clamp(16px, .4rem + 2.2vw, 40px); border-radius: var(--r-xl); box-shadow: var(--shadow-2); }
+
+  /* ---------- Gear-shifter progress (H-pattern gate) ---------- */
+  .shifter {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; align-items: center; gap: 12px 24px;
+    padding: clamp(12px, .4rem + 1vw, 18px); border-radius: var(--r-lg);
+    background: linear-gradient(135deg, #f6f5fd 0%, var(--stone-50) 55%, #f2f6fd 100%); border: 1px solid var(--line);
+  }
+  .shifter-gate { grid-row: 1 / span 2; width: clamp(128px, 6.5rem + 5vw, 180px); height: auto; overflow: visible; }
+  .gate-plate { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.2; }
+  .gate-screw { fill: var(--stone-100); stroke: var(--ink-4); stroke-width: 1; }
+  .gate-slot, .gate-groove, .gate-trail { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .gate-slot { stroke: var(--stone-200); stroke-width: 24; }
+  .gate-groove { stroke: var(--stone-50); stroke-width: 19; }
+  .gate-trail { stroke: url(#shift-trail-grad); stroke-width: 4; stroke-dasharray: 354; stroke-dashoffset: 354; transition: stroke-dashoffset .7s var(--ease-in-out); }
+  .gear circle { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.2; transition: fill .35s var(--ease), stroke .35s var(--ease); }
+  .gear text { font-family: var(--font); font-size: 11px; font-weight: 700; fill: var(--ink-3); transition: fill .35s var(--ease); }
+  .gear.is-done circle { fill: var(--ink); stroke: var(--ink); }
+  .gear.is-done text { fill: var(--ivory); }
+  .gear.is-current circle { fill: var(--accent); stroke: var(--accent); }
+  .gear.is-current text { fill: #fff; }
+  .gear { transform-box: fill-box; transform-origin: center; }
+  .gear.is-current { animation: gear-pop .55s var(--spring); }
+  @keyframes gear-pop { 40% { transform: scale(1.22); } }
+  .knob-shadow { fill: rgba(43, 37, 34, .13); }
+  .knob-boot { fill: url(#shift-boot-grad); stroke: var(--ink); stroke-width: 1.6; }
+  .knob-stitch { fill: none; stroke: var(--ink); stroke-opacity: .32; stroke-width: 1; stroke-dasharray: 2 3; }
+  .knob-top { fill: url(#shift-knob-grad); }
+  .knob-rim { fill: none; stroke: #fff; stroke-opacity: .12; stroke-width: 1.2; }
+  .knob-shine { fill: #fff; opacity: .34; }
+  .knob-body { transform-box: fill-box; transform-origin: center; }
+  .knob.is-seated .knob-body { animation: knob-seat .5s var(--spring); }
+  @keyframes knob-seat { 30% { transform: scale(.86); } }
+
+  .shift-now { align-self: end; display: grid; gap: 2px; line-height: 1.15; }
+  .shift-count { font-size: .76rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+  .shift-name { font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem); font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+  .shift-steps { align-self: start; list-style: none; padding: 0; margin: 4px 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .shift-step {
+    display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 6px 10px 6px 6px;
+    border-radius: 13px; border: 1px solid var(--line); background: var(--paper);
+    color: var(--ink-3); font-size: .86rem; font-weight: 600; text-align: left; line-height: 1.15;
+    transition: border-color var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .shift-step .num { flex: none; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 9px; background: var(--stone-100); color: var(--ink-3); font-size: .8rem; font-weight: 700; transition: background-color .35s var(--ease), color .35s var(--ease); }
+  .shift-step:not(:disabled):hover { border-color: var(--ink-4); color: var(--ink); }
+  .shift-step:not(:disabled):active { transform: scale(.97); }
+  .shift-step.is-done .num { background: var(--ink); color: var(--ivory); }
+  .shift-step.is-current { border-color: var(--accent); background: var(--accent-soft); color: var(--ink); box-shadow: inset 0 0 0 1px var(--accent); }
+  .shift-step.is-current .num { background: var(--accent); color: #fff; }
+  .shift-step:disabled { cursor: default; background: rgba(255, 255, 255, .5); border-style: dashed; color: var(--ink-4); }
+  /* The form column narrows when the sidebar appears, so the shifter adapts to the form's width, not the viewport's. */
+  .booking-form { container: booking / inline-size; }
+  @container booking (max-width: 640px) {
+    .shifter { gap: 12px 16px; }
+    .shifter-gate { grid-row: auto; }
+    .shift-now { align-self: center; }
+    .shift-steps { grid-column: 1 / -1; margin: 0; }
+  }
+  @container booking (max-width: 440px) {
+    .shift-step { flex-direction: column; justify-content: center; gap: 3px; padding: 6px 2px; font-size: .72rem; text-align: center; }
+    .shift-step .num { width: 24px; height: 24px; border-radius: 8px; font-size: .74rem; }
+  }
+
+  /* ---------- Step panels ---------- */
+  .steps { margin-top: clamp(22px, 1rem + 1vw, 34px); }
+  .steps.is-animating { overflow: clip; overflow-clip-margin: 12px; }
+  .js .steps:not(.is-ready) > .step-panel ~ .step-panel,
+  .js .steps:not(.is-ready) [data-kind-fields="equipment"] { display: none; }
+  .step-panel { display: grid; gap: 22px; }
+  .step-panel[hidden], .kind-fields[hidden] { display: none; }
+  .step-head { display: grid; gap: 6px; }
+  .step-title { font-size: clamp(1.55rem, 1.2rem + 1.1vw, 2.1rem); letter-spacing: -0.03em; }
+  .step-title:focus { outline: none; }
+  .step-lead { color: var(--ink-3); }
+  .step-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding-top: 22px; border-top: 1px solid var(--line); }
+  .step-nav [data-next], .step-nav [type="submit"] { margin-left: auto; }
+  @media (max-width: 479.98px) {
+    .step-nav [data-back] { flex: 0 0 auto; padding-inline: 16px; }
+    .step-nav [data-next], .step-nav [type="submit"] { flex: 1 1 auto; }
+  }
+  html:not(.js) .shifter, html:not(.js) [data-next], html:not(.js) [data-back], html:not(.js) .review, html:not(.js) .symptoms { display: none; }
+  fieldset.field { border: 0; padding: 0; margin: 0; min-width: 0; }
+  fieldset.field > legend { padding: 0; margin-bottom: 9px; }
+  .kind-fields { display: grid; gap: 16px; }
+  .booking-form .field { align-content: start; }
+  .field-label .opt { font-weight: 500; color: var(--ink-4); }
+  .field-hint:empty { display: none; }
+  .date-note { color: var(--warn); font-weight: 550; }
+
+  /* Choice tiles: icon on top, check badge pinned to the corner */
+  .choice { -webkit-tap-highlight-color: transparent; }
+  .choice-text { min-width: 0; }
+  .choice-tile { position: relative; flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px; line-height: 1.25; }
+  .choice-tile small { margin-top: 3px; }
+  .choice input:checked + .choice-tile::after { position: absolute; top: 12px; right: 12px; margin: 0; }
+  .choice input:checked + .choice-card .icon { animation: hop .55s var(--spring); }
+  @keyframes hop { 40% { transform: translateY(-3px) rotate(-8deg); } }
+
+  .type-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); }
+  .type-card { gap: 14px; padding: 18px; font-size: 1.02rem; }
+  .type-card .icon-tile .icon { width: 20px; height: 20px; }
+  .type-card .icon-tile-ink .icon { color: var(--ivory); }
+  .choice input:checked + .type-card .icon-tile:not(.icon-tile-ink) { background: var(--foil); }
+  @media (max-width: 559.98px) {
+    .type-card { flex-direction: row; align-items: center; padding: 12px 14px; }
+    .choice input:checked + .type-card::after { position: static; margin-left: auto; }
+  }
+
+  .svc-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); }
+  .svc-card { align-items: flex-start; line-height: 1.25; }
+  .svc-card .icon { margin-top: 1px; }
+  .svc-card.is-unsure { background: var(--stone-50); border-style: dashed; }
+  @media (max-width: 559.98px) {
+    .svc-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .svc-card { position: relative; flex-direction: column; gap: 8px; padding: 12px 12px 13px; font-size: .9rem; }
+    .svc-card small { display: none; }
+    .choice input:checked + .svc-card::after { position: absolute; top: 10px; right: 10px; margin: 0; width: 18px; height: 18px; }
+  }
+  .preselect-note { align-items: center; }
+  @media (max-width: 559.98px) { .preselect-note { padding: 12px 14px; font-size: .92rem; } }
+  .preselect-note[hidden] { display: none; }
+
+  .symptoms { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 4px; }
+  .symptoms-label { font-size: .84rem; color: var(--ink-3); margin-right: 2px; }
+  .symptom {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 15px 6px 11px;
+    border-radius: var(--pill); border: 1px dashed var(--line-strong); background: var(--paper);
+    font-size: .88rem; font-weight: 600; color: var(--ink-2);
+    transition: border-color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  }
+  .symptom .icon { width: 16px; height: 16px; color: var(--accent); }
+  .symptom:hover { border-color: var(--accent); color: var(--ink); }
+  .symptom:active { transform: scale(.96); }
+  .symptom.is-added { border-style: solid; border-color: rgba(77, 86, 191, .3); background: var(--accent-soft); }
+  .symptom.is-added .icon { animation: pop .35s var(--spring); }
+
+  .time-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); }
+  .drop-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); }
+  .contact-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  @media (max-width: 559.98px) {
+    .time-grid, .drop-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .contact-grid { gap: 8px; }
+    .contact-grid .choice-tile small { display: none; }
+    .choice-tile { padding: 12px 12px 13px; gap: 8px; font-size: .92rem; }
+    .choice input:checked + .choice-tile::after { top: 10px; right: 10px; width: 18px; height: 18px; }
+  }
+
+  /* ---------- Review (styled like a repair order) ---------- */
+  .review { position: relative; overflow: hidden; border-radius: var(--r-lg); border: 1px solid var(--line); background: var(--paper); box-shadow: var(--shadow-1); }
+  .review::before { content: ""; position: absolute; inset: 0 0 auto; height: 5px; background: var(--foil); }
+  .review-head { display: flex; align-items: center; gap: 12px; padding: 20px 18px 14px; border-bottom: 1.5px dashed var(--line-strong); }
+  .review-head h3 { font-size: 1.1rem; }
+  .review-head p { font-size: .88rem; color: var(--ink-3); }
+  .review-head .badge { margin-left: auto; }
+  .review-list { margin: 0; padding: 4px 18px 8px; }
+  .review-row { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 2px 14px; padding: 13px 0; border-bottom: 1px solid var(--line); }
+  .review-row:last-child { border-bottom: 0; }
+  .review-row dt { padding-top: 3px; font-size: .74rem; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+  .review-row dd { margin: 0; display: flex; align-items: flex-start; gap: 12px; }
+  .review-val { flex: 1; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
+  .review-val small { display: block; margin-top: 2px; font-weight: 450; color: var(--ink-3); }
+  .review-val.is-empty { color: var(--ink-4); font-weight: 500; }
+  .review-edit { flex: none; min-height: 44px; margin-block: -11px; padding: 0 4px; border: 0; background: none; color: var(--accent); font-weight: 600; font-size: .9rem; border-radius: 8px; }
+  .review-edit:hover { text-decoration: underline; text-underline-offset: .2em; }
+  @media (max-width: 479.98px) { .review-row { grid-template-columns: 1fr; } .review-head .badge { display: none; } }
+
+  .form-legal { font-size: .84rem; color: var(--ink-3); }
+
+  /* ---------- Sidebar ---------- */
+  .aside-card { padding: clamp(20px, 1rem + 1vw, 28px); border-radius: var(--r-xl); }
+  .aside-card .eyebrow { margin-bottom: 10px; }
+  .aside-title { font-size: 1.4rem; letter-spacing: -0.025em; }
+  .aside-text { margin-top: 8px; color: var(--ink-3); font-size: .96rem; }
+  .aside-hours { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .aside-hours-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+  .aside-hours-head h3 { font-size: 1.02rem; }
+  .aside-hours .open-status { font-size: .84rem; }
+  .aside-hours .hours-table { margin-top: 6px; font-size: .92rem; }
+  .aside-hours .hours-table th, .aside-hours .hours-table td { padding: 8px 0; }
+  .aside-rows { display: grid; gap: 8px; margin-top: 18px; }
+  .aside-row {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--r);
+    background: var(--stone-50); border: 1px solid var(--line); text-decoration: none; color: var(--ink);
+    transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+  }
+  .aside-row:hover { transform: translateY(-1px); background: var(--paper); border-color: var(--line-strong); box-shadow: var(--shadow-1); }
+  .aside-row small { display: block; font-size: .72rem; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
+  .aside-row strong { display: block; font-weight: 600; font-size: .95rem; line-height: 1.35; overflow-wrap: anywhere; }
+  .aside-row .chev { margin-left: auto; width: 16px; height: 16px; color: var(--ink-4); }
+  @media (min-width: 680px) and (max-width: 999.98px) {
+    .aside-card { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; column-gap: 36px; }
+    .aside-card > :not(.aside-hours) { grid-column: 1; }
+    .aside-card .aside-hours { grid-column: 2; grid-row: 1 / span 4; margin-top: 0; padding: 0 0 0 36px; border-top: 0; border-left: 1px solid var(--line); }
+    .aside-card .aside-rows { align-self: end; }
+  }
+
+  /* ---------- Success ---------- */
+  .form-success h2 { font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.2rem); letter-spacing: -0.03em; }
+  .form-success .cluster { justify-content: center; margin-top: 6px; }
+  .form-success a[href^="tel:"] { white-space: nowrap; }
+</style>
+</head>
+<body data-page="appointment" id="top">
+<!-- @partial icons -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="i-brake" viewBox="0 0 24 24"><circle cx="11" cy="13" r="8"/><circle cx="11" cy="13" r="2.4"/><path d="M11 6.9v.6M17.1 13h-.6M11 19.1v-.6M4.9 13h.6"/><path d="M15.4 3.7a9.6 9.6 0 0 1 4.9 4.9" stroke-width="3.2"/></symbol>
+  <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3.5c3 3.6 5.5 6.6 5.5 9.6a5.5 5.5 0 0 1-11 0c0-3 2.5-6 5.5-9.6z"/><path d="M9.4 14a2.6 2.6 0 0 0 2.6 2.6"/></symbol>
+  <symbol id="i-diagnostics" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M6.5 12.5l2.4-3 2.5 2.2 3-4.2 3.1 3.6"/><path d="M8.5 20.5h7M12 17v3.5"/></symbol>
+  <symbol id="i-engine" viewBox="0 0 24 24"><path d="M9.5 5.5h5M12 5.5v2.5"/><path d="M6 10.5V9a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l1.8 1.8h1.8a1 1 0 0 1 1 1v1.4h1v4h-1v1.3a1 1 0 0 1-1 1h-2.8L14.9 20H8.6l-2.6-2.6"/><path d="M6 10.5H4.5v7H6zM4.5 14H2.5M2.5 12v4"/></symbol>
+  <symbol id="i-transmission" viewBox="0 0 24 24"><circle cx="5" cy="5" r="1.7"/><circle cx="12" cy="5" r="1.7"/><circle cx="19" cy="5" r="1.7"/><circle cx="5" cy="19" r="1.7"/><circle cx="12" cy="19" r="1.7"/><path d="M5 6.7v10.6M12 6.7v10.6M19 6.7V12H5"/></symbol>
+  <symbol id="i-ac" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.6 4.4 12 6.3l2.4-1.9M9.6 19.6 12 17.7l2.4 1.9M4.4 10.6l2.8-1.2-.4-3M17.2 17.6l-.4-3 2.8-1.2M4.4 13.4l2.8 1.2-.4 3M17.2 6.4l-.4 3 2.8 1.2"/></symbol>
+  <symbol id="i-tire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+  <symbol id="i-suspension" viewBox="0 0 24 24"><path d="M12 2.5v2.5M12 19v2.5"/><path d="M8 5h8M8 19h8"/><path d="M8.5 5l7 2.3-7 2.3 7 2.4-7 2.3 7 2.4-7 .3"/></symbol>
+  <symbol id="i-battery" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="12.5" rx="2.2"/><path d="M6.5 7V5h3v2M14.5 7V5h3v2"/><path d="M6.5 13.2h3.2M8.1 11.6v3.2M14.3 13.2h3.2"/></symbol>
+  <symbol id="i-mower" viewBox="0 0 24 24"><path d="M20.5 3.5l-5.2 8.5"/><path d="M4 12h11.8l1.7 3.8H3z"/><path d="M6 12V9.6h6.5l1 2.4"/><circle cx="6.5" cy="18" r="2"/><circle cx="15" cy="18" r="2"/></symbol>
+  <symbol id="i-inspection" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2.2"/><path d="M9 4.5V3.2h6v1.3"/><path d="M8.6 12.6l2.3 2.3 4.6-4.8"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.2 3.8h3l1.6 4.1-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4.1 1.6v3a2 2 0 0 1-2.1 2A14.8 14.8 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2 2 4-4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.3V12l3.1 2"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7.2 12 13l8.2-5.8"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.6 2.6 5-5.2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 3.5a4.6 4.6 0 0 0-4.3 6L3.9 16.3a2 2 0 0 0 2.8 2.8l6.8-6.8a4.6 4.6 0 0 0 6-4.4c0-.5 0-.9-.2-1.3l-2.5 2.5-2.5-.6-.6-2.5 2.5-2.5c-.4-.1-.8-.1-1.2-.1z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.4c0 4.4-3 7.9-7 9.6-4-1.7-7-5.2-7-9.6V6z"/><path d="M8.8 12.1l2.2 2.2 4.3-4.4"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M2.5 15.6v-2.8a1.5 1.5 0 0 1 1-1.4l2.3-.8 2.4-3.3a2 2 0 0 1 1.6-.8h4.8a2 2 0 0 1 1.5.7l3 3.6 1.9.5a1.5 1.5 0 0 1 1.1 1.5v2.8"/><path d="M2.5 15.6h2.2M9.3 15.6h5.4M19.3 15.6h2.2"/><circle cx="7" cy="16" r="2.3"/><circle cx="17" cy="16" r="2.3"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 15.8V9.6a1 1 0 0 1 1-1h3.2l1.8-2.8h4.3a1 1 0 0 1 1 1v2.8h5.1a1.6 1.6 0 0 1 1.5 1.1l1.1 3.2v1.9"/><path d="M2.5 15.8h2M9 15.8h6M19.5 15.8h2"/><path d="M6.7 8.6h6.9"/><circle cx="6.8" cy="16.2" r="2.2"/><circle cx="17.2" cy="16.2" r="2.2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M6 9.6V20h12V9.6"/><path d="M10 20v-5.2h4V20"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 17h-9.5l-4.8 3.6V17H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 5z"/><path d="M7.5 10h9M7.5 13h5.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.4 2.9 17.3a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.5M12 17v.3"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24"><path d="M6.5 3h7.8l4.2 4.2V21h-12z"/><path d="M14 3v4.5h4.5M9.2 12h5.6M9.2 15.8h5.6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.5a1 1 0 0 1 1-1h7.8l8.2 8.2a1.5 1.5 0 0 1 0 2.1l-6.2 6.2a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7.5 4.5 3.5 4.5v14c4 0 6.5.5 8.5 2 2-1.5 4.5-2 8.5-2v-14c-4 0-6.5.5-8.5 2z"/><path d="M12 6.5v14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17.5 14.6c1.8.7 3 2.4 3.5 4.9"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.8-2.5 2.3-2.5 3.9M12 17v.3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.4 17.5a8.6 8.6 0 1 1 15.2 0"/><path d="M12 13.5l4.2-4.2"/><circle cx="12" cy="13.5" r="1.3"/><path d="M6.8 9.6l.9.6M12 6.4v1.1M17.2 9.6l-.9.6"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7.2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></symbol>
+  <symbol id="i-steering" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="2.2"/><path d="M3.3 10.6c3.1.6 5.6.8 6.6 1.1M20.7 10.6c-3.1.6-5.6.8-6.6 1.1M12 14.2V21"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M5.5 18.5l1.4-1.4M17.1 6.9l1.4-1.4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13.5 14.5-14-.3 9.6-5.8 14.5-13.2 14.5"/><path d="M5 19c3-4 6-6.5 9.5-8.5"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15.5a4.5 4.5 0 0 1-.4-9 5.5 5.5 0 0 1 10.6 1.4A3.8 3.8 0 0 1 17 15.5z"/><path d="M8.5 18.2l-.8 2M12.5 18.2l-.8 2M16.5 18.2l-.8 2"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9.2 14.2v-2.5a1 1 0 0 1 1-1h5M13.5 8.7l2 2-2 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2.5 8.5 6 6.5l3.2 1.2M21.5 8.5 18 6.5l-4.8 1.6-3.3 2.7a1.3 1.3 0 0 0 1.6 2l2.4-1.6 4.3 3.9"/><path d="M2.5 14.2l2 .1 4.8 4a1.4 1.4 0 0 0 2-1.9M8 15.5l2.8 2.3a1.4 1.4 0 0 0 2-1.9M11.6 13.4l3 2.6a1.4 1.4 0 0 0 1.9-2M21.5 14.2h-3.3"/></symbol>
+  <symbol id="i-fuel" viewBox="0 0 24 24"><path d="M4.5 20.5V5.5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v15M3 20.5h13M4.5 10.5h10"/><path d="M14.5 8.5l3 .1 1.5 1.6v7.3a1.3 1.3 0 0 0 2.6 0V9.5L19 6.8"/></symbol>
+  <symbol id="i-car-mini" viewBox="0 0 32 14"><path d="M2 10.8V8.6c0-.6.4-1.1 1-1.3l4-1.2L10.4 2.7c.4-.4 1-.7 1.6-.7h7.3c.6 0 1.2.3 1.6.7L24 6.1l4.8.9c.7.1 1.2.7 1.2 1.4v2.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--ivory, #faf8f5)" stroke-width="1.2"/><circle cx="23.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--ivory, #faf8f5)" stroke-width="1.2"/></symbol>
+</svg>
+<!-- @end icons -->
+<!-- @partial header -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="index.html" aria-label="Clinton Complete Auto Care home">
+      <span class="brand-badge"><img src="assets/img/logo-mark-white.webp" alt="" width="480" height="207" decoding="async"></span>
+      <span class="brand-text" aria-hidden="true"><span class="brand-line1">Complete Auto Care</span><span class="brand-line2">&amp; Small Engine Repair</span></span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li><a class="nav-link" href="index.html" data-nav="home">Home</a></li>
+        <li class="has-menu" data-menu>
+          <a class="nav-link" href="services.html" data-nav="services">Services</a>
+          <button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega-services" aria-label="Show all services"><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+          <div class="mega" id="mega-services">
+            <div class="mega-grid">
+              <a class="mega-item" href="services/brakes.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-brake"/></svg></span><span class="mega-text"><strong>Brakes</strong><small>Pads, rotors, fluid &amp; ABS</small></span></a>
+              <a class="mega-item" href="services/oil-change.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg></span><span class="mega-text"><strong>Oil &amp; Maintenance</strong><small>Oil, filters, fluids &amp; factory service</small></span></a>
+              <a class="mega-item" href="services/diagnostics.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span><span class="mega-text"><strong>Diagnostics</strong><small>Warning lights &amp; drivability</small></span></a>
+              <a class="mega-item" href="services/engine-repair.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-engine"/></svg></span><span class="mega-text"><strong>Engine &amp; Cooling</strong><small>Gaskets, timing, radiators &amp; more</small></span></a>
+              <a class="mega-item" href="services/transmission.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-transmission"/></svg></span><span class="mega-text"><strong>Transmission</strong><small>Fluid service, clutches &amp; axles</small></span></a>
+              <a class="mega-item" href="services/heating-ac.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-ac"/></svg></span><span class="mega-text"><strong>A/C &amp; Heating</strong><small>Recharge, leaks, blower &amp; heater</small></span></a>
+              <a class="mega-item" href="services/tires-alignment.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg></span><span class="mega-text"><strong>Tires &amp; Alignment</strong><small>Mount, balance, rotate &amp; align</small></span></a>
+              <a class="mega-item" href="services/suspension-steering.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-suspension"/></svg></span><span class="mega-text"><strong>Suspension &amp; Steering</strong><small>Shocks, struts &amp; steering</small></span></a>
+              <a class="mega-item" href="services/electrical-battery.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-battery"/></svg></span><span class="mega-text"><strong>Battery &amp; Electrical</strong><small>Batteries, alternators &amp; wiring</small></span></a>
+              <a class="mega-item" href="services/inspections.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="mega-text"><strong>Inspections</strong><small>Pre-purchase &amp; road-trip checks</small></span></a>
+              <a class="mega-item" href="services/small-engine-repair.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span><span class="mega-text"><strong>Small Engine Repair</strong><small>Mowers, generators &amp; power equipment</small></span></a>
+            </div>
+            <div class="mega-foot">
+              <p class="mega-note"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg> Not sure what you need? Describe the symptom and we&rsquo;ll diagnose it.</p>
+              <div class="mega-actions">
+                <a class="link-arrow" href="services.html">All services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                <a class="btn btn-primary btn-sm" href="appointment.html" aria-current="page">Book a service</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="services/small-engine-repair.html" data-nav="small-engine">Small Engine</a></li>
+        <li><a class="nav-link" href="about.html" data-nav="about">About</a></li>
+        <li><a class="nav-link" href="fleet.html" data-nav="fleet">Fleet</a></li>
+        <li><a class="nav-link" href="resources.html" data-nav="resources">Car Care</a></li>
+        <li><a class="nav-link" href="contact.html" data-nav="contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-call" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span class="visually-hidden">Call </span><span class="header-call-num">(555) 555-0123</span></a>
+      <a class="btn btn-primary btn-sm header-book is-active" href="appointment.html" data-nav="appointment" aria-current="page">Book Service</a>
+    </div>
+  </div>
+  <div class="road-progress" aria-hidden="true"><span class="road-progress-lane"></span><svg class="road-progress-car"><use href="#i-car-mini"/></svg></div>
+</header>
+<!-- @end header -->
+
+<main id="main">
+
+  <section class="page-hero appt-hero" aria-labelledby="page-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <nav class="breadcrumb" aria-label="Breadcrumb">
+          <ol>
+            <li><a href="index.html">Home</a></li>
+            <li><span aria-current="page">Book a service</span></li>
+          </ol>
+        </nav>
+        <p class="eyebrow mt-3"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book a service</p>
+        <h1 id="page-title">Request an appointment.</h1>
+        <p class="lead">Four quick steps, about a minute. Tell us what you drive and what&rsquo;s going on, pick a time that suits you, and we&rsquo;ll reach out to confirm.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>About a minute</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg>We confirm with you</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Cars, trucks &amp; small engines</span>
+        </div>
+        <p class="hero-call"><span class="open-status" data-open-status>Shop hours</span><span>Rather talk it through? <a class="text-link" href="tel:+15555550123" data-biz-href="tel"><span data-biz="phone">(555) 555-0123</span></a></span></p>
+      </div>
+
+      <div class="page-hero-art" aria-hidden="true">
+        <svg class="keytag-art" viewBox="-40 0 440 320">
+          <defs>
+            <linearGradient id="art-foil" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#dde4ff"/><stop offset=".5" stop-color="#efe6ff"/><stop offset="1" stop-color="#dff1ff"/>
+            </linearGradient>
+          </defs>
+          <!-- key board rail with a few empty hooks -->
+          <path class="art-ink art-thin" d="M70 32h300" stroke-opacity=".28"/>
+          <g class="art-ink art-thin" stroke-opacity=".45">
+            <rect class="art-paper" x="96" y="23" width="30" height="18" rx="7"/><path d="M111 41v9"/>
+            <rect class="art-paper" x="314" y="23" width="30" height="18" rx="7"/><path d="M329 41v9"/>
+          </g>
+          <rect class="art-ink art-paper" x="188" y="18" width="64" height="28" rx="11"/>
+          <circle class="art-ink art-thin art-soft" cx="202" cy="32" r="3.5"/>
+          <circle class="art-ink art-thin art-soft" cx="238" cy="32" r="3.5"/>
+          <path class="art-ink" d="M220 46v12" stroke-width="5"/>
+          <g class="swing">
+            <!-- split ring -->
+            <circle class="art-ink" cx="220" cy="82" r="24" stroke-width="3"/>
+            <path class="art-ink art-thin" d="M199.6 70.4a24 24 0 0 1 12-11" stroke-opacity=".55"/>
+            <!-- key fob + blade -->
+            <g class="fob">
+              <path class="art-ink" d="M206 101c-4 4-8 9-10 15"/>
+              <rect class="art-ink art-lilac" x="150" y="116" width="62" height="100" rx="26"/>
+              <circle class="art-ink art-paper" cx="181" cy="142" r="10"/>
+              <path class="art-ink art-thin" d="M177.6 143h6.8v4.6h-6.8zM179 143v-2a2 2 0 0 1 4 0v2"/>
+              <circle class="art-ink art-paper" cx="181" cy="168" r="10"/>
+              <path class="art-ink art-thin" d="M177.6 169h6.8v4.6h-6.8zM179 169v-2a2 2 0 0 1 4-.6"/>
+              <circle class="art-ink art-soft" cx="181" cy="194" r="6"/>
+              <rect class="art-ink art-paper" x="172" y="214" width="18" height="12" rx="3"/>
+              <path class="art-ink art-paper" d="M175 226h12v56l-6 9-6-9z"/>
+              <path class="art-ink art-thin" d="M187 238h-4v6h4M187 254h-4v6h4M187 268h-4v5h4" stroke-opacity=".7"/>
+              <path class="art-ink art-thin" d="M181 232v44" stroke-opacity=".35"/>
+            </g>
+            <!-- service tag -->
+            <g class="tag">
+              <path class="art-ink art-paper" d="M258 126h50l16 16v130a8 8 0 0 1-8 8h-66a8 8 0 0 1-8-8V142z"/>
+              <circle class="art-foil" cx="283" cy="145" r="11"/>
+              <circle class="art-ink art-thin art-paper" cx="283" cy="145" r="5.5"/>
+              <path class="art-ink art-thin" d="M236 101c15 10 31 24 47 41" stroke-opacity=".8"/>
+              <rect class="art-foil" x="243" y="166" width="80" height="24"/>
+              <text class="tag-text" x="283" y="182.5" text-anchor="middle">SERVICE</text>
+              <rect class="art-ink art-thin art-paper" x="255" y="204" width="14" height="14" rx="4"/>
+              <path class="tag-check art-ink art-accent art-draw" d="M257 210l5 5 11-13" stroke-width="2.6"/>
+              <path class="art-ink art-thin" d="M277 211h34M256 234h55M256 250h40" stroke-opacity=".32"/>
+            </g>
+          </g>
+          <g transform="translate(340 92)">
+            <path class="art-pulse" d="M10 0c.8 5.6 4.4 9.2 10 10-5.6.8-9.2 4.4-10 10-.8-5.6-4.4-9.2-10-10 5.6-.8 9.2-4.4 10-10z" fill="var(--accent)" opacity=".75"/>
+          </g>
+        </svg>
+        <div class="float-note note-a"><span class="dot is-ok"></span><span><strong>Request received</strong><small>We&rsquo;ll confirm a time</small></span></div>
+        <div class="float-note note-b"><span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-calendar-check"/></svg></span><span><strong>Tuesday, morning</strong><small>Preferred drop-off noted</small></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section booking" aria-label="Appointment request">
+    <div class="container booking-layout">
+
+      <div class="card booking-card">
+        <form class="form booking-form" id="booking-form" data-form="manual" name="appointment" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" data-success="#appointment-success" data-subject="Appointment request from the website" novalidate>
+          <input type="hidden" name="form-name" value="appointment">
+          <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+
+          <!-- Gear-shifter progress -->
+          <div class="shifter">
+            <svg class="shifter-gate" viewBox="0 0 200 150" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="shift-trail-grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#4d56bf"/><stop offset=".55" stop-color="#7a5cc4"/><stop offset="1" stop-color="#3b7fc2"/>
+                </linearGradient>
+                <radialGradient id="shift-knob-grad" cx=".36" cy=".3" r=".8">
+                  <stop offset="0" stop-color="#5d534e"/><stop offset=".6" stop-color="#2b2522"/><stop offset="1" stop-color="#1b1715"/>
+                </radialGradient>
+                <linearGradient id="shift-boot-grad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#dde4ff"/><stop offset=".5" stop-color="#efe6ff"/><stop offset="1" stop-color="#dff1ff"/>
+                </linearGradient>
+              </defs>
+              <rect class="gate-plate" x="1" y="1" width="198" height="148" rx="24"/>
+              <circle class="gate-screw" cx="22" cy="75" r="3"/>
+              <circle class="gate-screw" cx="178" cy="75" r="3"/>
+              <path class="gate-slot" d="M64 28V122M136 28V122M64 75H136"/>
+              <path class="gate-groove" d="M64 28V122M136 28V122M64 75H136"/>
+              <path class="gate-trail" d="M64 28L64 122L64 75L136 75L136 28L136 122"/>
+              <g class="gear is-current" data-gear="1"><circle cx="24" cy="28" r="11"/><text x="24" y="28" text-anchor="middle" dominant-baseline="central">1</text></g>
+              <g class="gear" data-gear="2"><circle cx="24" cy="122" r="11"/><text x="24" y="122" text-anchor="middle" dominant-baseline="central">2</text></g>
+              <g class="gear" data-gear="3"><circle cx="176" cy="28" r="11"/><text x="176" y="28" text-anchor="middle" dominant-baseline="central">3</text></g>
+              <g class="gear" data-gear="4"><circle cx="176" cy="122" r="11"/><text x="176" y="122" text-anchor="middle" dominant-baseline="central">4</text></g>
+              <g class="knob" style="transform: translate(64px, 28px)">
+                <ellipse class="knob-shadow" cx="2" cy="5" rx="22" ry="20"/>
+                <g class="knob-body">
+                  <circle class="knob-boot" r="22"/>
+                  <circle class="knob-stitch" r="17.5"/>
+                  <circle class="knob-top" r="13"/>
+                  <circle class="knob-rim" r="10"/>
+                  <ellipse class="knob-shine" cx="-4.5" cy="-5.5" rx="4.6" ry="3.2" transform="rotate(-35 -4.5 -5.5)"/>
+                </g>
+              </g>
+            </svg>
+            <p class="shift-now" id="shift-now" aria-live="polite" aria-atomic="true"><span class="shift-count">Step <span data-shift-num>1</span> of 4:</span> <span class="shift-name" data-shift-name>Vehicle</span></p>
+            <ol class="shift-steps" role="list">
+              <li><button class="shift-step is-current" type="button" data-go="1" aria-current="step"><span class="num" aria-hidden="true">1</span><span class="lbl"><span class="visually-hidden">Step 1: </span>Vehicle</span></button></li>
+              <li><button class="shift-step" type="button" data-go="2" disabled><span class="num" aria-hidden="true">2</span><span class="lbl"><span class="visually-hidden">Step 2: </span>Services</span></button></li>
+              <li><button class="shift-step" type="button" data-go="3" disabled><span class="num" aria-hidden="true">3</span><span class="lbl"><span class="visually-hidden">Step 3: </span>Timing</span></button></li>
+              <li><button class="shift-step" type="button" data-go="4" disabled><span class="num" aria-hidden="true">4</span><span class="lbl"><span class="visually-hidden">Step 4: </span>Contact</span></button></li>
+            </ol>
+          </div>
+
+          <div class="steps">
+
+            <!-- Step 1: Vehicle -->
+            <section class="step-panel" id="step-1" data-name="Vehicle" aria-labelledby="step-1-title">
+              <div class="step-head">
+                <h2 class="step-title" id="step-1-title" tabindex="-1">What are we working on?</h2>
+                <p class="step-lead">Cars, trucks and the small engines in your garage. Choose one, then add a few details.</p>
+              </div>
+
+              <fieldset class="field" data-required-group data-error="Please choose what we&rsquo;ll be working on.">
+                <legend class="field-label">It&rsquo;s a&hellip; <span class="req">*</span></legend>
+                <div class="choice-grid type-grid">
+                  <label class="choice"><input type="radio" name="vehicle_type" value="Car or SUV" data-kind="vehicle" data-label="Vehicle type"><span class="choice-card choice-tile type-card"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span><span class="choice-text"><span class="choice-name">Car or SUV</span><small>Sedans, hatchbacks &amp; crossovers</small></span></span></label>
+                  <label class="choice"><input type="radio" name="vehicle_type" value="Truck or van" data-kind="vehicle" data-label="Vehicle type"><span class="choice-card choice-tile type-card"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span><span class="choice-text"><span class="choice-name">Truck or van</span><small>Pickups, vans &amp; work trucks</small></span></span></label>
+                  <label class="choice"><input type="radio" name="vehicle_type" value="Small engine equipment" data-kind="equipment" data-label="Vehicle type"><span class="choice-card choice-tile type-card"><span class="icon-tile icon-tile-sm icon-tile-ink"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg></span><span class="choice-text"><span class="choice-name">Small engine equipment</span><small>Mowers, generators &amp; more</small></span></span></label>
+                </div>
+                <p class="field-error" id="a-type-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please choose what we&rsquo;ll be working on.</span></p>
+              </fieldset>
+
+              <div class="kind-fields" data-kind-fields="vehicle">
+                <div class="form-grid form-grid-2">
+                  <div class="field">
+                    <label class="field-label" for="a-year">Year <span class="req">*</span></label>
+                    <input class="input" id="a-year" name="vehicle_year" type="text" inputmode="numeric" autocomplete="off" maxlength="4" pattern="(19|20)[0-9]{2}" placeholder="e.g. 2017" required data-label="Year" data-error="Please enter a 4-digit year.">
+                    <p class="field-error" id="a-year-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter a 4-digit year.</span></p>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="a-make">Make <span class="req">*</span></label>
+                    <input class="input" id="a-make" name="vehicle_make" type="text" list="a-makes" autocomplete="off" autocapitalize="words" placeholder="e.g. Ford" required data-label="Make" data-error="Please enter the make.">
+                    <p class="field-error" id="a-make-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter the make.</span></p>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="a-model">Model <span class="req">*</span></label>
+                    <input class="input" id="a-model" name="vehicle_model" type="text" autocomplete="off" autocapitalize="words" placeholder="e.g. Escape" required data-label="Model" data-error="Please enter the model.">
+                    <p class="field-error" id="a-model-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter the model.</span></p>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="a-miles">Mileage <span class="opt">(optional)</span></label>
+                    <input class="input" id="a-miles" name="mileage" type="text" inputmode="numeric" autocomplete="off" placeholder="e.g. 84,000" data-label="Mileage" aria-describedby="a-miles-hint">
+                    <p class="field-hint" id="a-miles-hint">A rough number is fine.</p>
+                  </div>
+                </div>
+                <datalist id="a-makes">
+                  <option value="Acura"></option><option value="Audi"></option><option value="BMW"></option><option value="Buick"></option><option value="Cadillac"></option><option value="Chevrolet"></option><option value="Chrysler"></option><option value="Dodge"></option><option value="Ford"></option><option value="GMC"></option><option value="Honda"></option><option value="Hyundai"></option><option value="Infiniti"></option><option value="Jeep"></option><option value="Kia"></option><option value="Lexus"></option><option value="Lincoln"></option><option value="Mazda"></option><option value="Mercedes-Benz"></option><option value="Mini"></option><option value="Mitsubishi"></option><option value="Nissan"></option><option value="Ram"></option><option value="Subaru"></option><option value="Toyota"></option><option value="Volkswagen"></option><option value="Volvo"></option>
+                </datalist>
+              </div>
+
+              <div class="kind-fields" data-kind-fields="equipment">
+                <div class="field">
+                  <label class="field-label" for="a-equip">Equipment type <span class="req">*</span></label>
+                  <select class="select" id="a-equip" name="equipment_type" required data-label="Equipment type" data-error="Please choose the type of equipment.">
+                    <option value="">Choose one</option>
+                    <option>Push mower</option>
+                    <option>Riding mower or lawn tractor</option>
+                    <option>Zero-turn mower</option>
+                    <option>Generator</option>
+                    <option>Pressure washer</option>
+                    <option>Chainsaw</option>
+                    <option>String trimmer or edger</option>
+                    <option>Leaf blower</option>
+                    <option>Snow blower</option>
+                    <option>Tiller or cultivator</option>
+                    <option>Something else</option>
+                  </select>
+                  <p class="field-error" id="a-equip-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please choose the type of equipment.</span></p>
+                </div>
+                <div class="form-grid form-grid-2">
+                  <div class="field">
+                    <label class="field-label" for="a-brand">Brand <span class="opt">(if you know it)</span></label>
+                    <input class="input" id="a-brand" name="equipment_brand" type="text" list="a-brands" autocomplete="off" autocapitalize="words" placeholder="e.g. Honda" data-label="Equipment brand">
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="a-emodel">Model <span class="opt">(if you know it)</span></label>
+                    <input class="input" id="a-emodel" name="equipment_model" type="text" autocomplete="off" placeholder="Usually on a sticker or plate" data-label="Equipment model">
+                  </div>
+                </div>
+                <datalist id="a-brands">
+                  <option value="Ariens"></option><option value="Briggs &amp; Stratton"></option><option value="Craftsman"></option><option value="Cub Cadet"></option><option value="Echo"></option><option value="Generac"></option><option value="Honda"></option><option value="Husqvarna"></option><option value="John Deere"></option><option value="Kawasaki"></option><option value="Kohler"></option><option value="Ryobi"></option><option value="Snapper"></option><option value="Stihl"></option><option value="Toro"></option><option value="Troy-Bilt"></option>
+                </datalist>
+              </div>
+
+              <div class="step-nav">
+                <button class="btn btn-primary btn-lg" type="button" data-next>Next: Services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              </div>
+            </section>
+
+            <!-- Step 2: Services -->
+            <section class="step-panel" id="step-2" data-name="Services" aria-labelledby="step-2-title">
+              <div class="step-head">
+                <h2 class="step-title" id="step-2-title" tabindex="-1">What can we help with?</h2>
+                <p class="step-lead">Pick everything that applies. Not sure what it is? That&rsquo;s fine, just describe it below.</p>
+              </div>
+
+              <p class="callout preselect-note" id="a-preselect" hidden><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg><span>We&rsquo;ve selected <strong data-preselect-name>this service</strong> from the page you were on. Add anything else on your list.</span></p>
+
+              <fieldset class="field" data-required-group data-error="Please choose at least one service, or &ldquo;Not sure&rdquo;.">
+                <legend class="field-label">Services <span class="req">*</span></legend>
+                <div class="choice-grid svc-grid">
+                  <label class="choice"><input type="checkbox" name="services" value="Brakes" data-slug="brakes" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-brake"/></svg><span class="choice-text"><span class="choice-name">Brakes</span><small>Pads, rotors, fluid &amp; ABS</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Oil &amp; Maintenance" data-slug="oil-change" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg><span class="choice-text"><span class="choice-name">Oil &amp; Maintenance</span><small>Oil, filters &amp; fluids</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Diagnostics" data-slug="diagnostics" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg><span class="choice-text"><span class="choice-name">Diagnostics</span><small>Warning lights &amp; drivability</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Engine &amp; Cooling" data-slug="engine-repair" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-engine"/></svg><span class="choice-text"><span class="choice-name">Engine &amp; Cooling</span><small>Leaks, overheating &amp; more</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Transmission" data-slug="transmission" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-transmission"/></svg><span class="choice-text"><span class="choice-name">Transmission</span><small>Shifting, fluid &amp; clutches</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="A/C &amp; Heating" data-slug="heating-ac" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-ac"/></svg><span class="choice-text"><span class="choice-name">A/C &amp; Heating</span><small>Cold air, heat &amp; blower</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Tires &amp; Alignment" data-slug="tires-alignment" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg><span class="choice-text"><span class="choice-name">Tires &amp; Alignment</span><small>Mount, balance &amp; align</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Suspension &amp; Steering" data-slug="suspension-steering" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-suspension"/></svg><span class="choice-text"><span class="choice-name">Suspension &amp; Steering</span><small>Shocks, struts &amp; steering</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Battery &amp; Electrical" data-slug="electrical-battery" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-battery"/></svg><span class="choice-text"><span class="choice-name">Battery &amp; Electrical</span><small>Starting, charging &amp; wiring</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Inspections" data-slug="inspections" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg><span class="choice-text"><span class="choice-name">Inspections</span><small>Pre-purchase &amp; road trips</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Small Engine Repair" data-slug="small-engine-repair" data-label="Services"><span class="choice-card svc-card"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg><span class="choice-text"><span class="choice-name">Small Engine Repair</span><small>Mowers, generators &amp; more</small></span></span></label>
+                  <label class="choice"><input type="checkbox" name="services" value="Not sure" data-slug="not-sure" data-label="Services"><span class="choice-card svc-card is-unsure"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg><span class="choice-text"><span class="choice-name">Not sure / something else</span><small>Describe it below</small></span></span></label>
+                </div>
+                <p class="field-error" id="a-services-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please choose at least one service, or &ldquo;Not sure&rdquo;.</span></p>
+              </fieldset>
+
+              <div class="field">
+                <label class="field-label" for="a-details">What&rsquo;s going on? <span class="req" data-details-req hidden>*</span></label>
+                <textarea class="textarea" id="a-details" name="details" rows="4" data-label="What's going on" data-error="Please tell us a little about what&rsquo;s going on." aria-describedby="a-details-hint" placeholder="When it happens, what you hear, feel or smell, and any lights on the dash."></textarea>
+                <p class="field-hint" id="a-details-hint">The more detail, the better we can prepare. Optional unless you chose &ldquo;Not sure&rdquo;.</p>
+                <p class="field-error" id="a-details-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please tell us a little about what&rsquo;s going on.</span></p>
+                <div class="symptoms">
+                  <span class="symptoms-label" id="a-symptoms-label">Quick add:</span>
+                  <button class="symptom" type="button" data-symptom="A warning light is on." aria-describedby="a-symptoms-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Warning light</button>
+                  <button class="symptom" type="button" data-symptom="It&rsquo;s making a noise." aria-describedby="a-symptoms-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Noise</button>
+                  <button class="symptom" type="button" data-symptom="I noticed a leak or a smell." aria-describedby="a-symptoms-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Leak or smell</button>
+                  <button class="symptom" type="button" data-symptom="It vibrates or pulls to one side." aria-describedby="a-symptoms-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Vibration</button>
+                  <button class="symptom" type="button" data-symptom="It won&rsquo;t start, or is hard to start." aria-describedby="a-symptoms-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Won&rsquo;t start</button>
+                </div>
+              </div>
+
+              <div class="step-nav">
+                <button class="btn btn-secondary btn-lg" type="button" data-back><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg>Back</button>
+                <button class="btn btn-primary btn-lg" type="button" data-next>Next: Timing <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              </div>
+            </section>
+
+            <!-- Step 3: Timing -->
+            <section class="step-panel" id="step-3" data-name="Timing" aria-labelledby="step-3-title">
+              <div class="step-head">
+                <h2 class="step-title" id="step-3-title" tabindex="-1">When works for you?</h2>
+                <p class="step-lead">Pick a preferred day and, if you can, a backup. We&rsquo;ll confirm the actual time with you.</p>
+              </div>
+
+              <div class="form-grid form-grid-2">
+                <div class="field">
+                  <label class="field-label" for="a-date">Preferred date <span class="req">*</span></label>
+                  <input class="input" id="a-date" name="preferred_date" type="date" required data-label="Preferred date" data-error="Please choose a date, today or later." aria-describedby="a-date-note">
+                  <p class="field-hint date-note" id="a-date-note" aria-live="polite"></p>
+                  <p class="field-error" id="a-date-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please choose a date, today or later.</span></p>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="a-date2">Backup date <span class="opt">(optional)</span></label>
+                  <input class="input" id="a-date2" name="backup_date" type="date" data-label="Backup date" data-error="Please choose a date on or after your preferred date." aria-describedby="a-date2-note">
+                  <p class="field-hint date-note" id="a-date2-note" aria-live="polite"></p>
+                  <p class="field-error" id="a-date2-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please choose a date on or after your preferred date.</span></p>
+                </div>
+              </div>
+
+              <fieldset class="field" data-required-group data-error="Please choose a time of day.">
+                <legend class="field-label">Time of day <span class="req">*</span></legend>
+                <div class="choice-grid time-grid">
+                  <label class="choice"><input type="radio" name="time_window" value="Morning" data-label="Time of day"><span class="choice-card choice-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18.5h18M7 18.5a5 5 0 0 1 10 0M12 4v5M9.6 6.4 12 4l2.4 2.4M4.6 12l1.7 1M19.4 12l-1.7 1"/></svg><span class="choice-text"><span class="choice-name">Morning</span><small>Earlier in the day</small></span></span></label>
+                  <label class="choice"><input type="radio" name="time_window" value="Midday" data-label="Time of day"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg><span class="choice-text"><span class="choice-name">Midday</span><small>Around lunchtime</small></span></span></label>
+                  <label class="choice"><input type="radio" name="time_window" value="Afternoon" data-label="Time of day"><span class="choice-card choice-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18.5h18M7 18.5a5 5 0 0 1 10 0M12 4v5M9.6 6.6 12 9l2.4-2.4M4.6 12l1.7 1M19.4 12l-1.7 1"/></svg><span class="choice-text"><span class="choice-name">Afternoon</span><small>Later in the day</small></span></span></label>
+                  <label class="choice"><input type="radio" name="time_window" value="Flexible" data-label="Time of day"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg><span class="choice-text"><span class="choice-name">I&rsquo;m flexible</span><small>Any time works</small></span></span></label>
+                </div>
+                <p class="field-error" id="a-time-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please choose a time of day.</span></p>
+              </fieldset>
+
+              <fieldset class="field" data-required-group data-error="Please choose drop-off or wait.">
+                <legend class="field-label">Drop off or wait? <span class="req">*</span></legend>
+                <div class="choice-grid drop-grid">
+                  <label class="choice"><input type="radio" name="drop_or_wait" value="Drop off" data-label="Drop off or wait"><span class="choice-card choice-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="15.5" r="4.5"/><path d="M11.3 12.2 19.5 4M16.2 7.3l2.4 2.4M13.9 9.6l1.9 1.9"/></svg><span class="choice-text"><span class="choice-name">I&rsquo;ll drop it off</span><small>Leave it with us, we&rsquo;ll keep you posted</small></span></span></label>
+                  <label class="choice"><input type="radio" name="drop_or_wait" value="Wait" data-label="Drop off or wait"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg><span class="choice-text"><span class="choice-name">I&rsquo;d like to wait</span><small>We&rsquo;ll tell you if that&rsquo;s practical</small></span></span></label>
+                </div>
+                <p class="field-error" id="a-drop-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please choose drop-off or wait.</span></p>
+              </fieldset>
+
+              <div class="step-nav">
+                <button class="btn btn-secondary btn-lg" type="button" data-back><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg>Back</button>
+                <button class="btn btn-primary btn-lg" type="button" data-next>Next: Contact <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              </div>
+            </section>
+
+            <!-- Step 4: Contact + review -->
+            <section class="step-panel" id="step-4" data-name="Contact" aria-labelledby="step-4-title">
+              <div class="step-head">
+                <h2 class="step-title" id="step-4-title" tabindex="-1">How should we reach you?</h2>
+                <p class="step-lead">We&rsquo;ll use these details to confirm your appointment and keep you posted.</p>
+              </div>
+
+              <div class="form-grid form-grid-2">
+                <div class="field">
+                  <label class="field-label" for="a-name">Your name <span class="req">*</span></label>
+                  <input class="input" id="a-name" name="name" type="text" autocomplete="name" autocapitalize="words" required data-label="Name" data-error="Please enter your name.">
+                  <p class="field-error" id="a-name-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your name.</span></p>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="a-phone">Phone <span class="req">*</span></label>
+                  <input class="input" id="a-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required data-label="Phone" data-error="Please enter your phone number.">
+                  <p class="field-error" id="a-phone-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your phone number.</span></p>
+                </div>
+              </div>
+
+              <div class="field">
+                <label class="field-label" for="a-email">Email <span class="req" data-email-req hidden>*</span><span class="opt" data-email-opt>(optional)</span></label>
+                <input class="input" id="a-email" name="email" type="email" autocomplete="email" inputmode="email" data-label="Email" aria-describedby="a-email-hint">
+                <p class="field-hint" id="a-email-hint">Optional, unless you&rsquo;d like us to confirm by email.</p>
+                <p class="field-error" id="a-email-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter a valid email address.</span></p>
+              </div>
+
+              <fieldset class="field" data-required-group data-error="Please choose how we should confirm.">
+                <legend class="field-label">Best way to confirm <span class="req">*</span></legend>
+                <div class="choice-grid contact-grid">
+                  <label class="choice"><input type="radio" name="contact_method" value="Call" data-label="Confirm by"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span class="choice-text"><span class="choice-name">Call</span><small>We&rsquo;ll ring you</small></span></span></label>
+                  <label class="choice"><input type="radio" name="contact_method" value="Text" data-label="Confirm by"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span class="choice-text"><span class="choice-name">Text</span><small>A quick message</small></span></span></label>
+                  <label class="choice"><input type="radio" name="contact_method" value="Email" data-label="Confirm by"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span class="choice-text"><span class="choice-name">Email</span><small>In your inbox</small></span></span></label>
+                </div>
+                <p class="field-error" id="a-method-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please choose how we should confirm.</span></p>
+              </fieldset>
+
+              <div class="field">
+                <label class="field-label" for="a-notes">Anything else? <span class="opt">(optional)</span></label>
+                <textarea class="textarea" id="a-notes" name="notes" rows="3" data-label="Notes" placeholder="Best times to reach you, questions for us, anything we should know."></textarea>
+              </div>
+
+              <section class="review" aria-labelledby="review-title">
+                <div class="review-head">
+                  <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+                  <div>
+                    <h3 id="review-title">Review your request</h3>
+                    <p>Check the details, then send it over.</p>
+                  </div>
+                  <span class="badge">Not yet confirmed</span>
+                </div>
+                <dl class="review-list">
+                  <div class="review-row">
+                    <dt>Vehicle</dt>
+                    <dd><span class="review-val" data-review="vehicle">Not provided</span><button class="review-edit" type="button" data-go="1" aria-label="Edit vehicle details">Edit</button></dd>
+                  </div>
+                  <div class="review-row">
+                    <dt>Services</dt>
+                    <dd><span class="review-val" data-review="services">Not provided</span><button class="review-edit" type="button" data-go="2" aria-label="Edit services">Edit</button></dd>
+                  </div>
+                  <div class="review-row">
+                    <dt>Timing</dt>
+                    <dd><span class="review-val" data-review="timing">Not provided</span><button class="review-edit" type="button" data-go="3" aria-label="Edit timing">Edit</button></dd>
+                  </div>
+                  <div class="review-row">
+                    <dt>Contact</dt>
+                    <dd><span class="review-val" data-review="contact">Add your details above</span></dd>
+                  </div>
+                </dl>
+              </section>
+
+              <div class="callout callout-warn form-status" data-form-error role="alert" hidden></div>
+
+              <div class="step-nav">
+                <button class="btn btn-secondary btn-lg" type="button" data-back><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg>Back</button>
+                <button class="btn btn-primary btn-lg" type="submit"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Send request</button>
+              </div>
+              <p class="form-legal">This sends a request, not a confirmed booking. We use your details only to schedule and update you about this visit. See our <a class="text-link" href="privacy.html">privacy notice</a>.</p>
+            </section>
+
+          </div>
+        </form>
+
+        <div class="form-success" id="appointment-success" hidden>
+          <svg class="success-mark" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="42"/><path d="M27 43l10 10 20-21"/></svg>
+          <h2>Request sent. Thank you!</h2>
+          <p>We&rsquo;ll check the schedule and reach out the way you asked to confirm a time. Your appointment is set once we&rsquo;ve confirmed it with you.</p>
+          <p>Need it sooner? Call <a class="text-link" href="tel:+15555550123" data-biz-href="tel"><span data-biz="phone">(555) 555-0123</span></a>.</p>
+          <div class="cluster">
+            <a class="btn btn-secondary" href="index.html"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Back to home</a>
+            <a class="btn btn-ghost" href="services.html">Browse services <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+      </div>
+
+      <aside class="booking-aside" aria-labelledby="aside-title">
+        <div class="card aside-card">
+          <p class="eyebrow"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>Good to know</p>
+          <h2 class="aside-title" id="aside-title">A request, not a booking.</h2>
+          <p class="aside-text">We&rsquo;ll look at the schedule and confirm a time with you by phone, text or email. Nothing is booked until you hear from us.</p>
+
+          <div class="aside-hours">
+            <div class="aside-hours-head">
+              <h3>Shop hours</h3>
+              <span class="open-status" data-open-status>Shop hours</span>
+            </div>
+<!-- @partial hours-table -->
+<table class="hours-table">
+  <caption class="visually-hidden">Shop hours</caption>
+  <tbody>
+      <tr data-day="Mo"><th scope="row">Monday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="Tu"><th scope="row">Tuesday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="We"><th scope="row">Wednesday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="Th"><th scope="row">Thursday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="Fr"><th scope="row">Friday</th><td>8:00 AM – 5:30 PM</td></tr>
+      <tr data-day="Sa"><th scope="row">Saturday</th><td>8:00 AM – 1:00 PM</td></tr>
+      <tr data-day="Su"><th scope="row">Sunday</th><td>Closed</td></tr>
+  </tbody>
+</table>
+<!-- @end hours-table -->
+          </div>
+
+          <div class="aside-rows">
+            <a class="aside-row" href="tel:+15555550123" data-biz-href="tel">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg></span>
+              <span><small>Rather call?</small><strong data-biz="phone">(555) 555-0123</strong></span>
+              <svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+            </a>
+            <a class="aside-row" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" data-biz-href="maps" target="_blank" rel="noopener">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg></span>
+              <span><small>Find the shop</small><strong data-biz="addressLines">123 Main Street<br>Clinton, ST 00000</strong></span>
+              <svg class="icon chev" aria-hidden="true"><use href="#i-arrow-up-right"/></svg>
+            </a>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- @partial footer -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="mini-card" href="index.html" aria-label="Clinton Complete Auto Care home">
+        <img src="assets/img/logo-white-sm.webp" alt="" width="640" height="349" loading="lazy" decoding="async">
+        <span class="mini-card-foil">And Small Engine Repair</span>
+      </a>
+      <p class="footer-blurb">Honest repair and maintenance for cars, trucks and the small engines that keep your home and business running.</p>
+      <p><span class="open-status" data-open-status>Shop hours</span></p>
+    </div>
+    <nav class="footer-col" aria-labelledby="footer-services">
+      <h2 id="footer-services">Services</h2>
+      <ul>
+        <li><a href="services/brakes.html">Brakes</a></li>
+        <li><a href="services/oil-change.html">Oil &amp; Maintenance</a></li>
+        <li><a href="services/diagnostics.html">Diagnostics</a></li>
+        <li><a href="services/engine-repair.html">Engine &amp; Cooling</a></li>
+        <li><a href="services/transmission.html">Transmission</a></li>
+        <li><a href="services/heating-ac.html">A/C &amp; Heating</a></li>
+        <li><a href="services/tires-alignment.html">Tires &amp; Alignment</a></li>
+        <li><a href="services/suspension-steering.html">Suspension &amp; Steering</a></li>
+        <li><a href="services/electrical-battery.html">Battery &amp; Electrical</a></li>
+        <li><a href="services/inspections.html">Inspections</a></li>
+        <li><a href="services/small-engine-repair.html">Small Engine Repair</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul>
+        <li><a href="about.html">About us</a></li>
+        <li><a href="fleet.html">Fleet services</a></li>
+        <li><a href="specials.html">Specials</a></li>
+        <li><a href="brands.html">Makes we service</a></li>
+        <li><a href="careers.html">Careers</a></li>
+      </ul>
+      <h2 class="footer-subhead">Help</h2>
+      <ul>
+        <li><a href="appointment.html" aria-current="page">Book a service</a></li>
+        <li><a href="resources.html">Car care guides</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col footer-visit">
+      <h2>Visit the shop</h2>
+      <address>
+        <a class="footer-contact" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>123 Main Street<br>Clinton, ST 00000</span></a>
+        <a class="footer-contact" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>(555) 555-0123</span></a>
+        <a class="footer-contact" href="mailto:service@example.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>service@example.com</span></a>
+      </address>
+      <ul class="hours-list">
+        <li data-days="Mo Tu We Th Fr"><span>Mon – Fri</span><span>8:00 AM – 5:30 PM</span></li>
+        <li data-days="Sa"><span>Sat</span><span>8:00 AM – 1:00 PM</span></li>
+        <li data-days="Su"><span>Sun</span><span>Closed</span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span data-year>2026</span> Clinton Complete Auto Care. All rights reserved.</p>
+    <p class="footer-links"><a href="privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a><span aria-hidden="true">&middot;</span><a href="https://blakew316.github.io/automotive/app/">Staff sign-in</a></p>
+  </div>
+</footer>
+<!-- @end footer -->
+<!-- @partial tabbar -->
+<nav class="tabbar" aria-label="Quick navigation">
+  <a class="tab" href="index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+  <a class="tab" href="services.html" data-nav="services"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span>Services</span></a>
+  <a class="tab tab-book is-active" href="appointment.html" data-nav="appointment" aria-current="page"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Book</span></a>
+  <a class="tab" href="contact.html" data-nav="contact"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Contact</span></a>
+  <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>More</span></button>
+</nav>
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="more-sheet-title">Menu</h2>
+      <button class="icon-btn" type="button" data-close-sheet aria-label="Close menu" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <p class="sheet-status"><span class="open-status" data-open-status>Shop hours</span></p>
+    <div class="sheet-quick">
+      <a class="quick-action" href="tel:+15555550123"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>Call</span></a>
+      <a class="quick-action" href="https://www.google.com/maps/search/?api=1&amp;query=Clinton+Complete+Auto+Care" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-directions"/></svg><span>Directions</span></a>
+      <a class="quick-action" href="mailto:service@example.com"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>Email</span></a>
+    </div>
+    <h3 class="sheet-label">Explore</h3>
+    <ul class="sheet-grid">
+      <li><a href="index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a></li>
+      <li><a href="services.html" data-nav="services"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg>Services</a></li>
+      <li><a href="services/small-engine-repair.html" data-nav="small-engine"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small Engine</a></li>
+      <li><a href="about.html" data-nav="about"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>About</a></li>
+      <li><a href="fleet.html" data-nav="fleet"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet</a></li>
+      <li><a href="specials.html" data-nav="specials"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg>Specials</a></li>
+      <li><a href="brands.html" data-nav="brands"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg>Makes We Service</a></li>
+      <li><a href="resources.html" data-nav="resources"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg>Car Care</a></li>
+      <li><a href="faq.html" data-nav="faq"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+      <li><a href="careers.html" data-nav="careers"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"/></svg>Careers</a></li>
+      <li><a href="contact.html" data-nav="contact"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Contact</a></li>
+      <li><a class="is-active" href="appointment.html" data-nav="appointment" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Book Service</a></li>
+    </ul>
+    <h3 class="sheet-label">Services</h3>
+    <ul class="sheet-list">
+      <li><a href="services/brakes.html"><svg class="icon" aria-hidden="true"><use href="#i-brake"/></svg>Brakes<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/oil-change.html"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg>Oil &amp; Maintenance<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/diagnostics.html"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg>Diagnostics<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/engine-repair.html"><svg class="icon" aria-hidden="true"><use href="#i-engine"/></svg>Engine &amp; Cooling<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/transmission.html"><svg class="icon" aria-hidden="true"><use href="#i-transmission"/></svg>Transmission<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/heating-ac.html"><svg class="icon" aria-hidden="true"><use href="#i-ac"/></svg>A/C &amp; Heating<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/tires-alignment.html"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg>Tires &amp; Alignment<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/suspension-steering.html"><svg class="icon" aria-hidden="true"><use href="#i-suspension"/></svg>Suspension &amp; Steering<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/electrical-battery.html"><svg class="icon" aria-hidden="true"><use href="#i-battery"/></svg>Battery &amp; Electrical<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/inspections.html"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspections<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="services/small-engine-repair.html"><svg class="icon" aria-hidden="true"><use href="#i-mower"/></svg>Small Engine Repair<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+    </ul>
+  </div>
+</dialog>
+<!-- @end tabbar -->
+<script>
+(() => {
+  "use strict";
+  const init = () => {
+    const d = document;
+    const form = d.getElementById("booking-form");
+    if (!form) return;
+    const $ = (s, el = d) => el.querySelector(s);
+    const $$ = (s, el = d) => Array.from(el.querySelectorAll(s));
+    const reduce = matchMedia("(prefers-reduced-motion: reduce)");
+    const easeOut = "cubic-bezier(.22, 1, .36, 1)";
+    const easeInOut = "cubic-bezier(.65, 0, .35, 1)";
+
+    const steps = $(".steps", form);
+    const panels = $$(".step-panel", form);
+    const total = panels.length;
+    const knob = $(".knob", form);
+    const trail = $(".gate-trail", form);
+    const gears = $$(".gear", form);
+    const pills = $$(".shift-step", form);
+    const numEl = $("[data-shift-num]", form);
+    const nameEl = $("[data-shift-name]", form);
+    const header = $("[data-header]");
+    let current = 1;
+    let reached = 1;
+    let busy = false;
+
+    /* ---------- Gear-shifter: knob travels through the gate like a real shifter ---------- */
+    const POS = { 1: [64, 28], 2: [64, 122], 3: [136, 28], 4: [136, 122] };
+    const NEUTRAL = 75;
+    const TRAIL = { 1: 0, 2: 94, 3: 260, 4: 354 };
+    const place = (p) => `translate(${p[0]}px, ${p[1]}px)`;
+
+    const glide = (pts, dur) => {
+      knob.style.transform = place(pts[pts.length - 1]);
+      knob.classList.remove("is-seated");
+      const lens = pts.slice(1).map((p, i) => Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]));
+      const len = lens.reduce((s, v) => s + v, 0);
+      if (reduce.matches || !knob.animate || !len) return;
+      let acc = 0;
+      const frames = pts.map((p, i) => {
+        if (i) acc += lens[i - 1];
+        return { transform: place(p), offset: acc / len };
+      });
+      knob.animate(frames, { duration: dur || Math.min(950, 280 + len * 2.4), easing: easeInOut }).onfinish = () => knob.classList.add("is-seated");
+    };
+    const shiftTo = (a, b) => {
+      const pts = [POS[a]];
+      if (POS[a][0] !== POS[b][0]) pts.push([POS[a][0], NEUTRAL], [POS[b][0], NEUTRAL]);
+      pts.push(POS[b]);
+      const len = pts.slice(1).reduce((s, p, i) => s + Math.hypot(p[0] - pts[i][0], p[1] - pts[i][1]), 0);
+      const dur = Math.min(950, 280 + len * 2.4);
+      trail.style.transitionDuration = reduce.matches ? "0s" : `${dur}ms`;
+      trail.style.strokeDashoffset = String(354 - TRAIL[b]);
+      glide(pts, dur);
+    };
+
+    const paint = (n) => {
+      numEl.textContent = n;
+      nameEl.textContent = panels[n - 1].dataset.name;
+      gears.forEach((g) => {
+        const k = Number(g.dataset.gear);
+        g.classList.toggle("is-current", k === n);
+        g.classList.toggle("is-done", k < n);
+      });
+      pills.forEach((p) => {
+        const k = Number(p.dataset.go);
+        p.classList.toggle("is-current", k === n);
+        p.classList.toggle("is-done", k < n);
+        p.disabled = k > reached;
+        if (k === n) p.setAttribute("aria-current", "step");
+        else p.removeAttribute("aria-current");
+      });
+    };
+
+    /* ---------- Panel transitions ---------- */
+    const bringIntoView = () => {
+      const offset = (header ? header.offsetHeight : 0) + 12;
+      const top = form.getBoundingClientRect().top;
+      if (top < offset) scrollTo({ top: scrollY + top - offset, behavior: reduce.matches ? "auto" : "smooth" });
+    };
+    const focusHeading = (panel) => {
+      const h = $(".step-title", panel);
+      if (h) h.focus({ preventScroll: true });
+      if (showErrorsOnArrival) {
+        showErrorsOnArrival = false;
+        validate(panel);
+      }
+    };
+    const swap = (out, inn, dir) => {
+      if (reduce.matches || !out.animate) {
+        out.hidden = true;
+        inn.hidden = false;
+        focusHeading(inn);
+        return;
+      }
+      busy = true;
+      const h0 = steps.offsetHeight;
+      steps.classList.add("is-animating");
+      const leave = out.animate(
+        [{ opacity: 1, transform: "none" }, { opacity: 0, transform: `translateX(${-26 * dir}px)` }],
+        { duration: 170, easing: easeInOut, fill: "forwards" }
+      );
+      leave.onfinish = () => {
+        out.hidden = true;
+        leave.cancel();
+        inn.hidden = false;
+        const h1 = steps.offsetHeight;
+        steps.animate([{ height: `${h0}px` }, { height: `${h1}px` }], { duration: 420, easing: easeOut }).onfinish = () => steps.classList.remove("is-animating");
+        inn.animate([{ opacity: 0, transform: `translateX(${30 * dir}px)` }, { opacity: 1, transform: "none" }], { duration: 460, easing: easeOut });
+        busy = false;
+        focusHeading(inn);
+      };
+    };
+
+    const validate = (panel) => (window.CCA ? window.CCA.validateFields(panel) : true);
+    // Silent check for steps that aren't on screen (validateFields skips hidden panels).
+    const quietValid = (panel) =>
+      $$(".field", panel).every((f) => {
+        if (f.hasAttribute("data-required-group")) return $$("input:checked", f).length > 0;
+        const c = $("input:not([type=hidden]), select, textarea", f);
+        if (!c || c.disabled) return true;
+        if (c.type === "tel" && c.value && c.value.replace(/\D/g, "").length < 10) return false;
+        return c.checkValidity();
+      });
+    let showErrorsOnArrival = false;
+
+    const goTo = (n, opts = {}) => {
+      n = Math.max(1, Math.min(total, n));
+      if (n === current || busy) return;
+      if (n > current) {
+        if (n > reached && n !== current + 1) return;
+        if (!validate(panels[current - 1])) return;
+        // Jumping ahead with a step pill: stop at any step that was changed and no longer passes.
+        for (let k = current + 1; k < n; k++) {
+          if (!quietValid(panels[k - 1])) { n = k; opts.showErrors = true; break; }
+        }
+      }
+      showErrorsOnArrival = Boolean(opts.showErrors);
+      const from = current;
+      current = n;
+      reached = Math.max(reached, n);
+      if (n === 2) autoPickSmallEngine();
+      if (n === total) buildReview();
+      paint(n);
+      bringIntoView();
+      shiftTo(from, n);
+      swap(panels[from - 1], panels[n - 1], n > from ? 1 : -1);
+    };
+
+    $$("[data-next]", form).forEach((b) => b.addEventListener("click", () => goTo(current + 1)));
+    $$("[data-back]", form).forEach((b) => b.addEventListener("click", () => goTo(current - 1)));
+    $$("[data-go]", form).forEach((b) => b.addEventListener("click", () => goTo(Number(b.dataset.go))));
+
+    // Enter moves forward (text fields, selects and choice cards); textareas keep their newlines.
+    form.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" || e.isComposing || e.shiftKey) return;
+      const t = e.target;
+      if (!(t instanceof HTMLInputElement || t instanceof HTMLSelectElement)) return;
+      e.preventDefault();
+      if (current < total) goTo(current + 1);
+      else if (form.requestSubmit) form.requestSubmit();
+    });
+
+    /* ---------- Step 1: vehicle vs. equipment fields ---------- */
+    const kindInputs = $$('input[name="vehicle_type"]', form);
+    const kindGroups = $$("[data-kind-fields]", form);
+    const setKind = (kind, animate) => {
+      kindGroups.forEach((g) => {
+        const on = g.dataset.kindFields === kind;
+        const wasHidden = g.hidden;
+        g.hidden = !on;
+        $$("input, select, textarea", g).forEach((c) => (c.disabled = !on));
+        if (on && wasHidden && animate && !reduce.matches && g.animate) {
+          g.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 380, easing: easeOut });
+        }
+      });
+    };
+    kindInputs.forEach((i) => i.addEventListener("change", () => setKind(i.dataset.kind, true)));
+
+    /* ---------- Step 2: services ---------- */
+    const svcBoxes = $$('input[name="services"]', form);
+    const nameOf = (input) => {
+      const el = input.closest(".choice") && $(".choice-name", input.closest(".choice"));
+      return el ? el.textContent.trim() : input.value;
+    };
+    // Equipment owners get Small Engine Repair ticked for them, until they touch the list themselves.
+    let svcTouched = false;
+    svcBoxes.forEach((b) => b.addEventListener("change", () => (svcTouched = true)));
+    const autoPickSmallEngine = () => {
+      const kind = kindInputs.find((i) => i.checked);
+      if (svcTouched || !kind || kind.dataset.kind !== "equipment" || svcBoxes.some((b) => b.checked)) return;
+      const se = svcBoxes.find((b) => b.dataset.slug === "small-engine-repair");
+      if (se) se.checked = true;
+    };
+    const details = $("#a-details");
+    const detailsReq = $("[data-details-req]", form);
+    const notSure = svcBoxes.find((b) => b.dataset.slug === "not-sure");
+    const syncDetails = () => {
+      const req = Boolean(notSure && notSure.checked);
+      details.required = req;
+      detailsReq.hidden = !req;
+    };
+    if (notSure) notSure.addEventListener("change", syncDetails);
+
+    $$("[data-symptom]", form).forEach((b) =>
+      b.addEventListener("click", () => {
+        const add = b.dataset.symptom;
+        const v = details.value.trim();
+        if (!v.toLowerCase().includes(add.toLowerCase())) {
+          details.value = v ? `${v}${/[.!?]$/.test(v) ? " " : ". "}${add}` : add;
+          details.dispatchEvent(new Event("input", { bubbles: true }));
+        }
+        b.classList.add("is-added");
+        const use = $("use", b);
+        if (use) use.setAttribute("href", "#i-check");
+        details.focus();
+        details.setSelectionRange(details.value.length, details.value.length);
+      })
+    );
+
+    // Deep link: appointment.html?service=<slug>
+    const slug = (new URLSearchParams(location.search).get("service") || "").toLowerCase();
+    const picked = slug && slug !== "not-sure" && svcBoxes.find((b) => b.dataset.slug === slug);
+    if (picked) {
+      picked.checked = true;
+      const note = $("#a-preselect");
+      $("[data-preselect-name]", note).textContent = nameOf(picked);
+      note.hidden = false;
+      if (slug === "small-engine-repair") {
+        const eq = kindInputs.find((i) => i.dataset.kind === "equipment");
+        if (eq) eq.checked = true;
+      }
+    }
+
+    /* ---------- Step 3: dates ---------- */
+    const pad = (n) => String(n).padStart(2, "0");
+    const isoDate = (dt) => `${dt.getFullYear()}-${pad(dt.getMonth() + 1)}-${pad(dt.getDate())}`;
+    const parseDate = (v) => {
+      const [y, m, day] = String(v || "").split("-").map(Number);
+      return y && m && day ? new Date(y, m - 1, day) : null;
+    };
+    const fmtDate = (v) => {
+      const dt = parseDate(v);
+      return dt ? dt.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }) : "";
+    };
+    const today = isoDate(new Date());
+    const date1 = $("#a-date");
+    const date2 = $("#a-date2");
+    date1.min = today;
+    date2.min = today;
+    const openDays = (() => {
+      try {
+        const data = JSON.parse(d.getElementById("business-data").textContent);
+        const names = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const set = new Set();
+        (data.openingHoursSpecification || []).forEach((s) =>
+          [].concat(s.dayOfWeek).forEach((day) => {
+            const i = names.indexOf(String(day).replace("https://schema.org/", ""));
+            if (i > -1) set.add(i);
+          })
+        );
+        return set.size ? set : null;
+      } catch {
+        return null;
+      }
+    })();
+    const noteIds = new Map([[date1, "a-date-note"], [date2, "a-date2-note"]]);
+    const showNote = (input) => {
+      const out = d.getElementById(noteIds.get(input));
+      const dt = parseDate(input.value);
+      if (!out) return;
+      out.textContent = dt && openDays && !openDays.has(dt.getDay())
+        ? `Heads up: we’re closed on ${dt.toLocaleDateString("en-US", { weekday: "long" })}s. We’ll suggest the nearest open day when we confirm.`
+        : "";
+    };
+    date1.addEventListener("change", () => {
+      date2.min = date1.value && date1.value > today ? date1.value : today;
+      showNote(date1);
+    });
+    date2.addEventListener("change", () => showNote(date2));
+
+    /* ---------- Step 4: email requirement follows the chosen contact method ---------- */
+    const email = $("#a-email");
+    const emailReq = $("[data-email-req]", form);
+    const emailOpt = $("[data-email-opt]", form);
+    const emailHint = $("#a-email-hint");
+    const methodInputs = $$('input[name="contact_method"]', form);
+    const syncEmail = () => {
+      const m = methodInputs.find((i) => i.checked);
+      const req = Boolean(m && m.value === "Email");
+      email.required = req;
+      emailReq.hidden = !req;
+      emailOpt.hidden = req;
+      emailHint.textContent = req ? "We’ll send your confirmation here." : "Optional, unless you’d like us to confirm by email.";
+    };
+    methodInputs.forEach((i) => i.addEventListener("change", syncEmail));
+
+    /* ---------- Review ---------- */
+    const val = (name) => {
+      const el = form.elements[name];
+      if (!el || el.disabled) return "";
+      return String(el.value || "").trim();
+    };
+    const checkedNames = (name) => $$(`input[name="${name}"]:checked`, form).map(nameOf);
+    const setRow = (key, main, sub, empty) => {
+      const el = $(`[data-review="${key}"]`, form);
+      el.textContent = main || empty || "Not provided";
+      el.classList.toggle("is-empty", !main);
+      if (main && sub) {
+        const s = d.createElement("small");
+        s.textContent = sub;
+        el.append(s);
+      }
+    };
+    const buildReview = () => {
+      const kind = kindInputs.find((i) => i.checked);
+      let vehicle = "";
+      let vehicleSub = "";
+      if (kind && kind.dataset.kind === "equipment") {
+        vehicle = val("equipment_type");
+        vehicleSub = [val("equipment_brand"), val("equipment_model")].filter(Boolean).join(" ");
+      } else if (kind) {
+        vehicle = [val("vehicle_year"), val("vehicle_make"), val("vehicle_model")].filter(Boolean).join(" ");
+        const miles = val("mileage").replace(/\s*(miles|mi\.?)$/i, "");
+        vehicleSub = [nameOf(kind), miles && `${miles} miles`].filter(Boolean).join(" · ");
+      }
+      setRow("vehicle", vehicle, vehicleSub);
+
+      const notes = details.value.trim();
+      setRow("services", checkedNames("services").join(", "), notes.length > 90 ? `${notes.slice(0, 88).trim()}…` : notes);
+
+      const when = [fmtDate(date1.value), checkedNames("time_window")[0]].filter(Boolean).join(", ");
+      const drop = checkedNames("drop_or_wait")[0];
+      const backup = fmtDate(date2.value);
+      setRow("timing", when, [drop, backup && `Backup: ${backup}`].filter(Boolean).join(" · "));
+
+      const who = [val("name"), val("phone")].filter(Boolean).join(" · ");
+      const method = checkedNames("contact_method")[0];
+      setRow("contact", who, [val("email"), method && `Confirm by ${method.toLowerCase()}`].filter(Boolean).join(" · "), "Add your details above");
+    };
+    form.addEventListener("input", () => { if (current === total) buildReview(); });
+    form.addEventListener("change", () => { if (current === total) buildReview(); });
+
+    /* ---------- Submit ---------- */
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (current < total) return goTo(current + 1);
+      const C = window.CCA;
+      const errBox = $("[data-form-error]", form);
+      if (errBox) { errBox.hidden = true; errBox.classList.remove("is-visible"); }
+      if (!C) return form.submit();
+      if (!C.validateFields(panels[current - 1])) return;
+      // An earlier step may have been edited since it was checked: send the customer back to it.
+      const stale = panels.findIndex((p, i) => i < total - 1 && !quietValid(p));
+      if (stale > -1) return goTo(stale + 1, { showErrors: true });
+      const btn = $('[type="submit"]', form);
+      btn.classList.add("is-loading");
+      btn.disabled = true;
+      try {
+        await C.submitForm(form);
+        C.showSuccess(form);
+      } catch {
+        C.showError(form);
+        // site.js borrows the header call button's text, which includes a hidden "Call " prefix
+        const tel = $('[data-form-error] a[href^="tel:"]', form);
+        const num = $('[data-biz="phone"]');
+        if (tel && num) tel.textContent = num.textContent.trim();
+      } finally {
+        btn.classList.remove("is-loading");
+        btn.disabled = false;
+      }
+    });
+
+    /* ---------- Initial state ---------- */
+    panels.forEach((p, i) => (p.hidden = i !== 0));
+    const startKind = kindInputs.find((i) => i.checked);
+    setKind(startKind ? startKind.dataset.kind : "vehicle", false);
+    syncDetails();
+    syncEmail();
+    paint(1);
+    steps.classList.add("is-ready");
+    // Shift into first: the knob slides out of neutral when the page loads.
+    if (!reduce.matches) setTimeout(() => glide([[100, NEUTRAL], [64, NEUTRAL], POS[1]], 820), 450);
+  };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
+</body>
+</html>

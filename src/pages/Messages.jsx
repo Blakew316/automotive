@@ -8,8 +8,8 @@ import ComposeModal from '../components/Compose';
 import { fullName, vehicleName, relTime, time, date, telHref, phone as fmtPhone } from '../lib/format';
 import { STATUS } from '../lib/workflow';
 
-const CHANNEL_ICON = { sms: MessageSquare, email: Mail, portal: Globe, note: NotebookPen, call: Phone };
-const CHANNEL_LABEL = { sms: 'Text', email: 'Email', portal: 'From report / booking page', note: 'Logged', call: 'Call' };
+const CHANNEL_ICON = { sms: MessageSquare, email: Mail, portal: Globe, web: Globe, note: NotebookPen, call: Phone };
+const CHANNEL_LABEL = { sms: 'Text', email: 'Email', portal: 'From report / booking page', web: 'From your website', note: 'Logged', call: 'Call' };
 
 export default function Messages() {
   const { customerId } = useParams();
