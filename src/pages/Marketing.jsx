@@ -95,11 +95,12 @@ export default function Marketing() {
               <div className="text-sm text-ink-2">{vehicleName(r.vehicle)}</div>
               <div className="text-xs text-ink-3">
                 Last oil service {when(r.last)}
-                {r.estMiles ? ` · est. ${number(r.estMiles)} mi now (${number(r.estMiles - r.lastMiles)} since)` : ''}
+                {r.estMiles ? ` · ${r.measured ? '' : 'est. '}${number(r.estMiles)} mi now${r.lastMiles ? ` (${number(r.estMiles - r.lastMiles)} since)` : ''}` : ''}
+                {r.oilLife != null ? ` · oil life ${r.oilLife}%` : ''}
               </div>
             </>
           )}
-          badge={(r) => (r.due === 'soon' ? <span className="chip">Due soon</span> : <span className="chip border-warn/40 text-warn">{r.due === 'mileage' ? 'Mileage due' : `${r.overdueDays} days overdue`}</span>)}
+          badge={(r) => (r.due === 'soon' ? <span className="chip">Due soon</span> : <span className="chip border-warn/40 text-warn">{r.due === 'oil' ? 'Car says oil change due' : r.due === 'mileage' ? 'Mileage due' : `${r.overdueDays} days overdue`}</span>)}
         />
       )}
       {tab === 'declined' && (

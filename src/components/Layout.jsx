@@ -13,6 +13,7 @@ import { useCloudSync } from '../lib/useCloudSync';
 import { useTracking } from '../lib/useTracking';
 import PhoneLine from './PhoneLine';
 import PayLine from './PayLine';
+import QboAutoSync from './QboAutoSync';
 import { syncLabel } from '../lib/sync/labels';
 import CommandPalette from './CommandPalette';
 import Toasts from './Toasts';
@@ -340,6 +341,7 @@ export default function Layout() {
 
           <CommandPalette />
           <Toasts />
+          <QboAutoSync />
         </div>
       </PayLine>
     </PhoneLine>

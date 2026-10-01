@@ -197,11 +197,53 @@ export function customersCsv(state) {
   return toCsv(['Name', 'Company', 'Email', 'Phone', 'Street', 'City', 'State', 'ZIP', 'Country', 'Notes'], rows);
 }
 
-/** Daily sales summary journal: one balanced entry per day for shops that post summaries instead of invoices. */
-export function journalCsv(state, from, to) {
+/**
+ * The accounts the daily sales journal posts to, with what each usually is in QuickBooks Online
+ * (used to suggest a match from the shop's chart of accounts).
+ */
+export const JOURNAL_ACCOUNTS = [
+  { name: 'Accounts Receivable', types: ['Accounts Receivable'], match: /receivable|a\/r/i },
+  { name: 'Undeposited Funds', types: ['Other Current Asset'], subTypes: ['UndepositedFunds'], match: /undeposited|payments to deposit/i },
+  { name: 'Labor Income', types: ['Income'], match: /labor|labour|service income|services/i },
+  { name: 'Parts Income', types: ['Income'], match: /parts|sales of product|product income/i },
+  { name: 'Shop Fees & Supplies Income', types: ['Income', 'Other Income'], match: /fee|suppl/i },
+  { name: 'Sublet Income', types: ['Income'], match: /sublet|outside/i },
+  { name: 'Discounts Given', types: ['Income'], subTypes: ['DiscountsRefundsGiven'], match: /discount/i },
+  { name: 'Card Surcharge Income', types: ['Income', 'Other Income'], match: /surcharge|convenience/i },
+  { name: 'Sales Tax Payable', types: ['Other Current Liability'], subTypes: ['SalesTaxPayable'], match: /sales tax/i },
+  { name: 'Tips Payable', types: ['Other Current Liability'], match: /tip|gratuit/i },
+  { name: 'Card Processing Fees', types: ['Expense', 'Other Expense'], subTypes: ['BankCharges'], match: /merchant|processing|card fee|bank (charge|fee)|stripe/i },
+];
+
+/** Best guess at which QuickBooks account each journal account should post to. */
+export function suggestAccountMap(accounts, current = {}) {
+  const out = {};
+  for (const a of JOURNAL_ACCOUNTS) {
+    if (current[a.name] && accounts.some((x) => x.id === current[a.name].id)) {
+      out[a.name] = current[a.name];
+      continue;
+    }
+    const fits = accounts.filter((x) => a.types.includes(x.type));
+    const pick =
+      fits.find((x) => x.name.toLowerCase() === a.name.toLowerCase()) ||
+      fits.find((x) => a.subTypes?.includes(x.subType) && a.match.test(x.name)) ||
+      fits.find((x) => a.match.test(x.name)) ||
+      fits.find((x) => a.subTypes?.includes(x.subType));
+    if (pick) out[a.name] = { id: pick.id, name: pick.name };
+  }
+  return out;
+}
+
+/**
+ * Daily sales summary journals: one balanced entry per day for shops that post summaries instead
+ * of invoices — sales (accrual, on the invoice date) and the payments received that day.
+ * Returns [{ date: 'YYYY-MM-DD', no: 'SALES-YYYYMMDD', memo, lines: [{ account, debit, credit }] }].
+ */
+export function salesJournals(state, from, to) {
   const shop = state.shop;
   const days = new Map();
   const add = (day, account, debit, credit) => {
+    if (!debit && !credit) return;
     const row = days.get(day) || new Map();
     const cur = row.get(account) || { debit: 0, credit: 0 };
     cur.debit += debit;
@@ -215,26 +257,50 @@ export function journalCsv(state, from, to) {
     add(day, 'Accounts Receivable', t.total, 0);
     add(day, 'Labor Income', 0, t.labor);
     add(day, 'Parts Income', 0, t.parts);
-    if (t.fees + t.supplies) add(day, 'Shop Fees & Supplies Income', 0, t.fees + t.supplies);
-    if (t.sublet) add(day, 'Sublet Income', 0, t.sublet);
-    if (t.discount) add(day, 'Discounts Given', t.discount, 0);
-    if (t.tax) add(day, 'Sales Tax Payable', 0, t.tax);
+    add(day, 'Shop Fees & Supplies Income', 0, t.fees + t.supplies);
+    add(day, 'Sublet Income', 0, t.sublet);
+    add(day, 'Discounts Given', t.discount, 0);
+    add(day, 'Sales Tax Payable', 0, t.tax);
   }
   for (const p of paymentsIn(state, from, to)) {
     const day = isoDate(new Date(p.at));
     add(day, 'Undeposited Funds', p.deposit, 0);
     add(day, 'Accounts Receivable', 0, p.amount);
-    if (p.tip) add(day, 'Tips Payable', 0, p.tip);
-    if (p.surcharge) add(day, 'Card Surcharge Income', 0, p.surcharge);
+    add(day, 'Tips Payable', 0, p.tip);
+    add(day, 'Card Surcharge Income', 0, p.surcharge);
+    // Stripe pays out the payment less its fee.
+    const fee = Number(p.stripe?.fee) || 0;
+    add(day, 'Card Processing Fees', fee, 0);
+    add(day, 'Undeposited Funds', 0, fee);
   }
-  const rows = [];
-  [...days.keys()].sort().forEach((day, i) => {
-    const no = `SALES-${day.replace(/-/g, '')}`;
+  return [...days.keys()].sort().map((day) => {
+    const lines = [];
     for (const [account, v] of days.get(day)) {
-      const net = round2(v.debit - v.credit);
-      if (!net) continue;
-      rows.push([no, d(`${day}T12:00:00`), account, net > 0 ? n2(net) : '', net < 0 ? n2(-net) : '', `Daily sales summary ${i + 1}`]);
+      const net = Math.round((v.debit - v.credit) * 100);
+      if (net) lines.push({ account, cents: net });
     }
+    // Each amount is rounded to the cent on its own; put any leftover cent on the largest line so
+    // the day still balances.
+    const off = lines.reduce((s, l) => s + l.cents, 0);
+    if (off && Math.abs(off) <= lines.length) {
+      const side = lines.filter((l) => Math.sign(l.cents) === Math.sign(off) * -1);
+      const big = (side.length ? side : lines).reduce((a, b) => (Math.abs(b.cents) > Math.abs(a.cents) ? b : a));
+      big.cents -= off;
+    }
+    return {
+      date: day,
+      no: `SALES-${day.replace(/-/g, '')}`,
+      memo: `Daily sales summary for ${new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} from AutoShop Pro`,
+      lines: lines.filter((l) => l.cents).map((l) => ({ account: l.account, debit: l.cents > 0 ? l.cents / 100 : 0, credit: l.cents < 0 ? -l.cents / 100 : 0 })),
+    };
+  });
+}
+
+/** The same daily journals as a CSV in QuickBooks Online's journal entry import layout. */
+export function journalCsv(state, from, to) {
+  const rows = [];
+  salesJournals(state, from, to).forEach((j, i) => {
+    for (const l of j.lines) rows.push([j.no, d(`${j.date}T12:00:00`), l.account, l.debit ? n2(l.debit) : '', l.credit ? n2(l.credit) : '', `Daily sales summary ${i + 1}`]);
   });
   return toCsv(['JournalNo', 'JournalDate', 'AccountName', 'Debits', 'Credits', 'Description'], rows);
 }

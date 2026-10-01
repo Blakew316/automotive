@@ -171,3 +171,7 @@ export const uploadPrivateJson = (cfg, path, data) =>
 export const shopPay = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-pay', { body: { action, ...args } });
 export const payEvents = (cfg) => call(cfg, '/rest/v1/shop_pay_events?select=id,kind,ref,payload,created_at&order=id.asc&limit=200', { method: 'GET' });
 export const clearPayEvents = (cfg, ids) => (ids.length ? call(cfg, `/rest/v1/shop_pay_events?id=in.(${ids.map(Number).join(',')})`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }) : null);
+
+// ---------------------------------------------------------------- QuickBooks Online (shop-qbo) and connected cars (shop-cars)
+export const shopQbo = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-qbo', { body: { action, ...args } });
+export const shopCars = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-cars', { body: { action, ...args } });
