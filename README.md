@@ -106,7 +106,7 @@ CARFAX doesn’t accept uploads from individual shops. Records reach CARFAX Repo
 
 ## Design
 
-Navy and light grey, kept calm: a flat navy sidebar, light grey canvas with white cards, navy for actions and links, and quiet navy or grey icon tints instead of colored tiles — no gradients or glows. Green / amber / red are reserved for status and appear only as dots and small pills. Monospaced section labels, chart colors checked for color-blind separation, San Francisco on Apple devices with Inter elsewhere, light and dark appearance, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
+Navy and light grey, kept calm: a white sidebar with dark, easy-to-read labels, light grey canvas with white cards, navy for actions and links, and quiet navy or grey icon tints instead of colored tiles — no gradients or glows. Green / amber / red are reserved for status and appear only as dots and small pills. Monospaced section labels, chart colors checked for color-blind separation, San Francisco on Apple devices with Inter elsewhere, light appearance by default with an optional dark mode, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
 
 ## Data sources
 

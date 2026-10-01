@@ -81,12 +81,12 @@ function Sidebar({ onNavigate }) {
   const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform);
 
   return (
-    <div className="flex h-full flex-col bg-sidebar text-sidebar-ink">
+    <div className="flex h-full flex-col border-r border-sidebar-line bg-sidebar text-sidebar-ink">
       <div className="flex h-16 items-center gap-3 px-4">
         <Logo size={32} />
         <div className="min-w-0 leading-tight">
-          <div className="text-md font-semibold tracking-tight text-white">AutoShop Pro</div>
-          <div className="truncate font-mono text-[10px] font-medium uppercase tracking-[0.14em] text-sidebar-ink-2">{state.shop.name}</div>
+          <div className="text-md font-semibold tracking-tight text-sidebar-ink">AutoShop Pro</div>
+          <div className="truncate text-xs font-medium text-sidebar-ink-2">{state.shop.name}</div>
         </div>
       </div>
 
@@ -96,21 +96,21 @@ function Sidebar({ onNavigate }) {
             setPaletteOpen(true);
             onNavigate?.();
           }}
-          className="flex h-8 w-full items-center gap-2 rounded-[8px] border border-sidebar-line bg-sidebar-2 px-2.5 text-sm text-sidebar-ink-2 transition-colors hover:border-sidebar-ink-2/40 hover:text-sidebar-ink"
+          className="flex h-9 w-full items-center gap-2 rounded-[8px] border border-sidebar-line bg-sidebar-2 px-2.5 text-sm text-sidebar-ink-2 transition-colors hover:border-ink-4 hover:text-sidebar-ink"
         >
           <Search size={14} strokeWidth={2} />
           <span className="flex-1 text-left">Search</span>
           <span className="flex gap-0.5">
-            <kbd className="kbd-dark">{isMac ? '⌘' : 'Ctrl'}</kbd>
-            <kbd className="kbd-dark">K</kbd>
+            <kbd className="kbd">{isMac ? '⌘' : 'Ctrl'}</kbd>
+            <kbd className="kbd">K</kbd>
           </span>
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-3 pb-4 [scrollbar-color:rgb(255_255_255/0.15)_transparent]">
+      <nav className="flex-1 overflow-y-auto px-3 pb-4">
         {nav.map((group, gi) => (
           <div key={gi} className={gi ? 'mt-5' : 'mt-2'}>
-            {group.title && <div className="mb-1.5 px-2.5 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-sidebar-ink-2/80">{group.title}</div>}
+            {group.title && <div className="mb-1.5 px-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-sidebar-ink-2">{group.title}</div>}
             <div className="space-y-px">
               {group.items.map((item) => (
                 <NavLink
@@ -119,21 +119,21 @@ function Sidebar({ onNavigate }) {
                   end={item.end}
                   onClick={onNavigate}
                   className={({ isActive }) =>
-                    `group relative flex h-8 items-center gap-2.5 rounded-[7px] px-2.5 text-[13.5px] transition-colors ${
-                      isActive ? 'bg-sidebar-2 font-medium text-white' : 'text-sidebar-ink/80 hover:bg-white/[0.05] hover:text-white'
+                    `group relative flex h-9 items-center gap-2.5 rounded-[8px] px-2.5 text-[14px] font-medium transition-colors ${
+                      isActive ? 'bg-accent/[0.09] font-semibold text-accent' : 'text-sidebar-ink hover:bg-fill/[0.08]'
                     }`
                   }
                 >
                   {({ isActive }) => (
                     <>
-                      {isActive && <span className="absolute -left-3 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-sidebar-ink/80" />}
-                      <item.icon size={17} strokeWidth={1.75} className={isActive ? 'text-white' : 'text-sidebar-ink-2 group-hover:text-sidebar-ink'} />
+                      {isActive && <span className="absolute -left-3 top-2 bottom-2 w-[3px] rounded-r-full bg-accent" />}
+                      <item.icon size={18} strokeWidth={1.9} className={isActive ? 'text-accent' : 'text-sidebar-ink-2 group-hover:text-sidebar-ink'} />
                       <span className="flex-1 truncate">{item.label}</span>
                       {item.count && counts[item.count] > 0 &&
                         (item.badge ? (
-                          <span className="tabular flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-sidebar-ink px-1.5 text-2xs font-semibold text-sidebar">{counts[item.count]}</span>
+                          <span className="tabular flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-accent px-1.5 text-2xs font-semibold text-on-accent">{counts[item.count]}</span>
                         ) : (
-                          <span className="tabular text-xs text-sidebar-ink-2">{counts[item.count]}</span>
+                          <span className="tabular text-xs font-medium text-sidebar-ink-2">{counts[item.count]}</span>
                         ))}
                     </>
                   )}
@@ -145,17 +145,17 @@ function Sidebar({ onNavigate }) {
       </nav>
 
       <div className="border-t border-sidebar-line px-3 py-3">
-        <button onClick={() => setSwitching(true)} className="mb-2.5 flex w-full items-center gap-2.5 rounded-[9px] px-1.5 py-1.5 text-left transition-colors hover:bg-white/[0.05]" title="Switch user">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-sidebar-2 text-xs font-semibold text-sidebar-ink ring-1 ring-sidebar-line">
+        <button onClick={() => setSwitching(true)} className="mb-2.5 flex w-full items-center gap-2.5 rounded-[9px] px-1.5 py-1.5 text-left transition-colors hover:bg-fill/[0.08]" title="Switch user">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-fill/[0.14] text-xs font-semibold text-sidebar-ink">
             {user.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
           </span>
-          <span className="min-w-0 flex-1 text-xs leading-4">
-            <span className="block truncate font-medium text-sidebar-ink">{user.name}</span>
-            <span className="block truncate text-sidebar-ink-2">{ROLES[role]?.label}</span>
+          <span className="min-w-0 flex-1 text-[13px] leading-4">
+            <span className="block truncate font-semibold text-sidebar-ink">{user.name}</span>
+            <span className="block truncate text-xs text-sidebar-ink-2">{ROLES[role]?.label}</span>
           </span>
           <ChevronsUpDown size={14} className="shrink-0 text-sidebar-ink-2" />
         </button>
-        <div className="flex rounded-[8px] bg-sidebar-2 p-[2px] ring-1 ring-sidebar-line" role="radiogroup" aria-label="Appearance">
+        <div className="flex rounded-[8px] bg-fill/[0.1] p-[2px]" role="radiogroup" aria-label="Appearance">
           {THEMES.map((t) => (
             <button
               key={t.value}
@@ -164,7 +164,7 @@ function Sidebar({ onNavigate }) {
               title={t.label}
               onClick={() => setTheme(t.value)}
               className={`flex h-6 flex-1 items-center justify-center rounded-[6px] transition-all ${
-                theme === t.value ? 'bg-white/[0.12] text-white shadow-[0_1px_2px_rgb(0_0_0/0.3)]' : 'text-sidebar-ink-2 hover:text-white'
+                theme === t.value ? 'bg-surface text-ink shadow-[0_1px_2px_rgb(0_0_0/0.12)]' : 'text-sidebar-ink-2 hover:text-sidebar-ink'
               }`}
             >
               <t.icon size={13} strokeWidth={2} />
@@ -199,11 +199,11 @@ function NoAccess() {
   );
 }
 
-/** App mark: a navy wrench on a white tile. */
+/** App mark: a wrench on a small navy tile. */
 export function Logo({ size = 28 }) {
   return (
     <span
-      className="flex shrink-0 items-center justify-center rounded-[9px] bg-white text-[rgb(16_33_62)] shadow-[0_1px_2px_rgb(0_0_0/0.12)] ring-1 ring-black/[0.06]"
+      className="flex shrink-0 items-center justify-center rounded-[9px] bg-accent text-on-accent"
       style={{ width: size, height: size }}
     >
       <Wrench size={Math.round(size * 0.52)} strokeWidth={2.2} />
@@ -231,7 +231,7 @@ export default function Layout() {
         <div className="no-print fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 animate-fade-in bg-black/25" onClick={() => setNavOpen(false)} />
           <aside className="relative h-full w-[272px] animate-slide-in bg-sidebar shadow-sheet">
-            <button onClick={() => setNavOpen(false)} className="btn-icon btn absolute right-2 top-4 rounded-full text-sidebar-ink-2 hover:bg-white/10 hover:text-white" aria-label="Close menu">
+            <button onClick={() => setNavOpen(false)} className="btn-icon btn absolute right-2 top-4 rounded-full text-sidebar-ink-2 hover:bg-fill/10 hover:text-sidebar-ink" aria-label="Close menu">
               <X size={17} />
             </button>
             <Sidebar onNavigate={() => setNavOpen(false)} />

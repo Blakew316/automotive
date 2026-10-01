@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 /*
- * Design tokens — navy and light grey. Light grey canvas, white cards, a flat navy sidebar and navy
- * for actions and links. Everything else stays neutral grey; status color (green/amber/red) is
+ * Design tokens — navy and light grey. Light grey canvas, white cards and a white sidebar, with navy
+ * for actions, links and the current page. Everything else stays neutral grey; status color (green/amber/red) is
  * reserved for meaning and appears only as dots, thin tints and small pills.
  */
 :root {
@@ -12,11 +12,11 @@
   --canvas: 239 241 244;
   --surface: 255 255 255;
   --raised: 247 248 250;
-  --sidebar: 16 33 62;
-  --sidebar-2: 27 48 84;
-  --sidebar-ink: 233 238 246;
-  --sidebar-ink-2: 152 168 194;
-  --sidebar-line: 33 54 90;
+  --sidebar: 255 255 255;
+  --sidebar-2: 245 246 248;
+  --sidebar-ink: 20 27 38;
+  --sidebar-ink-2: 82 93 110;
+  --sidebar-line: 222 226 232;
   --ink: 20 27 38;
   --ink-2: 76 88 106;
   --ink-3: 102 113 130;
@@ -47,11 +47,11 @@
     --canvas: 11 16 25;
     --surface: 20 27 39;
     --raised: 27 35 49;
-    --sidebar: 13 21 35;
-    --sidebar-2: 26 38 58;
-    --sidebar-ink: 233 238 246;
-    --sidebar-ink-2: 140 156 182;
-    --sidebar-line: 33 45 66;
+    --sidebar: 20 25 33;
+    --sidebar-2: 30 36 46;
+    --sidebar-ink: 236 239 244;
+    --sidebar-ink-2: 168 176 190;
+    --sidebar-line: 40 47 58;
     --ink: 234 238 244;
     --ink-2: 162 172 188;
     --ink-3: 126 137 154;
@@ -82,11 +82,11 @@
   --canvas: 11 16 25;
   --surface: 20 27 39;
   --raised: 27 35 49;
-  --sidebar: 13 21 35;
-  --sidebar-2: 26 38 58;
-  --sidebar-ink: 233 238 246;
-  --sidebar-ink-2: 140 156 182;
-  --sidebar-line: 33 45 66;
+  --sidebar: 20 25 33;
+  --sidebar-2: 30 36 46;
+  --sidebar-ink: 236 239 244;
+  --sidebar-ink-2: 168 176 190;
+  --sidebar-line: 40 47 58;
   --ink: 234 238 244;
   --ink-2: 162 172 188;
   --ink-3: 126 137 154;
@@ -117,11 +117,11 @@
   --canvas: 239 241 244;
   --surface: 255 255 255;
   --raised: 247 248 250;
-  --sidebar: 16 33 62;
-  --sidebar-2: 27 48 84;
-  --sidebar-ink: 233 238 246;
-  --sidebar-ink-2: 152 168 194;
-  --sidebar-line: 33 54 90;
+  --sidebar: 255 255 255;
+  --sidebar-2: 245 246 248;
+  --sidebar-ink: 20 27 38;
+  --sidebar-ink-2: 82 93 110;
+  --sidebar-line: 222 226 232;
   --ink: 20 27 38;
   --ink-2: 76 88 106;
   --ink-3: 102 113 130;
@@ -269,9 +269,6 @@
     content: '';
     @apply h-[3px] w-4 rounded-full bg-brand;
   }
-  .eyebrow-on-dark {
-    @apply text-sidebar-ink-2;
-  }
   /* Quiet icon tile used for modules, KPIs and card headers: a light tint, never a solid fill. */
   .icon-tile {
     @apply inline-flex shrink-0 items-center justify-center rounded-[9px];
@@ -306,9 +303,6 @@
   /* Misc */
   .kbd {
     @apply inline-flex h-5 min-w-[20px] items-center justify-center rounded-[5px] border border-line bg-surface px-1 font-sans text-2xs font-medium text-ink-3;
-  }
-  .kbd-dark {
-    @apply inline-flex h-5 min-w-[20px] items-center justify-center rounded-[5px] border border-sidebar-line bg-sidebar-2 px-1 font-sans text-2xs font-medium text-sidebar-ink-2;
   }
   .chip {
     @apply inline-flex h-6 items-center gap-1.5 whitespace-nowrap rounded-full border border-line bg-surface px-2.5 text-xs font-medium text-ink-2;
