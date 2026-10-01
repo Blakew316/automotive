@@ -7,6 +7,7 @@ import { Phone, MessageSquare, Check, X, ChevronLeft, ChevronRight, Play, Circle
 import { money, date, dateTime, phone as fmtPhone, telHref, smsHref, number } from '../lib/format';
 import { approvalText, totalWithChoice } from '../lib/report';
 import { formatDuration } from '../lib/media';
+import { TiresBrakes } from './Gauges';
 
 const RATING = {
   good: { label: 'Good', tone: 'text-ok', dot: 'bg-ok', icon: CircleCheck },
@@ -134,6 +135,7 @@ export default function ReportView({ report, Media, onDecision, decisions = {}, 
               </span>
             ))}
           </div>
+          <TiresBrakes items={report.inspection.items} className="border-b border-line/70 px-4 py-4" />
           <ul className="divide-y divide-line/70">
             {flagged.map((i) => {
               const R = RATING[i.rating];

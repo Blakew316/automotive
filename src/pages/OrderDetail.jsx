@@ -3,10 +3,12 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   Printer, Send, MoreHorizontal, Plus, Trash2, MessageSquare, Mail, Check, ClipboardCheck, Wrench, StickyNote,
   CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2, PenLine, HandCoins,
-  History,
+  History, Activity,
 } from 'lucide-react';
 import { useShop, useUI, useLookup, useTotals, useSync } from '../store/hooks';
 import RecordHistory from '../components/RecordHistory';
+import DictateButton from '../components/Dictate';
+import { newTrackId, publishTrack, revokeTrack, trackPayload, trackFingerprint } from '../lib/tracker';
 import { PageHeader, Card, Tabs, Menu, EmptyState, Modal, SearchInput, InlineText, Toggle } from '../components/ui';
 import ServiceBlock from './order/ServiceBlock';
 import InspectionPanel from './order/InspectionPanel';
@@ -66,6 +68,30 @@ export default function OrderDetail() {
     toast(`Moved to ${STATUS[status].label}`, { action: { label: 'Undo', onClick: () => setOrderStatus(order.id, prev) } });
   };
 
+  // Live status page: create it the first time, publish now, then text the link.
+  const tracking = Boolean(order.track?.id && !order.track.off);
+  const sendTrack = async () => {
+    if (!sync?.staff) return toast('Sign in under Settings → Shop Cloud to send live status links', { tone: 'error' });
+    const id = order.track?.id || newTrackId();
+    const o = { ...order, track: { ...(order.track || {}), id, off: false } };
+    try {
+      await publishTrack(sync.cfg, id, trackPayload(state, o));
+      updateOrder(order.id, { track: { ...o.track, fp: trackFingerprint(state, o), publishedAt: new Date().toISOString() } });
+      setComposing({ templateId: 'track' });
+    } catch (e) {
+      toast(e.message || 'Couldn’t publish the status page', { tone: 'error' });
+    }
+  };
+  const stopTrack = async () => {
+    try {
+      if (sync?.staff) await revokeTrack(sync.cfg, order.track.id);
+      updateOrder(order.id, { track: { ...order.track, off: true } });
+      toast('Live status link turned off');
+    } catch (e) {
+      toast(e.message, { tone: 'error' });
+    }
+  };
+
   const next = NEXT[order.status];
   const shop = state.shop;
   const firstName = customer?.firstName || 'there';
@@ -100,6 +126,7 @@ export default function OrderDetail() {
                 { label: `Email ${docName.toLowerCase()}`, icon: Mail, disabled: !customer?.email, onClick: () => setComposing({ channel: 'email', templateId: isInvoice ? 'ready' : 'estimate', initialBody: emailBody }) },
                 isInvoice && t.balance > 0.004 && { label: 'Request payment', icon: HandCoins, disabled: !customer, onClick: () => setComposing({ templateId: 'pay' }) },
                 { label: 'Status update…', icon: MessageSquare, disabled: !customer, onClick: () => setComposing({ templateId: 'update' }) },
+                { label: tracking ? 'Text live status link' : 'Live status link…', icon: Activity, disabled: !customer, onClick: sendTrack },
                 '-',
                 { label: 'Share vehicle report & photos', icon: Share2, onClick: () => setSharing(true) },
                 { label: 'Show customer view', icon: MonitorSmartphone, onClick: () => navigate(`/orders/${order.id}/report`) },
@@ -141,6 +168,7 @@ export default function OrderDetail() {
                 order.status === 'closed' && { label: 'Reopen', icon: RotateCcw, onClick: () => move('ready') },
                 { label: order.taxExempt ? 'Charge tax' : 'Mark tax exempt', icon: Receipt, onClick: () => updateOrder(order.id, { taxExempt: !order.taxExempt }) },
                 sync?.enabled && { label: 'Change history', icon: History, onClick: () => setHistory(true) },
+                tracking && { label: 'Turn off live status link', icon: Activity, onClick: stopTrack },
                 '-',
                 { label: 'Delete repair order', icon: Trash2, danger: true, onClick: () => setConfirmDelete(true) },
               ]}
@@ -330,10 +358,11 @@ function NotesPanel({ order, onAdd }) {
     <div className="space-y-4">
       <Card className="p-3">
         <textarea rows={3} value={text} onChange={(e) => setText(e.target.value)} placeholder="Add a note — calls, authorizations, parts ETAs…" className="input resize-none border-transparent bg-transparent shadow-none focus:ring-0" />
-        <div className="mt-2 flex items-center justify-between">
-          <label className="flex items-center gap-2 text-sm text-ink-2">
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <label className="flex flex-1 items-center gap-2 text-sm text-ink-2">
             <Toggle checked={internal} onChange={setInternal} label="Internal note" /> Internal only
           </label>
+          <DictateButton onText={(t) => setText((cur) => [cur.trim(), t].filter(Boolean).join(' '))} label="Dictate a note" />
           <button
             className="btn-primary btn-sm"
             disabled={!text.trim()}

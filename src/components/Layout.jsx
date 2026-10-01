@@ -10,6 +10,7 @@ import { ROLES, homeFor } from '../lib/access';
 import SwitchUser from './SwitchUser';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { useCloudSync } from '../lib/useCloudSync';
+import { useTracking } from '../lib/useTracking';
 import { syncLabel } from '../lib/sync/labels';
 import CommandPalette from './CommandPalette';
 import Toasts from './Toasts';
@@ -264,6 +265,7 @@ export default function Layout() {
   const location = useLocation();
   const { can } = useAccess();
   useCloudSync();
+  useTracking();
 
   useEffect(() => {
     document.getElementById('main-scroll')?.scrollTo(0, 0);

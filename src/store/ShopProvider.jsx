@@ -47,6 +47,22 @@ async function loadStore() {
 
 const now = () => new Date().toISOString();
 
+/** Every repair order keeps a log of when its status changed (for the customer's live status page). */
+function stampStatusChanges(base, next) {
+  if (next.orders === base.orders) return next;
+  const before = new Map(base.orders.map((o) => [o.id, o]));
+  const changed = next.orders.filter((o) => {
+    const b = before.get(o.id);
+    return b !== o && (!b || b.status !== o.status);
+  });
+  if (!changed.length) return next;
+  const at = now();
+  const ids = new Set(changed.map((o) => o.id));
+  return produce(next, (d) => {
+    for (const o of d.orders) if (ids.has(o.id)) o.statusLog = [...(o.statusLog || []), { status: o.status, at }].slice(-40);
+  });
+}
+
 function persistLocal(data) {
   try {
     localStorage.setItem(LEGACY_KEY, JSON.stringify(data));
@@ -135,10 +151,12 @@ function ShopStore({ boot, children }) {
   const update = useCallback(
     (mutator) => {
       let result;
-      const next = produce(stateRef.current, (draft) => {
+      const base = stateRef.current;
+      let next = produce(base, (draft) => {
         result = mutator(draft);
         if (isDraft(result)) result = current(result);
       });
+      next = stampStatusChanges(base, next);
       commit(next);
       return result;
     },
@@ -361,10 +379,12 @@ function ShopStore({ boot, children }) {
       addNote: (orderId, text, internal = true) =>
         update((s) => void findOrder(s, orderId).notes.unshift({ id: uid('note'), at: now(), text, internal })),
 
-      addMedia: (orderId, records) =>
+      addMedia: (orderId, records, afterId) =>
         update((s) => {
           const o = findOrder(s, orderId);
-          o.media = [...(o.media || []), ...records];
+          const list = o.media || [];
+          const at = afterId ? list.findIndex((m) => m.id === afterId) + 1 : 0;
+          o.media = at > 0 ? [...list.slice(0, at), ...records, ...list.slice(at)] : [...list, ...records];
           o.updatedAt = now();
         }),
       updateMedia: (orderId, mediaId, patch) =>
