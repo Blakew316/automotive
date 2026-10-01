@@ -3,7 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   Printer, Send, MoreHorizontal, Plus, Trash2, MessageSquare, Mail, Check, ClipboardCheck, Wrench, StickyNote,
   CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2, PenLine, HandCoins,
-  History, Activity, Building2,
+  History, Activity, Building2, Undo2,
 } from 'lucide-react';
 import { useShop, useUI, useLookup, useTotals, useSync } from '../store/hooks';
 import RecordHistory from '../components/RecordHistory';
@@ -14,6 +14,7 @@ import ServiceBlock from './order/ServiceBlock';
 import InspectionPanel from './order/InspectionPanel';
 import OrderSidebar, { PaymentModal } from './order/OrderSidebar';
 import ChargeModal from './order/ChargeModal';
+import ComebackModal from './order/ComebackModal';
 import { hasTerms } from '../lib/accounts';
 import MediaPanel, { MediaViewer } from './order/MediaPanel';
 import { useMediaViewer } from '../lib/useMedia';
@@ -45,6 +46,7 @@ export default function OrderDetail() {
   const [addingService, setAddingService] = useState(false);
   const [paying, setPaying] = useState(false);
   const [charging, setCharging] = useState(false);
+  const [comeback, setComeback] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [sharing, setSharing] = useState(false);
   const [authorizing, setAuthorizing] = useState(false);
@@ -176,6 +178,7 @@ export default function OrderDetail() {
                 order.status === 'in_progress' && { label: 'Waiting on parts', icon: PackageCheck, onClick: () => move('waiting_parts') },
                 order.status === 'closed' && { label: 'Reopen', icon: RotateCcw, onClick: () => move('ready') },
                 { label: order.taxExempt ? 'Charge tax' : 'Mark tax exempt', icon: Receipt, onClick: () => updateOrder(order.id, { taxExempt: !order.taxExempt }) },
+                vehicle && { label: order.comeback ? 'Edit comeback' : 'Mark as comeback', icon: Undo2, onClick: () => setComeback(true) },
                 sync?.enabled && { label: 'Change history', icon: History, onClick: () => setHistory(true) },
                 tracking && { label: 'Turn off live status link', icon: Activity, onClick: stopTrack },
                 '-',
@@ -187,6 +190,21 @@ export default function OrderDetail() {
       />
 
       <Stepper status={order.status} onPick={move} />
+      {order.comeback && (
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-[10px] border border-warn/40 bg-warn/[0.07] px-4 py-2.5 text-sm">
+          <Undo2 size={15} className="text-warn" />
+          <span className="font-medium">Comeback</span>
+          <span className="text-ink-2">
+            of{' '}
+            <Link to={`/orders/${order.comeback.of}`} className="link">
+              RO #{order.comeback.ofNumber}
+            </Link>
+            {order.comeback.reason ? ` — ${order.comeback.reason}` : ''}
+            {order.comeback.techId ? ` · ${state.technicians.find((x) => x.id === order.comeback.techId)?.name || ''}` : ''}
+          </span>
+          <button className="btn-plain btn-sm ml-auto" onClick={() => setComeback(true)}>Edit</button>
+        </div>
+      )}
       {history && <RecordHistory collection="orders" id={order.id} title={`${docName} #${order.number}`} onClose={() => setHistory(false)} />}
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -254,6 +272,7 @@ export default function OrderDetail() {
 
       {addingService && <AddServiceModal order={order} onClose={() => setAddingService(false)} />}
       {paying && <PaymentModal order={order} customer={customer} onClose={() => setPaying(false)} onReceipt={(amount) => setComposing({ templateId: 'receipt', extra: { amount } })} />}
+      {comeback && <ComebackModal order={order} onClose={() => setComeback(false)} />}
       {charging && customer?.account && <ChargeModal order={order} customer={customer} onClose={() => setCharging(false)} />}
       {authorizing && <AuthorizeModal order={order} customer={customer} onClose={() => setAuthorizing(false)} />}
       {composing && customer && <ComposeModal customer={customer} order={order} {...composing} onClose={() => setComposing(null)} />}

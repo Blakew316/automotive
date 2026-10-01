@@ -83,6 +83,7 @@ export default function Reports() {
       .filter((o) => new Date(o.createdAt) >= from)
       .forEach((o) =>
         o.services.forEach((s) => {
+          if (s.noCharge) return;
           const v = s.items.reduce((a, i) => a + (i.type === 'labor' ? i.hours * i.rate : i.qty * i.price), 0);
           if (s.status === 'declined') declined += v;
           else if (s.status === 'approved') approved += v;

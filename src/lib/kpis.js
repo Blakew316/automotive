@@ -34,6 +34,7 @@ export function periodMetrics(state, from, to) {
   for (const o of written)
     for (const s of o.services) {
       hoursPresented += laborHours(s);
+      if (s.noCharge) continue;
       const v = s.items.reduce((a, i) => a + itemTotal(i), 0);
       quoted += v;
       if (s.status !== 'declined' && s.status !== 'pending') approved += v;

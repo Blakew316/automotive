@@ -5,6 +5,7 @@ import { orderProfit, profitTone, TONE_TEXT, TONE_BG } from '../../lib/profit';
 import { useShop, useUI, useTotals } from '../../store/hooks';
 import { Card, CardHeader, Avatar, CopyButton, NumInput, Modal, Field, Mono, ExternalLink, Toggle, InlineText } from '../../components/ui';
 import { accountSummary, dueDate, hasTerms, termsLabel } from '../../lib/accounts';
+import TransportCard from './TransportCard';
 import { AuthorizationLog } from './AuthorizeModal';
 import { financingOffer } from '../../lib/financing';
 import { money, fullName, vehicleName, phone, telHref, dateShort, time, number, round2 } from '../../lib/format';
@@ -121,12 +122,20 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
         </div>
       </Card>
 
+      {order.status !== 'closed' || order.transport || order.checkin ? <TransportCard order={order} customer={customer} /> : null}
+
       <Card>
         <CardHeader title="Totals" subtitle={t.hours ? `${t.hours} labor hours` : undefined} />
         <dl className="px-4 py-2 text-sm">
           <Row label="Labor" value={t.labor} />
           <Row label="Parts" value={t.parts} />
           {t.fees > 0 && <Row label="Fees" value={t.fees} />}
+          {t.noCharge > 0 && (
+            <div className="flex items-center justify-between py-1">
+              <dt className="text-ink-2">No-charge work</dt>
+              <dd className="tabular text-ink-3 line-through">{money(t.noCharge)}</dd>
+            </div>
+          )}
           {t.sublet > 0 && <Row label="Sublet" value={t.sublet} />}
           <div className="flex items-center justify-between py-1">
             <dt className="flex items-center gap-2 text-ink-2">

@@ -7,6 +7,7 @@ import { bookingChannels } from '../../lib/kpis';
 import { teamSummary } from '../../lib/time';
 import { serviceTotal } from '../../lib/pricing';
 import { AUTH_METHODS } from '../../lib/authMethods';
+import { comebackStats } from '../../lib/operations';
 import { money, money0, pct, fullName, number } from '../../lib/format';
 
 function Kpis({ items }) {
@@ -86,7 +87,56 @@ export function TechReport({ from, to }) {
           </div>
         </Card>
       </div>
+      <Comebacks from={from} to={to} jobs={new Map(rows.map((r) => [r.tech.id, r.jobs]))} />
     </>
+  );
+}
+
+/** Comebacks (work that came back) and no-charge work, by technician. */
+function Comebacks({ from, to, jobs }) {
+  const { state } = useShop();
+  const totals = useTotals();
+  const c = useMemo(() => comebackStats(state, from, to, totals), [state, from, to, totals]);
+  const tech = (id) => state.technicians.find((t) => t.id === id);
+  return (
+    <Card className="mt-6">
+      <CardHeader title="Comebacks & no-charge work" subtitle={`${c.count} comeback${c.count === 1 ? '' : 's'} · ${pct(c.rate, 1)} of invoiced ROs · ${money0(c.noCharge)} of work done at no charge`} />
+      {c.count === 0 ? (
+        <p className="px-4 py-4 text-sm text-ink-3">No comebacks in this period. Mark one from a repair order’s ⋯ menu → Mark as comeback.</p>
+      ) : (
+        <div className="grid gap-0 lg:grid-cols-2 lg:divide-x lg:divide-line/70">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Technician</th>
+                <th className="text-right">Comebacks</th>
+                <th className="text-right">Rate</th>
+                <th className="text-right">Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.byTech.map((r) => (
+                <tr key={r.techId || 'none'}>
+                  <td className="font-medium">{tech(r.techId)?.name || 'Not assigned'}</td>
+                  <td className="tabular text-right">{r.count}</td>
+                  <td className="tabular text-right">{jobs.get(r.techId) ? pct(r.count / jobs.get(r.techId), 1) : '—'}</td>
+                  <td className="tabular text-right">{money(r.cost)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <ul className="divide-y divide-line/70 border-t border-line/70 lg:border-t-0">
+            {c.list.slice(0, 8).map((o) => (
+              <li key={o.id} className="px-4 py-2.5 text-sm">
+                <Link to={`/orders/${o.id}`} className="font-medium hover:underline">RO #{o.number}</Link>
+                <span className="text-ink-3"> · back from #{o.comeback.ofNumber}{o.comeback.techId ? ` · ${tech(o.comeback.techId)?.name || ''}` : ''}</span>
+                {o.comeback.reason && <div className="text-xs text-ink-2">{o.comeback.reason}</div>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </Card>
   );
 }
 

@@ -158,7 +158,7 @@ export function invoicesCsv(state, from, to) {
     const memo = `RO #${o.number}${v ? ` · ${vehicleName(v)}${v.vin ? ` · VIN ${v.vin}` : ''}` : ''}`;
     const base = [o.number, fullName(c), d(o.invoicedAt), d(o.invoicedAt), 'Due on receipt', memo];
     for (const s of o.services) {
-      if (s.status === 'declined') continue;
+      if (s.status === 'declined' || s.noCharge) continue;
       for (const i of s.items) {
         const qty = i.type === 'labor' ? Number(i.hours) || 0 : Number(i.qty) || 0;
         const rate = i.type === 'labor' ? Number(i.rate) || 0 : Number(i.price) || 0;

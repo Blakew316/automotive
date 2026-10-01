@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { Search, Plus, Minus, Package, Boxes, Droplets, ArrowUpRight, Download, Pencil, Trash2, Store, ClipboardList, Disc3, BatteryCharging, Wrench } from 'lucide-react';
 import PurchaseOrders from './parts/PurchaseOrders';
 import TireLog from './parts/TireLog';
+import CoreReturns from './parts/CoreReturns';
+import { coreList } from '../lib/operations';
 import { inventoryStatus, GROUPS, STOCK_STATUS } from '../lib/inventory';
 import { useShop, useUI } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Tabs, SearchInput, Segmented, EmptyState, Modal, Field, Mono, ExternalLink, IconTile } from '../components/ui';
@@ -31,6 +33,7 @@ export default function Parts() {
           { value: 'inventory', label: 'Inventory', icon: Boxes, count: low ? `${low} low` : state.inventory.length },
           { value: 'orders', label: 'Purchase orders', icon: ClipboardList, count: state.purchaseOrders.filter((p) => ['draft', 'ordered', 'partial'].includes(p.status)).length || null },
           { value: 'tires', label: 'Tires', icon: Disc3 },
+          { value: 'cores', label: 'Cores', icon: BatteryCharging, count: coreList(state).filter((c) => c.status === 'owed').length || null },
           { value: 'specs', label: 'Maintenance specs', icon: Droplets, count: vehicleSpecs.length },
         ]}
       />
@@ -38,6 +41,7 @@ export default function Parts() {
       {tab === 'inventory' && <Inventory />}
       {tab === 'orders' && <PurchaseOrders />}
       {tab === 'tires' && <TireLog />}
+      {tab === 'cores' && <CoreReturns />}
       {tab === 'specs' && <Specs />}
     </>
   );

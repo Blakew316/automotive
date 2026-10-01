@@ -7,6 +7,7 @@ import { newTireQuote, tireLabel } from '../lib/tires';
 import { priceFromMatrix, orderTotals } from '../lib/pricing';
 import { STATUS } from '../lib/workflow';
 import { BLANK_ACCOUNT, dueDate, termsLabel } from '../lib/accounts';
+import { matchCustomer, matchVehicle, parseVehicle, TRANSPORT } from '../lib/operations';
 import { uid, fullName, vehicleName } from '../lib/format';
 import { loadSaved, createSaver } from '../lib/persist';
 import { diffStates, applyToDraft } from '../lib/sync/records';
@@ -193,6 +194,48 @@ function ShopStore({ boot, children }) {
         if (i.type === 'part') return { partStatus: 'needed', price: i.price ?? priceFromMatrix(i.cost, s.shop.matrix), ...base };
         return base;
       });
+    const makeOrder = (s, { customerId, vehicleId, concern = '', jobIds = [], appointmentId = null, status = 'estimate', id = null }) => {
+      s.counters.order += 1;
+      const v = s.vehicles.find((x) => x.id === vehicleId);
+      const owner = s.customers.find((c) => c.id === (customerId || v?.customerId));
+      const o = {
+        id: id || uid('ro'),
+        number: s.counters.order,
+        status,
+        ...(owner?.account?.taxExempt ? { taxExempt: true } : {}),
+        customerId: customerId || v?.customerId || null,
+        vehicleId: vehicleId || null,
+        techId: null,
+        advisor: '',
+        concern,
+        mileageIn: v?.mileage || null,
+        mileageOut: null,
+        services: jobIds.map((jid) => {
+          const job = s.cannedJobs.find((j) => j.id === jid);
+          return { id: uid('svc'), title: job.title, status: 'pending', techId: null, done: false, items: materialize(s, job.items), ...(job.tires ? { tires: newTireQuote() } : {}) };
+        }),
+        inspection: {},
+        notes: [],
+        payments: [],
+        discount: { type: 'amt', value: 0 },
+        createdAt: now(),
+        updatedAt: now(),
+        promisedAt: null,
+        authorizedAt: null,
+        invoicedAt: null,
+        closedAt: null,
+      };
+      s.orders.push(o);
+      if (appointmentId) {
+        const a = s.appointments.find((x) => x.id === appointmentId);
+        if (a) {
+          Object.assign(a, { orderId: o.id, status: 'arrived' });
+          o.source = a.source === 'online' ? 'online' : 'phone';
+        }
+      } else o.source = 'walk-in';
+      log(s, `Repair order #${o.number} opened${v ? ` — ${vehicleName(v)}` : ''}`, o.id);
+      return o;
+    };
 
     return {
       updateShop: (patch) => update((s) => void Object.assign(s.shop, patch)),
@@ -227,49 +270,8 @@ function ShopStore({ boot, children }) {
         }),
       deleteVehicle: (id) => update((s) => void (s.vehicles = s.vehicles.filter((v) => v.id !== id))),
 
-      createOrder: ({ customerId, vehicleId, concern = '', jobIds = [], appointmentId = null, status = 'estimate' }) =>
-        update((s) => {
-          s.counters.order += 1;
-          const v = s.vehicles.find((x) => x.id === vehicleId);
-          const owner = s.customers.find((c) => c.id === (customerId || v?.customerId));
-          const o = {
-            id: uid('ro'),
-            number: s.counters.order,
-            status,
-            ...(owner?.account?.taxExempt ? { taxExempt: true } : {}),
-            customerId: customerId || v?.customerId || null,
-            vehicleId: vehicleId || null,
-            techId: null,
-            advisor: '',
-            concern,
-            mileageIn: v?.mileage || null,
-            mileageOut: null,
-            services: jobIds.map((jid) => {
-              const job = s.cannedJobs.find((j) => j.id === jid);
-              return { id: uid('svc'), title: job.title, status: 'pending', techId: null, done: false, items: materialize(s, job.items), ...(job.tires ? { tires: newTireQuote() } : {}) };
-            }),
-            inspection: {},
-            notes: [],
-            payments: [],
-            discount: { type: 'amt', value: 0 },
-            createdAt: now(),
-            updatedAt: now(),
-            promisedAt: null,
-            authorizedAt: null,
-            invoicedAt: null,
-            closedAt: null,
-          };
-          s.orders.push(o);
-          if (appointmentId) {
-            const a = s.appointments.find((x) => x.id === appointmentId);
-            if (a) {
-              Object.assign(a, { orderId: o.id, status: 'arrived' });
-              o.source = a.source === 'online' ? 'online' : 'phone';
-            }
-          } else o.source = 'walk-in';
-          log(s, `Repair order #${o.number} opened${v ? ` — ${vehicleName(v)}` : ''}`, o.id);
-          return o;
-        }),
+      createOrder: (args) => update((s) => makeOrder(s, args)),
+
 
       updateOrder: (id, patch) =>
         update((s) => {
@@ -477,6 +479,47 @@ function ShopStore({ boot, children }) {
         update((s) => {
           s.messages.push({ id: uid('msg'), customerId, orderId, dir, channel, body, at: when || now(), read: dir === 'out', ...(meta ? { meta } : {}) });
         }),
+      // Self check-in from the lobby tablet or the key drop: find (or add) the customer and vehicle and
+      // open the repair order. Ids come from the inbox row, so two devices handling it agree.
+      addCheckin: (row) =>
+        update((s) => {
+          const p = row.payload || {};
+          const ref = String(row.id).replace(/[^\w-]/g, '').slice(0, 64);
+          if (!ref || s.orders.some((o) => o.checkin?.remoteId === ref)) return null;
+          const at = row.created_at || now();
+          const clip = (v, n = 120) => String(v || '').trim().slice(0, n);
+          let c = matchCustomer(s, p);
+          if (!c) {
+            const [firstName = '', ...rest] = clip(p.name).split(/\s+/);
+            c = { id: `cus_ci_${ref}`, firstName, lastName: rest.join(' '), company: '', phone: clip(p.phone, 40), email: clip(p.email), address: '', city: '', state: '', zip: '', notes: 'Added at self check-in', tags: [], textOptIn: p.contact !== 'call', createdAt: at };
+            s.customers.unshift(c);
+          }
+          let v = matchVehicle(s, c, p);
+          const miles = Math.max(0, Math.round(Number(String(p.mileage || '').replace(/\D/g, '')) || 0));
+          if (!v) {
+            const d = parseVehicle(p.vehicle);
+            const vin = clip(p.vin, 17).toUpperCase();
+            v = { id: `veh_ci_${ref}`, customerId: c.id, vin: vin.length === 17 ? vin : '', year: d.year, make: clip(d.make, 40), model: clip(d.model, 60), trim: '', engine: '', color: '', plate: clip(p.plate, 12).toUpperCase(), plateState: '', mileage: miles, notes: '', createdAt: at };
+            s.vehicles.unshift(v);
+          } else if (miles > (v.mileage || 0)) v.mileage = miles;
+          const today = new Date().toDateString();
+          const appt = s.appointments.find((a) => a.customerId === c.id && !a.orderId && new Date(a.start).toDateString() === today && !['cancelled', 'no_show'].includes(a.status));
+          const o = makeOrder(s, { customerId: c.id, vehicleId: v.id, concern: clip(p.concern, 2000), appointmentId: appt?.id, id: `ro_ci_${ref}` });
+          if (!appt) o.source = 'kiosk';
+          if (miles) o.mileageIn = miles;
+          o.transport = TRANSPORT[p.transport] ? p.transport : 'dropoff';
+          if (p.needBy) o.promisedAt = new Date(p.needBy).toISOString();
+          const by = clip(p.name) || 'Customer';
+          const signature = typeof p.signature === 'string' && p.signature.startsWith('data:image/') ? p.signature : null;
+          const limit = Number(p.diagLimit) || 0;
+          o.checkin = { remoteId: ref, at, by, keyTag: clip(p.keyTag, 20), dropoff: p.dropoff === 'dropbox' ? 'dropbox' : 'counter', contact: ['text', 'call', 'email'].includes(p.contact) ? p.contact : 'text', loaner: Boolean(p.loaner) };
+          if (signature) o.authorizations = [{ id: uid('auth'), at, method: 'kiosk', by, serviceIds: [], declinedIds: [], amount: limit, signature, note: limit ? `Diagnosis authorized at self check-in, up to $${limit}` : 'Signed at self check-in' }];
+          const bits = [p.concern && `“${clip(p.concern, 300)}”`, o.checkin.dropoff === 'dropbox' ? `Keys in the drop box${o.checkin.keyTag ? ` (tag ${o.checkin.keyTag})` : ''}` : o.checkin.keyTag ? `Key tag ${o.checkin.keyTag}` : '', TRANSPORT[o.transport], p.needBy && `needs it by ${new Date(p.needBy).toLocaleString('en-US', { weekday: 'short', hour: 'numeric', minute: '2-digit' })}`].filter(Boolean);
+          s.messages.push({ id: uid('msg'), customerId: c.id, orderId: o.id, dir: 'in', channel: 'portal', body: `Checked in ${vehicleName(v)} — ${bits.join(' · ')}`, at, read: false, meta: { remoteId: ref, checkin: true } });
+          log(s, `Self check-in: ${fullName(c)} — ${vehicleName(v)}`, o.id);
+          return o.id;
+        }),
+
       // Contact and fleet forms on the shop's website: match the customer or add them, then log the message.
       addWebsiteMessage: ({ remoteId, name, phone, email, company, body, at: when }) =>
         update((s) => {

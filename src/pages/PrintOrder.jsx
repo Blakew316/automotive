@@ -135,7 +135,7 @@ export default function PrintOrder() {
                       {declined && <span className="ml-2 text-xs font-normal">Declined — not included</span>}
                       {!declined && kind === 'estimate' && s.status === 'pending' && <span className="ml-2 text-xs font-normal text-ink-3">Awaiting approval</span>}
                     </td>
-                    <td className="tabular pb-1 pt-4 text-right font-semibold">{money(serviceTotal(s))}</td>
+                    <td className="tabular pb-1 pt-4 text-right font-semibold">{s.noCharge ? 'No charge' : money(serviceTotal(s))}</td>
                   </tr>
                   {s.items.map((i) => (
                     <tr key={i.id} className="text-ink-2">

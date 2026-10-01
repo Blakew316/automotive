@@ -29,7 +29,7 @@ create policy "AutoShop staff delete" on storage.objects
 create table if not exists public.shop_inbox (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
-  kind text not null check (kind in ('booking', 'approval', 'message')),
+  kind text not null check (kind in ('booking', 'approval', 'message', 'checkin')),
   ref text check (ref is null or char_length(ref) <= 64),
   payload jsonb not null check (octet_length(payload::text) < 20000)
 );

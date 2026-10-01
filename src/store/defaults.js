@@ -3,9 +3,11 @@
 import { INSPECTION_TEMPLATE } from '../lib/workflow';
 import { defaultStaff } from '../lib/access';
 import { SHOP_CLOUD } from '../lib/cloudDefaults';
+import { FRONT_DESK_DEFAULTS } from '../lib/operations';
 
 export const MESSAGE_TEMPLATES = [
   { id: 'estimate', label: 'Estimate ready', body: 'Hi {first}, it’s {shop}. Your estimate for the {vehicle} is {total}. Reply YES to approve or call {phone} with questions. Photos and online approval: {link}' },
+  { id: 'checkedin', label: 'Checked in', body: 'Hi {first}, thanks for checking in your {vehicle} at {shop}. We’ll text you as soon as we’ve had a look. Follow along here: {trackLink}' },
   { id: 'update', label: 'Status update', body: 'Hi {first}, quick update on your {vehicle} from {shop}: ' },
   { id: 'track', label: 'Live status link', body: 'Hi {first}, it’s {shop}. Follow your {vehicle} live — this page updates as we go: {trackLink}' },
   { id: 'ready', label: 'Vehicle ready', body: 'Hi {first}, your {vehicle} is ready for pickup at {shop}. Balance due {balance}. Pay ahead here: {payLink}' },
@@ -35,6 +37,7 @@ export const SHOP_DEFAULTS = {
   // Monthly scorecard targets (Reports → Goals). GP% also colors job profitability on ROs.
   goals: { carCount: 150, aro: 600, gpPct: 55, partsMargin: 50, elr: 135, closeRate: 65 },
   templates: MESSAGE_TEMPLATES,
+  frontDesk: FRONT_DESK_DEFAULTS,
 };
 
 const TECH_DEFAULTS = { payType: 'hourly', laborCommissionPct: 0, partsCommissionPct: 0, active: true, phone: '', email: '' };
@@ -45,6 +48,8 @@ export function migrate(data) {
   d.shop = { ...SHOP_DEFAULTS, ...d.shop };
   for (const k of ['payments', 'financing', 'booking', 'marketing', 'goals']) d.shop[k] = { ...SHOP_DEFAULTS[k], ...(d.shop[k] || {}) };
   d.shop.website = { url: d.shop.website?.url || '' };
+  const fd = d.shop.frontDesk || {};
+  d.shop.frontDesk = { ...FRONT_DESK_DEFAULTS, ...fd, checkin: { ...FRONT_DESK_DEFAULTS.checkin, ...(fd.checkin || {}) }, lobby: { ...FRONT_DESK_DEFAULTS.lobby, ...(fd.lobby || {}) }, loaners: Array.isArray(fd.loaners) ? fd.loaners : [] };
   if (!Array.isArray(d.shop.templates) || !d.shop.templates.length) d.shop.templates = MESSAGE_TEMPLATES;
   else {
     // Keep the shop's edits; add any templates introduced since.

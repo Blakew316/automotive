@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive, Store, Wrench, CreditCard, MessageSquareText, CalendarCheck, Cloud, ChevronRight, Globe } from 'lucide-react';
+import { Download, Upload, RotateCcw, Trash2, Plus, Pencil, HardDrive, Store, Wrench, CreditCard, MessageSquareText, CalendarCheck, Cloud, ChevronRight, Globe, ConciergeBell } from 'lucide-react';
 import { useShop, useUI, useSync, useAccess } from '../store/hooks';
 import { PageHeader, Card, CardHeader, Field, Toggle, Modal, NumInput, InlineText, Tabs } from '../components/ui';
 import { priceFromMatrix, DEFAULT_MATRIX } from '../lib/pricing';
@@ -13,6 +13,7 @@ import BookingSettings from './settings/BookingSettings';
 import InspectionTemplates from './settings/InspectionTemplates';
 import InstallSection from './settings/InstallSection';
 import WebsiteSettings from './settings/WebsiteSettings';
+import FrontDeskSettings from './settings/FrontDeskSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
 
@@ -22,6 +23,7 @@ const TABS = [
   { value: 'payments', label: 'Payments & financing', icon: CreditCard },
   { value: 'messaging', label: 'Messaging', icon: MessageSquareText },
   { value: 'booking', label: 'Online booking', icon: CalendarCheck },
+  { value: 'frontdesk', label: 'Front desk', icon: ConciergeBell },
   { value: 'website', label: 'Website', icon: Globe },
   { value: 'cloud', label: 'Shop Cloud', icon: Cloud },
   { value: 'data', label: 'Data', icon: HardDrive },
@@ -102,6 +104,7 @@ export default function Settings() {
           </>
         )}
         {tab === 'booking' && <BookingSettings />}
+        {tab === 'frontdesk' && <FrontDeskSettings />}
         {tab === 'website' && <WebsiteSettings />}
         {tab === 'cloud' && (
           <>

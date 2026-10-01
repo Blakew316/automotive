@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer, Wrench, Car, Wallet, Megaphone, Landmark, ChartColumn, Activity } from 'lucide-react';
+import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer, Wrench, Car, Wallet, Megaphone, Landmark, ChartColumn, Activity, KeyRound } from 'lucide-react';
 import { useShop, useLookup, useTotals, useAccess } from '../store/hooks';
 import { Card, CardHeader, StatusLabel, Avatar, EmptyState, Dot, IconTile } from '../components/ui';
 import { ColumnChart } from '../components/charts';
@@ -39,6 +39,9 @@ export default function Dashboard() {
       if (o.status === 'estimate' && now - new Date(o.createdAt) > 3 * 3600000) attention.push({ id: `est-${o.id}`, icon: FileText, text: `${name} estimate needs a follow-up`, sub: `Sent ${relTime(o.createdAt, now)} · ${money0(totals(o).total)}`, to: `/orders/${o.id}`, tone: 'bg-info' });
     });
     receivable.filter((o) => o.status === 'ready').forEach((o) => attention.push({ id: `bal-${o.id}`, icon: Receipt, text: `#${o.number} ready — ${money(totals(o).balance)} due`, sub: fullName(lookup.customer.get(o.customerId)), to: `/orders/${o.id}`, tone: 'bg-ok' }));
+    // Customers who checked themselves in (lobby tablet or key drop) and haven't been looked at yet.
+    const selfIn = orders.filter((o) => o.checkin && o.status === 'estimate' && sameDay(o.checkin.at, now));
+    if (selfIn.length) attention.unshift({ id: 'checkins', icon: KeyRound, text: `${selfIn.length} self check-in${selfIn.length === 1 ? '' : 's'} today`, sub: selfIn.map((o) => fullName(lookup.customer.get(o.customerId))).slice(0, 3).join(', '), to: selfIn.length === 1 ? `/orders/${selfIn[0].id}` : '/frontdesk', tone: 'bg-accent' });
     // Business accounts with invoices past their terms.
     const late = openInvoices(state, { now }).filter((i) => i.pastDue > 0 && isAccount(i.customer));
     if (late.length) {
