@@ -17,6 +17,7 @@ import FrontDeskSettings from './settings/FrontDeskSettings';
 import LocationsSection from './settings/LocationsSection';
 import KeysSettings from './settings/KeysSettings';
 import PhoneSettings from './settings/PhoneSettings';
+import StripeSettings from './settings/StripeSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
 
@@ -98,6 +99,7 @@ export default function Settings() {
         )}
         {tab === 'payments' && (
           <>
+            <StripeSettings />
             <PaymentsSection />
             <FinancingSection />
           </>

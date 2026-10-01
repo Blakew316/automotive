@@ -100,7 +100,7 @@ export default function KeysSettings() {
               <div className="mb-2 flex items-center gap-2 text-sm font-semibold">
                 {g.title}
                 {!g.keys.some((k) => k.ready) && <span className="rounded-full bg-fill/[0.08] px-2 py-0.5 text-2xs font-medium text-ink-3">Used when this integration is turned on</span>}
-                {g.setup && g.keys.every((k) => keyOf(k.name)) && (
+                {g.setup && g.keys.every((k) => k.auto || keyOf(k.name)) && (
                   <Link to={g.setup.to} className="link ml-auto text-xs font-normal">{g.setup.label}</Link>
                 )}
               </div>

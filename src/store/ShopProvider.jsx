@@ -10,8 +10,9 @@ import { BLANK_ACCOUNT, dueDate, termsLabel } from '../lib/accounts';
 import { matchCustomer, matchVehicle, parseVehicle, TRANSPORT } from '../lib/operations';
 import { decodeOffline } from '../lib/vin';
 import { shopAt, stampFor } from '../lib/locations';
-import { uid, fullName, vehicleName } from '../lib/format';
+import { uid, fullName, vehicleName, money } from '../lib/format';
 import { callMeta, callText } from '../lib/phone';
+import { onlineRef } from '../lib/payments';
 import { loadSaved, createSaver } from '../lib/persist';
 import { diffStates, applyToDraft } from '../lib/sync/records';
 import { useShopSync } from '../lib/sync/useShopSync';
@@ -623,6 +624,42 @@ function ShopStore({ boot, children }) {
             log(s, `New contact from the website: ${fullName(c)}`);
           }
           s.messages.push({ id: uid('msg'), customerId: c.id, orderId: null, dir: 'in', channel: 'web', body, at: when || now(), read: false, meta: { remoteId } });
+        }),
+      // Online payments and refunds from Stripe (shop_pay_events). The payment intent id is the
+      // payment's ref, so devices that both handle the same event agree. Returns the ids handled.
+      applyPayEvents: (rows) =>
+        update((s) => {
+          const handled = [];
+          for (const row of rows) {
+            const p = row.payload || {};
+            const o = s.orders.find((x) => x.id === p.orderId) || s.orders.find((x) => x.payLink?.id && x.payLink.id === p.link);
+            const pi = p.paymentIntent;
+            if (o && pi && row.kind === 'payment' && !o.payments.some((x) => x.stripe?.pi === pi && !x.stripe.refund)) {
+              const at = p.paidAt || row.created_at || now();
+              o.payments.push({ id: `pay_st_${pi}`, at, method: p.method || 'Card', amount: Number(p.amount) || 0, tip: 0, surcharge: 0, ref: onlineRef(p), stripe: { pi, charge: p.charge || null, fee: p.fee ?? null, type: p.type || 'card', brand: p.brand || null, last4: p.last4 || null, link: p.link || null, live: Boolean(p.livemode) } });
+              if (o.payLink && (!p.link || o.payLink.id === p.link)) o.payLink = { ...o.payLink, status: 'paid', paidAt: at };
+              const t = orderTotals(o, shopAt(s.shop, o.locationId));
+              if (t.balance <= 0.004 && o.status === 'ready') {
+                o.status = 'closed';
+                o.closedAt = o.closedAt || now();
+              }
+              o.updatedAt = now();
+              if (o.customerId) s.messages.push({ id: `msg_pay_${pi}`, customerId: o.customerId, orderId: o.id, dir: 'in', channel: 'portal', body: `Paid ${money(p.amount)} online — ${onlineRef(p).replace(' · online', '')}`, at, read: false, meta: { payment: pi } });
+              log(s, `Online payment ${money(p.amount)} on RO #${o.number}`, o.id);
+            }
+            if (o && pi && row.kind === 'refund') {
+              // Refund totals are cumulative; record what's new since the last one.
+              const recorded = -o.payments.filter((x) => x.stripe?.pi === pi && x.stripe.refund).reduce((t, x) => t + Number(x.amount), 0);
+              const delta = Math.round(((Number(p.refunded) || 0) - recorded) * 100) / 100;
+              if (delta > 0.004) {
+                o.payments.push({ id: uid('pay'), at: p.at || now(), method: 'Refund', amount: -delta, tip: 0, surcharge: 0, ref: 'Stripe refund', stripe: { pi, refund: true } });
+                o.updatedAt = now();
+                log(s, `Refund ${money(delta)} on RO #${o.number}`, o.id);
+              }
+            }
+            handled.push(row.id);
+          }
+          return handled;
         }),
       markThreadRead: (customerId) =>
         update((s) => {

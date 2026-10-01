@@ -4,6 +4,7 @@
 import { publishPublicJson, publicFolder, newShareId, trackLink } from './cloudShare';
 import { orderTotals } from './pricing';
 import { payLink } from './messaging';
+import { openPayLink } from './payments';
 import { vehicleName } from './format';
 import { shopAt } from './locations';
 
@@ -54,7 +55,7 @@ export function trackPayload(state, order) {
     services: order.services.filter((s) => s.status !== 'declined').map((s) => ({ title: s.title, done: Boolean(s.done), approved: s.status !== 'pending' })),
     reportUrl: order.share && !order.share.revoked ? order.share.url : null,
     balance: ['ready', 'closed'].includes(order.status) && balance > 0.004 ? balance : 0,
-    payLink: ['ready', 'closed'].includes(order.status) && balance > 0.004 ? payLink(shop, balance, `RO ${order.number}`) || null : null,
+    payLink: ['ready', 'closed'].includes(order.status) && balance > 0.004 ? openPayLink(order, balance)?.url || payLink(shop, balance, `RO ${order.number}`) || null : null,
     updatedAt: new Date().toISOString(),
   };
 }

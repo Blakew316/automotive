@@ -30,9 +30,10 @@ export const KEY_GROUPS = [
   },
   {
     title: 'Card payments (Stripe)',
+    setup: { to: '/settings?tab=payments', label: 'Connect Stripe in Settings → Payments' },
     keys: [
-      { name: 'stripe_secret_key', label: 'Secret key', hint: 'Stripe dashboard → Developers → API keys (sk_live_… or a restricted key)' },
-      { name: 'stripe_webhook_secret', label: 'Webhook signing secret', hint: 'Stripe dashboard → Developers → Webhooks (whsec_…)' },
+      { name: 'stripe_secret_key', label: 'Secret key', hint: 'Stripe dashboard → Developers → API keys (sk_live_…, or sk_test_… to try it)', ready: true },
+      { name: 'stripe_webhook_secret', label: 'Webhook signing secret', hint: 'Filled in for you when you connect Stripe', ready: true, auto: true },
     ],
   },
   {

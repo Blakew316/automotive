@@ -1,11 +1,14 @@
 // One composer for every customer message: estimates, updates, payment requests, reminders.
 // With the business line connected, texts go out from the shop's Twilio number; otherwise texts and
 // emails open in the device's Messages/Mail app. Either way they're logged to the conversation.
-import { useMemo, useState } from 'react';
-import { MessageSquare, Mail, NotebookPen, Info } from 'lucide-react';
-import { useShop, useUI, usePhone } from '../store/hooks';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { MessageSquare, Mail, NotebookPen, Info, CreditCard } from 'lucide-react';
+import { useShop, useUI, usePhone, usePay } from '../store/hooks';
 import { Modal, Segmented, Spinner } from './ui';
 import { fillTemplate, messageContext, sendHref } from '../lib/messaging';
+import { openPayLink } from '../lib/payments';
+import { orderTotals } from '../lib/pricing';
+import { shopAt } from '../lib/locations';
 import { fullName, phone as fmtPhone } from '../lib/format';
 
 export default function ComposeModal({ customer, order, appointment, templateId = 'update', initialBody, channel: initialChannel, extra, subject: initialSubject, onClose, onSent }) {
@@ -28,8 +31,40 @@ export default function ComposeModal({ customer, order, appointment, templateId 
 
   const pickTemplate = (id) => {
     setTid(id);
-    setBody(fillTemplate(templates.find((t) => t.id === id)?.body || '', ctx));
+    const filled = fillTemplate(templates.find((t) => t.id === id)?.body || '', ctx);
+    auto.current = filled;
+    setBody(filled);
   };
+
+  // A template with {payLink} and Stripe connected: make a secure pay link for the exact balance,
+  // then fill it in (unless the message was already edited).
+  const pay = usePay();
+  const auto = useRef(body);
+  const latestBody = useRef(body);
+  latestBody.current = body;
+  const tplBody = templates.find((t) => t.id === tid)?.body || '';
+  const balance = order ? Math.max(0, orderTotals(order, shopAt(state.shop, order.locationId)).balance) : 0;
+  const needLink = Boolean(pay.ensureLink && order && balance >= 0.5 && tplBody.includes('{payLink}') && !openPayLink(order, balance));
+  const [linkError, setLinkError] = useState('');
+  useEffect(() => {
+    if (!needLink) return undefined;
+    let alive = true;
+    pay
+      .ensureLink(order)
+      .then((link) => {
+        if (!alive || latestBody.current !== auto.current) return;
+        const filled = fillTemplate(tplBody, { ...ctx, payLink: link.url });
+        auto.current = filled;
+        setBody(filled);
+      })
+      .catch((e) => alive && setLinkError(e.message || 'Couldn’t make a pay link'));
+    return () => {
+      alive = false;
+    };
+    // Once per template and order; ctx changes as the link lands.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [needLink, tid, order?.id]);
+  const linking = needLink && !linkError;
 
   const log = (dir = 'out', ch = channel) => {
     addMessage({ customerId: customer.id, orderId: order?.id || null, dir, channel: ch, body: body.trim(), meta: tid ? { template: tid } : undefined });
@@ -80,7 +115,7 @@ export default function ComposeModal({ customer, order, appointment, templateId 
             <NotebookPen size={14} /> Log only
           </button>
           <button className="btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn-primary" disabled={!body.trim() || !href || busy || stopped} onClick={send}>
+          <button className="btn-primary" disabled={!body.trim() || !href || busy || stopped || linking} onClick={send}>
             {busy ? <Spinner size={14} /> : channel === 'sms' ? <MessageSquare size={15} /> : <Mail size={15} />} {channel === 'sms' ? 'Send text' : 'Send email'}
           </button>
         </>
@@ -106,6 +141,12 @@ export default function ComposeModal({ customer, order, appointment, templateId 
         </div>
         {channel === 'email' && <input className="input" value={subject} onChange={(e) => setSubject(e.target.value)} aria-label="Subject" placeholder="Subject" />}
         <textarea rows={6} className="input resize-none" value={body} onChange={(e) => setBody(e.target.value)} aria-label="Message" autoFocus />
+        {(linking || linkError || (pay.ready && order && openPayLink(order, balance) && body.includes(openPayLink(order, balance).url))) && (
+          <p className={`flex items-center gap-1.5 text-xs ${linkError ? 'text-bad' : 'text-ink-3'}`}>
+            {linking ? <Spinner size={12} /> : <CreditCard size={12} />}
+            {linking ? 'Creating a secure pay link for the balance…' : linkError ? `Pay link: ${linkError}` : 'Includes a secure Stripe pay link for the exact balance — it’s recorded on the RO when paid.'}
+          </p>
+        )}
         <div className="flex items-center justify-between text-xs text-ink-3">
           <span>{channel === 'sms' ? `${body.length} characters${body.length > 160 ? ` · ${Math.ceil(body.length / 153)} texts` : ''}` : ''}</span>
           {channel === 'sms' && (line.optedOut(customer?.phone) ? <span className="text-bad">Replied STOP — texts are blocked until they reply START</span> : customer?.textOptIn === false ? <span className="text-warn">Customer opted out of texts</span> : null)}

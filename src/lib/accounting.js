@@ -4,6 +4,7 @@ import { orderTotals, itemTotal, totalsCalculator } from './pricing';
 import { teamSummary } from './time';
 import { toCsv } from './serviceHistory';
 import { addDays, fullName, isoDate, startOfDay, vehicleName, round2 } from './format';
+import { processingFees } from './payments';
 
 export const ACCOUNTING_PERIODS = [
   { value: 'month', label: 'This month' },
@@ -92,6 +93,9 @@ export function profitAndLoss(state, from, to) {
 
   const byCategory = new Map();
   for (const e of expensesIn(state, from, to)) byCategory.set(e.category, (byCategory.get(e.category) || 0) + (Number(e.amount) || 0));
+  // Fees Stripe kept on online payments (recorded with each payment).
+  const cardFees = processingFees(payments);
+  if (cardFees > 0.004) byCategory.set('Card processing (Stripe)', (byCategory.get('Card processing (Stripe)') || 0) + cardFees);
   const expenses = [...byCategory.entries()].map(([category, amount]) => ({ category, amount })).sort((a, b) => b.amount - a.amount);
   const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0);
 
