@@ -46,9 +46,13 @@ export function serviceReminders(state, now = new Date()) {
     const last = new Date(oil.invoicedAt);
     const days = (now - last) / DAY;
     const lastMiles = Number(oil.mileageOut || oil.mileageIn) || 0;
-    const estMiles = lastMiles ? Math.round(lastMiles + days * perDay) : null;
+    // A connected car reports its real odometer and oil life; otherwise project from the last visit.
+    const live = v.connected?.reading;
+    const liveMiles = Number(live?.odometer) > lastMiles ? Number(live.odometer) + Math.max(0, (now - new Date(v.connected.readAt)) / DAY) * perDay : null;
+    const estMiles = liveMiles ? Math.round(liveMiles) : lastMiles ? Math.round(lastMiles + days * perDay) : null;
     const dueDate = addDays(last, Math.round(months * 30.4));
-    const byMiles = lastMiles ? estMiles - lastMiles >= miles : false;
+    const byOil = typeof live?.oilLife === 'number' && live.oilLife <= 15;
+    const byMiles = byOil || (lastMiles ? estMiles - lastMiles >= miles : false);
     const byTime = now >= dueDate;
     // Include anything due within the next two weeks so reminders go out ahead of time.
     const soon = !byTime && !byMiles && (dueDate - now) / DAY <= 14;
@@ -61,7 +65,9 @@ export function serviceReminders(state, now = new Date()) {
       last: oil.invoicedAt,
       lastMiles,
       estMiles,
-      due: byMiles ? 'mileage' : byTime ? 'time' : 'soon',
+      due: byOil ? 'oil' : byMiles ? 'mileage' : byTime ? 'time' : 'soon',
+      oilLife: typeof live?.oilLife === 'number' ? live.oilLife : null,
+      measured: Boolean(liveMiles),
       overdueDays: Math.round((now - dueDate) / DAY),
       service: 'an oil change',
       contacted: contacted.get(c.id),

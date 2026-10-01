@@ -2,6 +2,7 @@ import { lazy, Suspense, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Plus, Pencil, ScanLine, Car, Trash2, MoreHorizontal, Database, ChevronRight, History } from 'lucide-react';
 import RecordHistory from '../components/RecordHistory';
+import ConnectedCar from '../components/ConnectedCar';
 import { useShop, useUI, useTotals, useLookup, useSync } from '../store/hooks';
 import { PageHeader, Card, CardHeader, EmptyState, StatusLabel, KV, Mono, CopyButton, Menu, Modal, Spinner } from '../components/ui';
 import { VehicleForm } from '../components/forms';
@@ -116,6 +117,7 @@ export default function VehicleDetail() {
               {v.driver && <KV label="Driver / dept.">{v.driver}</KV>}
             </dl>
           </Card>
+          <ConnectedCar vehicle={v} owner={owner} />
           <ResourcesCard year={v.year} make={v.make} model={v.model} vin={v.vin} />
         </div>
       </div>

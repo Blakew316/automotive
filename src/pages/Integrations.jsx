@@ -1,6 +1,9 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Landmark, Package, FileClock, CreditCard, HandCoins, MessageSquare, Star, CalendarDays, ScanLine, Upload, Download, ExternalLink as ExtIcon, ArrowRight, Smartphone, Globe } from 'lucide-react';
-import { useShop, useUI } from '../store/hooks';
+import { Cloud, Landmark, Package, FileClock, CreditCard, HandCoins, MessageSquare, Star, CalendarDays, ScanLine, Upload, Download, ExternalLink as ExtIcon, ArrowRight, Smartphone, Globe, PhoneCall, Sparkles, Radio, Link2 } from 'lucide-react';
+import { useShop, useUI, useSync, useAccess, usePhone, usePay } from '../store/hooks';
+import { shopQbo, shopCars } from '../lib/sync/api';
+import { phone as fmtPhone } from '../lib/format';
 import { PageHeader, Card } from '../components/ui';
 import { HistorySection } from './settings/IntegrationSections';
 import { cloudConfig, cloudSession } from '../lib/cloudShare';
@@ -16,9 +19,32 @@ const STATUS_STYLE = {
   builtin: 'border-accent/30 bg-accent/[0.06] text-accent',
 };
 
+/** QuickBooks and connected-car status from the shop's server (the phone line and Stripe come from their providers). */
+function useServerStatus() {
+  const sync = useSync();
+  const { role } = useAccess();
+  const cfg = sync?.cfg;
+  const staff = Boolean(sync?.staff && cfg);
+  const manager = ['owner', 'manager'].includes(role);
+  const [st, setSt] = useState({});
+  useEffect(() => {
+    if (!staff) return undefined;
+    let alive = true;
+    if (manager) shopQbo(cfg, 'status').then((qbo) => alive && setSt((s) => ({ ...s, qbo })), () => {});
+    shopCars(cfg, 'status', { vehicleIds: [] }).then((cars) => alive && setSt((s) => ({ ...s, cars })), () => {});
+    return () => {
+      alive = false;
+    };
+  }, [staff, manager, cfg]);
+  return staff ? st : {};
+}
+
 export default function Integrations() {
   const { state } = useShop();
   const { toast } = useUI();
+  const phoneLine = usePhone();
+  const stripe = usePay();
+  const server = useServerStatus();
   const shop = state.shop;
   const cfg = cloudConfig(shop);
   const signedIn = Boolean(cfg && cloudSession()?.url === cfg.url);
@@ -82,12 +108,28 @@ export default function Integrations() {
           action: <Link to="/settings?tab=messaging" className="btn-secondary btn-sm">Settings</Link>,
         },
         {
+          icon: PhoneCall,
+          name: 'Business texting & calls',
+          by: 'Twilio · your shop’s own number',
+          body: 'Two-way texts and calls from the shop number, logged on the customer — with appointment reminders sent on schedule, photos from customers, voicemail, and an AI receptionist that can answer when you’re busy.',
+          status: phoneLine.connected ? ['on', phoneLine.status?.phone ? fmtPhone(phoneLine.status.phone) : 'Connected'] : phoneLine.status?.configured ? ['setup', 'Connect number'] : ['setup', 'Not set up'],
+          action: <Link to="/settings?tab=messaging" className="btn-secondary btn-sm">{phoneLine.connected ? 'Settings' : 'Set up'}</Link>,
+        },
+        {
           icon: MessageSquare,
-          name: 'Texting & email',
-          by: 'Your phone and email',
-          body: 'Messages open in your Messages or Mail app so they come from the shop’s own number and address, and are logged on the customer. Customers can also reply from their report link. Fully automated carrier texting (e.g. Twilio, Podium) needs a separate messaging service.',
+          name: 'Phone & email apps',
+          by: 'Your device',
+          body: 'Without a business line, messages open in this device’s Messages or Mail app so they come from your own number and address — and are still logged on the customer. Customers can also reply from their report link.',
           status: ['builtin', 'Built in'],
           action: <Link to="/messages" className="btn-secondary btn-sm">Messages</Link>,
+        },
+        {
+          icon: Sparkles,
+          name: 'AI assistant',
+          by: 'Claude · your Anthropic account',
+          body: 'Drafts estimate explanations, status texts and replies, writes cause & correction from tech notes, suggests diagnostic plans and summarizes customers. Staff review everything before it goes out.',
+          status: phoneLine.status?.aiReady ? ['on', 'On'] : ['setup', 'Add key'],
+          action: <Link to="/settings?tab=keys" className="btn-secondary btn-sm">Keys &amp; AI</Link>,
         },
       ],
     },
@@ -97,16 +139,24 @@ export default function Integrations() {
         {
           icon: Landmark,
           name: 'QuickBooks Online',
-          by: 'Intuit',
-          body: 'Export invoices, payments, expenses, a daily sales journal and your customer list in QuickBooks’ import layouts. Also works with Xero, Wave and spreadsheets.',
-          status: ['builtin', 'CSV export'],
-          action: <Link to="/accounting?tab=export" className="btn-secondary btn-sm">Exports</Link>,
+          by: 'Intuit · direct sync',
+          body: 'Each day’s sales, payments, sales tax, tips and card fees post to QuickBooks as one journal entry — automatically every day, or by hand. Invoice, payment, expense and customer exports also work with Xero, Wave and spreadsheets.',
+          status: server.qbo?.connected && !server.qbo.error ? ['on', server.qbo.env === 'production' ? (shop.qbo?.auto ? 'Syncing daily' : 'Connected') : 'Sandbox'] : server.qbo?.connected ? ['setup', 'Reconnect'] : server.qbo?.configured ? ['setup', 'Connect'] : ['builtin', 'CSV export'],
+          action: <Link to="/accounting?tab=export" className="btn-secondary btn-sm">{server.qbo?.connected ? 'Sync' : 'Set up'}</Link>,
         },
         {
           icon: CreditCard,
-          name: 'Payment links',
-          by: 'Stripe · Square · PayPal · Venmo · Cash App',
-          body: 'Text-to-pay links on invoices and the customer report, paid into your own processor account. In-person card, cash and check payments are recorded on the RO with tips and surcharges.',
+          name: 'Online card payments',
+          by: 'Stripe · your own account',
+          body: 'Customers pay their balance from a text, the live status page or the report — cards, Apple Pay, Google Pay, bank and pay-over-time — and the payment lands on the RO by itself, with refunds from the RO.',
+          status: stripe.ready ? ['on', stripe.status?.mode === 'test' ? 'Test mode' : 'Live'] : stripe.status?.configured ? ['setup', 'Connect'] : ['setup', 'Not set up'],
+          action: <Link to="/settings?tab=payments" className="btn-secondary btn-sm">{stripe.ready ? 'Settings' : 'Set up'}</Link>,
+        },
+        {
+          icon: Link2,
+          name: 'Other payment links',
+          by: 'Square · PayPal · Venmo · Cash App',
+          body: 'Prefer another processor? Add your pay link or handle and it’s included on invoices and the customer report. In-person card, cash and check payments are recorded on the RO with tips and surcharges.',
           status: payOn ? ['on', pay.label] : ['setup', 'Not set up'],
           action: <Link to="/settings?tab=payments" className="btn-secondary btn-sm">Settings</Link>,
         },
@@ -138,6 +188,14 @@ export default function Integrations() {
             </span>
           ),
         })),
+        {
+          icon: Radio,
+          name: 'Connected cars',
+          by: 'Smartcar · with the owner’s consent',
+          body: 'Text a customer a link to connect their car, then see its real odometer, oil life, tire pressures and fuel on the vehicle page. Mileage stays current and oil-change reminders go out when the car says so.',
+          status: server.cars?.configured ? ['on', shop.cars?.mode === 'simulated' ? 'Simulated' : 'Ready'] : ['setup', 'Not set up'],
+          action: <Link to="/settings?tab=general#connected-cars" className="btn-secondary btn-sm">{server.cars?.configured ? 'Settings' : 'Set up'}</Link>,
+        },
         {
           icon: ScanLine,
           name: 'NHTSA vPIC & recalls',

@@ -18,6 +18,7 @@ import LocationsSection from './settings/LocationsSection';
 import KeysSettings from './settings/KeysSettings';
 import PhoneSettings from './settings/PhoneSettings';
 import StripeSettings from './settings/StripeSettings';
+import ConnectedCarsSettings from './settings/ConnectedCarsSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
 
@@ -88,6 +89,7 @@ export default function Settings() {
                 <Field label="Invoice terms">{(id) => <InlineText id={id} multiline rows={2} className="input" {...text('invoiceTerms')} />}</Field>
               </div>
             </Section>
+            <ConnectedCarsSettings />
             <InstallSection />
           </>
         )}

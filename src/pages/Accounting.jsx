@@ -7,6 +7,7 @@ import { ColumnChart, RankBars } from '../components/charts';
 import { EXPENSE_CATEGORIES } from '../store/defaults';
 import { ACCOUNTING_PERIODS, accountingRange, profitAndLoss, paymentsIn, expensesIn, salesTaxByMonth, invoicesCsv, paymentsCsv, expensesCsv, customersCsv, journalCsv, downloadCsv } from '../lib/accounting';
 import { money, money0, moneyShort, pct, date, dateShort, time, fullName, isoDate, addDays } from '../lib/format';
+import QuickBooksSync from './accounting/QuickBooksSync';
 
 const TABS = [
   { value: 'pl', label: 'Profit & loss', icon: Landmark },
@@ -31,7 +32,7 @@ export default function Accounting() {
     <>
       <PageHeader
         title="Accounting"
-        subtitle="Profit & loss, expenses, deposits and sales tax — with exports for QuickBooks"
+        subtitle="Profit & loss, expenses, deposits and sales tax — synced to QuickBooks"
         actions={
           <button className="btn-primary" onClick={() => setEditing({ date: new Date().toISOString(), category: 'Shop supplies', vendor: '', amount: '', method: 'Card', memo: '' })}>
             <Plus size={15} /> Add expense
@@ -457,6 +458,9 @@ function Exports({ from, to, label }) {
   ];
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
+      <div className="xl:col-span-2">
+        <QuickBooksSync from={from} to={to} label={label} />
+      </div>
       <Card>
         <CardHeader title="Exports" subtitle={`For ${label}`} />
         <ul className="divide-y divide-line/70">
@@ -481,7 +485,7 @@ function Exports({ from, to, label }) {
         </ul>
       </Card>
       <Card>
-        <CardHeader title="Importing into QuickBooks Online" />
+        <CardHeader title="Importing files into QuickBooks" subtitle="Without the direct connection, or for invoices and expenses" />
         <ol className="list-decimal space-y-2 py-3 pl-9 pr-4 text-sm text-ink-2">
           <li>Import the <b>customer list</b> first so invoice names match.</li>
           <li>

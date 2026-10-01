@@ -38,16 +38,18 @@ export const KEY_GROUPS = [
   },
   {
     title: 'QuickBooks Online',
+    setup: { to: '/accounting?tab=export', label: 'Connect in Accounting → QuickBooks' },
     keys: [
-      { name: 'quickbooks_client_id', label: 'Client ID', hint: 'Intuit Developer → your app → Keys & credentials' },
-      { name: 'quickbooks_client_secret', label: 'Client secret', hint: 'Intuit Developer → your app → Keys & credentials' },
+      { name: 'quickbooks_client_id', label: 'Client ID', hint: 'developer.intuit.com → your app → Keys & credentials', ready: true },
+      { name: 'quickbooks_client_secret', label: 'Client secret', hint: 'developer.intuit.com → your app → Keys & credentials', ready: true },
     ],
   },
   {
     title: 'Connected cars (Smartcar)',
+    setup: { to: '/settings?tab=general#connected-cars', label: 'Set up in Settings → General' },
     keys: [
-      { name: 'smartcar_client_id', label: 'Client ID', hint: 'Smartcar dashboard → Configuration' },
-      { name: 'smartcar_client_secret', label: 'Client secret', hint: 'Smartcar dashboard → Configuration' },
+      { name: 'smartcar_client_id', label: 'Client ID', hint: 'dashboard.smartcar.com → Configuration', ready: true },
+      { name: 'smartcar_client_secret', label: 'Client secret', hint: 'dashboard.smartcar.com → Configuration', ready: true },
     ],
   },
 ];

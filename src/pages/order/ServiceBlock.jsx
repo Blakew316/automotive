@@ -9,6 +9,7 @@ import { SUPPLIERS } from '../../lib/suppliers';
 import { jobProfit, profitTone, TONE_TEXT } from '../../lib/profit';
 import InventoryPicker from './InventoryPicker';
 import TirePanel from './TirePanel';
+import JobMemory from './JobMemory';
 import { newTireQuote } from '../../lib/tires';
 import { MediaThumb, PickButton } from './MediaPanel';
 import { useIngest } from '../../lib/useMedia';
@@ -104,6 +105,7 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
       </header>
 
       {service.note && <p className="border-b border-line/70 bg-raised px-4 py-2 text-xs text-ink-2">{service.note}</p>}
+      <JobMemory order={order} service={service} vehicle={vehicle} editable={editable} />
       {service.noCharge && (
         <div className="flex flex-wrap items-center gap-2 border-b border-line/70 bg-raised px-4 py-2 text-xs text-ink-2">
           <ShieldCheck size={14} className="text-ink-3" />
