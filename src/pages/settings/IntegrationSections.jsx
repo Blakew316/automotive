@@ -87,7 +87,7 @@ export function SharingSection() {
           <div className="flex items-start gap-3 rounded-[10px] border border-line bg-raised p-3">
             <ShieldCheck size={18} className="mt-0.5 shrink-0 text-accent" />
             <div className="text-sm">
-              <div className="font-medium">Connected to the AutoShop Pro cloud</div>
+              <div className="font-medium">Connected to the WPI Driveline cloud</div>
               <div className="text-ink-2">
                 Your shop’s own Supabase project with a private-write <code className="font-mono text-xs">{bucket}</code> bucket and customer inbox. Sign in once on each device to publish share links, keep your booking page’s open times current, and receive bookings, approvals and messages.
               </div>
@@ -114,7 +114,7 @@ export function SharingSection() {
           </div>
           {!builtIn && (
             <button className="btn-plain btn-sm mt-2" onClick={() => updateShop({ cloud: { ...SHOP_CLOUD } })}>
-              Use the AutoShop Pro cloud
+              Use the WPI Driveline cloud
             </button>
           )}
         </details>

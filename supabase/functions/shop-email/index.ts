@@ -64,7 +64,7 @@ async function resend(key: string, path: string, init: { method?: string; body?:
 
 const esc = (s: unknown) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 // Escapes the text and makes web addresses clickable (trailing punctuation and quotes stay outside the link).
-const linkify = (raw: string) => raw.split(/(https?:\/\/[^\s<>"']*[^\s<>"'.,;:!?)\]])/g).map((part, i) => (i % 2 ? `<a href="${esc(part)}" style="color:#1c3b6b">${esc(part)}</a>` : esc(part))).join("");
+const linkify = (raw: string) => raw.split(/(https?:\/\/[^\s<>"']*[^\s<>"'.,;:!?)\]])/g).map((part, i) => (i % 2 ? `<a href="${esc(part)}" style="color:#1a6fd6">${esc(part)}</a>` : esc(part))).join("");
 const domainOf = (from: string) => (from.match(/@([^>\s]+)>?\s*$/)?.[1] || "").toLowerCase();
 const emailOk = (s: unknown) => typeof s === "string" && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(s.trim());
 
@@ -72,11 +72,11 @@ const emailOk = (s: unknown) => typeof s === "string" && /^[^@\s]+@[^@\s]+\.[^@\
 function branded(shop: { name?: string; phone?: string; address?: string; email?: string }, bodyText: string, extra = "") {
   const paras = String(bodyText || "").split(/\n{2,}/).map((p) => `<p style="margin:0 0 14px">${linkify(p).replace(/\n/g, "<br>")}</p>`).join("");
   const footer = [shop.address, shop.phone, shop.email].filter(Boolean).map(esc).join(" · ");
-  return `<!doctype html><html><body style="margin:0;background:#f1f3f6;padding:24px 12px;font:15px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#18202b">
-<div style="max-width:560px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)">
-<div style="height:3px;background:linear-gradient(90deg,#1c3b6b,#4d56bf,#7a5cc4,#2f76ba)"></div>
+  return `<!doctype html><html><body style="margin:0;background:#f2f6fa;padding:24px 12px;font:15px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#0f2b4c">
+<div style="max-width:560px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(15,43,76,.07)">
+<div style="height:3px;background:#1f7ae0;background:linear-gradient(90deg,#1f7ae0 50%,#2db36a 50%)"></div>
 <div style="padding:24px 26px 8px"><div style="font-weight:700;font-size:17px;margin-bottom:16px">${esc(shop.name || "")}</div>${paras}${extra}</div>
-<div style="padding:14px 26px 20px;border-top:1px solid #e6e9ee;color:#6b7482;font-size:12.5px">${footer}</div>
+<div style="padding:14px 26px 20px;border-top:1px solid #dee6f0;color:#607088;font-size:12.5px">${footer}</div>
 </div></body></html>`;
 }
 
@@ -84,14 +84,14 @@ const money = (n: unknown) => `$${(Number(n) || 0).toLocaleString("en-US", { min
 
 /** The owner's daily summary, from the numbers the app keeps current. */
 function digestHtml(shopName: string, day: string, s: any) {
-  const tile = (label: string, value: string, sub = "") => `<td style="padding:10px 12px;border:1px solid #e6e9ee;border-radius:10px;width:33%;vertical-align:top"><div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#6b7482">${esc(label)}</div><div style="font-size:20px;font-weight:700;margin-top:2px">${esc(value)}</div>${sub ? `<div style="font-size:12px;color:#6b7482">${esc(sub)}</div>` : ""}</td>`;
-  const list = (title: string, items: string[]) => (items?.length ? `<div style="margin-top:18px"><div style="font-weight:600;margin-bottom:6px">${esc(title)}</div><ul style="margin:0;padding-left:18px;color:#3a4350">${items.slice(0, 8).map((i) => `<li style="margin:2px 0">${esc(i)}</li>`).join("")}</ul></div>` : "");
+  const tile = (label: string, value: string, sub = "") => `<td style="padding:10px 12px;border:1px solid #dee6f0;border-radius:10px;width:33%;vertical-align:top"><div style="font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#607088">${esc(label)}</div><div style="font-size:20px;font-weight:700;margin-top:2px">${esc(value)}</div>${sub ? `<div style="font-size:12px;color:#607088">${esc(sub)}</div>` : ""}</td>`;
+  const list = (title: string, items: string[]) => (items?.length ? `<div style="margin-top:18px"><div style="font-weight:600;margin-bottom:6px">${esc(title)}</div><ul style="margin:0;padding-left:18px;color:#3d506b">${items.slice(0, 8).map((i) => `<li style="margin:2px 0">${esc(i)}</li>`).join("")}</ul></div>` : "");
   const t = s.today || {};
-  return `<!doctype html><html><body style="margin:0;background:#f1f3f6;padding:24px 12px;font:14.5px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#18202b">
+  return `<!doctype html><html><body style="margin:0;background:#f2f6fa;padding:24px 12px;font:14.5px/1.5 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#0f2b4c">
 <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:14px;overflow:hidden">
-<div style="height:3px;background:linear-gradient(90deg,#1c3b6b,#4d56bf,#7a5cc4,#2f76ba)"></div>
+<div style="height:3px;background:#1f7ae0;background:linear-gradient(90deg,#1f7ae0 50%,#2db36a 50%)"></div>
 <div style="padding:22px 24px">
-<div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#4d56bf;font-weight:600">${esc(day)}</div>
+<div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#1a6fd6;font-weight:600">${esc(day)}</div>
 <div style="font-size:20px;font-weight:700;margin:2px 0 16px">${esc(shopName)} — today</div>
 <table role="presentation" style="width:100%;border-collapse:separate;border-spacing:6px"><tr>
 ${tile("Sales", money(t.sales), `${t.invoiced || 0} invoiced RO${t.invoiced === 1 ? "" : "s"}`)}${tile("Collected", money(t.collected), `${t.payments || 0} payment${t.payments === 1 ? "" : "s"}`)}${tile("Car count", String(t.carCount ?? 0), t.aro ? `ARO ${money(t.aro)}` : "")}
@@ -100,7 +100,7 @@ ${tile("In the shop", String(s.inShop ?? 0), `${s.waitingParts || 0} waiting on 
 </tr></table>
 ${list("Tomorrow’s appointments", s.tomorrow)}
 ${list("Needs attention", s.attention)}
-<p style="margin:18px 0 0;color:#6b7482;font-size:12.5px">Numbers as of ${esc(s.asOf || "")} from AutoShop Pro.</p>
+<p style="margin:18px 0 0;color:#607088;font-size:12.5px">Numbers as of ${esc(s.asOf || "")} from WPI Driveline.</p>
 </div></div></body></html>`;
 }
 
@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
       const dayLabel = new Date().toLocaleDateString("en-US", { timeZone: d.tz, weekday: "long", month: "long", day: "numeric" });
       const html = fresh
         ? digestHtml(shopName, dayLabel, s)
-        : branded({ name: shopName }, `No device has been open in AutoShop Pro today, so there are no new numbers for ${dayLabel}. The summary comes back as soon as the shop's app is used.`);
+        : branded({ name: shopName }, `No device has been open in WPI Driveline today, so there are no new numbers for ${dayLabel}. The summary comes back as soon as the shop's app is used.`);
       await resend(key, "/emails", { method: "POST", body: { from, to: d.recipients, subject: `${shopName} — ${dayLabel}`, html, tags: [{ name: "kind", value: "digest" }] } });
       await db("/rest/v1/shop_digest?id=eq.1", { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ last_sent: today }) });
       return json({ sent: d.recipients.length });
@@ -192,7 +192,7 @@ Deno.serve(async (req) => {
       if (!emailOk(to)) return fail("Which address should the test go to?");
       const r = await resend(key, "/emails", {
         method: "POST",
-        body: { from, to: [to], subject: `Test email from ${body.shop || "AutoShop Pro"}`, html: branded({ name: body.shop, phone: body.phone, address: body.address, email: replyTo }, "This is a test from AutoShop Pro. If you can read this, customer emails are working — they’ll come from this address and replies go to your inbox."), ...(replyTo ? { reply_to: replyTo } : {}), tags: [{ name: "kind", value: "test" }] },
+        body: { from, to: [to], subject: `Test email from ${body.shop || "WPI Driveline"}`, html: branded({ name: body.shop, phone: body.phone, address: body.address, email: replyTo }, "This is a test from WPI Driveline. If you can read this, customer emails are working — they’ll come from this address and replies go to your inbox."), ...(replyTo ? { reply_to: replyTo } : {}), tags: [{ name: "kind", value: "test" }] },
       });
       return json({ id: r.id, to });
     }

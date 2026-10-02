@@ -1,6 +1,8 @@
 import { Suspense, useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
-import { Search, Sun, Moon, Monitor, Wrench, MoreHorizontal, ChevronLeft, ChevronsUpDown, Lock, CloudDownload, MapPin } from 'lucide-react';
+import { Search, Sun, Moon, Monitor, MoreHorizontal, ChevronLeft, ChevronsUpDown, Lock, CloudDownload, MapPin } from 'lucide-react';
+import { AppIcon, Logo } from '../brand/Logo';
+import { otherName } from '../brand/artwork';
 import { useShop, useUI, useAccess, useSync, useSite } from '../store/hooks';
 import { ROLES, homeFor } from '../lib/access';
 import SwitchUser from './SwitchUser';
@@ -53,12 +55,11 @@ function Sidebar({ onNavigate }) {
 
   return (
     <div className="flex h-full flex-col border-r border-sidebar-line bg-sidebar text-sidebar-ink">
-      <div className="flex h-16 items-center gap-3 px-4">
-        <Logo size={32} />
-        <div className="min-w-0 leading-tight">
-          <div className="text-md font-semibold tracking-tight text-sidebar-ink">AutoShop Pro</div>
-          <div className="truncate text-xs font-medium text-sidebar-ink-2">{state.shop.name}</div>
-        </div>
+      <div className="flex h-[76px] items-center gap-3 px-5">
+        <Logo className="h-12" />
+        {otherName(state.shop.name) && (
+          <div className="min-w-0 border-l border-sidebar-line pl-3 text-xs font-medium leading-tight text-sidebar-ink-2">{otherName(state.shop.name)}</div>
+        )}
       </div>
 
       <SiteSwitcher />
@@ -99,7 +100,7 @@ function Sidebar({ onNavigate }) {
                 >
                   {({ isActive }) => (
                     <>
-                      {isActive && <span className="bg-foil-ink absolute -left-3 bottom-2 top-2 w-[3px] rounded-r-full" />}
+                      {isActive && <span className="bg-accent absolute -left-3 bottom-2 top-2 w-[3px] rounded-r-full" />}
                       <item.icon size={18} strokeWidth={1.9} className={`transition-colors ${isActive ? HUE[group.hue].on : HUE[group.hue].icon}`} />
                       <span className="flex-1 truncate">{item.label}</span>
                       {item.count && counts[item.count] > 0 &&
@@ -227,18 +228,6 @@ function NoAccess() {
   );
 }
 
-/** App mark: a wrench on a small navy tile. */
-export function Logo({ size = 28 }) {
-  return (
-    <span
-      className="flex shrink-0 items-center justify-center rounded-[9px] bg-accent text-on-accent shadow-[0_1px_3px_rgb(var(--hue-indigo)/0.35)]"
-      style={{ width: size, height: size, backgroundImage: 'linear-gradient(135deg, rgb(var(--accent)) 30%, rgb(var(--hue-indigo)) 75%, rgb(var(--hue-lilac)) 115%)' }}
-    >
-      <Wrench size={Math.round(size * 0.52)} strokeWidth={2.2} />
-    </span>
-  );
-}
-
 /**
  * iPhone and iPad-portrait navigation bar: transparent over the page until it scrolls, then frosted
  * with a hairline. The page's large title moves up into it once it scrolls out of view.
@@ -291,7 +280,7 @@ function NavBar() {
             </button>
           ) : (
             <span className="pl-3">
-              <Logo size={28} />
+              <AppIcon size={28} />
             </span>
           )}
         </div>
@@ -392,7 +381,7 @@ export default function Layout() {
                 id="main-scroll"
                 className="relative flex-1 overflow-y-auto overscroll-y-contain pb-[calc(var(--tabbar)+var(--safe-b))] pl-[var(--safe-l)] pr-[var(--safe-r)] pt-[calc(var(--navbar)+var(--safe-t))] [scroll-padding-top:calc(var(--navbar)+var(--safe-t)+12px)] lg:pl-0 lg:pr-0"
               >
-                <div aria-hidden="true" className="foil-haze no-print pointer-events-none absolute inset-x-0 top-0 h-[280px]" />
+                <div aria-hidden="true" className="brand-haze no-print pointer-events-none absolute inset-x-0 top-0 h-[280px]" />
                 <AccountNotice />
                 <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-2 sm:px-6 lg:px-10 lg:pt-9">
                   {can(location.pathname) ? (

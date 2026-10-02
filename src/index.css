@@ -3,12 +3,13 @@
 @tailwind utilities;
 
 /*
- * Design tokens — navy and light grey. Light grey canvas, white cards and a white sidebar, with navy
- * for actions, links and the current page. Status color (green/amber/red) is reserved for meaning and
- * appears only as dots, thin tints and small pills.
+ * Design tokens — the WPI Driveline logo in light hues. A pale blue-grey canvas, white cards and a
+ * near-white sidebar; the logo's navy is the ink, its blue is the accent for actions, links and the
+ * current page, and its two-tone bar (blue, then green) is the signature line. Status color
+ * (green/amber/red) is reserved for meaning and appears only as dots, thin tints and small pills.
  *
- * The public website's "foil" hues (indigo, lilac, azure, teal) add a little life: icon tiles, the
- * sidebar, avatars and a few hairline accents — always as light tints or thin lines, never big blocks.
+ * A small family of cool hues (blue, periwinkle, cyan, green — the hue-* tokens) tells the sections
+ * apart on icon tiles, the sidebar and avatars — always as light tints or thin lines, never big blocks.
  */
 /*
  * Type that steps up a point on touch phones (iOS reads 15–17pt as body), and the safe-area insets
@@ -60,162 +61,175 @@
 
 :root {
   color-scheme: light;
-  --canvas: 239 241 244;
+  --canvas: 242 246 250;
   --surface: 255 255 255;
-  --raised: 247 248 250;
-  --sidebar: 255 255 255;
-  --sidebar-2: 245 246 248;
-  --sidebar-ink: 20 27 38;
-  --sidebar-ink-2: 82 93 110;
-  --sidebar-line: 222 226 232;
-  --ink: 20 27 38;
-  --ink-2: 76 88 106;
-  --ink-3: 102 113 130;
-  --ink-4: 160 170 184;
-  --line: 222 226 232;
-  --fill: 108 120 138;
-  --accent: 28 59 107;
+  --raised: 247 250 253;
+  --sidebar: 250 252 255;
+  --sidebar-2: 238 244 252;
+  --sidebar-ink: 15 43 76;
+  --sidebar-ink-2: 84 99 122;
+  --sidebar-line: 224 232 242;
+  --ink: 15 43 76;
+  --ink-2: 61 80 107;
+  --ink-3: 96 112 136;
+  --ink-4: 154 167 186;
+  --line: 222 230 240;
+  --fill: 100 118 145;
+  --accent: 26 111 214;
   --on-accent: 255 255 255;
-  --brand: 28 59 107;
-  --sky: 112 140 180;
-  --slate: 100 113 132;
-  --graphite: 16 33 62;
-  --ok: 24 128 80;
+  --brand: 15 43 76;
+  --sky: 120 160 214;
+  --slate: 107 122 144;
+  --graphite: 15 43 76;
+  --ok: 24 128 72;
   --warn: 170 100 6;
   --bad: 196 48 48;
-  --info: 28 59 107;
-  --violet: 90 104 150;
-  --grid: 28 59 107;
-  --shadow-ring: 15 23 42;
-  --hue-indigo: 77 86 191;
-  --hue-lilac: 122 92 196;
-  --hue-azure: 47 118 186;
-  --hue-teal: 14 132 120;
+  --info: 26 111 214;
+  --violet: 96 106 216;
+  --grid: 26 111 214;
+  --shadow-ring: 15 43 76;
+  --hue-indigo: 28 114 214;
+  --hue-lilac: 96 106 216;
+  --hue-azure: 12 128 178;
+  --hue-teal: 20 133 84;
   --hue-amber: 176 110 20;
   --hue-rose: 190 70 98;
-  --haze: 0.09;
-  --foil-ink: linear-gradient(90deg, rgb(var(--hue-indigo)), rgb(var(--hue-lilac)) 50%, rgb(var(--hue-azure)));
-  --series-1: #2f62b0;
-  --series-2: #13968a;
+  --logo-blue: 31 122 224;
+  --logo-green: 45 179 106;
+  --logo-sub: 107 122 144;
+  --haze: 0.1;
+  --brand-bar: linear-gradient(90deg, rgb(var(--logo-blue)) 50%, rgb(var(--logo-green)) 50%);
+  --series-1: #1f7ae0;
+  --series-2: #21a35e;
   --series-3: #9aa3af;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme='light']) {
     color-scheme: dark;
-    --canvas: 11 16 25;
-    --surface: 20 27 39;
-    --raised: 27 35 49;
-    --sidebar: 20 25 33;
-    --sidebar-2: 30 36 46;
-    --sidebar-ink: 236 239 244;
-    --sidebar-ink-2: 168 176 190;
-    --sidebar-line: 40 47 58;
-    --ink: 234 238 244;
-    --ink-2: 162 172 188;
-    --ink-3: 126 137 154;
-    --ink-4: 88 99 116;
-    --line: 42 51 66;
-    --fill: 130 142 160;
-    --accent: 140 172 226;
-    --on-accent: 12 24 44;
-    --brand: 140 172 226;
-    --sky: 120 156 210;
-    --slate: 100 114 136;
-    --graphite: 26 38 58;
-    --ok: 64 186 120;
+    --canvas: 10 18 30;
+    --surface: 17 28 44;
+    --raised: 24 37 56;
+    --sidebar: 14 23 37;
+    --sidebar-2: 26 39 58;
+    --sidebar-ink: 234 240 248;
+    --sidebar-ink-2: 160 174 196;
+    --sidebar-line: 34 48 68;
+    --ink: 234 240 248;
+    --ink-2: 166 180 200;
+    --ink-3: 128 144 168;
+    --ink-4: 86 102 126;
+    --line: 38 52 74;
+    --fill: 132 148 172;
+    --accent: 110 168 240;
+    --on-accent: 8 22 44;
+    --brand: 232 238 246;
+    --sky: 120 166 226;
+    --slate: 104 120 144;
+    --graphite: 24 40 62;
+    --ok: 72 196 124;
     --warn: 230 166 64;
     --bad: 238 104 104;
-    --info: 140 172 226;
-    --violet: 150 160 210;
-    --grid: 140 172 226;
+    --info: 110 168 240;
+    --violet: 156 164 246;
+    --grid: 110 168 240;
     --shadow-ring: 255 255 255;
-    --hue-indigo: 146 156 246;
-    --hue-lilac: 182 158 240;
-    --hue-azure: 112 172 232;
-    --hue-teal: 72 200 182;
+    --hue-indigo: 120 172 242;
+    --hue-lilac: 156 164 246;
+    --hue-azure: 92 190 232;
+    --hue-teal: 84 204 140;
     --hue-amber: 232 172 80;
     --hue-rose: 236 128 156;
-    --haze: 0.07;
-    --series-1: #4a82da;
-    --series-2: #16a08f;
+    --logo-blue: 76 147 234;
+    --logo-green: 51 171 107;
+    --logo-sub: 154 168 188;
+    --haze: 0.08;
+    --series-1: #4c93ea;
+    --series-2: #33ab6b;
     --series-3: #7d8696;
   }
 }
 
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --canvas: 11 16 25;
-  --surface: 20 27 39;
-  --raised: 27 35 49;
-  --sidebar: 20 25 33;
-  --sidebar-2: 30 36 46;
-  --sidebar-ink: 236 239 244;
-  --sidebar-ink-2: 168 176 190;
-  --sidebar-line: 40 47 58;
-  --ink: 234 238 244;
-  --ink-2: 162 172 188;
-  --ink-3: 126 137 154;
-  --ink-4: 88 99 116;
-  --line: 42 51 66;
-  --fill: 130 142 160;
-  --accent: 140 172 226;
-  --on-accent: 12 24 44;
-  --brand: 140 172 226;
-  --sky: 120 156 210;
-  --slate: 100 114 136;
-  --graphite: 26 38 58;
-  --ok: 64 186 120;
+  --canvas: 10 18 30;
+  --surface: 17 28 44;
+  --raised: 24 37 56;
+  --sidebar: 14 23 37;
+  --sidebar-2: 26 39 58;
+  --sidebar-ink: 234 240 248;
+  --sidebar-ink-2: 160 174 196;
+  --sidebar-line: 34 48 68;
+  --ink: 234 240 248;
+  --ink-2: 166 180 200;
+  --ink-3: 128 144 168;
+  --ink-4: 86 102 126;
+  --line: 38 52 74;
+  --fill: 132 148 172;
+  --accent: 110 168 240;
+  --on-accent: 8 22 44;
+  --brand: 232 238 246;
+  --sky: 120 166 226;
+  --slate: 104 120 144;
+  --graphite: 24 40 62;
+  --ok: 72 196 124;
   --warn: 230 166 64;
   --bad: 238 104 104;
-  --info: 140 172 226;
-  --violet: 150 160 210;
-  --grid: 140 172 226;
+  --info: 110 168 240;
+  --violet: 156 164 246;
+  --grid: 110 168 240;
   --shadow-ring: 255 255 255;
-  --hue-indigo: 146 156 246;
-  --hue-lilac: 182 158 240;
-  --hue-azure: 112 172 232;
-  --hue-teal: 72 200 182;
+  --hue-indigo: 120 172 242;
+  --hue-lilac: 156 164 246;
+  --hue-azure: 92 190 232;
+  --hue-teal: 84 204 140;
   --hue-amber: 232 172 80;
   --hue-rose: 236 128 156;
-  --haze: 0.07;
-  --series-1: #4a82da;
-  --series-2: #16a08f;
+  --logo-blue: 76 147 234;
+  --logo-green: 51 171 107;
+  --logo-sub: 154 168 188;
+  --haze: 0.08;
+  --series-1: #4c93ea;
+  --series-2: #33ab6b;
   --series-3: #7d8696;
 }
 
 /* Documents (estimates/invoices) always render on paper-white regardless of app theme. */
 .force-light {
   color-scheme: light;
-  --canvas: 239 241 244;
+  --canvas: 242 246 250;
   --surface: 255 255 255;
-  --raised: 247 248 250;
-  --sidebar: 255 255 255;
-  --sidebar-2: 245 246 248;
-  --sidebar-ink: 20 27 38;
-  --sidebar-ink-2: 82 93 110;
-  --sidebar-line: 222 226 232;
-  --ink: 20 27 38;
-  --ink-2: 76 88 106;
-  --ink-3: 102 113 130;
-  --ink-4: 160 170 184;
-  --line: 222 226 232;
-  --fill: 108 120 138;
-  --accent: 28 59 107;
+  --raised: 247 250 253;
+  --sidebar: 250 252 255;
+  --sidebar-2: 238 244 252;
+  --sidebar-ink: 15 43 76;
+  --sidebar-ink-2: 84 99 122;
+  --sidebar-line: 224 232 242;
+  --ink: 15 43 76;
+  --ink-2: 61 80 107;
+  --ink-3: 96 112 136;
+  --ink-4: 154 167 186;
+  --line: 222 230 240;
+  --fill: 100 118 145;
+  --accent: 26 111 214;
   --on-accent: 255 255 255;
-  --brand: 28 59 107;
-  --sky: 112 140 180;
-  --slate: 100 113 132;
-  --graphite: 16 33 62;
-  --ok: 24 128 80;
+  --brand: 15 43 76;
+  --sky: 120 160 214;
+  --slate: 107 122 144;
+  --graphite: 15 43 76;
+  --ok: 24 128 72;
   --warn: 170 100 6;
   --bad: 196 48 48;
-  --info: 28 59 107;
-  --violet: 90 104 150;
-  --grid: 28 59 107;
-  --shadow-ring: 15 23 42;
-  --series-1: #2f62b0;
-  --series-2: #13968a;
+  --info: 26 111 214;
+  --violet: 96 106 216;
+  --grid: 26 111 214;
+  --shadow-ring: 15 43 76;
+  --logo-blue: 31 122 224;
+  --logo-green: 45 179 106;
+  --logo-sub: 107 122 144;
+  --brand-bar: linear-gradient(90deg, rgb(var(--logo-blue)) 50%, rgb(var(--logo-green)) 50%);
+  --series-1: #1f7ae0;
+  --series-2: #21a35e;
   --series-3: #9aa3af;
 }
 
@@ -301,9 +315,7 @@
     @apply inline-flex h-8 shrink-0 select-none items-center justify-center gap-1.5 whitespace-nowrap rounded-[7px] px-3 text-sm font-medium transition duration-150 ease-apple disabled:pointer-events-none disabled:opacity-40;
   }
   .btn-primary {
-    @apply btn bg-accent text-on-accent shadow-[0_1px_2px_rgb(0_0_0/0.1)] hover:brightness-[1.12] active:brightness-95;
-    /* Navy that leans toward the site's indigo at the far edge. */
-    background-image: linear-gradient(120deg, rgb(var(--accent)) 35%, rgb(var(--hue-indigo) / 0.9) 135%);
+    @apply btn bg-accent text-on-accent shadow-[0_1px_2px_rgb(var(--accent)/0.25)] hover:brightness-[1.08] active:brightness-95;
   }
   .btn-dark {
     @apply btn bg-graphite text-white hover:brightness-125 active:brightness-110;
@@ -362,34 +374,47 @@
   .section-label {
     @apply font-mono text-2xs font-semibold uppercase tracking-[0.08em] text-ink-3;
   }
-  /* Short navy rule that opens a section label. */
+  /* The logo's two-tone bar, short, opening a section label. */
   .eyebrow {
     @apply inline-flex items-center gap-2 font-mono text-2xs font-semibold uppercase tracking-[0.1em] text-ink-3;
   }
   .eyebrow::before {
     content: '';
     @apply h-[3px] w-4 rounded-full;
-    background: var(--foil-ink);
+    background: var(--brand-bar);
   }
-  /* The website's holographic "foil" as a thin line: indigo → lilac → azure. */
-  .bg-foil-ink {
-    background: var(--foil-ink);
+  /* The logo's bar as a thin line: blue, then green. */
+  .bg-brand-bar {
+    background: var(--brand-bar);
   }
-  /* A faint wash of the foil hues at the top of each page — light enough to read as atmosphere, not color. */
-  .foil-haze {
+  /* A faint wash of the logo's blue and green at the top of each page — atmosphere, not color. */
+  .brand-haze {
     background:
-      radial-gradient(55% 100% at 88% 0%, rgb(var(--hue-lilac) / var(--haze)), transparent 72%),
-      radial-gradient(45% 90% at 52% 0%, rgb(var(--hue-azure) / calc(var(--haze) * 0.8)), transparent 70%),
-      radial-gradient(40% 80% at 12% 0%, rgb(var(--hue-indigo) / calc(var(--haze) * 0.7)), transparent 70%);
+      radial-gradient(55% 100% at 88% 0%, rgb(var(--logo-blue) / var(--haze)), transparent 72%),
+      radial-gradient(45% 90% at 50% 0%, rgb(var(--hue-azure) / calc(var(--haze) * 0.6)), transparent 70%),
+      radial-gradient(40% 80% at 10% 0%, rgb(var(--logo-green) / calc(var(--haze) * 0.7)), transparent 70%);
   }
-  /* A 2px foil line along the top edge of a card. */
-  .foil-top {
+  /* A 2px brand bar along the top edge of a card. */
+  .brand-top {
     @apply relative overflow-hidden;
   }
-  .foil-top::before {
+  .brand-top::before {
     content: '';
     @apply pointer-events-none absolute inset-x-0 top-0 h-[2px];
-    background: var(--foil-ink);
+    background: var(--brand-bar);
+  }
+  /* Customer pages (booking, payment, status, check-in, fleet, lobby): a light header with the logo's
+     bar along its top edge and a faint blue-green wash. */
+  .customer-header {
+    @apply relative border-b border-line bg-surface text-ink;
+    background-image:
+      radial-gradient(70% 140% at 100% 0%, rgb(var(--logo-blue) / 0.09), transparent 70%),
+      radial-gradient(50% 120% at 0% 100%, rgb(var(--logo-green) / 0.07), transparent 70%);
+  }
+  .customer-header::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-[3px];
+    background: var(--brand-bar);
   }
   /* Quiet icon tile used for modules, KPIs and card headers: a light tint, never a solid fill. */
   .icon-tile {

@@ -1,13 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="tile" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="36.8" y2="36.8">
-      <stop offset="0.2609" stop-color="#1c3b6b"/>
-      <stop offset="0.6522" stop-color="#4d56bf"/>
-      <stop offset="1" stop-color="#7a5cc4"/>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f8fbff"/>
+      <stop offset="1" stop-color="#e3edfa"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="8" fill="url(#tile)"/>
-  <g transform="translate(6 6) scale(0.8333)" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.106-3.105c.32-.322.863-.22.983.218a6 6 0 0 1-8.259 7.057l-7.91 7.91a1 1 0 0 1-2.999-3l7.91-7.91a6 6 0 0 1 7.057-8.259c.438.12.54.662.219.984z"/>
+  <rect width="32" height="32" rx="7" fill="url(#tile)"/>
+  <g transform="translate(3.520 18.435) scale(0.05082)">
+    <path transform="translate(-5.74 0)" fill="#0F2B4C" d="M54.32 0H103.27L124.51 -83.98C127.93 -97.78 130 -112.67 132.2 -127.81C134.52 -112.43 136.84 -97.41 140.26 -83.98L161.5 0H210.33L258.91 -181.88H211.18L193.24 -101.44C189.58 -84.59 186.65 -64.09 183.84 -44.8C180.66 -64.09 177.49 -84.59 173.46 -101.44L154.3 -181.88H110.47L91.19 -101.44C87.16 -84.35 83.98 -63.72 80.81 -44.31C77.88 -63.72 74.95 -84.35 71.41 -101.44L53.47 -181.88H5.74ZM284.81 0H327.9V-56.76H358.05C399.8 -56.76 425.56 -81.54 425.56 -119.02C425.56 -156.25 400.29 -181.88 359.27 -181.88H284.81ZM327.9 -90.82V-146.97H350.12C370.38 -146.97 380.88 -136.11 380.88 -119.02C380.88 -102.17 370.38 -90.82 350.24 -90.82ZM496.86 -181.88H453.77V0H496.86Z"/>
+    <rect x="0" y="46.84" width="235.72" height="39.35" fill="#1F7AE0"/>
+    <rect x="255.4" y="46.84" width="235.72" height="39.35" fill="#2DB36A"/>
   </g>
 </svg>

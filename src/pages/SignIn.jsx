@@ -5,7 +5,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { LogIn, KeyRound, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useShop, useSync, useUI } from '../store/hooks';
 import { Spinner, Field } from '../components/ui';
-import { Logo } from '../components/Layout';
+import { Logo } from '../brand/Logo';
+import { otherName } from '../brand/artwork';
 import TwoStepSetup from '../components/TwoStepSetup';
 import { signIn, signOut, changePassword, isStaffSession, sessionClaims, needsCode, twoStepFactors, verifyCode } from '../lib/cloudShare';
 import { syncApi, mfaOk } from '../lib/sync/api';
@@ -128,12 +129,13 @@ export default function SignIn() {
 
   const titles = { password: 'Choose your password', code: 'Enter your code', enroll: 'Set up two-step sign-in', signin: 'Sign in' };
   return (
-    <div className="flex min-h-[100dvh] items-center justify-center bg-canvas px-4 py-10">
-      <div className="w-full max-w-[400px]">
+    <div className="relative flex min-h-[100dvh] items-center justify-center bg-canvas px-4 py-10">
+      <div aria-hidden="true" className="brand-haze pointer-events-none absolute inset-x-0 top-0 h-[360px]" />
+      <div className="relative w-full max-w-[400px]">
         <div className="mb-6 flex flex-col items-center text-center">
-          <Logo size={44} />
-          <h1 className="mt-4 text-2xl font-bold tracking-tight">{titles[step]}</h1>
-          <p className="mt-1 text-sm text-ink-3">{state.shop.name} · AutoShop Pro</p>
+          <Logo variant="full" className="h-[148px]" />
+          <h1 className="mt-7 text-2xl font-bold tracking-tight">{titles[step]}</h1>
+          {otherName(state.shop.name) && <p className="mt-1 text-sm text-ink-3">{otherName(state.shop.name)}</p>}
         </div>
         <div className="card p-5">
           {!cfg ? (
@@ -144,7 +146,7 @@ export default function SignIn() {
             <form className="space-y-4" onSubmit={submitCode}>
               <p className="flex items-start gap-2 text-sm text-ink-2">
                 <ShieldCheck size={16} className="mt-0.5 shrink-0 text-ok" />
-                Open your authenticator app and enter the 6-digit code for AutoShop Pro.
+                Open your authenticator app and enter the current 6-digit code.
               </p>
               <input
                 className="input h-12 text-center font-mono text-xl tracking-[0.35em]"

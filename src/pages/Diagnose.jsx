@@ -386,7 +386,7 @@ export default function Diagnose() {
             </Card>
           ) : (
             <>
-              <Card className="foil-top">
+              <Card className="brand-top">
                 <CardHeader icon={Stethoscope} tone="navy" title={asked ? 'Quick answer' : `Known problems: ${vLabel}`} subtitle={asked ? 'The strongest leads, best first — verify before replacing parts' : 'Add what it’s doing and any codes to narrow these down'} />
                 <ul className="divide-y divide-line/70" data-testid="dx-answer">
                   {answer.map((a, i) => {

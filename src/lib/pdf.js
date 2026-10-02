@@ -6,6 +6,7 @@ import { INSPECTION_RATINGS } from './workflow';
 import { dueDate, hasTerms, termsLabel } from './accounts';
 import { shopAt } from './locations';
 import { money, fullName, vehicleName, date, phone, number } from './format';
+import { BARS, COLORS, DRIVELINE, VIEWBOX, WPI, otherName } from '../brand/artwork';
 
 const TITLES = { estimate: 'Estimate', workorder: 'Work Order', invoice: 'Invoice', receipt: 'Receipt' };
 /** The document's name, e.g. "Invoice". */
@@ -39,8 +40,8 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
 
   const doc = await PDFDocument.create();
   doc.setTitle(`${TITLES[kind]} ${order.number} — ${shop.name}`);
-  doc.setAuthor(shop.name || 'AutoShop Pro');
-  doc.setCreator('AutoShop Pro');
+  doc.setAuthor(shop.name || 'WPI Driveline');
+  doc.setCreator('WPI Driveline');
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
   const mono = await doc.embedFont(StandardFonts.Courier);
@@ -48,12 +49,14 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
   const W = 612;
   const H = 792;
   const M = 48;
-  const INK = rgb(0.08, 0.11, 0.15);
-  const INK2 = rgb(0.3, 0.35, 0.42);
-  const INK3 = rgb(0.45, 0.5, 0.56);
-  const LINE = rgb(0.86, 0.88, 0.91);
-  const NAVY = rgb(0.11, 0.23, 0.42);
-  const INDIGO = rgb(0.3, 0.34, 0.75);
+  const hex = (h) => rgb(...[1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255));
+  const NAVY = hex(COLORS.navy);
+  const BLUE = hex(COLORS.blue);
+  const GREEN = hex(COLORS.green);
+  const INK = NAVY;
+  const INK2 = rgb(0.24, 0.31, 0.42);
+  const INK3 = rgb(0.38, 0.44, 0.53);
+  const LINE = rgb(0.87, 0.9, 0.94);
 
   let page;
   let y;
@@ -77,6 +80,16 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
     const w = f.widthOfTextAtSize(str, size);
     page.drawText(str, { x: align === 'right' ? x - w : x, y: yy, size, font: f, color });
   }
+  /** The logo (WPI, bars, DRIVELINE) with its top-left corner at (x, top), h points tall. Returns its width. */
+  const logo = (x, top, h) => {
+    const [vx, vy, vw, vh] = VIEWBOX.lockup;
+    const k = h / vh;
+    for (const p of [WPI, DRIVELINE]) page.drawSvgPath(p.d, { x: x + (p.x - vx) * k, y: top - (p.y - vy) * k, scale: k, color: NAVY });
+    for (const [[bx, by, bw, bh], color] of [[BARS.blue, BLUE], [BARS.green, GREEN]]) {
+      page.drawRectangle({ x: x + (bx - vx) * k, y: top - (by + bh - vy) * k, width: bw * k, height: bh * k, color });
+    }
+    return vw * k;
+  };
   const wrap = (s, maxW, f = font, size = 10) => {
     const words = pdfSafe(s).split(/\s+/).filter(Boolean);
     const lines = [];
@@ -101,10 +114,11 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
   const rule = (yy, color = LINE, thick = 0.75) => page.drawLine({ start: { x: M, y: yy }, end: { x: W - M, y: yy }, thickness: thick, color });
 
   newPage();
-  // ---- Header
-  text(shop.name || 'Auto repair', M, y - 6, { f: bold, size: 18 });
+  // ---- Header: the logo; beside it the shop's own name (when it goes by another one), address and contact.
+  const logoW = logo(M, y + 8, 48);
   const addr = [shop.address, [shop.city, shop.state].filter(Boolean).join(', ') + (shop.zip ? ` ${shop.zip}` : ''), [shop.phone, shop.email].filter(Boolean).join(' · ')].filter((x) => x && x.trim());
-  addr.forEach((l, i) => text(l, M, y - 24 - i * 12, { size: 9.5, color: INK2 }));
+  const info = [otherName(shop.name) && [otherName(shop.name), { f: bold, size: 12 }], ...addr.map((l) => [l, { size: 9.5, color: INK2 }])].filter(Boolean);
+  info.forEach(([l, o], i) => text(l, M + logoW + 18, y - 4 - i * 13, { ...o, maxW: W - 2 * M - logoW - 18 - 170 }));
   text(TITLES[kind], W - M, y - 8, { f: bold, size: 22, align: 'right' });
   const meta = [
     `No. ${order.number}`,
@@ -113,10 +127,10 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
     invoiceLike && hasTerms(c) ? `${termsLabel(c.account.terms)} · due ${date(dueDate(order, c))}` : null,
   ].filter(Boolean);
   meta.forEach((l, i) => text(l, W - M, y - 26 - i * 12, { size: 9.5, color: INK2, align: 'right' }));
-  y -= Math.max(24 + addr.length * 12, 26 + meta.length * 12) + 10;
-  // A navy rule that turns indigo at the end — the app's accent.
-  page.drawLine({ start: { x: M, y }, end: { x: W - M - 120, y }, thickness: 1.5, color: NAVY });
-  page.drawLine({ start: { x: W - M - 120, y }, end: { x: W - M, y }, thickness: 1.5, color: INDIGO });
+  y -= Math.max(42, 6 + info.length * 13, 26 + meta.length * 12) + 12;
+  // The logo's bar across the page: blue, then green.
+  page.drawLine({ start: { x: M, y }, end: { x: W / 2, y }, thickness: 1.5, color: BLUE });
+  page.drawLine({ start: { x: W / 2, y }, end: { x: W - M, y }, thickness: 1.5, color: GREEN });
   y -= 20;
 
   // ---- Customer & vehicle

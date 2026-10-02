@@ -2,6 +2,8 @@
 // place that isn't a tab, shared-data status and appearance — laid out like iOS Settings.
 import { useState } from 'react';
 import { Search, Sun, Monitor, Moon, MapPin } from 'lucide-react';
+import { Logo } from '../brand/Logo';
+import { otherName } from '../brand/artwork';
 import { PageHeader, IconTile, ListRow, Segmented, Avatar } from '../components/ui';
 import { useShop, useUI, useAccess, useSync, useSite } from '../store/hooks';
 import { NAV, HUE, useNavCounts, tabsFor } from '../components/nav';
@@ -102,7 +104,10 @@ export default function More() {
         </div>
       </Group>
 
-      <p className="px-4 text-center text-xs text-ink-4">AutoShop Pro · {state.shop.name}</p>
+      <div className="flex flex-col items-center gap-1.5 px-4 pt-2 text-xs text-ink-4">
+        <Logo variant="full" className="h-14 opacity-90" />
+        {otherName(state.shop.name) && <p>{otherName(state.shop.name)}</p>}
+      </div>
       {switching && <SwitchUser onClose={() => setSwitching(false)} />}
     </div>
   );

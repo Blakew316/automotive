@@ -4,7 +4,8 @@
 // no shop data beyond what's on the link.
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { CreditCard, Lock, CheckCircle2, Link2Off, Phone, Wrench, FlaskConical } from 'lucide-react';
+import { CreditCard, Lock, CheckCircle2, Link2Off, Phone, FlaskConical } from 'lucide-react';
+import { ShopBrand } from '../brand/Logo';
 import { EmptyState, Spinner } from '../components/ui';
 import { payFunction } from '../lib/payments';
 import { SHOP_CLOUD } from '../lib/cloudDefaults';
@@ -75,14 +76,12 @@ export default function Pay() {
   const processing = justPaid && !paid;
   return (
     <div className="min-h-[100dvh] bg-canvas">
-      <header className="bg-graphite text-white">
-        <div className="mx-auto max-w-md px-4 pb-8 pt-5">
-          <div className="flex items-center gap-2 text-sm text-white/75">
-            <Wrench size={15} /> {data.shop || 'Your repair shop'}
-          </div>
-          <p className="mt-6 text-sm text-white/70">{data.title || (data.ro ? `Repair order #${data.ro}` : 'Invoice')}</p>
+      <header className="customer-header">
+        <div className="mx-auto max-w-md px-4 pb-8 pt-6">
+          <ShopBrand name={data.shop} />
+          <p className="mt-6 text-sm text-ink-3">{data.title || (data.ro ? `Repair order #${data.ro}` : 'Invoice')}</p>
           <h1 className="tabular mt-1 text-4xl font-bold tracking-tight">{money(data.amount)}</h1>
-          <p className="mt-1 text-sm text-white/70">{paid ? `Paid${data.paidAt ? ` ${dateShort(data.paidAt)}` : ''}` : 'Amount due'}</p>
+          <p className="mt-1 text-sm text-ink-3">{paid ? `Paid${data.paidAt ? ` ${dateShort(data.paidAt)}` : ''}` : 'Amount due'}</p>
         </div>
       </header>
       <main className="mx-auto max-w-md space-y-4 px-4 py-6">

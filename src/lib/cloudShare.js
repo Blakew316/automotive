@@ -112,7 +112,7 @@ export async function enrollAuthenticator(cfg, issuer) {
   // Clear out any setup that was started and never finished.
   const user = await authCall(cfg, token, '/user');
   for (const f of user.factors || []) if (f.status !== 'verified') await authCall(cfg, token, `/factors/${f.id}`, { method: 'DELETE' }).catch(() => {});
-  const f = await authCall(cfg, token, '/factors', { method: 'POST', body: { factor_type: 'totp', friendly_name: `AutoShop Pro ${new Date().toISOString().slice(0, 10)}`, issuer: issuer || 'AutoShop Pro' } });
+  const f = await authCall(cfg, token, '/factors', { method: 'POST', body: { factor_type: 'totp', friendly_name: `WPI Driveline ${new Date().toISOString().slice(0, 10)}`, issuer: issuer || 'WPI Driveline' } });
   return { id: f.id, qr: f.totp?.qr_code, secret: f.totp?.secret, uri: f.totp?.uri };
 }
 

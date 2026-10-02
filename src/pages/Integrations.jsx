@@ -70,7 +70,7 @@ export default function Integrations() {
         {
           icon: Cloud,
           name: 'Shop Cloud',
-          by: cfg?.url === SHOP_CLOUD.url ? 'AutoShop Pro cloud · Supabase' : 'Supabase (your own project)',
+          by: cfg?.url === SHOP_CLOUD.url ? 'WPI Driveline cloud · Supabase' : 'Supabase (your own project)',
           body: 'Share links for reports, photos and video; online approvals with e-signature; customer replies; and the online booking inbox.',
           status: signedIn ? ['on', 'Connected'] : cfg ? ['setup', 'Sign in on this device'] : ['setup', 'Not set up'],
           action: <Link to="/settings?tab=cloud" className="btn-secondary btn-sm">{cfg ? 'Manage' : 'Set up'}</Link>,
@@ -250,7 +250,7 @@ export default function Integrations() {
           icon: Smartphone,
           name: 'Mobile app',
           by: 'iPhone · iPad · Android',
-          body: 'Install AutoShop Pro on phones and tablets from the browser — it opens full-screen like a native app and works offline. Techs can clock in and snap inspection photos from the bay.',
+          body: 'Install WPI Driveline on phones and tablets from the browser — it opens full-screen like a native app and works offline. Techs can clock in and snap inspection photos from the bay.',
           status: ['builtin', 'Install'],
           action: <Link to="/settings?tab=general#install" className="btn-secondary btn-sm">How to</Link>,
         },

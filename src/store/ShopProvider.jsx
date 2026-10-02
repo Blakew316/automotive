@@ -941,7 +941,7 @@ function ShopStore({ boot, children }) {
         });
       },
       importData: (data) => {
-        if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not an AutoShop Pro backup file');
+        if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not a WPI Driveline backup file');
         commit(migrate(data));
       },
     };

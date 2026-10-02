@@ -137,7 +137,7 @@ ok(sent.tags[0].name === 'kind' && sent.tags[0].value === 'estimate', 'tagged by
 await call(ADVISOR, { action: 'send', to: 'jane@example.com', subject: 'Line one\r\nBcc: x@evil.co', text: 'Pay here: "https://pay.example/a?b=1&c=2".', shop: { name: 'Main Street Auto' } });
 sent = world.resend.at(-1).body;
 ok(sent.subject === 'Line one Bcc: x@evil.co', 'line breaks removed from the subject');
-ok(sent.html.includes('&quot;<a href="https://pay.example/a?b=1&amp;c=2" style="color:#1c3b6b">https://pay.example/a?b=1&amp;c=2</a>&quot;.'), 'links stop before quotes and punctuation, and are escaped');
+ok(sent.html.includes('&quot;<a href="https://pay.example/a?b=1&amp;c=2" style="color:#1a6fd6">https://pay.example/a?b=1&amp;c=2</a>&quot;.'), 'links stop before quotes and punctuation, and are escaped');
 r = await call(ADVISOR, { action: 'send', to: 'x@y.co', subject: 's', text: 't', attachments: [{ filename: 'big.pdf', content: 'A'.repeat(14_000_001) }] });
 ok(r.status === 400 && /too large/.test(r.body.message), 'oversized attachments refused');
 world.resendDown = true;

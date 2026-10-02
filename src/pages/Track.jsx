@@ -2,7 +2,8 @@
 // the customer's phone, so it never loads shop data — only the small file the shop publishes.
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Check, Phone, MapPin, FileText, CreditCard, Clock, Link2Off, Wrench, RefreshCw } from 'lucide-react';
+import { Check, Phone, MapPin, FileText, CreditCard, Clock, Link2Off, RefreshCw } from 'lucide-react';
+import { ShopBrand } from '../brand/Logo';
 import { EmptyState, Spinner } from '../components/ui';
 import { parseShareSource } from '../lib/cloudShare';
 import { phone as fmtPhone, telHref, money, relTime } from '../lib/format';
@@ -69,16 +70,14 @@ export default function Track() {
 
   return (
     <div className="min-h-[100dvh] bg-canvas">
-      <header className="bg-graphite text-white">
-        <div className="mx-auto max-w-xl px-4 pb-7 pt-5">
-          <div className="flex items-center gap-2 text-sm text-white/75">
-            <Wrench size={15} /> {data.shop.name}
-          </div>
-          <p className="mt-5 text-sm text-white/70">{data.first ? `Hi ${data.first} — here’s your` : 'Your'} {data.vehicle}</p>
+      <header className="customer-header">
+        <div className="mx-auto max-w-xl px-4 pb-7 pt-6">
+          <ShopBrand name={data.shop.name} />
+          <p className="mt-5 text-sm text-ink-3">{data.first ? `Hi ${data.first} — here’s your` : 'Your'} {data.vehicle}</p>
           <h1 className="mt-1 text-3xl font-bold tracking-tight">{current?.label || 'In the shop'}</h1>
-          <p className="mt-2 max-w-md text-[15px] text-white/80">{current?.detail}</p>
+          <p className="mt-2 max-w-md text-[15px] text-ink-2">{current?.detail}</p>
           {data.promisedAt && !done && (
-            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-sm">
+            <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-accent/[0.08] px-3 py-1 text-sm text-ink-2 ring-1 ring-accent/15">
               <Clock size={14} /> Expected {when(data.promisedAt)}
             </p>
           )}

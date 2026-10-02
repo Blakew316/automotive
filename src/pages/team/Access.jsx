@@ -23,7 +23,7 @@ export default function Access() {
           icon={ShieldCheck}
           tone="blue"
           title="Staff & access"
-          subtitle="Who can use AutoShop Pro on this shop’s devices, and what each role can open"
+          subtitle="Who can use WPI Driveline on this shop’s devices, and what each role can open"
           actions={
             <button className="btn-primary btn-sm" onClick={() => save([...staff, { id: uid('staff'), name: 'New team member', role: 'advisor', pin: '' }])}>
               <Plus size={13} /> Add person

@@ -59,10 +59,10 @@ export default function WebsiteSettings() {
             <p className="mt-2 text-xs text-ink-3">Put it on your Google Business Profile, social pages and business cards.</p>
           </div>
         ) : (
-          <p className="text-sm text-ink-2">The website is published together with AutoShop Pro. Enter its address below if it’s hosted somewhere else.</p>
+          <p className="text-sm text-ink-2">The website is published together with WPI Driveline. Enter its address below if it’s hosted somewhere else.</p>
         )}
 
-        <Field label="Website address" hint={`Leave blank to use the site published with AutoShop Pro${defaultWebsite() ? ` (${defaultWebsite()})` : ''}. Enter your own domain once it points at the site.`}>
+        <Field label="Website address" hint={`Leave blank to use the site published with WPI Driveline${defaultWebsite() ? ` (${defaultWebsite()})` : ''}. Enter your own domain once it points at the site.`}>
           {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder={defaultWebsite() || 'https://www.yourshop.com'} value={w.url || ''} onCommit={(url) => updateShop({ website: { ...w, url: url.trim() } })} />}
         </Field>
 

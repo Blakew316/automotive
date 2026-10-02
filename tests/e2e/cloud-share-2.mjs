@@ -26,7 +26,7 @@ async function run(staff) {
     return route.fulfill({ status: 404, body: '{}' });
   });
   await page.goto(BASE + '/settings?tab=cloud');
-  await page.getByText('Connected to the AutoShop Pro cloud').waitFor();
+  await page.getByText('Connected to the WPI Driveline cloud').waitFor();
   await page.waitForFunction(() => window.__autoshop);
 const s0 = await page.evaluate(() => window.__autoshop.state());
   ok(s0.shop.cloud.url === CLOUD && s0.shop.cloud.bucket === 'autoshop-media', 'fresh install is preconfigured for the AutoShop Pro project');

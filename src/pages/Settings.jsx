@@ -315,7 +315,7 @@ function DataSection() {
             if (!f) return;
             try {
               const data = JSON.parse(await f.text());
-              if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not an AutoShop Pro backup file');
+              if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not a WPI Driveline backup file');
               setPendingImport(data);
               setConfirm('import');
             } catch (err) {

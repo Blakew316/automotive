@@ -28,17 +28,17 @@ const esc = (s: unknown) => String(s ?? "").replace(/&/g, "&amp;").replace(/</g,
 function page(title: string, body: string, ok = true) {
   return new Response(
     `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title>
-<style>body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;background:#f1f3f6;color:#18202b;display:grid;place-items:center;min-height:100vh}
+<style>body{margin:0;font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;background:#f2f6fa;color:#0f2b4c;display:grid;place-items:center;min-height:100vh}
 main{background:#fff;border-radius:16px;box-shadow:0 1px 3px #0001;padding:32px 28px;max-width:380px;margin:16px;text-align:center}
 .i{width:48px;height:48px;border-radius:50%;margin:0 auto 12px;display:grid;place-items:center;font-size:24px;background:${ok ? "#e5f4ea" : "#fbe9e9"};color:${ok ? "#1d7a3e" : "#a12b2b"}}
-h1{font-size:20px;margin:0 0 6px}p{margin:0;color:#4b5563}</style></head>
+h1{font-size:20px;margin:0 0 6px}p{margin:0;color:#3d506b}</style></head>
 <body><main><div class="i">${ok ? "✓" : "!"}</div><h1>${esc(title)}</h1><p>${esc(body)}</p></main></body></html>`,
     { status: ok ? 200 : 400, headers: { "Content-Type": "text/html; charset=utf-8" } },
   );
 }
 const redirect = (url: string) => new Response(null, { status: 302, headers: { Location: url } });
 const back = (url: string | null, params: Record<string, string>) => {
-  if (!url || !/^https?:\/\//.test(url)) return page(params.qbo === "connected" ? "QuickBooks connected" : "Something went wrong", params.message || "You can close this window and go back to AutoShop Pro.", params.qbo === "connected");
+  if (!url || !/^https?:\/\//.test(url)) return page(params.qbo === "connected" ? "QuickBooks connected" : "Something went wrong", params.message || "You can close this window and go back to WPI Driveline.", params.qbo === "connected");
   const u = new URL(url);
   for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
   return redirect(u.toString());

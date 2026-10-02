@@ -101,7 +101,7 @@ export default function StripeSettings() {
               <Step n={2} done={st.configured} /> Paste the secret key (Developers → API keys) in <Link to="/settings?tab=keys" className="link">Keys & AI</Link>.
             </li>
             <li className="flex items-start gap-2">
-              <Step n={3} /> Connect — AutoShop Pro registers its payment webhook in your Stripe account for you.
+              <Step n={3} /> Connect — WPI Driveline registers its payment webhook in your Stripe account for you.
             </li>
           </ol>
           {st.configured &&
@@ -112,7 +112,7 @@ export default function StripeSettings() {
             ) : (
               <p className="text-ink-3">The owner connects Stripe.</p>
             ))}
-          <p className="text-xs text-ink-3">Payments go straight to your Stripe account at Stripe’s standard rates. AutoShop Pro adds no fees.</p>
+          <p className="text-xs text-ink-3">Payments go straight to your Stripe account at Stripe’s standard rates. WPI Driveline adds no fees.</p>
         </div>
       )}
     </Card>

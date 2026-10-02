@@ -53,7 +53,7 @@ export default function SwitchUser({ onClose }) {
   };
 
   return (
-    <Modal open onClose={onClose} title={picking ? `Enter PIN for ${picking.name}` : 'Who’s working?'} subtitle={picking ? ROLES[picking.role]?.label : 'Each person sees the parts of AutoShop Pro their role needs'} size="sm">
+    <Modal open onClose={onClose} title={picking ? `Enter PIN for ${picking.name}` : 'Who’s working?'} subtitle={picking ? ROLES[picking.role]?.label : 'Each person sees the parts of WPI Driveline their role needs'} size="sm">
       {picking ? (
         <div className="mx-auto max-w-[240px]">
           <div className="mb-4 flex justify-center gap-3" aria-label={`${pin.length} of 4 digits entered`}>

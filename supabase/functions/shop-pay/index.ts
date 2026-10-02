@@ -160,7 +160,7 @@ Deno.serve(async (req) => {
       // Replace any earlier endpoint for this shop (its signing secret can't be read back).
       const list = await stripe(key, "/webhook_endpoints?limit=100");
       for (const ep of list.data?.data || []) if (ep.url === WEBHOOK) await stripe(key, `/webhook_endpoints/${ep.id}`, { method: "DELETE" });
-      const ep = await stripe(key, "/webhook_endpoints", { body: { url: WEBHOOK, enabled_events: EVENTS, description: "AutoShop Pro — online payments" } });
+      const ep = await stripe(key, "/webhook_endpoints", { body: { url: WEBHOOK, enabled_events: EVENTS, description: "WPI Driveline — online payments" } });
       if (!ep.ok) return fail(stripeMessage(ep.data, ep.status));
       await rpc("shop_secret_set", { p_name: "stripe_webhook_secret", p_value: ep.data.secret });
       await rpc("shop_secret_set", { p_name: "stripe_webhook_id", p_value: ep.data.id });

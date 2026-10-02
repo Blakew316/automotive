@@ -2,7 +2,8 @@
 // needs (hours, services, open times) comes from the link or the shop's published booking file.
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { CalendarX, Check, ChevronLeft, MapPin, Phone, MessageSquare, Mail, Wrench, CircleCheck, Clock } from 'lucide-react';
+import { CalendarX, Check, ChevronLeft, MapPin, Phone, MessageSquare, Mail, CircleCheck, Clock } from 'lucide-react';
+import { ShopBrand } from '../brand/Logo';
 import { EmptyState, Spinner } from '../components/ui';
 import { decodeConfig, slotsForDay, bookableDays } from '../lib/booking';
 import { parseShareSource, submitToInbox } from '../lib/cloudShare';
@@ -112,15 +113,12 @@ function Booking({ config }) {
 
   return (
     <div className="min-h-screen bg-canvas">
-      <header className="bg-graphite text-white">
-        <div className="mx-auto max-w-xl px-4 pb-6 pt-5">
-          <div className="flex items-center gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[11px] bg-white text-[rgb(16_33_62)]">
-              <Wrench size={18} />
-            </span>
+      <header className="customer-header">
+        <div className="mx-auto max-w-xl px-4 pb-6 pt-6">
+          <div className="flex flex-col gap-3">
+            <ShopBrand name={shop.name} className="h-11" />
             <div className="min-w-0">
-              <div className="truncate font-semibold">{shop.name}</div>
-              <div className="flex flex-wrap gap-x-3 text-xs text-white/60">
+              <div className="flex flex-wrap gap-x-3 text-xs text-ink-3">
                 {address && (
                   <span>
                     <MapPin size={11} className="mr-0.5 inline" />
@@ -128,7 +126,7 @@ function Booking({ config }) {
                   </span>
                 )}
                 {shop.phone && (
-                  <a href={telHref(shop.phone)} className="hover:text-white">
+                  <a href={telHref(shop.phone)} className="hover:text-ink">
                     <Phone size={11} className="mr-0.5 inline" />
                     {fmtPhone(shop.phone)}
                   </a>
@@ -139,14 +137,14 @@ function Booking({ config }) {
           {!done && (
             <div className="mt-6">
               <h1 className="text-2xl font-bold tracking-tight">Schedule your visit</h1>
-              <p className="text-sm text-white/65">Takes about 2 minutes — we’ll confirm by text.</p>
+              <p className="text-sm text-ink-3">Takes about 2 minutes — we’ll confirm by text.</p>
             </div>
           )}
           {me && !done && (
-            <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs ring-1 ring-white/15">
+            <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-accent/[0.08] px-3 py-1 text-xs text-ink-2 ring-1 ring-accent/15">
               Welcome back, {me.name.split(' ')[0]}
               <button
-                className="text-white/60 underline hover:text-white"
+                className="text-accent underline hover:text-ink"
                 onClick={() => {
                   saveMe(null);
                   setMe(null);
