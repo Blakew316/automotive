@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Landmark, Package, FileClock, CreditCard, HandCoins, MessageSquare, Star, CalendarDays, ScanLine, Upload, Download, ExternalLink as ExtIcon, ArrowRight, Smartphone, Globe, PhoneCall, Sparkles, Radio, Link2, Mail } from 'lucide-react';
+import { Cloud, Landmark, Package, FileClock, CreditCard, HandCoins, MessageSquare, Star, CalendarDays, ScanLine, Upload, Download, ExternalLink as ExtIcon, ArrowRight, Smartphone, Globe, PhoneCall, Sparkles, Radio, Link2, Mail, Nfc } from 'lucide-react';
 import { useShop, useUI, useSync, useAccess, usePhone, usePay, useEmail } from '../store/hooks';
 import { shopQbo, shopCars } from '../lib/sync/api';
 import { phone as fmtPhone } from '../lib/format';
@@ -160,6 +160,14 @@ export default function Integrations() {
           body: 'Customers pay their balance from a text, the live status page or the report — cards, Apple Pay, Google Pay, bank and pay-over-time — and the payment lands on the RO by itself, with refunds from the RO.',
           status: stripe.ready ? ['on', stripe.status?.mode === 'test' ? 'Test mode' : 'Live'] : stripe.status?.configured ? ['setup', 'Connect'] : ['setup', 'Not set up'],
           action: <Link to="/settings?tab=payments" className="btn-secondary btn-sm">{stripe.ready ? 'Settings' : 'Set up'}</Link>,
+        },
+        {
+          icon: Nfc,
+          name: 'Card readers at the counter',
+          by: 'Stripe Terminal · smart readers',
+          body: 'Send the amount from the RO to a Stripe reader; the customer taps, inserts or swipes, and the payment lands on the RO with the tip, card and fee.',
+          status: stripe.readers?.length ? ['on', `${stripe.readers.length} reader${stripe.readers.length === 1 ? '' : 's'}`] : stripe.ready ? ['setup', 'Add a reader'] : ['setup', 'Connect Stripe first'],
+          action: <Link to="/settings?tab=payments" className="btn-secondary btn-sm">{stripe.readers?.length ? 'Settings' : 'Set up'}</Link>,
         },
         {
           icon: Link2,

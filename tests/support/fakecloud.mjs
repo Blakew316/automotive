@@ -1,7 +1,7 @@
 // In-memory stand-in for the AutoShop Pro Supabase project, mirroring the SQL functions' rules.
 import { newSecret, checkTotp } from './totp.mjs';
 export function fakeCloud() {
-  const db = { records: new Map(), seq: 0, history: [], backups: [], files: new Map(), public: new Map(), users: new Map(), inbox: [], calls: [], secrets: new Map(), aiCalls: [], aiUsage: 0, phone: { configured: false, connected: false, number: '+15125550100', optOuts: [], aiReady: true }, phoneEvents: [], sms: [], dials: [], outbox: new Map(), pay: { configured: false, connected: false, mode: 'test' }, links: new Map(), payEvents: [], refunds: [], checkouts: [], qbo: { configured: false, connected: false, env: 'sandbox', company: 'Main Street Auto LLC', error: null, accounts: [], entries: new Map(), authorizes: [], posts: [] }, cars: { configured: false, connected: new Map(), links: [], reads: 0, nextReading: null }, mfaRoles: [], challenges: new Map(), email: { domains: new Map(), dnsReady: false, sent: [], tests: [], digest: { enabled: false, hour: 18, tz: 'America/Chicago', recipients: [], last_sent: null, snapshot_at: null }, snapshot: null, snapshotDay: null }, emailEvents: [] };
+  const db = { records: new Map(), seq: 0, history: [], backups: [], files: new Map(), public: new Map(), users: new Map(), inbox: [], calls: [], secrets: new Map(), aiCalls: [], aiUsage: 0, phone: { configured: false, connected: false, number: '+15125550100', optOuts: [], aiReady: true }, phoneEvents: [], sms: [], dials: [], outbox: new Map(), pay: { configured: false, connected: false, mode: 'test', readers: [], intents: new Map(), location: null }, links: new Map(), payEvents: [], refunds: [], checkouts: [], qbo: { configured: false, connected: false, env: 'sandbox', company: 'Main Street Auto LLC', error: null, accounts: [], entries: new Map(), authorizes: [], posts: [] }, cars: { configured: false, connected: new Map(), links: [], reads: 0, nextReading: null }, mfaRoles: [], challenges: new Map(), email: { domains: new Map(), dnsReady: false, sent: [], tests: [], digest: { enabled: false, hour: 18, tz: 'America/Chicago', recipients: [], last_sent: null, snapshot_at: null }, snapshot: null, snapshotDay: null }, emailEvents: [] };
   let evSeq = 0;
   let payId = 0;
   // A row in shop_pay_events, as the stripe-webhook function would write it.
@@ -313,7 +313,8 @@ export function fakeCloud() {
       if (!staff(u)) return json(403, { message: 'Shop staff only' });
       const b = body();
       const role = u.app_metadata.autoshop_role;
-      if (b.action === 'status') return json(200, db.pay.configured ? { configured: true, connected: db.pay.connected, mode: db.pay.mode, account: { name: 'Main Street Auto', chargesEnabled: true }, webhook: 'x' } : { configured: false, connected: false });
+      const readerView = (r) => ({ id: r.id, label: r.label, type: r.type, status: r.status, serial: r.serial, simulated: r.simulated });
+      if (b.action === 'status') return json(200, db.pay.configured ? { configured: true, connected: db.pay.connected, mode: db.pay.mode, account: { name: 'Main Street Auto', chargesEnabled: true }, webhook: 'x', terminal: { readers: db.pay.readers.map(readerView), location: db.pay.location } } : { configured: false, connected: false });
       if (!db.pay.configured) return json(412, { message: 'Add your Stripe secret key in Settings → Keys & AI first.' });
       if (b.action === 'connect') {
         if (role !== 'owner') return json(403, { message: 'Only the owner can connect Stripe' });
@@ -326,6 +327,62 @@ export function fakeCloud() {
         const url = `${b.returnBase.replace(/\/+$/, '')}/${id}${b.returnQuery ? `?${b.returnQuery}` : ''}`;
         db.links.set(id, { id, url, orderId: b.orderId, roNumber: b.roNumber, amount: Math.round(b.amount * 100) / 100, title: b.title, shopName: b.shopName, shopPhone: b.shopPhone, email: b.email, status: 'open' });
         return json(200, { id, url, amount: Math.round(b.amount * 100) / 100, mode: db.pay.mode });
+      }
+      // Card readers (Stripe Terminal). An intent's status: waiting → succeeded | declined | canceled.
+      if (b.action === 'registerReader') {
+        if (role !== 'owner') return json(403, { message: 'Only the owner can add card readers' });
+        if (!b.code) return json(400, { message: 'Enter the pairing code shown on the reader' });
+        if (!db.pay.location) {
+          if (!b.address?.line1 || !b.address?.city || !b.address?.state || !b.address?.postal) return json(400, { message: 'Add the shop’s street address, city, state and ZIP in Settings → General first — Stripe needs it for card readers.' });
+          db.pay.location = 'tml_1';
+          db.pay.locationAddress = b.address;
+        }
+        if (b.code === 'wrong-code') return json(400, { message: 'Stripe didn’t recognize that code — check the reader’s screen for a new one.' });
+        const sim = b.code.startsWith('simulated');
+        const r = { id: `tmr_${db.pay.readers.length + 1}`, label: b.label, type: sim ? 'simulated_wisepos_e' : 'bbpos_wisepos_e', status: 'online', serial: sim ? 'simulated-wpe-1' : 'WSC513100000001', simulated: sim };
+        db.pay.readers.push(r);
+        return json(200, { reader: readerView(r) });
+      }
+      if (b.action === 'removeReader') {
+        if (role !== 'owner') return json(403, { message: 'Only the owner can remove card readers' });
+        db.pay.readers = db.pay.readers.filter((r) => r.id !== b.readerId);
+        return json(200, { ok: true });
+      }
+      if (b.action === 'readerCharge') {
+        const rd = db.pay.readers.find((r) => r.id === b.readerId);
+        if (!rd) return json(400, { message: 'Choose a reader' });
+        if (rd.status === 'offline') return json(409, { message: 'The reader is offline — check it’s on and connected to Wi-Fi.' });
+        const cents = (x) => Math.round(Number(x || 0) * 100);
+        const total = cents(b.amount) + cents(b.tip) + cents(b.surcharge);
+        if (total < 50) return json(400, { message: 'Card payments start at $0.50.' });
+        const id = `pi_term_${db.pay.intents.size + 1}`;
+        db.pay.intents.set(id, { id, total, status: 'waiting', reader: rd.id, meta: { order: b.orderId, ro: b.roNumber, amount: Number(b.amount), tip: Number(b.tip) || 0, surcharge: Number(b.surcharge) || 0 } });
+        return json(200, { paymentIntent: id, test: db.pay.mode === 'test' });
+      }
+      if (b.action === 'readerCheck' || b.action === 'readerCancel') {
+        const pi = db.pay.intents.get(b.paymentIntent);
+        if (!pi) return json(400, { message: 'Which payment?' });
+        if (b.action === 'readerCancel') {
+          if (pi.status === 'waiting') pi.status = 'canceled';
+          return json(200, { ok: pi.status === 'canceled', status: pi.status });
+        }
+        if (pi.status === 'succeeded') {
+          const payment = { source: 'terminal', orderId: pi.meta.order, ro: pi.meta.ro, amount: pi.meta.amount, tip: pi.meta.tip, surcharge: pi.meta.surcharge, method: 'Card', type: 'card_present', brand: 'visa', last4: '4242', fee: Math.round(pi.total * 0.027 + 5) / 100, paymentIntent: pi.id, charge: `ch_${pi.id}`, reader: pi.reader, paidAt: new Date().toISOString(), livemode: false };
+          payEvent('payment', pi.id, payment);
+          return json(200, { status: 'succeeded', payment });
+        }
+        if (pi.status === 'declined') {
+          pi.status = 'canceled';
+          return json(200, { status: 'failed', message: 'Your card was declined.' });
+        }
+        if (pi.status === 'canceled') return json(200, { status: 'failed', message: 'The payment was canceled.' });
+        return json(200, { status: 'waiting' });
+      }
+      if (b.action === 'readerSimulate') {
+        if (db.pay.mode !== 'test') return json(400, { message: 'Simulating a tap only works in test mode' });
+        const pi = [...db.pay.intents.values()].reverse().find((x) => x.reader === b.readerId && x.status === 'waiting');
+        if (pi) pi.status = b.decline ? 'declined' : 'succeeded';
+        return json(200, { ok: true });
       }
       if (b.action === 'refund') {
         if (!['owner', 'manager'].includes(role)) return json(403, { message: 'Only the owner or a manager can refund' });

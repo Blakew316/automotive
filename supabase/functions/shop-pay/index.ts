@@ -4,6 +4,12 @@
 //             account, saving its signing secret to Vault (owner)
 //   link    – create a pay link for a repair order's balance (any staff)
 //   refund  – refund an online payment, in full or in part (owner or manager)
+// Card readers at the counter (Stripe Terminal, server-driven):
+//   registerReader / removeReader – add a Stripe smart reader by its pairing code, or remove it (owner)
+//   readerCharge  – send an amount for a repair order to a reader (any staff)
+//   readerCheck   – has the customer's card been approved? Captures and records it when it has
+//   readerCancel  – stop waiting and clear the reader's screen
+//   readerSimulate – test mode only: act as a customer tapping a test card
 // The Stripe secret key lives in Vault (Settings → Keys & AI); this function never returns it.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
@@ -11,7 +17,7 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const WEBHOOK = `${SUPABASE_URL}/functions/v1/stripe-webhook`;
 const STRIPE = "https://api.stripe.com/v1";
-const EVENTS = ["checkout.session.completed", "checkout.session.async_payment_succeeded", "checkout.session.async_payment_failed", "charge.refunded"];
+const EVENTS = ["checkout.session.completed", "checkout.session.async_payment_succeeded", "checkout.session.async_payment_failed", "charge.refunded", "payment_intent.amount_capturable_updated", "payment_intent.succeeded"];
 const CORS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -68,8 +74,37 @@ async function stripe(key: string, path: string, init: { method?: string; body?:
 function stripeMessage(data: any, status: number) {
   const e = data?.error || {};
   if (status === 401) return "Stripe didn't accept the secret key — check it in Settings → Keys & AI.";
-  if (status === 403) return "This Stripe key doesn't have permission for that. Use a secret key, or give the restricted key write access to Checkout Sessions, Refunds and Webhook Endpoints.";
+  if (status === 403) return "This Stripe key doesn't have permission for that. Use a secret key, or give the restricted key write access to Checkout Sessions, Payment Intents, Refunds, Terminal and Webhook Endpoints.";
   return e.message || `Stripe error ${status}`;
+}
+
+/** A reader as the app shows it. */
+const readerView = (r: any) => ({ id: r.id, label: r.label || r.serial_number || "Card reader", type: r.device_type || "", status: r.status || "offline", serial: r.serial_number || "", simulated: String(r.device_type || "").startsWith("simulated") || String(r.serial_number || "").startsWith("simulated") });
+
+/** What the RO records for a reader payment (the same as stripe-webhook records). */
+function terminalPayload(pi: any) {
+  const charge = pi.latest_charge && typeof pi.latest_charge === "object" ? pi.latest_charge : null;
+  const card = charge?.payment_method_details?.card_present || charge?.payment_method_details?.interac_present || {};
+  const fee = charge?.balance_transaction?.fee;
+  const m = pi.metadata || {};
+  return {
+    source: "terminal",
+    orderId: m.order || null,
+    ro: m.ro ? Number(m.ro) : null,
+    amount: Number(m.amount) || (pi.amount_received || pi.amount || 0) / 100,
+    tip: Number(m.tip) || 0,
+    surcharge: Number(m.surcharge) || 0,
+    method: "Card",
+    type: "card_present",
+    brand: card.brand || null,
+    last4: card.last4 || null,
+    fee: typeof fee === "number" ? fee / 100 : null,
+    paymentIntent: pi.id,
+    charge: charge?.id || null,
+    reader: m.reader || null,
+    paidAt: new Date().toISOString(),
+    livemode: Boolean(pi.livemode),
+  };
 }
 
 const newId = () => {
@@ -106,12 +141,14 @@ Deno.serve(async (req) => {
       if (!key) return json({ configured: false, connected: false, webhook: WEBHOOK });
       const hook = await secret("stripe_webhook_id");
       const acct = await stripe(key, "/account");
+      const list = await stripe(key, "/terminal/readers?limit=100");
       return json({
         configured: true,
         mode: key.includes("_test_") ? "test" : "live",
         connected: Boolean(hook && (await secret("stripe_webhook_secret"))),
         account: acct.ok ? { name: acct.data.settings?.dashboard?.display_name || acct.data.business_profile?.name || "", chargesEnabled: acct.data.charges_enabled !== false, country: acct.data.country || "" } : null,
         webhook: WEBHOOK,
+        terminal: { readers: list.ok ? (list.data.data || []).map(readerView) : [], location: await secret("stripe_terminal_location") },
       });
     }
     if (!key) return fail("Add your Stripe secret key in Settings → Keys & AI first.", 412, "not_configured");
@@ -154,6 +191,104 @@ Deno.serve(async (req) => {
       };
       await db("/rest/v1/shop_pay_links", { method: "POST", prefer: "return=minimal", body: JSON.stringify(row) });
       return json({ id, url: row.return_url, amount: cents / 100, mode: key.includes("_test_") ? "test" : "live" });
+    }
+
+    // ---------------------------------------------------------------- Card readers
+    if (body.action === "registerReader") {
+      if (role !== "owner") return fail("Only the owner can add card readers", 403);
+      const code = String(body.code || "").trim();
+      if (!code) return fail("Enter the pairing code shown on the reader");
+      // Readers belong to a Terminal location: the shop's address, made once.
+      let location = await secret("stripe_terminal_location");
+      if (!location) {
+        const a = body.address || {};
+        if (!a.line1 || !a.city || !a.state || !a.postal) return fail("Add the shop's street address, city, state and ZIP in Settings → General first — Stripe needs it for card readers.");
+        const loc = await stripe(key, "/terminal/locations", { body: { display_name: String(body.shopName || "Shop").slice(0, 100), address: { line1: String(a.line1).slice(0, 200), city: String(a.city).slice(0, 100), state: String(a.state).slice(0, 50), postal_code: String(a.postal).slice(0, 20), country: String(a.country || "US").slice(0, 2) } } });
+        if (!loc.ok) return fail(stripeMessage(loc.data, loc.status));
+        location = loc.data.id as string;
+        await rpc("shop_secret_set", { p_name: "stripe_terminal_location", p_value: location });
+      }
+      const r = await stripe(key, "/terminal/readers", { body: { registration_code: code, label: String(body.label || "Front counter").slice(0, 100), location } });
+      if (!r.ok) return fail(r.data?.error?.code === "resource_missing" || /registration/i.test(r.data?.error?.message || "") ? "Stripe didn’t recognize that code — check the reader’s screen for a new one." : stripeMessage(r.data, r.status));
+      // The webhook also needs to hear about reader payments (endpoints connected before readers existed).
+      const hook = await secret("stripe_webhook_id");
+      if (hook) await stripe(key, `/webhook_endpoints/${hook}`, { body: { enabled_events: EVENTS } });
+      return json({ reader: readerView(r.data) });
+    }
+    if (body.action === "removeReader") {
+      if (role !== "owner") return fail("Only the owner can remove card readers", 403);
+      const r = await stripe(key, `/terminal/readers/${encodeURIComponent(String(body.readerId || ""))}`, { method: "DELETE" });
+      if (!r.ok && r.status !== 404) return fail(stripeMessage(r.data, r.status));
+      return json({ ok: true });
+    }
+    if (body.action === "readerCharge") {
+      const readerId = String(body.readerId || "");
+      const amount = Math.round(Number(body.amount) * 100);
+      const tip = Math.max(0, Math.round(Number(body.tip || 0) * 100));
+      const surcharge = Math.max(0, Math.round(Number(body.surcharge || 0) * 100));
+      const total = amount + tip + surcharge;
+      if (!readerId || !body.orderId) return fail("Choose a reader");
+      if (!Number.isFinite(total) || amount <= 0 || total < 50) return fail("Card payments start at $0.50.");
+      if (total > 99_999_999) return fail("That amount is too large for one card payment.");
+      const pi = await stripe(key, "/payment_intents", {
+        body: {
+          amount: total,
+          currency: "usd",
+          payment_method_types: ["card_present"],
+          capture_method: "manual",
+          description: `RO #${Number(body.roNumber) || ""}${body.shopName ? ` — ${String(body.shopName).slice(0, 80)}` : ""}`,
+          metadata: { source: "terminal", order: String(body.orderId).slice(0, 80), ro: String(Number(body.roNumber) || ""), amount: (amount / 100).toFixed(2), tip: (tip / 100).toFixed(2), surcharge: (surcharge / 100).toFixed(2), reader: readerId, by: String(body.by || "").slice(0, 80) },
+        },
+        idempotency: body.nonce ? `reader-${readerId}-${String(body.nonce).slice(0, 60)}` : undefined,
+      });
+      if (!pi.ok) return fail(stripeMessage(pi.data, pi.status));
+      const go = await stripe(key, `/terminal/readers/${encodeURIComponent(readerId)}/process_payment_intent`, { body: { payment_intent: pi.data.id } });
+      if (!go.ok) {
+        await stripe(key, `/payment_intents/${pi.data.id}/cancel`, { body: {} });
+        const code = go.data?.error?.code;
+        return fail(code === "terminal_reader_offline" ? "The reader is offline — check it’s on and connected to Wi-Fi." : code === "terminal_reader_busy" ? "The reader is busy with another payment — finish or cancel it first." : stripeMessage(go.data, go.status), 409);
+      }
+      return json({ paymentIntent: pi.data.id, test: key.includes("_test_") });
+    }
+    if (body.action === "readerCheck" || body.action === "readerCancel") {
+      const readerId = encodeURIComponent(String(body.readerId || ""));
+      const id = String(body.paymentIntent || "");
+      if (!/^pi_/.test(id)) return fail("Which payment?");
+      if (body.action === "readerCancel") {
+        await stripe(key, `/terminal/readers/${readerId}/cancel_action`, { body: {} });
+        const c = await stripe(key, `/payment_intents/${id}/cancel`, { body: {} });
+        // Too late to cancel: it went through, so it still lands on the RO.
+        return json({ ok: c.ok, status: c.ok ? "canceled" : c.data?.error?.payment_intent?.status || "unknown" });
+      }
+      let pi = await stripe(key, `/payment_intents/${id}`);
+      if (!pi.ok) return fail(stripeMessage(pi.data, pi.status));
+      if (pi.data.status === "requires_capture") {
+        const cap = await stripe(key, `/payment_intents/${id}/capture`, { body: {}, idempotency: `capture-${id}` });
+        if (!cap.ok && cap.data?.error?.payment_intent?.status !== "succeeded") return fail(stripeMessage(cap.data, cap.status));
+        pi = await stripe(key, `/payment_intents/${id}`);
+      }
+      if (pi.data.status === "succeeded") {
+        const full = await stripe(key, `/payment_intents/${id}?expand[]=latest_charge.balance_transaction`);
+        const payload = terminalPayload(full.ok ? full.data : pi.data);
+        await db("/rest/v1/shop_pay_events?on_conflict=ref", { method: "POST", prefer: "resolution=ignore-duplicates,return=minimal", body: JSON.stringify({ kind: "payment", ref: id, payload }) });
+        return json({ status: "succeeded", payment: payload });
+      }
+      if (pi.data.status === "canceled") return json({ status: "failed", message: "The payment was canceled." });
+      const rd = await stripe(key, `/terminal/readers/${readerId}`);
+      const action = rd.ok ? rd.data.action : null;
+      if (action?.status === "failed" || (pi.data.status === "requires_payment_method" && pi.data.last_payment_error)) {
+        // Declined: release this attempt so "Try again" starts clean.
+        await stripe(key, `/payment_intents/${id}/cancel`, { body: {} });
+        return json({ status: "failed", message: action?.failure_message || pi.data.last_payment_error?.message || "The card was declined." });
+      }
+      if (rd.ok && rd.data.status === "offline") return json({ status: "waiting", offline: true });
+      return json({ status: "waiting" });
+    }
+    if (body.action === "readerSimulate") {
+      if (!key.includes("_test_")) return fail("Simulating a tap only works in test mode", 400);
+      const r = await stripe(key, `/test_helpers/terminal/readers/${encodeURIComponent(String(body.readerId || ""))}/present_payment_method`, { body: body.decline ? { card_present: { number: "4000000000000002" } } : {} });
+      if (!r.ok) return fail(stripeMessage(r.data, r.status));
+      return json({ ok: true });
     }
 
     if (body.action === "refund") {

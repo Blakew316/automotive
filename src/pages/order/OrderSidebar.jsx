@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Phone, MessageSquare, Mail, Plus, Trash2, ShieldAlert, ScanLine, ChevronRight, PenLine, HandCoins, Receipt, Building2, CalendarClock, CreditCard, Copy, Undo2, Check } from 'lucide-react';
+import { Phone, MessageSquare, Mail, Plus, Trash2, ShieldAlert, ScanLine, ChevronRight, PenLine, HandCoins, Receipt, Building2, CalendarClock, CreditCard, Copy, Undo2, Check, Nfc, CircleAlert, FlaskConical } from 'lucide-react';
 import { orderProfit, profitTone, TONE_TEXT, TONE_BG } from '../../lib/profit';
 import { useShop, useUI, useTotals, useSite, usePay, useAccess } from '../../store/hooks';
 import { Card, CardHeader, Avatar, CopyButton, NumInput, Modal, Field, Mono, ExternalLink, Toggle, InlineText, Spinner } from '../../components/ui';
@@ -391,6 +391,19 @@ export function PaymentModal({ order, onClose, onReceipt }) {
   const { toast } = useUI();
   const totals = useTotals();
   const pay = state.shop.payments || {};
+  const stripe = usePay();
+  const readers = stripe.readers || [];
+  // The counter's reader: the one picked last on this device, else the first; 'none' = another terminal.
+  const [readerPick, setReaderPick] = useState(() => {
+    try {
+      return localStorage.getItem('autoshop-pro:reader');
+    } catch {
+      return null;
+    }
+  });
+  const readerId = readerPick === 'none' ? '' : readers.some((r) => r.id === readerPick) ? readerPick : readers[0]?.id || '';
+  // On a card reader: { pi, status: 'waiting' | 'approved' | 'failed', message, card }.
+  const [onReader, setOnReader] = useState(null);
   const balance = Math.max(0, totals(order).balance);
   const [amount, setAmount] = useState(balance.toFixed(2));
   const [method, setMethod] = useState('Card');
@@ -403,13 +416,111 @@ export function PaymentModal({ order, onClose, onReceipt }) {
   const surcharge = method === 'Card' && pay.surchargePct > 0 ? round2(((n + tip) * pay.surchargePct) / 100) : 0;
   const charge = round2(n + tip + surcharge);
 
-  const submit = () => {
+  const useReader = method === 'Card' && Boolean(stripe.reader && readerId && readers.some((r) => r.id === readerId));
+  const submit = async () => {
     if (n <= 0) return;
+    if (useReader) {
+      setOnReader({ status: 'sending' });
+      try {
+        const r = await stripe.reader.charge({ order, readerId, amount: n, tip, surcharge });
+        setOnReader({ pi: r.paymentIntent, status: 'waiting', test: r.test });
+      } catch (e) {
+        setOnReader({ status: 'failed', message: e.message || 'The reader didn’t take the payment' });
+      }
+      return;
+    }
     addPayment(order.id, { amount: n, method, ref, tip, surcharge });
     toast(`${money(charge)} ${method.toLowerCase()} payment recorded`, { tone: 'success' });
     onClose();
     if (sendReceipt) onReceipt?.(charge);
   };
+
+  // Watch the reader until the customer's card is approved or declined.
+  const pi = onReader?.status === 'waiting' ? onReader.pi : null;
+  const doneRef = useRef(false);
+  useEffect(() => {
+    if (!pi) return undefined;
+    let alive = true;
+    const tick = async () => {
+      try {
+        const r = await stripe.reader.check(readerId, pi);
+        if (!alive) return;
+        if (r.status === 'succeeded' && !doneRef.current) {
+          doneRef.current = true;
+          setOnReader((x) => ({ ...x, status: 'approved', card: r.payment }));
+          toast(`${money(charge)} approved${r.payment?.last4 ? ` — ${r.payment.brand ? `${r.payment.brand[0].toUpperCase()}${r.payment.brand.slice(1)} ` : ''}••${r.payment.last4}` : ''}`, { tone: 'success' });
+          setTimeout(() => {
+            onClose();
+            if (sendReceipt) onReceipt?.(charge);
+          }, 1400);
+        } else if (r.status === 'failed') setOnReader((x) => ({ ...x, status: 'failed', message: r.message || 'The card was declined' }));
+      } catch {
+        // Network blip: keep watching.
+      }
+    };
+    const t = setInterval(tick, 1500);
+    tick();
+    return () => {
+      alive = false;
+      clearInterval(t);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pi]);
+  const cancelReader = async () => {
+    if (onReader?.pi) await stripe.reader.cancel(readerId, onReader.pi).catch(() => {});
+    setOnReader(null);
+  };
+  const readerName = readers.find((r) => r.id === readerId)?.label || 'the reader';
+
+  if (onReader)
+    return (
+      <Modal
+        open
+        onClose={onReader.status === 'waiting' ? cancelReader : onClose}
+        title="Card reader"
+        subtitle={`RO #${order.number} · ${money(charge)}`}
+        size="sm"
+        footer={
+          onReader.status === 'approved' ? null : onReader.status === 'failed' ? (
+            <>
+              <button className="btn-secondary" onClick={() => setOnReader(null)}>Back</button>
+              <button className="btn-primary" onClick={submit}>Try again</button>
+            </>
+          ) : (
+            <>
+              {onReader.test && onReader.status === 'waiting' && (
+                <button className="btn-plain mr-auto" onClick={() => stripe.reader.simulate(readerId).catch((e) => toast(e.message, { tone: 'error' }))} title="Test mode: act as a customer tapping a test card">
+                  <FlaskConical size={14} /> Simulate tap
+                </button>
+              )}
+              <button className="btn-secondary" onClick={cancelReader}>Cancel</button>
+            </>
+          )
+        }
+      >
+        <div className="flex flex-col items-center py-4 text-center" data-testid="reader-status">
+          {onReader.status === 'approved' ? (
+            <>
+              <span className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-ok/[0.12] text-ok"><Check size={28} /></span>
+              <div className="text-lg font-semibold">Approved</div>
+              <div className="text-sm text-ink-2">{money(charge)}{onReader.card?.last4 ? ` · ${onReader.card.brand || 'Card'} ••${onReader.card.last4}` : ''} — added to the RO</div>
+            </>
+          ) : onReader.status === 'failed' ? (
+            <>
+              <span className="mb-3 flex h-14 w-14 items-center justify-center rounded-full bg-bad/[0.1] text-bad"><CircleAlert size={26} /></span>
+              <div className="text-lg font-semibold">Not approved</div>
+              <div className="text-sm text-ink-2">{onReader.message}</div>
+            </>
+          ) : (
+            <>
+              <span className="mb-3 flex h-14 w-14 animate-pulse items-center justify-center rounded-full bg-hue-indigo/[0.12] text-hue-indigo"><Nfc size={28} /></span>
+              <div className="text-lg font-semibold">{onReader.status === 'sending' ? 'Sending to the reader…' : 'Tap, insert or swipe'}</div>
+              <div className="text-sm text-ink-2">{money(charge)} on {readerName}</div>
+            </>
+          )}
+        </div>
+      </Modal>
+    );
 
   return (
     <Modal
@@ -421,7 +532,9 @@ export function PaymentModal({ order, onClose, onReceipt }) {
       footer={
         <>
           <button className="btn-secondary" onClick={onClose}>Cancel</button>
-          <button className="btn-primary" disabled={n <= 0} onClick={submit}>Charge {money(charge)}</button>
+          <button className="btn-primary" disabled={n <= 0} onClick={submit}>
+            {useReader ? <><Nfc size={15} /> Send {money(charge)} to reader</> : `Charge ${money(charge)}`}
+          </button>
         </>
       }
     >
@@ -464,7 +577,34 @@ export function PaymentModal({ order, onClose, onReceipt }) {
             </div>
           </div>
         )}
-        <Field label="Reference" hint="Terminal approval code, last 4, check #…">{(id) => <input id={id} className="input" value={ref} onChange={(e) => setRef(e.target.value)} />}</Field>
+        {method === 'Card' && readers.length > 0 && stripe.reader && (
+          <Field label="Card reader" hint="Stripe reader at the counter — the payment is recorded on the RO when it’s approved">
+            {(id) => (
+              <select
+                id={id}
+                className="input"
+                value={readerId || 'none'}
+                onChange={(e) => {
+                  setReaderPick(e.target.value);
+                  try {
+                    localStorage.setItem('autoshop-pro:reader', e.target.value);
+                  } catch {
+                    // Only remembers the counter's choice.
+                  }
+                }}
+              >
+                {readers.map((r) => (
+                  <option key={r.id} value={r.id}>
+                    {r.label}
+                    {r.status === 'offline' ? ' (offline)' : ''}
+                  </option>
+                ))}
+                <option value="none">Recorded separately (other terminal)</option>
+              </select>
+            )}
+          </Field>
+        )}
+        {!useReader && <Field label="Reference" hint="Terminal approval code, last 4, check #…">{(id) => <input id={id} className="input" value={ref} onChange={(e) => setRef(e.target.value)} />}</Field>}
         <dl className="space-y-1 rounded-[10px] bg-fill/[0.06] px-3 py-2 text-sm">
           <div className="flex justify-between"><dt className="text-ink-2">Toward invoice</dt><dd className="tabular">{money(n)}</dd></div>
           {tip > 0 && <div className="flex justify-between"><dt className="text-ink-2">Tip</dt><dd className="tabular">{money(tip)}</dd></div>}

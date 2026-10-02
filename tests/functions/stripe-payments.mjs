@@ -15,6 +15,8 @@ const world = {
   stripe: [],
   endpoints: [{ id: 'we_old', url: `${URL_BASE}/functions/v1/stripe-webhook` }, { id: 'we_other', url: 'https://elsewhere.example/hook' }],
   sessions: new Map(),
+  readers: [],
+  intents: new Map(),
 };
 const res = (body, status = 200) => new Response(status === 204 ? null : typeof body === 'string' ? body : JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const parseForm = (b) => Object.fromEntries(new URLSearchParams(String(b || '')));
@@ -70,6 +72,63 @@ globalThis.fetch = async (input, init = {}) => {
     if (p === '/v1/webhook_endpoints' && method === 'POST') { const ep = { id: 'we_new', url: form.url, secret: 'whsec_test_secret' }; world.endpoints.push(ep); return res(ep); }
     if (p === '/v1/checkout/sessions' && method === 'POST') { const id = `cs_test_${world.sessions.size + 1}`; const s = { id, url: `https://checkout.stripe.com/c/pay/${id}`, status: 'open', form }; world.sessions.set(id, s); return res(s); }
     if (p.startsWith('/v1/checkout/sessions/')) { const s = world.sessions.get(p.split('/').pop()); return s ? res(s) : res({ error: { message: 'No such session' } }, 404); }
+    // Stripe Terminal (server-driven readers) and the payment intents they process.
+    const meta = (f) => Object.fromEntries(Object.entries(f).filter(([k]) => k.startsWith('metadata[')).map(([k, v]) => [k.slice(9, -1), v]));
+    const rd = (id) => world.readers.find((x) => x.id === id);
+    if (p === '/v1/terminal/readers' && method === 'GET') return res({ data: world.readers });
+    if (p === '/v1/terminal/locations' && method === 'POST') return res({ id: 'tml_1', display_name: form.display_name });
+    if (p === '/v1/terminal/readers' && method === 'POST') {
+      if (form.registration_code === 'bad-code') return res({ error: { code: 'resource_missing', message: 'No such registration code' } }, 400);
+      const x = { id: `tmr_${world.readers.length + 1}`, label: form.label, device_type: 'simulated_wisepos_e', serial_number: `simulated-wpe-${world.readers.length + 1}`, status: 'online', location: form.location, action: null };
+      world.readers.push(x);
+      return res(x);
+    }
+    let mt;
+    if ((mt = p.match(/^\/v1\/terminal\/readers\/([^/]+)$/))) {
+      if (method === 'DELETE') { world.readers = world.readers.filter((x) => x.id !== mt[1]); return res({ deleted: true }); }
+      return rd(mt[1]) ? res(rd(mt[1])) : res({ error: { message: 'No such reader' } }, 404);
+    }
+    if ((mt = p.match(/^\/v1\/terminal\/readers\/([^/]+)\/process_payment_intent$/))) {
+      const x = rd(mt[1]);
+      if (x.status === 'offline') return res({ error: { code: 'terminal_reader_offline', message: 'Reader is offline' } }, 400);
+      x.action = { type: 'process_payment_intent', status: 'in_progress', process_payment_intent: { payment_intent: form.payment_intent } };
+      return res(x);
+    }
+    if ((mt = p.match(/^\/v1\/terminal\/readers\/([^/]+)\/cancel_action$/))) { rd(mt[1]).action = null; return res(rd(mt[1])); }
+    if ((mt = p.match(/^\/v1\/test_helpers\/terminal\/readers\/([^/]+)\/present_payment_method$/))) {
+      const x = rd(mt[1]);
+      const pi = world.intents.get(x.action.process_payment_intent.payment_intent);
+      if (form['card_present[number]'] === '4000000000000002') {
+        x.action = { ...x.action, status: 'failed', failure_code: 'card_declined', failure_message: 'Your card was declined.' };
+        Object.assign(pi, { status: 'requires_payment_method', last_payment_error: { message: 'Your card was declined.' } });
+      } else {
+        x.action = { ...x.action, status: 'succeeded' };
+        Object.assign(pi, { status: 'requires_capture', latest_charge: 'ch_term_1' });
+      }
+      return res(x);
+    }
+    if (p === '/v1/payment_intents' && method === 'POST') {
+      const id = `pi_term_${world.intents.size + 1}`;
+      const pi = { id, amount: Number(form.amount), currency: form.currency, capture_method: form.capture_method, payment_method_types: [form['payment_method_types[0]']], description: form.description, metadata: meta(form), status: 'requires_payment_method', livemode: false, latest_charge: null };
+      world.intents.set(id, pi);
+      return res(pi);
+    }
+    if ((mt = p.match(/^\/v1\/payment_intents\/([^/]+)(\/capture|\/cancel)?$/)) && world.intents.has(mt[1])) {
+      const pi = world.intents.get(mt[1]);
+      if (mt[2] === '/capture') {
+        if (pi.status !== 'requires_capture') return res({ error: { message: 'This PaymentIntent could not be captured', payment_intent: { status: pi.status } } }, 400);
+        Object.assign(pi, { status: 'succeeded', amount_received: pi.amount });
+        return res(pi);
+      }
+      if (mt[2] === '/cancel') {
+        if (pi.status === 'succeeded') return res({ error: { message: 'You cannot cancel this PaymentIntent because it has a status of succeeded.', payment_intent: { status: 'succeeded' } } }, 400);
+        pi.status = 'canceled';
+        return res(pi);
+      }
+      const expand = url.searchParams.get('expand[]') === 'latest_charge.balance_transaction';
+      return res({ ...pi, latest_charge: pi.latest_charge && expand ? { id: pi.latest_charge, payment_method_details: { type: 'card_present', card_present: { brand: 'mastercard', last4: '4444' } }, balance_transaction: { fee: 320 } } : pi.latest_charge });
+    }
+    if ((mt = p.match(/^\/v1\/webhook_endpoints\/([^/]+)$/)) && method === 'POST') { const ep = world.endpoints.find((e) => e.id === mt[1]); ep.events = Object.entries(form).filter(([k]) => k.startsWith('enabled_events')).map(([, v]) => v); return res(ep); }
     if (p.startsWith('/v1/payment_intents/')) return res({ id: p.split('/').pop(), latest_charge: { id: 'ch_1', payment_method_details: { type: 'card', card: { brand: 'visa', last4: '4242' } }, balance_transaction: { fee: 1448 } } });
     if (p === '/v1/refunds') return res({ id: 're_1', amount: Number(form.amount || 48901), status: 'succeeded' });
     throw new Error(`unmocked stripe ${url}`);
@@ -175,5 +234,67 @@ ok(r.status === 403, 'advisors can’t refund');
 r = await callPay('refund', { paymentIntent: 'pi_123', amount: 100, nonce: 'x1' });
 const rf = world.stripe.filter((x) => x.path === '/v1/refunds').at(-1);
 ok(r.body.id === 're_1' && rf.form.payment_intent === 'pi_123' && rf.form.amount === '10000' && rf.headers['Idempotency-Key'], 'owner refunds part of a payment (idempotent)');
+
+// ---------------------------------------------------------------- Card readers (Stripe Terminal)
+r = await callPay('status');
+ok(Array.isArray(r.body.terminal.readers) && r.body.terminal.readers.length === 0 && r.body.terminal.location === null, 'status: no card readers yet');
+ok((await callPay('registerReader', { code: 'simulated-wpe' }, advisor)).status === 403, 'only the owner adds readers');
+r = await callPay('registerReader', { code: 'simulated-wpe', label: 'Front counter', shopName: 'Main Street Auto', address: { line1: '', city: 'Austin' } });
+ok(r.status === 400 && /street address/.test(r.body.message), 'a reader needs the shop’s address (Stripe location)');
+const address = { line1: '1 Main St', city: 'Austin', state: 'TX', postal: '78701', country: 'US' };
+r = await callPay('registerReader', { code: 'simulated-wpe', label: 'Front counter', shopName: 'Main Street Auto', address });
+const locForm = world.stripe.find((x) => x.path === '/v1/terminal/locations').form;
+ok(r.status === 200 && r.body.reader.id === 'tmr_1' && r.body.reader.label === 'Front counter' && r.body.reader.simulated, 'simulated reader added');
+ok(locForm.display_name === 'Main Street Auto' && locForm['address[line1]'] === '1 Main St' && locForm['address[postal_code]'] === '78701' && world.secrets.get('stripe_terminal_location') === 'tml_1', 'Terminal location made from the shop address and remembered');
+ok(world.stripe.filter((x) => x.path === '/v1/terminal/readers' && x.method === 'POST').at(-1).form.location === 'tml_1', 'reader registered at that location');
+ok(world.endpoints.find((e) => e.id === 'we_new').events.includes('payment_intent.amount_capturable_updated'), 'webhook now also hears about reader payments');
+r = await callPay('registerReader', { code: 'bad-code', label: 'Bay 2', address });
+ok(r.status === 400 && /didn’t recognize/.test(r.body.message) && world.stripe.filter((x) => x.path === '/v1/terminal/locations').length === 1, 'a wrong pairing code is explained; the location isn’t made twice');
+r = await callPay('status');
+ok(r.body.terminal.readers.length === 1 && r.body.terminal.readers[0].status === 'online', 'status lists the reader');
+
+ok((await callPay('readerCharge', { readerId: 'tmr_1', orderId: 'ro_9', roNumber: 11040, amount: 0.2 }, advisor)).status === 400, 'charges under $0.50 refused');
+r = await callPay('readerCharge', { readerId: 'tmr_1', orderId: 'ro_9', roNumber: 11040, amount: 100, tip: 10, surcharge: 3.3, shopName: 'Main Street Auto' }, advisor);
+const pi1 = r.body.paymentIntent;
+const made = world.intents.get(pi1);
+ok(r.status === 200 && r.body.test === true && made.amount === 11330 && made.capture_method === 'manual' && made.payment_method_types[0] === 'card_present', 'staff send the amount (with tip and surcharge) to the reader');
+ok(made.metadata.source === 'terminal' && made.metadata.order === 'ro_9' && made.metadata.amount === '100.00' && made.metadata.tip === '10.00' && made.metadata.reader === 'tmr_1' && made.description.startsWith('RO #11040'), 'payment tagged with the RO, the split and the reader');
+ok(world.readers[0].action.process_payment_intent.payment_intent === pi1, 'reader is showing the payment');
+ok((await callPay('readerCheck', { readerId: 'tmr_1', paymentIntent: pi1 }, advisor)).body.status === 'waiting', 'waiting for the card');
+ok((await callPay('readerSimulate', { readerId: 'tmr_1' }, advisor)).body.ok, 'test mode: simulate a tap');
+r = await callPay('readerCheck', { readerId: 'tmr_1', paymentIntent: pi1 }, advisor);
+ok(r.body.status === 'succeeded' && world.intents.get(pi1).status === 'succeeded', 'approved card captured');
+const p1 = r.body.payment;
+ok(p1.source === 'terminal' && p1.orderId === 'ro_9' && p1.amount === 100 && p1.tip === 10 && p1.surcharge === 3.3 && p1.brand === 'mastercard' && p1.last4 === '4444' && p1.fee === 3.2 && p1.reader === 'tmr_1', 'payment for the RO: amount, tip, surcharge, card and fee');
+ok(world.events.filter((e) => e.ref === pi1).length === 1, 'recorded for every device');
+await callPay('readerCheck', { readerId: 'tmr_1', paymentIntent: pi1 }, advisor);
+ok(world.events.filter((e) => e.ref === pi1).length === 1, 'checking again doesn’t record it twice');
+
+// Declined, cancelled, offline.
+const pi2 = (await callPay('readerCharge', { readerId: 'tmr_1', orderId: 'ro_9', roNumber: 11040, amount: 50 }, advisor)).body.paymentIntent;
+await callPay('readerSimulate', { readerId: 'tmr_1', decline: true }, advisor);
+r = await callPay('readerCheck', { readerId: 'tmr_1', paymentIntent: pi2 }, advisor);
+ok(r.body.status === 'failed' && r.body.message === 'Your card was declined.' && world.intents.get(pi2).status === 'canceled', 'declined card: says so and releases the attempt');
+const pi3 = (await callPay('readerCharge', { readerId: 'tmr_1', orderId: 'ro_9', roNumber: 11040, amount: 50 }, advisor)).body.paymentIntent;
+r = await callPay('readerCancel', { readerId: 'tmr_1', paymentIntent: pi3 }, advisor);
+ok(r.body.status === 'canceled' && world.readers[0].action === null, 'cancel clears the reader and the payment');
+world.readers[0].status = 'offline';
+r = await callPay('readerCharge', { readerId: 'tmr_1', orderId: 'ro_9', roNumber: 11040, amount: 50 }, advisor);
+ok(r.status === 409 && /offline/.test(r.body.message) && [...world.intents.values()].at(-1).status === 'canceled', 'offline reader: explained, nothing left pending');
+world.readers[0].status = 'online';
+
+// The webhook captures and records a reader payment if no screen is watching.
+const pi4 = (await callPay('readerCharge', { readerId: 'tmr_1', orderId: 'ro_10', roNumber: 11041, amount: 75, tip: 5 }, advisor)).body.paymentIntent;
+await callPay('readerSimulate', { readerId: 'tmr_1' }, advisor);
+ok((await signed({ type: 'payment_intent.amount_capturable_updated', data: { object: world.intents.get(pi4) } })) === 200, 'webhook accepts the approval');
+const e4 = world.events.find((e) => e.ref === pi4);
+ok(world.intents.get(pi4).status === 'succeeded' && e4?.payload.amount === 75 && e4.payload.tip === 5 && e4.payload.source === 'terminal', 'webhook captures it and records it for the RO');
+const count = world.events.length;
+await signed({ type: 'payment_intent.succeeded', data: { object: { id: 'pi_checkout_x', status: 'succeeded', metadata: { link: 'abc' } } } });
+ok(world.events.length === count, 'online (Checkout) payments aren’t recorded twice through payment intents');
+ok((await callPay('removeReader', { readerId: 'tmr_1' }, advisor)).status === 403 && (await callPay('removeReader', { readerId: 'tmr_1' })).body.ok && world.readers.length === 0, 'owner removes a reader');
+world.secrets.set('stripe_secret_key', 'sk_live_abc');
+ok((await callPay('readerSimulate', { readerId: 'tmr_1' })).status === 400, 'no simulated taps on a live account');
+world.secrets.set('stripe_secret_key', 'sk_test_abc123');
 
 console.log('STRIPE PASS');
