@@ -1,7 +1,8 @@
-// stripe-webhook: Stripe tells the shop when a pay link is paid (or refunded). Every request is
-// checked against its Stripe-Signature with the endpoint's signing secret (saved in Vault when the
-// owner connected Stripe). Payments are recorded in shop_pay_events for the shop's devices to add to
-// the repair order, with the card brand, last 4 and Stripe's fee for the books.
+// stripe-webhook: Stripe tells the shop when a pay link or a card-reader payment is paid (or
+// refunded). Every request is checked against its Stripe-Signature with the endpoint's signing
+// secret (saved in Vault when the owner connected Stripe). Payments are recorded in shop_pay_events
+// for the shop's devices to add to the repair order, with the card brand, last 4 and Stripe's fee
+// for the books.
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
@@ -82,6 +83,52 @@ async function record(session: any) {
   if (m.link) await db(`/rest/v1/shop_pay_links?id=eq.${encodeURIComponent(m.link)}`, { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ status: "paid", paid_at: payload.paidAt, payment_intent: pi }) });
 }
 
+/**
+ * A card-reader payment (Stripe Terminal): capture it once the card is approved, then record it like
+ * any other payment, with the tip and surcharge the counter entered. shop-pay does the same when the
+ * counter's screen sees the approval first; the payment intent id keeps it from being recorded twice.
+ */
+async function recordIntent(pi: any) {
+  const key = await secret("stripe_secret_key");
+  if (!key || pi?.metadata?.source !== "terminal") return;
+  const auth = { Authorization: `Bearer ${key}` };
+  if (pi.status === "requires_capture") {
+    const r = await fetch(`${STRIPE}/payment_intents/${pi.id}/capture`, { method: "POST", headers: auth });
+    if (!r.ok && r.status !== 400) throw new Error(`Capture failed (${r.status})`);
+  }
+  const r = await fetch(`${STRIPE}/payment_intents/${pi.id}?expand[]=latest_charge.balance_transaction`, { headers: auth });
+  if (!r.ok) return;
+  const full = await r.json();
+  if (full.status !== "succeeded") return;
+  await db("/rest/v1/shop_pay_events?on_conflict=ref", { method: "POST", prefer: "resolution=ignore-duplicates,return=minimal", body: JSON.stringify({ kind: "payment", ref: full.id, payload: terminalPayload(full) }) });
+}
+
+/** What the RO records for a reader payment (shared with shop-pay). */
+function terminalPayload(pi: any) {
+  const charge = pi.latest_charge && typeof pi.latest_charge === "object" ? pi.latest_charge : null;
+  const card = charge?.payment_method_details?.card_present || charge?.payment_method_details?.interac_present || {};
+  const fee = charge?.balance_transaction?.fee;
+  const m = pi.metadata || {};
+  return {
+    source: "terminal",
+    orderId: m.order || null,
+    ro: m.ro ? Number(m.ro) : null,
+    amount: Number(m.amount) || (pi.amount_received || pi.amount || 0) / 100,
+    tip: Number(m.tip) || 0,
+    surcharge: Number(m.surcharge) || 0,
+    method: "Card",
+    type: "card_present",
+    brand: card.brand || null,
+    last4: card.last4 || null,
+    fee: typeof fee === "number" ? fee / 100 : null,
+    paymentIntent: pi.id,
+    charge: charge?.id || null,
+    reader: m.reader || null,
+    paidAt: new Date().toISOString(),
+    livemode: Boolean(pi.livemode),
+  };
+}
+
 Deno.serve(async (req) => {
   if (req.method !== "POST") return new Response("POST only", { status: 405 });
   const raw = await req.text();
@@ -95,6 +142,7 @@ Deno.serve(async (req) => {
   try {
     const o = event.data?.object || {};
     if ((event.type === "checkout.session.completed" && o.payment_status === "paid") || event.type === "checkout.session.async_payment_succeeded") await record(o);
+    if (event.type === "payment_intent.amount_capturable_updated" || event.type === "payment_intent.succeeded") await recordIntent(o);
     if (event.type === "charge.refunded" && o.payment_intent) {
       // Cumulative: devices record the difference from what they already have.
       const ref = `refund:${o.id}:${o.amount_refunded}`;

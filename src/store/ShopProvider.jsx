@@ -637,7 +637,8 @@ function ShopStore({ boot, children }) {
             const pi = p.paymentIntent;
             if (o && pi && row.kind === 'payment' && !o.payments.some((x) => x.stripe?.pi === pi && !x.stripe.refund)) {
               const at = p.paidAt || row.created_at || now();
-              o.payments.push({ id: `pay_st_${pi}`, at, method: p.method || 'Card', amount: Number(p.amount) || 0, tip: 0, surcharge: 0, ref: onlineRef(p), stripe: { pi, charge: p.charge || null, fee: p.fee ?? null, type: p.type || 'card', brand: p.brand || null, last4: p.last4 || null, link: p.link || null, live: Boolean(p.livemode) } });
+              // Card-reader payments carry the tip and surcharge the counter entered.
+              o.payments.push({ id: `pay_st_${pi}`, at, method: p.method || 'Card', amount: Number(p.amount) || 0, tip: Number(p.tip) || 0, surcharge: Number(p.surcharge) || 0, ref: onlineRef(p), stripe: { pi, charge: p.charge || null, fee: p.fee ?? null, type: p.type || 'card', brand: p.brand || null, last4: p.last4 || null, link: p.link || null, reader: p.reader || null, live: Boolean(p.livemode) } });
               if (o.payLink && (!p.link || o.payLink.id === p.link)) o.payLink = { ...o.payLink, status: 'paid', paidAt: at };
               const t = orderTotals(o, shopAt(s.shop, o.locationId));
               if (t.balance <= 0.004 && o.status === 'ready') {
@@ -645,8 +646,9 @@ function ShopStore({ boot, children }) {
                 o.closedAt = o.closedAt || now();
               }
               o.updatedAt = now();
-              if (o.customerId) s.messages.push({ id: `msg_pay_${pi}`, customerId: o.customerId, orderId: o.id, dir: 'in', channel: 'portal', body: `Paid ${money(p.amount)} online — ${onlineRef(p).replace(' · online', '')}`, at, read: false, meta: { payment: pi } });
-              log(s, `Online payment ${money(p.amount)} on RO #${o.number}`, o.id);
+              // Paid at the counter: the person who took it already knows, so no unread message.
+              if (o.customerId && p.source !== 'terminal') s.messages.push({ id: `msg_pay_${pi}`, customerId: o.customerId, orderId: o.id, dir: 'in', channel: 'portal', body: `Paid ${money(p.amount)} online — ${onlineRef(p).replace(' · online', '')}`, at, read: false, meta: { payment: pi } });
+              log(s, `${p.source === 'terminal' ? 'Card reader' : 'Online'} payment ${money(p.amount)} on RO #${o.number}`, o.id);
             }
             if (o && pi && row.kind === 'refund') {
               // Refund totals are cumulative; record what's new since the last one.

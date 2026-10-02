@@ -21,7 +21,7 @@ export function usePhone() {
   return useContext(PhoneContext) || NO_LINE;
 }
 
-const NO_PAY = { status: null, ready: false, refresh: () => {}, ensureLink: null, refund: null };
+const NO_PAY = { status: null, ready: false, refresh: () => {}, ensureLink: null, refund: null, readers: [], reader: null };
 /** Online card payments through the shop's Stripe account (components/PayLine.jsx). */
 export function usePay() {
   return useContext(PayContext) || NO_PAY;

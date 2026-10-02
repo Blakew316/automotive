@@ -29,7 +29,7 @@ const TYPE = { link: 'Link', affirm: 'Affirm', klarna: 'Klarna', afterpay_clearp
 /** How an online payment reads: “Visa •••• 4242 · online”, “Affirm · online”. */
 export function onlineRef(p) {
   const what = p.brand ? `${BRAND[p.brand] || p.brand}${p.last4 ? ` •••• ${p.last4}` : ''}` : TYPE[p.type] ? `${TYPE[p.type]}${p.last4 ? ` •••• ${p.last4}` : ''}` : 'Card';
-  return `${what} · online`;
+  return `${what} · ${p.source === 'terminal' ? 'card reader' : 'online'}`;
 }
 
 /** Card processing fees Stripe kept, from online payments in a list. */

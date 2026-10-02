@@ -3,7 +3,8 @@
 //  - records payments and refunds on the repair order as Stripe reports them (Realtime, with
 //    polling as the fallback), with a "payment received" notice;
 //  - makes pay links on demand, and keeps one ready for every live status page with a balance;
-//  - refunds online payments.
+//  - refunds online payments;
+//  - charges cards on the shop's Stripe card readers from the RO.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useShop, useSync, useUI } from '../store/hooks';
 import { PayContext } from '../store/context';
@@ -150,6 +151,28 @@ export default function PayLine({ children }) {
     [cfg],
   );
 
-  const value = useMemo(() => ({ status: st, ready, refresh: () => setRev((n) => n + 1), ensureLink: ready ? ensureLink : null, refund: ready ? refund : null }), [st, ready, ensureLink, refund]);
+  // ---------------------------------------------------------------- Card readers (Stripe Terminal)
+  // The counter sends the amount to a reader, the customer taps or inserts, and the payment lands on
+  // the RO as soon as the reader approves it (the webhook records it too, in case this screen closes).
+  const readers = useMemo(() => (ready ? st?.terminal?.readers || [] : []), [ready, st]);
+  const sessionEmail = sync?.session?.email;
+  const reader = useMemo(
+    () => ({
+      charge: ({ order, readerId, amount, tip = 0, surcharge = 0 }) => shopPay(cfg, 'readerCharge', { readerId, orderId: order.id, roNumber: order.number, amount, tip, surcharge, shopName: latest.current.state.shop.name, by: sessionEmail || '' }),
+      check: async (readerId, paymentIntent) => {
+        const r = await shopPay(cfg, 'readerCheck', { readerId, paymentIntent });
+        if (r.status === 'succeeded' && r.payment) latest.current.applyPayEvents([{ kind: 'payment', payload: r.payment, created_at: new Date().toISOString() }]);
+        return r;
+      },
+      cancel: (readerId, paymentIntent) => shopPay(cfg, 'readerCancel', { readerId, paymentIntent }),
+      simulate: (readerId) => shopPay(cfg, 'readerSimulate', { readerId }),
+    }),
+    [cfg, sessionEmail],
+  );
+
+  const value = useMemo(
+    () => ({ status: st, ready, refresh: () => setRev((n) => n + 1), ensureLink: ready ? ensureLink : null, refund: ready ? refund : null, readers, reader: ready && readers.length ? reader : null }),
+    [st, ready, ensureLink, refund, readers, reader],
+  );
   return <PayContext.Provider value={value}>{children}</PayContext.Provider>;
 }
