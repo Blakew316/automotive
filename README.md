@@ -293,7 +293,7 @@ npm run build          # app only, into dist/
 npm run build:pages    # website + app as deployed (dist/ and dist/app/)
 ```
 
-Deploys to GitHub Pages via `.github/workflows/deploy.yml` (`npm run build:pages`).
+Deploys to GitHub Pages via `.github/workflows/deploy.yml` (`npm run build:pages`). Netlify serves the same site (`netlify.toml`): it runs the same build, and `scripts/netlify.mjs` places it under `/automotive/`, where its pages link. The bare domain forwards there, and deep links into the app open the app.
 
 ### Tests
 
