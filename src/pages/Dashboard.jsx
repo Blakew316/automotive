@@ -98,7 +98,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <section className="card foil-top mb-6 overflow-hidden">
+      <section className="card brand-top mb-6 overflow-hidden">
         <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-5 pt-6 sm:px-7 sm:pt-7">
           <div className="min-w-0">
             <div className="eyebrow mb-2">{now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>

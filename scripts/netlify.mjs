@@ -2,7 +2,7 @@
 /**
  * Lays out the Netlify site exactly like GitHub Pages, from the dist/ that scripts/pages.mjs built:
  *   /automotive/        the shop's public website
- *   /automotive/app/    the AutoShop Pro staff app
+ *   /automotive/app/    the WPI Driveline staff app
  * The pages are built for that folder (website/business.json basePath), so they go inside it; the
  * bare domain forwards there (netlify.toml), and 404.html sits at the root, where Netlify looks for it.
  *

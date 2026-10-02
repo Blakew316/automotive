@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CircleCheck, KeyRound, Wrench, Phone, ClipboardX, Car, MessageSquare } from 'lucide-react';
+import { ShopBrand } from '../brand/Logo';
 import { EmptyState, Spinner, Field } from '../components/ui';
 import SignaturePad from '../components/SignaturePad';
 import { ScanButton } from '../components/Scanner';
@@ -227,13 +228,11 @@ function Form({ config, kiosk, locationId }) {
 function Shell({ shop, children }) {
   return (
     <div className="min-h-[100dvh] bg-canvas">
-      <header className="bg-graphite text-white">
-        <div className="mx-auto max-w-2xl px-4 pb-6 pt-5">
-          <div className="flex items-center gap-2 text-sm text-white/75">
-            <Wrench size={15} /> {shop.name}
-          </div>
+      <header className="customer-header">
+        <div className="mx-auto max-w-2xl px-4 pb-6 pt-6">
+          <ShopBrand name={shop.name} />
           <h1 className="mt-4 text-3xl font-bold tracking-tight">Check in your vehicle</h1>
-          <p className="mt-1 text-[15px] text-white/75">Takes about a minute. We’ll keep you posted by text.</p>
+          <p className="mt-1 text-[15px] text-ink-3">Takes about a minute. We’ll keep you posted by text.</p>
         </div>
       </header>
       <main className="mx-auto max-w-2xl px-4 py-6">

@@ -16,7 +16,8 @@ const ctx = await browser.newContext({ viewport: { width: 1360, height: 950 }, s
 const page = await ctx.newPage();
 watch(page, 'app');
 await page.goto(ROOT, { waitUntil: 'networkidle' });
-ok((await page.title()).includes('Clinton Complete Auto Care'), 'root serves the public website');
+ok((await page.title()).includes('WPI Driveline'), 'root serves the public website');
+ok(await page.getByRole('link', { name: 'WPI Driveline home' }).first().locator('svg.brand-logo').isVisible(), 'header shows the WPI Driveline logo');
 ok((await page.locator('h1').count()) === 1, 'website home has one h1');
 const staff = await page.getByRole('link', { name: 'Staff sign-in' }).getAttribute('href');
 ok(staff === 'https://blakew316.github.io/automotive/app/signin', 'footer links staff to the sign-in page');

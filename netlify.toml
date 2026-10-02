@@ -1,5 +1,5 @@
 # Netlify serves the same site as GitHub Pages (scripts/pages.mjs, scripts/netlify.mjs): the shop's
-# website at /automotive/ and the AutoShop Pro staff app at /automotive/app/.
+# website at /automotive/ and the WPI Driveline staff app at /automotive/app/.
 [build]
   command = "npm run build:pages && node scripts/netlify.mjs"
   publish = "netlify-dist"

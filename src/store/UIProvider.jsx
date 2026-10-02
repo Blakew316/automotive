@@ -66,7 +66,7 @@ export default function UIProvider({ children }) {
     // Browser and status bar tint: one color per scheme, or the chosen appearance for both.
     document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
       const dark = theme === 'dark' || (theme === 'system' && /dark/.test(m.media || ''));
-      m.setAttribute('content', dark ? '#0b1019' : '#eff1f4');
+      m.setAttribute('content', dark ? '#0a121e' : '#f2f6fa');
     });
     try {
       localStorage.setItem(THEME_KEY, theme);

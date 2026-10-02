@@ -2,7 +2,7 @@
 /**
  * Assembles the GitHub Pages site:
  *   <base>          the shop's public website (website/)
- *   <base>app/      the AutoShop Pro staff app (Vite build)
+ *   <base>app/      the WPI Driveline staff app (Vite build)
  *
  * GitHub Pages serves one 404.html for every missing path. It is the app shell, so deep links into
  * the app (e.g. <base>app/orders/123) load directly; a small script in front of it forwards links
@@ -54,7 +54,7 @@ writeFileSync(join(DIST, '404.html'), shell.replace('<head>', `<head>\n    ${for
 // The app's old service worker was registered for the whole site; replace it with one that removes itself.
 writeFileSync(
   join(DIST, 'sw.js'),
-  `// AutoShop Pro now lives in app/ with its own service worker. This retires the old one registered at the site root.
+  `// The staff app now lives in app/ with its own service worker. This retires the old one registered at the site root.
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (event) => {
   event.waitUntil(

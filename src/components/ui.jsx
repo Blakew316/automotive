@@ -75,7 +75,7 @@ export function Card({ className = '', children, ...rest }) {
 }
 
 /**
- * Icon tile tints by tone — the website's foil hues, as a light wash with a hairline ring, so color
+ * Icon tile tints by tone — the brand's cool hues, as a light wash with a hairline ring, so color
  * adds life without ever becoming a block. Older tone names map onto the same palette.
  */
 const TINT = {
@@ -221,7 +221,7 @@ export function Tabs({ tabs, value, onChange, className = '' }) {
               active ? 'text-ink' : 'text-ink-3 hover:text-ink'
             }`}
           >
-            {active && <span className="bg-foil-ink absolute inset-x-0 -bottom-[2px] h-[2px] rounded-full" />}
+            {active && <span className="bg-brand-bar absolute inset-x-0 -bottom-[2px] h-[2px] rounded-full" />}
             {t.icon && <t.icon size={15} strokeWidth={1.8} className={active ? 'text-accent' : ''} />}
             {t.label}
             {t.count != null && <span className="tabular text-xs text-ink-4">{t.count}</span>}

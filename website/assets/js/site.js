@@ -1,4 +1,4 @@
-/* Clinton Complete Auto Care: shared behaviour for every page.
+/* WPI Driveline: shared behaviour for every page.
    No dependencies. Everything degrades gracefully without JS. */
 (() => {
   "use strict";

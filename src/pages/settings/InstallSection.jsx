@@ -3,7 +3,7 @@ import { useInstallPrompt, isStandalone, isIos } from '../../lib/pwa';
 import { useUI } from '../../store/hooks';
 import Section from './Section';
 
-/** Install AutoShop Pro on phones, tablets and computers (home screen / dock app). */
+/** Install WPI Driveline on phones, tablets and computers (home screen / dock app). */
 export default function InstallSection() {
   const { canInstall, install } = useInstallPrompt();
   const { toast } = useUI();
@@ -21,10 +21,10 @@ export default function InstallSection() {
               className="btn-primary"
               onClick={async () => {
                 const outcome = await install();
-                if (outcome === 'accepted') toast('AutoShop Pro installed', { tone: 'success' });
+                if (outcome === 'accepted') toast('WPI Driveline installed', { tone: 'success' });
               }}
             >
-              <Download size={15} /> Install AutoShop Pro
+              <Download size={15} /> Install WPI Driveline
             </button>
           )}
           <div className="grid gap-3 sm:grid-cols-2">

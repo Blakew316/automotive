@@ -165,7 +165,7 @@ export function SyncSection() {
           {confirm === 'leave' && 'This device keeps its current copy but stops sending and receiving changes. You can load the shared data again any time.'}
         </p>
         {confirm === 'join' && (
-          <button className="btn-plain btn-sm mt-2 px-0" onClick={() => downloadJson(state, `autoshop-this-device-${new Date().toISOString().slice(0, 10)}.json`)}>
+          <button className="btn-plain btn-sm mt-2 px-0" onClick={() => downloadJson(state, `wpi-driveline-this-device-${new Date().toISOString().slice(0, 10)}.json`)}>
             <Download size={13} /> Download this device’s data first
           </button>
         )}
@@ -213,7 +213,7 @@ export function CloudBackups() {
       const rows = (full?.data || []).map(([collection, id, data]) => ({ collection, id, data }));
       const skeleton = { version: 2, seededAt: full.created_at, shop: {}, counters: {} };
       for (const k of Object.keys(state)) if (Array.isArray(state[k])) skeleton[k] = [];
-      downloadJson(stateFromRows(rows, skeleton), `autoshop-cloud-backup-${full.created_at.slice(0, 10)}.json`);
+      downloadJson(stateFromRows(rows, skeleton), `wpi-driveline-cloud-backup-${full.created_at.slice(0, 10)}.json`);
     } catch (e) {
       toast(e.message, { tone: 'error' });
     } finally {

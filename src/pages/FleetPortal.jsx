@@ -2,7 +2,8 @@
 // open invoices and the balance. Reads only the small file the shop publishes for this account.
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import { Phone, CalendarPlus, CreditCard, Link2Off, Wrench, RefreshCw, Activity, FileText, Truck } from 'lucide-react';
+import { Phone, CalendarPlus, CreditCard, Link2Off, RefreshCw, Activity, FileText, Truck } from 'lucide-react';
+import { ShopBrand } from '../brand/Logo';
 import { EmptyState, Spinner, Segmented } from '../components/ui';
 import AgingBar from '../components/AgingBar';
 import { parseShareSource } from '../lib/cloudShare';
@@ -73,13 +74,11 @@ export default function FleetPortal() {
 
   return (
     <div className="min-h-[100dvh] bg-canvas">
-      <header className="bg-graphite text-white">
-        <div className="mx-auto max-w-4xl px-4 pb-7 pt-5">
-          <div className="flex items-center gap-2 text-sm text-white/75">
-            <Wrench size={15} /> {data.shop.name}
-          </div>
+      <header className="customer-header">
+        <div className="mx-auto max-w-4xl px-4 pb-7 pt-6">
+          <ShopBrand name={data.shop.name} />
           <h1 className="mt-5 text-3xl font-bold tracking-tight">{data.company}</h1>
-          <p className="mt-1 text-[15px] text-white/75">Fleet account · {data.terms}</p>
+          <p className="mt-1 text-[15px] text-ink-3">Fleet account · {data.terms}</p>
           <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <HeaderStat label="Units" value={data.units.length} />
             <HeaderStat label="Need maintenance" value={needPm} />
@@ -234,10 +233,10 @@ export default function FleetPortal() {
 
 function HeaderStat({ label, value, sub }) {
   return (
-    <div className="rounded-[10px] bg-white/[0.08] px-3 py-2.5">
-      <div className="text-xs text-white/65">{label}</div>
+    <div className="rounded-[10px] bg-surface/80 px-3 py-2.5 ring-1 ring-line">
+      <div className="text-xs text-ink-3">{label}</div>
       <div className="tabular text-xl font-semibold">{value}</div>
-      {sub && <div className="text-[11px] text-white/65">{sub}</div>}
+      {sub && <div className="text-[11px] text-ink-3">{sub}</div>}
     </div>
   );
 }

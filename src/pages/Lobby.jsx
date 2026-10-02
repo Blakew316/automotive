@@ -2,7 +2,8 @@
 // last initial only), plus the shop's messages, Wi-Fi and the self check-in code. Updates live as
 // the shop's data changes; pages through long lists on its own.
 import { useEffect, useMemo, useState } from 'react';
-import { Wrench, Wifi, CircleCheck } from 'lucide-react';
+import { Wifi, CircleCheck } from 'lucide-react';
+import { ShopBrand } from '../brand/Logo';
 import { useScopedShop, useSite } from '../store/hooks';
 import QrCode from '../components/QrCode';
 import { lobbyRows, checkinLink } from '../lib/operations';
@@ -37,14 +38,9 @@ export default function Lobby() {
 
   return (
     <div className="force-light flex min-h-[100dvh] flex-col bg-canvas text-ink">
-      <header className="flex items-center gap-4 bg-graphite px-10 py-6 text-white">
-        <span className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-white/10">
-          <Wrench size={24} />
-        </span>
-        <div className="flex-1">
-          <div className="text-3xl font-bold tracking-tight">{state.shop.name}</div>
-          <div className="text-lg text-white/70">Vehicle status</div>
-        </div>
+      <header className="customer-header flex items-center gap-6 px-10 py-6">
+        <ShopBrand name={state.shop.name} className="h-16" />
+        <div className="flex-1 border-l border-line pl-6 text-2xl font-semibold tracking-tight text-ink-2">Vehicle status</div>
         <div className="tabular text-4xl font-semibold">{now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</div>
       </header>
 

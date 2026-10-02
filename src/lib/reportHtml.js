@@ -61,8 +61,9 @@ export async function buildReportHtml(report, { includeVideo = true } = {}) {
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${esc(vName)} — RO #${esc(ro.number)} — ${esc(shop.name)}</title>
 <style>
-:root{color-scheme:light dark;--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--ink2:#515154;--ink3:#86868b;--line:#e5e5ea}
-@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1c1c1e;--ink:#f5f5f7;--ink2:#c7c7cc;--ink3:#8e8e93;--line:#38383a}}
+:root{color-scheme:light dark;--bg:#f2f6fa;--card:#fff;--ink:#0f2b4c;--ink2:#3d506b;--ink3:#607088;--line:#dee6f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0a121e;--card:#111c2c;--ink:#eaf0f8;--ink2:#a6b4c8;--ink3:#8090a8;--line:#26344a}}
+body::before{content:'';display:block;height:3px;background:linear-gradient(90deg,#1f7ae0 50%,#2db36a 50%)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
 main{max-width:760px;margin:0 auto;padding:28px 16px 48px}h1{font-size:28px;letter-spacing:-.02em;margin:18px 0 4px}h2{font-size:15px;margin:0;padding:12px 16px;border-bottom:1px solid var(--line)}
 .muted{color:var(--ink3);font-size:12.5px}.sub{color:var(--ink2);margin:0}.card{background:var(--card);border-radius:12px;margin:0 0 18px;overflow:hidden;box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)}
@@ -70,7 +71,7 @@ ul{list-style:none;margin:0;padding:0}li{padding:12px 16px;border-top:1px solid 
 .row{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:10px}figure{margin:0}figure img,figure video{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;background:#0001;display:block}figcaption{font-size:12px;color:var(--ink2);margin-top:4px}
 .zoom{display:none;position:fixed;inset:0;background:rgba(0,0,0,.94);z-index:9;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-decoration:none;padding:16px}.zoom:target{display:flex}.zoom img{max-width:100%;max-height:85vh;border-radius:6px}.zoom span{margin-top:10px;font-size:14px}
-dl{margin:0;padding:12px 16px}dl div{display:flex;justify-content:space-between;padding:2px 0;color:var(--ink2)}dl .total{color:var(--ink);font-weight:600;font-size:16px}a.btn{display:inline-block;background:#0071e3;color:#fff;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0}
+dl{margin:0;padding:12px 16px}dl div{display:flex;justify-content:space-between;padding:2px 0;color:var(--ink2)}dl .total{color:var(--ink);font-weight:600;font-size:16px}a.btn{display:inline-block;background:#1a6fd6;color:#fff;border-radius:8px;padding:8px 14px;text-decoration:none;font-weight:600;margin:4px 8px 4px 0}
 footer{font-size:12px;color:var(--ink3);border-top:1px solid var(--line);padding-top:12px;margin-top:28px}
 </style></head><body><main>
 <div><strong>${esc(shop.name)}</strong><div class="muted">${esc([shop.address, [shop.city, shop.state].filter(Boolean).join(', '), shop.zip].filter(Boolean).join(' '))} · ${esc(fmtPhone(shop.phone))}</div></div>

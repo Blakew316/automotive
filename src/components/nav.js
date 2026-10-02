@@ -20,7 +20,7 @@ export function useNavCounts() {
   };
 }
 
-// Each section wears one of the website's foil hues on its icons.
+// Each section wears one of the brand's cool hues on its icons.
 export const HUE = {
   navy: { icon: 'text-accent/75 group-hover:text-accent', active: 'bg-accent/[0.09] text-ink', on: 'text-accent', tone: 'navy' },
   lilac: { icon: 'text-hue-lilac/75 group-hover:text-hue-lilac', active: 'bg-hue-lilac/[0.1] text-ink', on: 'text-hue-lilac', tone: 'lilac' },

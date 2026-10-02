@@ -1,4 +1,4 @@
-// Call a customer. With the business line connected, AutoShop Pro rings the advisor's phone first and
+// Call a customer. With the business line connected, WPI Driveline rings the advisor's phone first and
 // then connects the customer, so the customer sees the shop's number; otherwise it's a plain tel: link.
 import { useState } from 'react';
 import { Phone, PhoneCall } from 'lucide-react';

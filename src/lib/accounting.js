@@ -290,7 +290,7 @@ export function salesJournals(state, from, to) {
     return {
       date: day,
       no: `SALES-${day.replace(/-/g, '')}`,
-      memo: `Daily sales summary for ${new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} from AutoShop Pro`,
+      memo: `Daily sales summary for ${new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} from WPI Driveline`,
       lines: lines.filter((l) => l.cents).map((l) => ({ account: l.account, debit: l.cents > 0 ? l.cents / 100 : 0, credit: l.cents < 0 ? -l.cents / 100 : 0 })),
     };
   });

@@ -1,60 +1,71 @@
 #!/usr/bin/env node
 /**
- * Renders the staff app's Home Screen icons, favicon and iOS launch screens from the app's logo
- * (src/components/Layout.jsx `Logo`: the accent-to-lilac gradient tile with a white lucide wrench).
+ * Writes every WPI Driveline brand file from the logo in src/brand/artwork.js.
  *
- *   public/icons/apple-touch-icon.png   180×180, opaque full-bleed square (iOS applies its own mask)
- *   public/icons/icon-192.png           manifest "any": the tile with rounded corners, transparent outside
- *   public/icons/icon-512.png
- *   public/icons/maskable-512.png       manifest "maskable": full bleed, wrench inside the 80% safe zone
- *   public/favicon.svg                  32×32 vector tile
- *   public/splash/{light,dark}-WxH.png  apple-touch-startup-image for every current iPhone (portrait)
- *                                       and iPad (portrait and landscape): the plain canvas color, no logo
- *   index.html                          the <link rel="apple-touch-startup-image"> tags, written between
- *                                       the <!-- launch screens --> markers (nothing else is touched)
+ * Staff app (public/):
+ *   icons/apple-touch-icon.png   180×180, opaque full-bleed square (iOS applies its own mask)
+ *   icons/icon-192.png           manifest "any": the tile with rounded corners, transparent outside
+ *   icons/icon-512.png
+ *   icons/maskable-512.png       manifest "maskable": full bleed, mark inside the 80% safe zone
+ *   favicon.svg                  32×32 vector tile
+ *   splash/{light,dark}-WxH.png  apple-touch-startup-image for every current iPhone (portrait) and
+ *                                iPad (portrait and landscape): the plain canvas color, no logo
+ *   ../index.html                the <link rel="apple-touch-startup-image"> tags, written between the
+ *                                <!-- launch screens --> markers (nothing else is touched)
  *
- * The icons are painted on a canvas in Chromium at their exact pixel size, with no highlight or shadow
- * so they read as the same mark as the in-app Logo; the wrench sits at its optical center (the heavy
- * head would otherwise make it look pushed up and to the right). The gradient is computed
- * per pixel with the CSS linear-gradient math instead of being drawn by Skia, which dithers gradients:
- * the noise is invisible but makes the PNGs 5–8× larger. The wrench (lucide-react's current path) and
- * the rounded corners are rasterized by Chromium. Every PNG is then re-encoded here with the filter and
- * zlib settings that compress it best; launch screens are 1-bit palette PNGs of a few hundred bytes.
+ * Public website (website/):
+ *   assets/img/logo.svg          WPI, bars and DRIVELINE (the header and brand card)
+ *   assets/img/logo-full.svg     the complete stacked logo with its tagline
+ *   assets/img/logo-mark.svg     WPI over its bars
+ *   assets/img/apple-touch-icon.png, favicon-32.png, icon-192.png, icon-512.png, icon-maskable-512.png
+ *   favicon.ico                  16 and 32 px
+ *   assets/img/og-image.png      1200×630 link preview
  *
- * Usage: node scripts/app-icons.mjs
+ * The icon is the logo's mark — navy WPI over its blue and green bars — on a pale blue tile. At favicon
+ * sizes the bars are drawn at least 2 px tall with a 1 px gap so they stay visible. The tile's gradient
+ * is computed per pixel with the CSS linear-gradient math instead of being drawn by Skia, which dithers
+ * gradients: the noise is invisible but makes the PNGs 5–8× larger. The glyphs are rasterized by
+ * Chromium. Every PNG is then re-encoded here with the filter and zlib settings that compress it best;
+ * launch screens are 1-bit palette PNGs of a few hundred bytes.
+ *
+ * Usage: node scripts/brand-assets.mjs
  */
 import { mkdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { constants, deflateSync, inflateSync } from 'node:zlib';
-import { __iconNode as WRENCH } from 'lucide-react/dist/esm/icons/wrench.js';
+import { BARS, COLORS, DRIVELINE, WPI, logoSvg } from '../src/brand/artwork.js';
 import { launch } from '../tests/support/env.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC = join(ROOT, 'public');
+const WEBSITE = join(ROOT, 'website');
 const SPLASH = join(PUBLIC, 'splash');
 const INDEX = join(ROOT, 'index.html');
 
-// The Logo tile: linear-gradient(135deg, rgb(28 59 107) 30%, rgb(77 86 191) 75%, rgb(122 92 196) 115%).
+// The tile: linear-gradient(135deg, #f8fbff, #e3edfa) — a pale blue that keeps the navy mark crisp.
 const STOPS = [
-  [0.3, [28, 59, 107]],
-  [0.75, [77, 86, 191]],
-  [1.15, [122, 92, 196]],
+  [0, [248, 251, 255]],
+  [1, [227, 237, 250]],
 ];
-const STROKE = 2.2; // the Logo's Wrench strokeWidth (24×24 grid)
-const WRENCH_D = WRENCH.filter(([tag]) => tag === 'path').map(([, attrs]) => attrs.d);
-if (!WRENCH_D.length) throw new Error('lucide-react wrench icon has no <path>');
+const hex = (rgb) => '#' + rgb.map((v) => v.toString(16).padStart(2, '0')).join('');
 
-/** size: px; radius: corner radius / size; wrench: wrench box (24×24 grid) / size. */
+/** size: px; radius: corner radius / size; mark: the mark's width / size. */
 const ICONS = [
-  { file: 'icons/apple-touch-icon.png', size: 180, radius: 0, wrench: 0.52, opaque: true },
-  { file: 'icons/icon-192.png', size: 192, radius: 0.225, wrench: 0.52 },
-  { file: 'icons/icon-512.png', size: 512, radius: 0.225, wrench: 0.52 },
-  { file: 'icons/maskable-512.png', size: 512, radius: 0, wrench: 0.4, opaque: true },
+  { file: 'public/icons/apple-touch-icon.png', size: 180, radius: 0, mark: 0.64, opaque: true },
+  { file: 'public/icons/icon-192.png', size: 192, radius: 0.225, mark: 0.64 },
+  { file: 'public/icons/icon-512.png', size: 512, radius: 0.225, mark: 0.64 },
+  { file: 'public/icons/maskable-512.png', size: 512, radius: 0, mark: 0.52, opaque: true },
+  { file: 'website/assets/img/apple-touch-icon.png', size: 180, radius: 0, mark: 0.64, opaque: true },
+  { file: 'website/assets/img/icon-192.png', size: 192, radius: 0.225, mark: 0.64 },
+  { file: 'website/assets/img/icon-512.png', size: 512, radius: 0.225, mark: 0.64 },
+  { file: 'website/assets/img/icon-maskable-512.png', size: 512, radius: 0, mark: 0.52, opaque: true },
+  { file: 'website/assets/img/favicon-32.png', size: 32, radius: 0.22, mark: 0.78 },
+  { file: 'favicon-16', size: 16, radius: 0.22, mark: 0.84 }, // only inside favicon.ico
 ];
 
-// Launch screens: the app's canvas color (index.html, theme-color) per color scheme.
-const SCHEMES = { light: '#eff1f4', dark: '#0b1019' };
+// Launch screens: the app's canvas color (index.css --canvas, theme-color) per color scheme.
+const SCHEMES = { light: '#f2f6fa', dark: '#0a121e' };
 // [CSS width, CSS height, device pixel ratio] in portrait.
 const IPHONES = [
   [440, 956, 3], [402, 874, 3], [430, 932, 3], [420, 912, 3], [393, 852, 3], [390, 844, 3], [428, 926, 3],
@@ -167,34 +178,26 @@ function encodePNG({ width, height, rgba }) {
   return { opaque, data: png({ width, height, depth: 8, colorType: opaque ? 2 : 6, idat: best }) };
 }
 
-// ---------------------------------------------------------------------------------------------------
-// Drawing (these two run in the page)
 
-/** Where the wrench's stroked ink sits in its 24×24 grid: bounding-box center and area centroid. */
-function measureWrench({ paths, stroke }) {
-  const N = 480, k = 24 / N, canvas = document.createElement('canvas');
-  canvas.width = canvas.height = N;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  ctx.scale(1 / k, 1 / k);
-  Object.assign(ctx, { lineWidth: stroke, lineCap: 'round', lineJoin: 'round' });
-  for (const d of paths) ctx.stroke(new Path2D(d));
-  const px = ctx.getImageData(0, 0, N, N).data;
-  let sx = 0, sy = 0, sum = 0, x0 = N, y0 = N, x1 = 0, y1 = 0;
-  for (let y = 0; y < N; y++) {
-    for (let x = 0; x < N; x++) {
-      const v = px[(y * N + x) * 4 + 3] / 255;
-      if (!v) continue;
-      sx += v * (x + 0.5);
-      sy += v * (y + 0.5);
-      sum += v;
-      x0 = Math.min(x0, x), y0 = Math.min(y0, y), x1 = Math.max(x1, x + 1), y1 = Math.max(y1, y + 1);
-    }
-  }
-  return { box: [((x0 + x1) / 2) * k, ((y0 + y1) / 2) * k], centroid: [(sx / sum) * k, (sy / sum) * k] };
+// ---------------------------------------------------------------------------------------------------
+// Drawing
+
+/**
+ * The mark for an icon S px wide: WPI's glyph, and the bars as [x, y, w, h] in logo units, thickened
+ * to at least 2 px with a 1 px gap when the icon is small.
+ */
+function markGeometry(S, share) {
+  const width = BARS.green[0] + BARS.green[2];
+  const k = (S * share) / width; // px per logo unit
+  const h = Math.max(BARS.blue[3], 2 / k);
+  const gap = Math.max(BARS.green[0] - BARS.blue[2], 1 / k);
+  const half = (width - gap) / 2;
+  const top = BARS.blue[1] + Math.max(0, (h - BARS.blue[3]) * 0.25);
+  return { k, width, top: WPI.y - 182, bottom: top + h, bars: [[0, top, half, h, COLORS.blue], [half + gap, top, half, h, COLORS.green]] };
 }
 
-/** Paints one icon on the page's canvas, which is exactly the viewport. */
-function paintIcon({ size: S, radius, wrench, center, stops, paths, stroke }) {
+/** Paints one icon on the page's canvas, which is exactly the viewport. Runs in the page. */
+function paintIcon({ size: S, radius, stops, wpi, geo, navy }) {
   const canvas = document.querySelector('canvas');
   canvas.width = canvas.height = S;
   // Background: CSS linear-gradient(135deg, ...) on a square runs corner to corner, so a pixel's
@@ -220,62 +223,100 @@ function paintIcon({ size: S, radius, wrench, center, stops, paths, stroke }) {
   ctx.fillStyle = ctx.createPattern(bg, 'no-repeat');
   ctx.fill();
 
-  // The wrench box, placed so its optical center (from measureWrench) lands on the icon's center.
-  const w = wrench * S;
-  ctx.translate(S / 2 - (center[0] / 24) * w, S / 2 - (center[1] / 24) * w);
-  ctx.scale(w / 24, w / 24);
-  Object.assign(ctx, { strokeStyle: '#fff', lineWidth: stroke, lineCap: 'round', lineJoin: 'round' });
-  for (const d of paths) ctx.stroke(new Path2D(d));
+  // The mark, centered on its full height (glyph top to the bottom of the bars).
+  const { k, width, top, bottom, bars } = geo;
+  ctx.translate(S / 2 - (width / 2) * k, S / 2 - ((top + bottom) / 2) * k);
+  ctx.scale(k, k);
+  ctx.fillStyle = navy;
+  ctx.save();
+  ctx.translate(wpi.x, wpi.y);
+  ctx.fill(new Path2D(wpi.d));
+  ctx.restore();
+  for (const [x, y, w, h, fill] of bars) {
+    ctx.fillStyle = fill;
+    ctx.fillRect(x, y, w, h);
+  }
 }
 
 // ---------------------------------------------------------------------------------------------------
 
 const written = [];
 function write(rel, data) {
-  const file = join(PUBLIC, rel);
+  const file = join(ROOT, rel);
   mkdirSync(dirname(file), { recursive: true });
   writeFileSync(file, data);
   written.push(file);
 }
 
-async function renderIcons() {
+/** An .ico holding PNG images (every browser since IE Vista-era reads PNG entries). */
+function ico(images) {
+  const head = Buffer.alloc(6 + 16 * images.length);
+  head.writeUInt16LE(1, 2);
+  head.writeUInt16LE(images.length, 4);
+  let offset = head.length;
+  images.forEach(({ size, data }, i) => {
+    const e = 6 + 16 * i;
+    head[e] = head[e + 1] = size % 256;
+    head.writeUInt16LE(1, e + 4); // color planes
+    head.writeUInt16LE(32, e + 6); // bits per pixel
+    head.writeUInt32LE(data.length, e + 8);
+    head.writeUInt32LE(offset, e + 12);
+    offset += data.length;
+  });
+  return Buffer.concat([head, ...images.map((im) => im.data)]);
+}
+
+/** The link preview: the logo on the pale tile color, with the bars' blue and green as a soft wash. */
+function ogPage() {
+  const logo = logoSvg('lockup').replace(/ width="[\d.]+" height="[\d.]+"/, ' width="560"');
+  return `<!doctype html><html><body style="margin:0">
+<div style="width:1200px;height:630px;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(60% 80% at 100% 0%, rgb(31 122 224 / .10), transparent 70%),
+  radial-gradient(55% 75% at 0% 100%, rgb(45 179 106 / .10), transparent 70%), ${hex(STOPS[0][1])}">${logo}</div>
+</body></html>`;
+}
+
+async function renderPNGs() {
   const browser = await launch();
+  const ico16 = [];
   try {
     const page = await browser.newPage({ viewport: { width: 512, height: 512 }, deviceScaleFactor: 1 });
     await page.setContent('<!doctype html><html><body style="margin:0"><canvas style="display:block"></canvas></body></html>');
-    const m = await page.evaluate(measureWrench, { paths: WRENCH_D, stroke: STROKE });
-    // Optical center: halfway between the bounding box's center and the centroid, so the heavy head
-    // doesn't make the wrench look pushed toward the top right.
-    const center = [0, 1].map((i) => (m.box[i] + m.centroid[i]) / 2);
     for (const icon of ICONS) {
       await page.setViewportSize({ width: icon.size, height: icon.size });
-      await page.evaluate(paintIcon, { ...icon, center, stops: STOPS, paths: WRENCH_D, stroke: STROKE });
+      await page.evaluate(paintIcon, { ...icon, stops: STOPS, wpi: WPI, geo: markGeometry(icon.size, icon.mark), navy: COLORS.navy });
       const shot = decodePNG(await page.screenshot({ omitBackground: !icon.opaque }));
       if (shot.width !== icon.size || shot.height !== icon.size) throw new Error(`${icon.file}: rendered ${shot.width}×${shot.height}`);
       const { opaque, data } = encodePNG(shot);
       if (icon.opaque && !opaque) throw new Error(`${icon.file} must be fully opaque`);
-      write(icon.file, data);
+      if (icon.size <= 32) ico16.push({ size: icon.size, data });
+      if (icon.file.includes('/')) write(icon.file, data);
     }
+    await page.setViewportSize({ width: 1200, height: 630 });
+    await page.setContent(ogPage());
+    write('website/assets/img/og-image.png', encodePNG(decodePNG(await page.screenshot())).data);
   } finally {
     await browser.close();
   }
+  write('website/favicon.ico', ico(ico16.sort((a, b) => a.size - b.size)));
 }
 
 function favicon() {
-  // userSpaceOnUse on the 32×32 tile: the 135deg line runs (0,0)→(32,32); stretching it to 115% keeps
-  // the CSS stop positions (30%, 75%, 115%) without clamping the last one.
-  const end = (32 * STOPS.at(-1)[0]).toFixed(1);
-  const hex = (rgb) => '#' + rgb.map((v) => v.toString(16).padStart(2, '0')).join('');
-  const stops = STOPS.map(([pos, rgb]) => `<stop offset="${+(pos / STOPS.at(-1)[0]).toFixed(4)}" stop-color="${hex(rgb)}"/>`);
+  // The same tile and mark as the PNG icons, at 32×32 with the small-size bars.
+  const S = 32, geo = markGeometry(S, 0.78);
+  const tx = (S / 2 - (geo.width / 2) * geo.k).toFixed(3), ty = (S / 2 - ((geo.top + geo.bottom) / 2) * geo.k).toFixed(3);
+  const r = (n) => +n.toFixed(2);
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
   <defs>
-    <linearGradient id="tile" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="${end}" y2="${end}">
-      ${stops.join('\n      ')}
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="${hex(STOPS[0][1])}"/>
+      <stop offset="1" stop-color="${hex(STOPS[1][1])}"/>
     </linearGradient>
   </defs>
-  <rect width="32" height="32" rx="8" fill="url(#tile)"/>
-  <g transform="translate(6 6) scale(0.8333)" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-    ${WRENCH_D.map((d) => `<path d="${d}"/>`).join('\n    ')}
+  <rect width="32" height="32" rx="7" fill="url(#tile)"/>
+  <g transform="translate(${tx} ${ty}) scale(${geo.k.toFixed(5)})">
+    <path transform="translate(${WPI.x} ${WPI.y})" fill="${COLORS.navy}" d="${WPI.d}"/>
+    ${geo.bars.map(([x, y, w, h, fill]) => `<rect x="${r(x)}" y="${r(y)}" width="${r(w)}" height="${r(h)}" fill="${fill}"/>`).join('\n    ')}
   </g>
 </svg>
 `;
@@ -295,7 +336,7 @@ function launchScreens() {
       const name = `${scheme}-${pw}x${ph}.png`;
       if (seen.has(name)) throw new Error(`two launch screens would be ${name}`);
       seen.add(name);
-      write(`splash/${name}`, solidPNG(pw, ph, color));
+      write(`public/splash/${name}`, solidPNG(pw, ph, color));
       const media = `screen and (device-width: ${w}px) and (device-height: ${h}px) and (-webkit-device-pixel-ratio: ${dpr}) and (orientation: ${orientation}) and (prefers-color-scheme: ${scheme})`;
       tags.push(`<link rel="apple-touch-startup-image" media="${media}" href="/splash/${name}" />`);
     }
@@ -312,13 +353,16 @@ function writeLinks(tags) {
   return next !== html;
 }
 
-await renderIcons();
-write('favicon.svg', favicon());
+for (const variant of ['lockup', 'full', 'mark']) {
+  write(`website/assets/img/${variant === 'lockup' ? 'logo' : `logo-${variant}`}.svg`, `${logoSvg(variant)}\n`);
+}
+await renderPNGs();
+write('public/favicon.svg', favicon());
 const tags = launchScreens();
 const changed = writeLinks(tags);
 
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;
-for (const file of written.filter((f) => !f.startsWith(SPLASH))) console.log(`${relative(ROOT, file).padEnd(30)} ${kb(statSync(file).size)}`);
+for (const file of written.filter((f) => !f.startsWith(SPLASH))) console.log(`${relative(ROOT, file).padEnd(42)} ${kb(statSync(file).size)}`);
 const splash = written.filter((f) => f.startsWith(SPLASH));
 console.log(`public/splash/ ${splash.length} launch screens, ${kb(splash.reduce((s, f) => s + statSync(f).size, 0))}`);
 console.log(`index.html: ${tags.length} launch screen links ${changed ? 'written' : 'unchanged'}`);

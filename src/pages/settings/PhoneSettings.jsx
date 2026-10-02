@@ -33,7 +33,7 @@ export default function PhoneSettings() {
     setBusy(true);
     try {
       const r = await shopPhone(sync.cfg, 'connect');
-      toast(`Connected ${fmtPhone(r.phone)} — texts and calls now come to AutoShop Pro`, { tone: 'success' });
+      toast(`Connected ${fmtPhone(r.phone)} — texts and calls now come to WPI Driveline`, { tone: 'success' });
       phone.refresh();
     } catch (e) {
       toast(e.message || 'Couldn’t connect the number', { tone: 'error' });
@@ -58,7 +58,7 @@ export default function PhoneSettings() {
         subtitle={st?.connected ? `Connected · ${fmtPhone(st.phone)}${st.connectedAt ? ` · since ${relTime(st.connectedAt)}` : ''}` : 'Text and call customers from your shop’s number, with an AI receptionist for missed calls'}
         actions={
           st?.connected && owner ? (
-            <button className="btn-plain btn-sm" onClick={connect} disabled={busy} title="Point the number at AutoShop Pro again">
+            <button className="btn-plain btn-sm" onClick={connect} disabled={busy} title="Point the number at WPI Driveline again">
               {busy ? <Spinner size={13} /> : <RefreshCw size={13} />} Reconnect
             </button>
           ) : null
@@ -242,7 +242,7 @@ function Setup({ st, owner, busy, onConnect }) {
   const steps = [
     { done: true, text: <>Create a Twilio account and buy (or port) a local number with texting and voice. <ExternalLink href="https://www.twilio.com/console">Twilio console</ExternalLink></> },
     { done: st.configured, text: <>Add the Account SID, Auth token and the number in <Link to="/settings?tab=keys" className="link">Keys & AI</Link>.</> },
-    { done: false, text: 'Connect the number — AutoShop Pro sets up its texting and calling for you.' },
+    { done: false, text: 'Connect the number — WPI Driveline sets up its texting and calling for you.' },
     { done: false, text: 'Register the number for business texting in Twilio (A2P 10DLC or toll-free verification).' },
   ];
   return (
@@ -319,7 +319,7 @@ function ForwardList({ line, canEdit, onChange }) {
   return (
     <div>
       <div className="field-label">Ring these phones</div>
-      <p className="mb-2 text-xs text-ink-3">They all ring at once; the first to answer gets the call. When you call customers from AutoShop Pro, they see the shop’s number.</p>
+      <p className="mb-2 text-xs text-ink-3">They all ring at once; the first to answer gets the call. When you call customers from WPI Driveline, they see the shop’s number.</p>
       <ul className="mb-2 space-y-1.5">
         {line.forward.map((f, i) => (
           <li key={`${f.number}-${i}`} className="flex items-center gap-2 rounded-[10px] border border-line px-3 py-1.5 text-sm">
@@ -357,7 +357,7 @@ function TestText() {
     e.preventDefault();
     setBusy(true);
     try {
-      await shopPhone(sync.cfg, 'send', { to, body: 'Test text from AutoShop Pro — your business line is working.' });
+      await shopPhone(sync.cfg, 'send', { to, body: 'Test text from WPI Driveline — your business line is working.' });
       toast('Test text sent', { tone: 'success' });
       setTo('');
     } catch (err) {

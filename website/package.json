@@ -1,8 +1,8 @@
 {
-  "name": "clinton-complete-auto-care",
+  "name": "wpi-driveline-website",
   "version": "1.0.0",
   "private": true,
-  "description": "Static multi-page website for Clinton Complete Auto Care & Small Engine Repair.",
+  "description": "Static multi-page website for WPI Driveline, auto and small engine repair.",
   "scripts": {
     "sync": "node scripts/sync.mjs",
     "check": "node scripts/check.mjs",

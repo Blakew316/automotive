@@ -1,6 +1,6 @@
-# AutoShop Pro
+# WPI Driveline
 
-Shop management for independent auto repair — estimates with fast customer authorization, repair orders through to paid invoice, a drag-and-drop workflow board, digital inspections, two-way customer messaging, online booking, a tech time clock with team pay and productivity, purchase orders, payments, accounting synced to QuickBooks Online, connected cars, marketing, a built-in vehicle database (every make and model NHTSA has VIN data for, with system diagrams, parts lists and repair guides), on-device VIN decoding, parts lookup across suppliers, and a technical library with OEM service information, wiring references and trouble codes.
+The WPI Driveline shop management system: shop management for independent auto repair — estimates with fast customer authorization, repair orders through to paid invoice, a drag-and-drop workflow board, digital inspections, two-way customer messaging, online booking, a tech time clock with team pay and productivity, purchase orders, payments, accounting synced to QuickBooks Online, connected cars, marketing, a built-in vehicle database (every make and model NHTSA has VIN data for, with system diagrams, parts lists and repair guides), on-device VIN decoding, parts lookup across suppliers, and a technical library with OEM service information, wiring references and trouble codes.
 
 Built with React, Vite and Tailwind. It installs to phones, tablets and computers as an app and works offline: each device keeps the shop in IndexedDB, and with **shared shop data** turned on every device stays in sync through the shop's Supabase project — live updates, offline edits that sync later, merged concurrent edits, a change history on every record and nightly backups. Features that reach customers' phones (share links, online approvals, customer replies and the online booking inbox) use the same project — see [Shop Cloud](#shop-cloud).
 
@@ -8,8 +8,8 @@ The repo also holds the shop's public website (`website/`), published alongside 
 
 | URL | What |
 | --- | --- |
-| https://blakew316.github.io/automotive/ | Public website — Clinton Complete Auto Care |
-| https://blakew316.github.io/automotive/app/ | AutoShop Pro staff app |
+| https://blakew316.github.io/automotive/ | Public website — WPI Driveline |
+| https://blakew316.github.io/automotive/app/ | WPI Driveline staff app |
 
 ## Features
 
@@ -108,7 +108,7 @@ The repo also holds the shop's public website (`website/`), published alongside 
 
 Shop data and photos live on the device (localStorage and IndexedDB), so everything works offline and costs nothing. Anything that has to open on a customer’s phone needs to be online, so it uses a [Supabase](https://supabase.com) project dedicated to AutoShop Pro.
 
-**It comes preconfigured.** The app ships connected to the *AutoShop Pro* project (`src/lib/cloudDefaults.js`): a public-read `autoshop-media` Storage bucket (photos, video and report files, 50 MB per file) and a `shop_inbox` table. Customers can only *add* booking requests, approvals and messages to the inbox; reading or clearing it, and uploading, replacing or deleting files, require a signed-in account whose `app_metadata.autoshop_staff` flag is set (checked by `public.is_shop_staff()` in every policy). Staff just sign in under **Settings → Shop Cloud** on each device; the first staff sign-in publishes the booking page, and passwords can be changed from the same screen. A signed-in account without the staff flag is warned and gets no access.
+**It comes preconfigured.** The app ships connected to the *AutoShop Pro* Supabase project (its name from before the WPI Driveline rebrand) (`src/lib/cloudDefaults.js`): a public-read `autoshop-media` Storage bucket (photos, video and report files, 50 MB per file) and a `shop_inbox` table. Customers can only *add* booking requests, approvals and messages to the inbox; reading or clearing it, and uploading, replacing or deleting files, require a signed-in account whose `app_metadata.autoshop_staff` flag is set (checked by `public.is_shop_staff()` in every policy). Staff just sign in under **Settings → Shop Cloud** on each device; the first staff sign-in publishes the booking page, and passwords can be changed from the same screen. A signed-in account without the staff flag is warned and gets no access.
 
 To add another staff login: create the user under Authentication → Users, then run
 
@@ -241,7 +241,7 @@ Without Shop Cloud, shops can still show reports on a counter tablet, send the d
 `website/` is the shop's static, multi-page website (copied from the `automotiverepair` repo): home, services and 11 service pages, about, makes, fleet, specials, car care guides, FAQ, contact, careers and a multi-step *Book a service* form. Every page is a standalone HTML file with no build step; see `website/README.md` for editing.
 
 - **Shop details** (phone, email, address, hours, social links) live in `website/business.json`. Edit it, then run `node website/scripts/sync.mjs` to update every page, the structured data, `sitemap.xml` and `robots.txt`; `node website/scripts/check.mjs` validates the pages.
-- **Forms → AutoShop Pro.** `shopInbox` in `business.json` points the booking, contact and fleet forms at the Shop Cloud inbox (the public anon key; customers can only add). Staff signed in to the app receive them automatically. If the inbox can't be reached, the visitor is offered a pre-filled email or the phone number instead.
+- **Forms → WPI Driveline.** `shopInbox` in `business.json` points the booking, contact and fleet forms at the Shop Cloud inbox (the public anon key; customers can only add). Staff signed in to the app receive them automatically. If the inbox can't be reached, the visitor is offered a pre-filled email or the phone number instead.
 - **Staff sign-in** in the footer goes to `/app/signin`.
 - **Hosting.** `npm run build:pages` (`scripts/pages.mjs`) builds the app into `dist/app/` and copies the website to `dist/`. GitHub Pages serves one `404.html` for every missing path; it is the app shell, so deep links into the app load directly, and a small script forwards old links from before the app moved under `app/` (e.g. `/automotive/orders`) and sends unknown pages to the website's not-found page. A self-removing `sw.js` at the root retires the service worker from the old layout.
 - **Own domain.** Point the domain at the site, set `siteUrl`, `basePath` (`"/"` at a domain root) and `staffAppUrl` in `business.json`, run the sync script, build with that base (`node scripts/pages.mjs /`), and enter the address under **Settings → Website** in the app.
@@ -252,7 +252,9 @@ CARFAX doesn’t accept uploads from individual shops. Records reach CARFAX Repo
 
 ## Design
 
-Navy and light grey, kept calm: a white sidebar with dark, easy-to-read labels, light grey canvas with white cards and navy for actions and links. A little color comes from the public website's "foil" hues — indigo, lilac, azure and teal — used only as light tints and hairlines: icon tiles, a hue per sidebar section, avatars, a thin foil line on tabs and the Today card, and a faint wash at the top of each page. Never as large blocks. Green / amber / red are reserved for status and appear only as dots and small pills. Monospaced section labels, chart colors checked for color-blind separation, San Francisco on Apple devices with Inter elsewhere, light appearance by default with an optional dark mode, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
+The WPI Driveline logo in light hues: navy "WPI" over a blue and a green bar, with DRIVELINE beneath. The logo's navy is the ink, its blue is the accent for actions, links and the current page, and its two-tone bar is the signature line — on tabs, section labels, the Today card, customer page headers, PDFs and emails. Surfaces stay light: a pale blue-grey canvas, white cards, a near-white sidebar and a faint blue-green wash at the top of each page. A few cool hues (blue, periwinkle, cyan, green) tell the sidebar sections and icon tiles apart, only as light tints and hairlines, never large blocks. Green / amber / red are reserved for status and appear only as dots and small pills. Monospaced section labels, chart colors checked for color-blind separation, San Francisco on Apple devices with Inter elsewhere, light appearance by default with an optional dark mode, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
+
+The logo lives in `src/brand/artwork.js` as outlined glyphs (the in-app `<Logo>` draws from it); `node scripts/brand-assets.mjs` regenerates the website's logo files, every app and website icon, the favicons, the link-preview image and the iOS launch screens from it.
 
 Every page loads on demand, so the first screen appears quickly on a shop tablet; the pages used all day are fetched in the background right after, and React lives in its own long-cached file so an update only downloads the app's own code. Demo data loads only on a device with no saved shop.
 
