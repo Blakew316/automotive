@@ -1,0 +1,26 @@
+# Netlify serves the same site as GitHub Pages (scripts/pages.mjs, scripts/netlify.mjs): the shop's
+# website at /automotive/ and the AutoShop Pro staff app at /automotive/app/.
+[build]
+  command = "npm run build:pages && node scripts/netlify.mjs"
+  publish = "netlify-dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# The pages link within /automotive/, so the bare domain goes straight there.
+[[redirects]]
+  from = "/"
+  to = "/automotive/"
+  status = 301
+
+# Deep links into the staff app (e.g. /automotive/app/orders/123) open the app.
+[[redirects]]
+  from = "/automotive/app/*"
+  to = "/automotive/app/index.html"
+  status = 200
+
+# The app's built files have content hashes in their names, so they can be cached for good.
+[[headers]]
+  for = "/automotive/app/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

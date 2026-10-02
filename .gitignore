@@ -27,3 +27,6 @@ __pycache__/
 
 # Test output (screenshots, logs, bundles)
 test-results/
+
+# Netlify publish folder (scripts/netlify.mjs)
+netlify-dist/
