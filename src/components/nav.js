@@ -2,7 +2,7 @@
 // (iPhone and iPad portrait) all read from here.
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package, BookOpen, ChartColumn, Settings,
-  Database, MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Building2, ConciergeBell,
+  Database, MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Building2, ConciergeBell, Stethoscope,
 } from 'lucide-react';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { useScopedShop } from '../store/hooks';
@@ -55,6 +55,7 @@ export const NAV = [
     title: 'Technical',
     hue: 'azure',
     items: [
+      { to: '/diagnose', label: 'Auto Diagnosis', icon: Stethoscope },
       { to: '/tech', label: 'Tech Time Clock', icon: Timer },
       { to: '/catalog', label: 'Vehicle Database', icon: Database },
       { to: '/vin', label: 'VIN Decoder', icon: ScanLine },
@@ -87,7 +88,7 @@ export const TABS = {
     { to: '/tech', label: 'Clock', icon: Timer },
     { to: '/workflow', label: 'Board', icon: SquareKanban },
     { to: '/orders', label: 'Orders', icon: ClipboardList },
-    { to: '/parts', label: 'Parts', icon: Package },
+    { to: '/diagnose', label: 'Diagnose', icon: Stethoscope },
   ],
 };
 

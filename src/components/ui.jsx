@@ -10,7 +10,7 @@ import { setNavBar, useIsPhone } from '../lib/viewport';
 const SECTIONS = [
   ['/workflow', 'Shop floor'], ['/orders', 'Shop floor'], ['/calendar', 'Shop floor'], ['/messages', 'Shop floor'],
   ['/customers', 'Customers'], ['/vehicles', 'Customers'], ['/marketing', 'Customers'],
-  ['/tech', 'Technical'], ['/catalog', 'Technical'], ['/vin', 'Technical'], ['/parts', 'Technical'], ['/library', 'Technical'],
+  ['/tech', 'Technical'], ['/diagnose', 'Technical'], ['/catalog', 'Technical'], ['/vin', 'Technical'], ['/parts', 'Technical'], ['/library', 'Technical'],
   ['/team', 'Business'], ['/reports', 'Business'], ['/accounting', 'Business'], ['/integrations', 'Business'], ['/import', 'Business'], ['/settings', 'Business'],
 ];
 

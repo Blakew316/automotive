@@ -4,8 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import {
   Search, ClipboardList, UserPlus, ScanLine, CalendarPlus, Users, Car, LayoutGrid, SquareKanban,
   CalendarDays, Package, BookOpen, ChartColumn, Settings, CircleAlert, CornerDownLeft, FileText, Database,
-  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Upload, Receipt, Truck, Globe,
-} from 'lucide-react';
+  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Upload, Receipt, Truck, Globe, Stethoscope } from 'lucide-react';
 import { useShop, useUI, useLookup, useAccess } from '../store/hooks';
 import { fullName, vehicleName } from '../lib/format';
 import { cleanVin } from '../lib/vin';
@@ -42,6 +41,7 @@ const ACTIONS = [
   { label: 'New repair order', to: '/orders/new', icon: ClipboardList, keywords: 'estimate ro work order create' },
   { label: 'New customer', to: '/customers?new=1', icon: UserPlus, keywords: 'add client' },
   { label: 'Book appointment', to: '/calendar?new=1', icon: CalendarPlus, keywords: 'schedule' },
+  { label: 'Auto diagnosis', to: '/diagnose', icon: Stethoscope, keywords: 'diagnose diagnosis known problems issues symptoms codes dtc misfire noise recall complaints tsb' },
   { label: 'Decode a VIN', to: '/vin', icon: ScanLine, keywords: 'vin lookup decode' },
   { label: 'New message', to: '/messages', icon: MessageSquare, keywords: 'text sms email customer' },
   { label: 'Add expense', to: '/accounting?tab=expenses', icon: Receipt, keywords: 'bill cost accounting' },

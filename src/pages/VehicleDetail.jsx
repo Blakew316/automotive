@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Plus, Pencil, ScanLine, Car, Trash2, MoreHorizontal, Database, ChevronRight, History } from 'lucide-react';
+import { Plus, Pencil, ScanLine, Car, Trash2, MoreHorizontal, Database, ChevronRight, History, Stethoscope } from 'lucide-react';
 import RecordHistory from '../components/RecordHistory';
 import ConnectedCar from '../components/ConnectedCar';
 import { useShop, useUI, useTotals, useLookup, useSync } from '../store/hooks';
@@ -44,6 +44,7 @@ export default function VehicleDetail() {
         subtitle={[v.trim, v.engine, v.color].filter(Boolean).join(' · ')}
         actions={
           <>
+            <Link to={`/diagnose?vehicle=${v.id}`} className="btn-secondary"><Stethoscope size={15} /> Diagnose</Link>
             {v.vin && <Link to={`/vin?vin=${v.vin}`} className="btn-secondary"><ScanLine size={15} /> Full decode</Link>}
             <Link to={`/orders/new?vehicle=${v.id}`} className="btn-primary"><Plus size={16} strokeWidth={2.2} /> Repair order</Link>
             <Menu

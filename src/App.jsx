@@ -71,6 +71,7 @@ const Lobby = lazy(() => import('./pages/Lobby'));
 const CheckinSign = lazy(() => import('./pages/CheckinSign'));
 const Timecards = lazy(() => import('./pages/Timecards'));
 const More = lazy(() => import('./pages/More'));
+const Diagnose = lazy(() => import('./pages/Diagnose'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -126,6 +127,7 @@ export default function App() {
                         <Route path="/frontdesk" element={<FrontDesk />} />
                         <Route path="/vehicles" element={<Vehicles />} />
                         <Route path="/vehicles/:id" element={<VehicleDetail />} />
+                        <Route path="/diagnose" element={<Diagnose />} />
                         <Route path="/vin" element={<VinDecoder />} />
                         <Route path="/catalog" element={<CatalogHome />} />
                         <Route path="/catalog/:make" element={<CatalogMake />} />
