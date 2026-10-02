@@ -120,7 +120,7 @@ ok(true, 'retry recovers');
 
 // ---- Other ways in: search and the vehicle page.
 await page.goto(APP + '/');
-await page.keyboard.press('Control+k');
+await page.locator('aside').getByRole('button', { name: /Search/ }).first().click();
 await page.getByRole('dialog', { name: 'Search' }).locator('input').fill('diagnos');
 await page.getByRole('button', { name: /Auto diagnosis/ }).first().click();
 await page.waitForURL(/\/diagnose$/);
