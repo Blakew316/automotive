@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { MessageSquare, Mail, Globe, NotebookPen, ChevronLeft, PenSquare, Inbox, Phone, ArrowDownLeft, Sparkles, PhoneMissed, PhoneIncoming, PhoneOutgoing, Voicemail, Bot, CalendarCheck, Check, CheckCheck, CircleAlert, Ban } from 'lucide-react';
+import { MessageSquare, Mail, Globe, NotebookPen, ChevronLeft, PenSquare, Inbox, Phone, ArrowDownLeft, Sparkles, PhoneMissed, PhoneIncoming, PhoneOutgoing, Voicemail, Bot, CalendarCheck, Check, CheckCheck, CircleAlert, Ban, Paperclip, MailOpen, Clock } from 'lucide-react';
 import { useShop, useUI, usePhone } from '../store/hooks';
 import { PageHeader, Card, SearchInput, Avatar, Segmented, EmptyState, Modal, Spinner } from '../components/ui';
 import { CustomerPicker } from '../components/forms';
@@ -21,6 +21,15 @@ const DELIVERY = {
   delivered: { icon: CheckCheck, label: 'Delivered', cls: 'text-ok' },
   undelivered: { icon: CircleAlert, label: 'Not delivered', cls: 'text-bad' },
   failed: { icon: CircleAlert, label: 'Not delivered', cls: 'text-bad' },
+};
+// Emails sent from the shop's address, as Resend reports them.
+const EMAIL_DELIVERY = {
+  sent: { icon: Check, label: 'Sent', cls: 'text-ink-3' },
+  delayed: { icon: Clock, label: 'Delayed', cls: 'text-warn' },
+  delivered: { icon: CheckCheck, label: 'Delivered', cls: 'text-ok' },
+  opened: { icon: MailOpen, label: 'Opened', cls: 'text-ok' },
+  bounced: { icon: CircleAlert, label: 'Bounced — check the address', cls: 'text-bad' },
+  complained: { icon: Ban, label: 'Marked as spam', cls: 'text-bad' },
 };
 
 export default function Messages() {
@@ -191,7 +200,7 @@ function Thread({ customer, onBack }) {
           const out = m.dir === 'out';
           const Icon = CHANNEL_ICON[m.channel] || MessageSquare;
           const order = m.orderId && state.orders.find((o) => o.id === m.orderId);
-          const delivery = out && m.meta?.via === 'line' ? DELIVERY[m.meta.status] || DELIVERY.sent : null;
+          const delivery = !out ? null : m.meta?.via === 'line' ? DELIVERY[m.meta.status] || DELIVERY.sent : m.meta?.via === 'email' ? EMAIL_DELIVERY[m.meta.status] || EMAIL_DELIVERY.sent : null;
           return (
             <div key={m.id}>
               {showDay && <div className="py-2 text-center text-2xs font-medium text-ink-3">{day}</div>}
@@ -213,14 +222,24 @@ function Thread({ customer, onBack }) {
                           m.channel === 'note' ? 'border border-dashed border-line bg-surface text-ink-2' : out ? 'bg-accent text-on-accent' : 'bg-fill/[0.12] text-ink'
                         } ${out ? 'rounded-br-[6px]' : 'rounded-bl-[6px]'}`}
                       >
+                        {m.meta?.subject && <div className={`mb-0.5 text-xs font-semibold ${out && m.channel !== 'note' ? 'text-on-accent/85' : 'text-ink-2'}`}>{m.meta.subject}</div>}
                         {m.body}
+                      </div>
+                    )}
+                    {m.meta?.attachments?.length > 0 && (
+                      <div className={`mt-1 flex flex-wrap gap-1 ${out ? 'justify-end' : ''}`}>
+                        {m.meta.attachments.map((f) => (
+                          <span key={f} className="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-2xs text-ink-2">
+                            <Paperclip size={11} className="text-hue-indigo" /> {f}
+                          </span>
+                        ))}
                       </div>
                     )}
                     <div className="mt-0.5 flex flex-wrap items-center gap-1 px-1 text-2xs text-ink-3">
                       <Icon size={11} />
                       {m.meta?.automation ? AUTOMATION_LABEL[m.meta.automation] || CHANNEL_LABEL[m.channel] : CHANNEL_LABEL[m.channel]} · {time(m.at)}
                       {delivery && (
-                        <span className={`inline-flex items-center gap-0.5 ${delivery.cls}`} title={m.meta.error ? `Carrier error ${m.meta.error}` : undefined}>
+                        <span className={`inline-flex items-center gap-0.5 ${delivery.cls}`} title={m.meta.bounce || (m.meta.error ? `Carrier error ${m.meta.error}` : undefined)}>
                           · <delivery.icon size={11} /> {delivery.label}
                         </span>
                       )}

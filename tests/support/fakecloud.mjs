@@ -1,12 +1,17 @@
 // In-memory stand-in for the AutoShop Pro Supabase project, mirroring the SQL functions' rules.
 import { newSecret, checkTotp } from './totp.mjs';
 export function fakeCloud() {
-  const db = { records: new Map(), seq: 0, history: [], backups: [], files: new Map(), public: new Map(), users: new Map(), inbox: [], calls: [], secrets: new Map(), aiCalls: [], aiUsage: 0, phone: { configured: false, connected: false, number: '+15125550100', optOuts: [], aiReady: true }, phoneEvents: [], sms: [], dials: [], outbox: new Map(), pay: { configured: false, connected: false, mode: 'test' }, links: new Map(), payEvents: [], refunds: [], checkouts: [], qbo: { configured: false, connected: false, env: 'sandbox', company: 'Main Street Auto LLC', error: null, accounts: [], entries: new Map(), authorizes: [], posts: [] }, cars: { configured: false, connected: new Map(), links: [], reads: 0, nextReading: null }, mfaRoles: [], challenges: new Map() };
+  const db = { records: new Map(), seq: 0, history: [], backups: [], files: new Map(), public: new Map(), users: new Map(), inbox: [], calls: [], secrets: new Map(), aiCalls: [], aiUsage: 0, phone: { configured: false, connected: false, number: '+15125550100', optOuts: [], aiReady: true }, phoneEvents: [], sms: [], dials: [], outbox: new Map(), pay: { configured: false, connected: false, mode: 'test' }, links: new Map(), payEvents: [], refunds: [], checkouts: [], qbo: { configured: false, connected: false, env: 'sandbox', company: 'Main Street Auto LLC', error: null, accounts: [], entries: new Map(), authorizes: [], posts: [] }, cars: { configured: false, connected: new Map(), links: [], reads: 0, nextReading: null }, mfaRoles: [], challenges: new Map(), email: { domains: new Map(), dnsReady: false, sent: [], tests: [], digest: { enabled: false, hour: 18, tz: 'America/Chicago', recipients: [], last_sent: null, snapshot_at: null }, snapshot: null, snapshotDay: null }, emailEvents: [] };
   let evSeq = 0;
   let payId = 0;
   // A row in shop_pay_events, as the stripe-webhook function would write it.
   const payEvent = (kind, ref, payload) => {
     if (!db.payEvents.some((e) => e.ref === ref)) db.payEvents.push({ id: ++payId, kind, ref, payload, created_at: new Date().toISOString() });
+  };
+  // A row in shop_email_events, as the email-webhook function would write it (one per email and kind).
+  let emailSeq = 0;
+  const emailEvent = (email_id, kind, payload = {}) => {
+    if (!db.emailEvents.some((e) => e.email_id === email_id && e.kind === kind)) db.emailEvents.push({ id: ++emailSeq, email_id, kind, payload, created_at: new Date().toISOString() });
   };
   // A row in shop_phone_events, as the twilio-webhook function would write it.
   const phoneEvent = (kind, sid, payload, final = true) => {
@@ -153,6 +158,19 @@ export function fakeCloud() {
         db.mfaRoles = [...new Set(b.roles)].sort();
         return json(200, db.mfaRoles);
       }
+      if (fn === 'shop_digest_save') {
+        if (!visible || !['owner', 'manager'].includes(u.app_metadata.autoshop_role)) return json(403, { message: 'Only the owner or a manager can change this' });
+        if (!b.p_tz) return json(400, { message: 'Unknown time zone' });
+        Object.assign(db.email.digest, { enabled: Boolean(b.p_enabled), hour: Math.max(0, Math.min(23, Number(b.p_hour))), tz: b.p_tz, recipients: [...new Set((b.p_recipients || []).map((r) => r.trim().toLowerCase()).filter((r) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(r)))] });
+        return route.fulfill({ status: 204 });
+      }
+      if (fn === 'shop_digest_snapshot') {
+        if (!visible) return json(403, { message: 'Shop staff only' });
+        db.email.snapshot = b.p_data;
+        db.email.snapshotDay = b.p_day;
+        db.email.digest.snapshot_at = new Date().toISOString();
+        return route.fulfill({ status: 204 });
+      }
       if (fn === 'shop_outbox_schedule' || fn === 'shop_outbox_cancel') {
         if (!visible) return json(400, { message: 'Shop staff only' });
         if (fn === 'shop_outbox_cancel') {
@@ -253,6 +271,15 @@ export function fakeCloud() {
       if (m === 'DELETE') {
         const ids = (url.searchParams.get('id') || '').replace(/^in\.\(|\)$/g, '').split(',').map(Number);
         db.phoneEvents = db.phoneEvents.filter((r) => !ids.includes(r.id));
+        return route.fulfill({ status: 204 });
+      }
+    }
+    if (p === '/rest/v1/shop_email_events') {
+      if (!staff(who(req))) return json(200, []);
+      if (m === 'GET') return json(200, [...db.emailEvents].sort((a, b) => a.id - b.id));
+      if (m === 'DELETE') {
+        const ids = (url.searchParams.get('id') || '').replace(/^in\.\(|\)$/g, '').split(',').map(Number);
+        db.emailEvents = db.emailEvents.filter((r) => !ids.includes(r.id));
         return route.fulfill({ status: 204 });
       }
     }
@@ -422,12 +449,59 @@ export function fakeCloud() {
       }
       return json(400, { message: 'Unknown action' });
     }
+    if (p === '/functions/v1/shop-email') {
+      const u = who(req);
+      if (!staff(u)) return json(403, { message: 'Shop staff only' });
+      const b = body();
+      const role = u.app_metadata.autoshop_role;
+      const manager = ['owner', 'manager'].includes(role);
+      const sec = (n) => db.secrets.get(n)?.value || '';
+      const key = sec('resend_api_key');
+      const from = sec('email_from');
+      const replyTo = sec('email_reply_to');
+      const want = (from.match(/@([^>\s]+)>?\s*$/)?.[1] || '').toLowerCase();
+      if (b.action === 'status') {
+        const domain = key && from ? db.email.domains.get(want) || { name: want, status: 'not_added', records: [] } : null;
+        return json(200, { configured: Boolean(key && from), keySet: Boolean(key), from: from || null, replyTo: replyTo || null, domain, error: null, webhook: 'https://huwcrbkplpudpsfczbyg.supabase.co/functions/v1/email-webhook', webhookSet: Boolean(sec('resend_webhook_secret')), digest: manager ? { ...db.email.digest } : null });
+      }
+      if (!key) return json(412, { message: 'Add your Resend API key in Settings → Keys & AI first.', code: 'not_configured' });
+      if (b.action === 'addDomain' || b.action === 'verifyDomain') {
+        if (role !== 'owner') return json(403, { message: 'Only the owner can set up the shop’s email domain' });
+        if (b.action === 'addDomain') {
+          const name = String(b.name || want).toLowerCase();
+          const rec = (record, type, nm, value, priority = null) => ({ record, type, name: nm, value, priority, ttl: 'Auto', status: 'not_started' });
+          const d = { id: `dom_${db.email.domains.size + 1}`, name, status: 'not_started', region: 'us-east-1', records: [rec('SPF', 'MX', 'send', 'feedback-smtp.us-east-1.amazonses.com', 10), rec('SPF', 'TXT', 'send', 'v=spf1 include:amazonses.com ~all'), rec('DKIM', 'TXT', 'resend._domainkey', 'p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDtest')] };
+          db.email.domains.set(name, d);
+          return json(200, d);
+        }
+        const d = [...db.email.domains.values()].find((x) => x.id === b.id);
+        if (d) {
+          d.status = db.email.dnsReady ? 'verified' : 'pending';
+          for (const r of d.records) r.status = db.email.dnsReady ? 'verified' : 'pending';
+        }
+        return json(200, { ok: true });
+      }
+      if (!from) return json(412, { message: 'Add the address to send from in Settings → Keys & AI first.' });
+      if (b.action === 'test') {
+        if (!manager) return json(403, { message: 'Only the owner or a manager can send a test' });
+        db.email.tests.push(b);
+        return json(200, { id: `em_test_${db.email.tests.length}`, to: b.to || u.email });
+      }
+      if (b.action === 'send') {
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(b.to || ''))) return json(400, { message: 'That email address doesn’t look right' });
+        if (!b.subject || !b.text) return json(400, { message: 'Add a subject and a message' });
+        const id = `em_${String(db.email.sent.length + 1).padStart(6, '0')}`;
+        db.email.sent.push({ ...b, id, from, replyTo });
+        return json(200, { id });
+      }
+      return json(400, { message: 'Unknown action' });
+    }
     if (p === '/functions/v1/shop-secrets') {
       const u = who(req);
       if (!staff(u)) return json(403, { error: 'Shop staff only', message: 'Shop staff only' });
       const b = body();
       const role = u.app_metadata.autoshop_role;
-      const SETTINGS = ['ai_model', 'ai_monthly_cap', 'twilio_phone'];
+      const SETTINGS = ['ai_model', 'ai_monthly_cap', 'twilio_phone', 'email_from', 'email_reply_to'];
       if (b.action === 'list') {
         if (!['owner', 'manager'].includes(role)) return json(403, { message: 'Only the owner or a manager can see integration keys' });
         const keys = [...db.secrets.entries()].filter(([, v]) => v.value).map(([name, v]) => ({ name, set: true, hint: SETTINGS.includes(name) || v.value.length < 8 ? null : v.value.slice(-4), updatedAt: v.at }));
@@ -509,5 +583,5 @@ export function fakeCloud() {
     return u;
   }
 
-  return { db, handle, addUser, phoneEvent, payEvent, live: () => [...db.records.values()].filter((r) => !r.deleted).length };
+  return { db, handle, addUser, phoneEvent, payEvent, emailEvent, live: () => [...db.records.values()].filter((r) => !r.deleted).length };
 }

@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft, Printer } from 'lucide-react';
-import { useShop, useLookup, useTotals } from '../store/hooks';
-import { Segmented, Toggle, EmptyState } from '../components/ui';
+import { ChevronLeft, Printer, Download } from 'lucide-react';
+import { useShop, useLookup, useTotals, useUI } from '../store/hooks';
+import { Segmented, Toggle, EmptyState, Spinner } from '../components/ui';
 import { money, fullName, vehicleName, date, phone, number } from '../lib/format';
 import { itemTotal, serviceTotal } from '../lib/pricing';
 import { INSPECTION_RATINGS } from '../lib/workflow';
 import { dueDate, hasTerms, termsLabel } from '../lib/accounts';
 import { shopAt } from '../lib/locations';
+import { docKind, orderPdf, downloadPdf } from '../lib/pdf';
 
 export default function PrintOrder() {
   const { id } = useParams();
@@ -19,6 +20,8 @@ export default function PrintOrder() {
   const [kind, setKind] = useState(defaultKind);
   const [showParts, setShowParts] = useState(true);
   const [showDeclined, setShowDeclined] = useState(true);
+  const [making, setMaking] = useState(false);
+  const { toast } = useUI();
 
   if (!order) return <EmptyState title="Repair order not found" action={<Link to="/orders" className="btn-secondary">Back</Link>} />;
 
@@ -53,8 +56,26 @@ export default function PrintOrder() {
           <label className="flex items-center gap-2 text-xs text-ink-2">
             <Toggle checked={showDeclined} onChange={setShowDeclined} label="Show declined" /> Declined
           </label>
-          <button className="btn-primary ml-auto" onClick={() => window.print()}>
-            <Printer size={15} /> Print / Save PDF
+          <button
+            className="btn-secondary ml-auto"
+            disabled={making}
+            onClick={async () => {
+              setMaking(true);
+              try {
+                // A paid invoice downloads as a receipt.
+                const pdfKind = kind === 'invoice' && docKind(order, shop) === 'receipt' ? 'receipt' : kind;
+                downloadPdf(await orderPdf(state, order, pdfKind, { showParts, showDeclined }));
+              } catch (e) {
+                toast(e.message || 'Couldn’t make the PDF', { tone: 'error' });
+              } finally {
+                setMaking(false);
+              }
+            }}
+          >
+            {making ? <Spinner size={14} /> : <Download size={15} />} Download PDF
+          </button>
+          <button className="btn-primary" onClick={() => window.print()}>
+            <Printer size={15} /> Print
           </button>
         </div>
       </div>

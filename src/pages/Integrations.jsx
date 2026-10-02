@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Cloud, Landmark, Package, FileClock, CreditCard, HandCoins, MessageSquare, Star, CalendarDays, ScanLine, Upload, Download, ExternalLink as ExtIcon, ArrowRight, Smartphone, Globe, PhoneCall, Sparkles, Radio, Link2 } from 'lucide-react';
-import { useShop, useUI, useSync, useAccess, usePhone, usePay } from '../store/hooks';
+import { Cloud, Landmark, Package, FileClock, CreditCard, HandCoins, MessageSquare, Star, CalendarDays, ScanLine, Upload, Download, ExternalLink as ExtIcon, ArrowRight, Smartphone, Globe, PhoneCall, Sparkles, Radio, Link2, Mail } from 'lucide-react';
+import { useShop, useUI, useSync, useAccess, usePhone, usePay, useEmail } from '../store/hooks';
 import { shopQbo, shopCars } from '../lib/sync/api';
 import { phone as fmtPhone } from '../lib/format';
 import { PageHeader, Card } from '../components/ui';
@@ -44,6 +44,7 @@ export default function Integrations() {
   const { toast } = useUI();
   const phoneLine = usePhone();
   const stripe = usePay();
+  const email = useEmail();
   const server = useServerStatus();
   const shop = state.shop;
   const cfg = cloudConfig(shop);
@@ -114,6 +115,14 @@ export default function Integrations() {
           body: 'Two-way texts and calls from the shop number, logged on the customer — with appointment reminders sent on schedule, photos from customers, voicemail, and an AI receptionist that can answer when you’re busy.',
           status: phoneLine.connected ? ['on', phoneLine.status?.phone ? fmtPhone(phoneLine.status.phone) : 'Connected'] : phoneLine.status?.configured ? ['setup', 'Connect number'] : ['setup', 'Not set up'],
           action: <Link to="/settings?tab=messaging" className="btn-secondary btn-sm">{phoneLine.connected ? 'Settings' : 'Set up'}</Link>,
+        },
+        {
+          icon: Mail,
+          name: 'Email from your address',
+          by: 'Resend · your own domain',
+          body: 'Estimates, invoices and receipts go out as PDF attachments from your shop’s address, with Delivered, Opened and Bounced on each message — plus a daily summary email for the owner.',
+          status: email.ready ? ['on', 'On'] : email.status?.configured ? ['setup', 'Verify domain'] : ['setup', 'Not set up'],
+          action: <Link to="/settings?tab=messaging#email" className="btn-secondary btn-sm">{email.ready ? 'Settings' : 'Set up'}</Link>,
         },
         {
           icon: MessageSquare,

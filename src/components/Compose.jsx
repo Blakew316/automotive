@@ -1,31 +1,42 @@
 // One composer for every customer message: estimates, updates, payment requests, reminders.
-// With the business line connected, texts go out from the shop's Twilio number; otherwise texts and
-// emails open in the device's Messages/Mail app. Either way they're logged to the conversation.
+// With the business line connected, texts go out from the shop's Twilio number; with email set up,
+// emails go out from the shop's own address with the RO's PDF attached. Otherwise texts and emails
+// open in the device's Messages/Mail app. Either way they're logged to the conversation.
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MessageSquare, Mail, NotebookPen, Info, CreditCard } from 'lucide-react';
-import { useShop, useUI, usePhone, usePay } from '../store/hooks';
+import { MessageSquare, Mail, NotebookPen, Info, CreditCard, Paperclip, Download } from 'lucide-react';
+import { useShop, useUI, usePhone, usePay, useEmail } from '../store/hooks';
 import { Modal, Segmented, Spinner } from './ui';
 import { fillTemplate, messageContext, sendHref } from '../lib/messaging';
 import { openPayLink } from '../lib/payments';
 import { orderTotals } from '../lib/pricing';
 import { shopAt } from '../lib/locations';
 import { fullName, phone as fmtPhone } from '../lib/format';
+import { emailSubject, attachDefault } from '../lib/email';
+import { docKind, docTitle, orderPdf, toBase64, downloadPdf } from '../lib/pdf';
 
 export default function ComposeModal({ customer, order, appointment, templateId = 'update', initialBody, channel: initialChannel, extra, subject: initialSubject, onClose, onSent }) {
   const { state, addMessage } = useShop();
   const { toast } = useUI();
   const line = usePhone();
+  const email = useEmail();
   const [busy, setBusy] = useState(false);
   const ctx = useMemo(() => messageContext(state, { customer, order, appointment, extra }), [state, customer, order, appointment, extra]);
   const templates = state.shop.templates || [];
   const [tid, setTid] = useState(initialBody ? '' : templateId);
   const [channel, setChannel] = useState(initialChannel || (customer?.phone ? 'sms' : 'email'));
   const [body, setBody] = useState(() => initialBody ?? fillTemplate(templates.find((t) => t.id === templateId)?.body || '', ctx));
-  const [subject, setSubject] = useState(initialSubject || (order ? `RO #${order.number} — ${state.shop.name}` : state.shop.name));
+  // The subject follows the template until it's edited by hand.
+  const autoSubject = (id) => emailSubject(state.shop, order, order || id !== 'update' ? id : '');
+  const [subject, setSubject] = useState(() => initialSubject || autoSubject(templateId));
+  const subjectAuto = useRef(subject);
   const canSms = Boolean(customer?.phone);
   const canEmail = Boolean(customer?.email);
   const href = sendHref(channel, customer, body, subject);
   const viaLine = channel === 'sms' && line.ready && canSms;
+  const viaEmail = channel === 'email' && Boolean(email.send) && canEmail;
+  // The RO as a PDF: attached when sending from the shop's address, or downloaded to attach by hand.
+  const kind = order ? docKind(order, shopAt(state.shop, order.locationId)) : null;
+  const [attach, setAttach] = useState(() => Boolean(order) && attachDefault(templateId));
   // Replied STOP: the business line won't send until they reply START.
   const stopped = viaLine && line.optedOut(customer?.phone);
 
@@ -34,6 +45,11 @@ export default function ComposeModal({ customer, order, appointment, templateId 
     const filled = fillTemplate(templates.find((t) => t.id === id)?.body || '', ctx);
     auto.current = filled;
     setBody(filled);
+    if (subject === subjectAuto.current) {
+      subjectAuto.current = autoSubject(id);
+      setSubject(subjectAuto.current);
+    }
+    if (order) setAttach(attachDefault(id));
   };
 
   // A template with {payLink} and Stripe connected: make a secure pay link for the exact balance,
@@ -72,6 +88,25 @@ export default function ComposeModal({ customer, order, appointment, templateId 
 
   const send = async () => {
     if (!body.trim() || !href) return;
+    if (viaEmail) {
+      setBusy(true);
+      try {
+        const attachments = [];
+        if (attach && order) {
+          const pdf = await orderPdf(state, order, kind);
+          attachments.push({ filename: pdf.filename, content: toBase64(pdf.bytes) });
+        }
+        await email.send({ customer, subject: subject.trim() || state.shop.name, text: body.trim(), orderId: order?.id || null, attachments, kind: tid || templateId || 'message', meta: tid ? { template: tid } : undefined });
+        toast(`Email sent to ${customer.email}${attachments.length ? ` with the ${docTitle(kind).toLowerCase()}` : ''}`, { tone: 'success' });
+        onSent?.();
+        onClose();
+      } catch (e) {
+        toast(e.message || 'The email didn’t send', { tone: 'error' });
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
     if (viaLine) {
       setBusy(true);
       try {
@@ -141,6 +176,31 @@ export default function ComposeModal({ customer, order, appointment, templateId 
         </div>
         {channel === 'email' && <input className="input" value={subject} onChange={(e) => setSubject(e.target.value)} aria-label="Subject" placeholder="Subject" />}
         <textarea rows={6} className="input resize-none" value={body} onChange={(e) => setBody(e.target.value)} aria-label="Message" autoFocus />
+        {channel === 'email' && order && (
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            {viaEmail ? (
+              <label className="flex cursor-pointer items-center gap-2 text-ink-2">
+                <input type="checkbox" className="h-4 w-4 accent-[rgb(var(--hue-indigo))]" checked={attach} onChange={(e) => setAttach(e.target.checked)} />
+                <Paperclip size={14} className="text-hue-indigo" />
+                Attach the {docTitle(kind).toLowerCase()} as a PDF
+              </label>
+            ) : (
+              <button
+                type="button"
+                className="btn-plain btn-sm"
+                onClick={async () => {
+                  try {
+                    downloadPdf(await orderPdf(state, order, kind));
+                  } catch (e) {
+                    toast(e.message || 'Couldn’t make the PDF', { tone: 'error' });
+                  }
+                }}
+              >
+                <Download size={14} /> Download the {docTitle(kind).toLowerCase()} PDF to attach
+              </button>
+            )}
+          </div>
+        )}
         {(linking || linkError || (pay.ready && order && openPayLink(order, balance) && body.includes(openPayLink(order, balance).url))) && (
           <p className={`flex items-center gap-1.5 text-xs ${linkError ? 'text-bad' : 'text-ink-3'}`}>
             {linking ? <Spinner size={12} /> : <CreditCard size={12} />}
@@ -159,6 +219,15 @@ export default function ComposeModal({ customer, order, appointment, templateId 
               {href && (
                 <a href={href} className="link" onClick={() => { log(); onClose(); }}>
                   Use this device’s Messages app instead
+                </a>
+              )}
+            </span>
+          ) : viaEmail ? (
+            <span>
+              Sends from <b>{email.status?.from}</b>; you’ll see Delivered, Opened or Bounced here and in Messages, and replies go to your shop inbox.{' '}
+              {href && (
+                <a href={href} className="link" onClick={() => { log(); onClose(); }}>
+                  Use this device’s Mail app instead
                 </a>
               )}
             </span>

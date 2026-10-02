@@ -236,7 +236,14 @@ export default function CustomerDetail() {
           <Card className="px-4 py-2">
             <dl className="divide-y divide-line/70">
               <KV label="Mobile">{c.phone ? <CallButton customer={c} className="link" size={0}>{phone(c.phone)}</CallButton> : '—'}</KV>
-              <KV label="Email">{c.email ? <a href={mailHref(c.email)} className="link break-all">{c.email}</a> : '—'}</KV>
+              <KV label="Email">
+                {c.email ? <a href={mailHref(c.email)} className="link break-all">{c.email}</a> : '—'}
+                {c.email && c.emailProblem && (
+                  <span className="pill ml-1.5 bg-bad/[0.1] text-bad" title={c.emailProblem === 'spam' ? 'They marked one of your emails as spam' : 'An email to this address bounced — check it with the customer'}>
+                    {c.emailProblem === 'spam' ? 'Marked spam' : 'Bounced'}
+                  </span>
+                )}
+              </KV>
               <KV label="Address">
                 {c.address ? (
                   <>

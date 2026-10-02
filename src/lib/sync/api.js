@@ -182,3 +182,12 @@ export const mfaPolicy = (cfg) => rpc(cfg, 'shop_mfa_policy', {}).then((r) => r 
 export const setMfaPolicy = (cfg, roles) => rpc(cfg, 'shop_mfa_policy_set', { roles });
 /** Whether this session meets the shop's two-step rules (false: enter a code, or set one up). */
 export const mfaOk = (cfg) => rpc(cfg, 'shop_mfa_ok', {});
+
+// ---------------------------------------------------------------- Email from the shop's address (shop-email)
+export const shopEmail = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-email', { body: { action, ...args } });
+export const emailEvents = (cfg) => call(cfg, '/rest/v1/shop_email_events?select=id,email_id,kind,payload,created_at&order=id.asc&limit=200', { method: 'GET' });
+export const clearEmailEvents = (cfg, ids) => (ids.length ? call(cfg, `/rest/v1/shop_email_events?id=in.(${ids.map(Number).join(',')})`, { method: 'DELETE', headers: { Prefer: 'return=minimal' } }) : null);
+/** Owner or manager: the daily summary email's on/off, hour (shop time), time zone and recipients. */
+export const digestSave = (cfg, { enabled, hour, tz, recipients }) => rpc(cfg, 'shop_digest_save', { p_enabled: enabled, p_hour: hour, p_tz: tz, p_recipients: recipients });
+/** Today's numbers for the summary (kept current by an owner or manager device). */
+export const digestSnapshot = (cfg, day, data) => rpc(cfg, 'shop_digest_snapshot', { p_day: day, p_data: data });

@@ -20,6 +20,7 @@ import PhoneSettings from './settings/PhoneSettings';
 import StripeSettings from './settings/StripeSettings';
 import ConnectedCarsSettings from './settings/ConnectedCarsSettings';
 import TwoStepSettings from './settings/TwoStepSettings';
+import EmailSettings from './settings/EmailSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
 
@@ -110,6 +111,7 @@ export default function Settings() {
         {tab === 'messaging' && (
           <>
             <PhoneSettings />
+            <EmailSettings />
             <TemplatesSection />
             <MarketingSettings />
           </>
