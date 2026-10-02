@@ -145,7 +145,7 @@ export function RankBars({ rows, format = (v) => v }) {
             <span className="tabular shrink-0 text-ink-2">{format(r.value)}</span>
           </div>
           <div className="h-1.5 w-full rounded-full bg-fill/[0.12]">
-            <div className="h-full rounded-full" style={{ width: `${(r.value / max) * 100}%`, background: 'var(--series-1)' }} />
+            <div className="h-full rounded-full" style={{ width: `${(r.value / max) * 100}%`, background: 'linear-gradient(90deg, var(--series-1), rgb(var(--hue-indigo)))' }} />
           </div>
           {r.sub && <div className="mt-1 text-xs text-ink-3">{r.sub}</div>}
         </li>

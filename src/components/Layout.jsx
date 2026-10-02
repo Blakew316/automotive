@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package,
@@ -8,6 +8,7 @@ import {
 import { useShop, useUI, useAccess, useSync, useSite, useScopedShop } from '../store/hooks';
 import { ROLES, homeFor } from '../lib/access';
 import SwitchUser from './SwitchUser';
+import { Avatar, Spinner } from './ui';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { useCloudSync } from '../lib/useCloudSync';
 import { useTracking } from '../lib/useTracking';
@@ -31,8 +32,17 @@ function useNavCounts() {
   };
 }
 
+// Each section of the sidebar wears one of the website's foil hues on its icons.
+const HUE = {
+  navy: { icon: 'text-accent/75 group-hover:text-accent', active: 'bg-accent/[0.09] text-ink', on: 'text-accent' },
+  lilac: { icon: 'text-hue-lilac/75 group-hover:text-hue-lilac', active: 'bg-hue-lilac/[0.1] text-ink', on: 'text-hue-lilac' },
+  azure: { icon: 'text-hue-azure/75 group-hover:text-hue-azure', active: 'bg-hue-azure/[0.1] text-ink', on: 'text-hue-azure' },
+  teal: { icon: 'text-hue-teal/75 group-hover:text-hue-teal', active: 'bg-hue-teal/[0.1] text-ink', on: 'text-hue-teal' },
+};
+
 const NAV = [
   {
+    hue: 'navy',
     items: [
       { to: '/', label: 'Today', icon: LayoutGrid, end: true },
       { to: '/workflow', label: 'Workflow', icon: SquareKanban, count: 'workflow' },
@@ -44,6 +54,7 @@ const NAV = [
   },
   {
     title: 'Customers',
+    hue: 'lilac',
     items: [
       { to: '/customers', label: 'Customers', icon: Users },
       { to: '/accounts', label: 'Fleet & Accounts', icon: Building2 },
@@ -53,6 +64,7 @@ const NAV = [
   },
   {
     title: 'Technical',
+    hue: 'azure',
     items: [
       { to: '/tech', label: 'Tech Time Clock', icon: Timer },
       { to: '/catalog', label: 'Vehicle Database', icon: Database },
@@ -63,6 +75,7 @@ const NAV = [
   },
   {
     title: 'Business',
+    hue: 'teal',
     items: [
       { to: '/team', label: 'Team', icon: UsersRound },
       { to: '/reports', label: 'Reports', icon: ChartColumn },
@@ -149,14 +162,14 @@ function Sidebar({ onNavigate }) {
                   onClick={onNavigate}
                   className={({ isActive }) =>
                     `group relative flex h-9 items-center gap-2.5 rounded-[8px] px-2.5 text-[14px] font-medium transition-colors ${
-                      isActive ? 'bg-accent/[0.09] font-semibold text-accent' : 'text-sidebar-ink hover:bg-fill/[0.08]'
+                      isActive ? `${HUE[group.hue].active} font-semibold` : 'text-sidebar-ink hover:bg-fill/[0.08]'
                     }`
                   }
                 >
                   {({ isActive }) => (
                     <>
-                      {isActive && <span className="absolute -left-3 top-2 bottom-2 w-[3px] rounded-r-full bg-accent" />}
-                      <item.icon size={18} strokeWidth={1.9} className={isActive ? 'text-accent' : 'text-sidebar-ink-2 group-hover:text-sidebar-ink'} />
+                      {isActive && <span className="bg-foil-ink absolute -left-3 bottom-2 top-2 w-[3px] rounded-r-full" />}
+                      <item.icon size={18} strokeWidth={1.9} className={`transition-colors ${isActive ? HUE[group.hue].on : HUE[group.hue].icon}`} />
                       <span className="flex-1 truncate">{item.label}</span>
                       {item.count && counts[item.count] > 0 &&
                         (item.badge ? (
@@ -176,9 +189,7 @@ function Sidebar({ onNavigate }) {
       <div className="border-t border-sidebar-line px-3 py-3">
         <SyncBadge onNavigate={onNavigate} />
         <button onClick={() => setSwitching(true)} className="mb-2.5 flex w-full items-center gap-2.5 rounded-[9px] px-1.5 py-1.5 text-left transition-colors hover:bg-fill/[0.08]" title="Switch user">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-fill/[0.14] text-xs font-semibold text-sidebar-ink">
-            {user.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join('').toUpperCase()}
-          </span>
+          <Avatar name={user.name} size={32} />
           <span className="min-w-0 flex-1 text-[13px] leading-4">
             <span className="block truncate font-semibold text-sidebar-ink">{user.name}</span>
             <span className="block truncate text-xs text-sidebar-ink-2">{ROLES[role]?.label}</span>
@@ -279,8 +290,8 @@ function NoAccess() {
 export function Logo({ size = 28 }) {
   return (
     <span
-      className="flex shrink-0 items-center justify-center rounded-[9px] bg-accent text-on-accent"
-      style={{ width: size, height: size }}
+      className="flex shrink-0 items-center justify-center rounded-[9px] bg-accent text-on-accent shadow-[0_1px_3px_rgb(var(--hue-indigo)/0.35)]"
+      style={{ width: size, height: size, backgroundImage: 'linear-gradient(135deg, rgb(var(--accent)) 30%, rgb(var(--hue-indigo)) 75%, rgb(var(--hue-lilac)) 115%)' }}
     >
       <Wrench size={Math.round(size * 0.52)} strokeWidth={2.2} />
     </span>
@@ -332,9 +343,23 @@ export default function Layout() {
               </button>
             </header>
             <main id="main-scroll" className="relative flex-1 overflow-y-auto">
+              <div aria-hidden="true" className="foil-haze no-print pointer-events-none absolute inset-x-0 top-0 h-[280px]" />
               <AccountNotice />
               <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-6 sm:px-6 lg:px-10 lg:pt-9">
-                {can(location.pathname) ? <Outlet /> : <NoAccess />}
+                {can(location.pathname) ? (
+                  // Pages load on demand: only this area waits, the sidebar stays put.
+                  <Suspense
+                    fallback={
+                      <div className="flex h-64 items-center justify-center text-ink-3">
+                        <Spinner size={20} />
+                      </div>
+                    }
+                  >
+                    <Outlet />
+                  </Suspense>
+                ) : (
+                  <NoAccess />
+                )}
               </div>
             </main>
           </div>

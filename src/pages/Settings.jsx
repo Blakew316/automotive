@@ -333,11 +333,11 @@ function DataSection() {
             <button className="btn-secondary" onClick={() => setConfirm(null)}>Cancel</button>
             <button
               className="btn-primary !bg-bad"
-              onClick={() => {
+              onClick={async () => {
                 try {
-                  if (confirm === 'clear') clearAll();
+                  if (confirm === 'clear') await clearAll();
                   else if (confirm === 'import') importData(pendingImport);
-                  else resetDemo();
+                  else await resetDemo();
                   toast(confirm === 'clear' ? 'All customers, vehicles and orders removed' : confirm === 'import' ? 'Backup restored' : 'Demo data reloaded', { tone: 'success' });
                 } catch (err) {
                   toast(err.message || 'Could not restore that backup', { tone: 'error' });

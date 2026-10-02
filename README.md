@@ -228,7 +228,9 @@ CARFAX doesn’t accept uploads from individual shops. Records reach CARFAX Repo
 
 ## Design
 
-Navy and light grey, kept calm: a white sidebar with dark, easy-to-read labels, light grey canvas with white cards, navy for actions and links, and quiet navy or grey icon tints instead of colored tiles — no gradients or glows. Green / amber / red are reserved for status and appear only as dots and small pills. Monospaced section labels, chart colors checked for color-blind separation, San Francisco on Apple devices with Inter elsewhere, light appearance by default with an optional dark mode, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
+Navy and light grey, kept calm: a white sidebar with dark, easy-to-read labels, light grey canvas with white cards and navy for actions and links. A little color comes from the public website's "foil" hues — indigo, lilac, azure and teal — used only as light tints and hairlines: icon tiles, a hue per sidebar section, avatars, a thin foil line on tabs and the Today card, and a faint wash at the top of each page. Never as large blocks. Green / amber / red are reserved for status and appear only as dots and small pills. Monospaced section labels, chart colors checked for color-blind separation, San Francisco on Apple devices with Inter elsewhere, light appearance by default with an optional dark mode, a ⌘K / Ctrl+K command palette, and layouts that work from phone to desktop.
+
+Every page loads on demand, so the first screen appears quickly on a shop tablet; the pages used all day are fetched in the background right after, and React lives in its own long-cached file so an update only downloads the app's own code. Demo data loads only on a device with no saved shop.
 
 ## Data sources
 

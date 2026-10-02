@@ -178,7 +178,7 @@ ok(await page.getByText('(217) 555-0188').count() > 0, 'printed estimate uses th
 ok(await page.getByText('Sales tax (8.5%)').count() > 0, 'location sales tax applied');
 // Dashboard / workflow scoped.
 await page.goto(APP + '/workflow');
-await page.waitForTimeout(400);
+await page.getByText(`#${wro.number}`).first().waitFor();
 ok(await page.getByText(`#${wro.number}`).count() > 0, 'workflow shows the West Side RO');
 // Front desk check-in link carries the location.
 await page.goto(APP + '/frontdesk');

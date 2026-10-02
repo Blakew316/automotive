@@ -35,6 +35,14 @@ export default {
         bad: token('bad'),
         info: token('info'),
         violet: token('violet'),
+        hue: {
+          indigo: token('hue-indigo'),
+          lilac: token('hue-lilac'),
+          azure: token('hue-azure'),
+          teal: token('hue-teal'),
+          amber: token('hue-amber'),
+          rose: token('hue-rose'),
+        },
       },
       fontFamily: {
         sans: [
