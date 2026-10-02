@@ -50,7 +50,10 @@ export default function ReportView({ report, Media, onDecision, decisions = {}, 
       <header className="mb-6">
         <div className="text-sm font-semibold text-ink">{shop.name}</div>
         <div className="text-xs text-ink-3">
-          {[shop.address, [shop.city, shop.state].filter(Boolean).join(', '), shop.zip].filter(Boolean).join(' ')} · {fmtPhone(shop.phone)}
+          {[shop.address, [shop.city, shop.state].filter(Boolean).join(', '), shop.zip].filter(Boolean).join(' ')} ·{' '}
+          <a href={telHref(shop.phone)} className="hover:text-accent">
+            {fmtPhone(shop.phone)}
+          </a>
         </div>
         <h1 className="mt-5 text-3xl font-bold tracking-tight text-ink">{vName}</h1>
         <p className="mt-1 text-md text-ink-2">
@@ -257,7 +260,10 @@ export default function ReportView({ report, Media, onDecision, decisions = {}, 
         {shop.warranty && <p>Warranty: {shop.warranty}</p>}
         {vehicle?.vin && <p>VIN {vehicle.vin}</p>}
         <p>
-          {shop.name} · {fmtPhone(shop.phone)}
+          {shop.name} ·{' '}
+          <a href={telHref(shop.phone)} className="hover:text-accent">
+            {fmtPhone(shop.phone)}
+          </a>
           {shop.email ? ` · ${shop.email}` : ''} · Report updated {dateTime(report.generatedAt)}
         </p>
       </footer>

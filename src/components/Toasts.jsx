@@ -7,7 +7,8 @@ const TINT = { success: 'text-ok', error: 'text-bad', default: 'text-white/70' }
 export default function Toasts() {
   const { toasts, dismiss } = useUI();
   return (
-    <div className="no-print pointer-events-none fixed inset-x-0 bottom-5 z-[60] flex flex-col items-center gap-2 px-4" aria-live="polite">
+    // Above the tab bar and the home indicator on iPhone.
+    <div className="no-print pointer-events-none fixed inset-x-0 bottom-[calc(var(--tabbar)+var(--safe-b)+12px)] z-[60] flex flex-col items-center gap-2 px-4 lg:bottom-5" aria-live="polite">
       {toasts.map((t) => {
         const Icon = ICONS[t.tone] || Info;
         return (

@@ -190,10 +190,10 @@ export default function SignIn() {
           ) : (
             <form className="space-y-4" onSubmit={submit}>
               <Field label="Email">
-                {(id) => <input id={id} type="email" autoComplete="username" className="input h-10" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus={!email} />}
+                {(id) => <input id={id} type="email" autoComplete="username" inputMode="email" autoCapitalize="none" autoCorrect="off" spellCheck={false} enterKeyHint="next" className="input h-10" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus={!email} />}
               </Field>
               <Field label="Password">
-                {(id) => <input id={id} type="password" autoComplete="current-password" className="input h-10" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus={Boolean(email)} />}
+                {(id) => <input id={id} type="password" autoComplete="current-password" enterKeyHint="go" className="input h-10" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus={Boolean(email)} />}
               </Field>
               <button type="submit" className="btn-primary btn-lg w-full" disabled={!email || !password || Boolean(busy)}>
                 {busy ? <Spinner size={15} /> : <LogIn size={15} />} Sign in

@@ -222,7 +222,7 @@ function MenuSection() {
               </div>
               <span className="tabular text-sm text-ink-2">{hours.toFixed(1)} hr</span>
               <button className="btn-ghost btn-icon h-7 w-7" onClick={() => setEditing({ ...j, hours })} aria-label="Edit"><Pencil size={13} /></button>
-              <button className="btn-ghost btn-icon h-7 w-7 opacity-0 group-hover:opacity-100" onClick={() => deleteCannedJob(j.id)} aria-label="Delete"><Trash2 size={13} /></button>
+              <button className="hover-reveal btn-ghost btn-icon h-7 w-7" onClick={() => deleteCannedJob(j.id)} aria-label="Delete"><Trash2 size={13} /></button>
             </li>
           );
         })}

@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, CalendarPlus, ArrowRight, Clock, Package, FileText, Receipt, CircleAlert, CalendarDays, Globe, MessageSquare, Truck, Timer, Wrench, Car, Wallet, Megaphone, Landmark, ChartColumn, Activity, KeyRound, PhoneMissed } from 'lucide-react';
 import { useLookup, useTotals, useAccess, useScopedShop } from '../store/hooks';
-import { Card, CardHeader, StatusLabel, Avatar, EmptyState, Dot, IconTile } from '../components/ui';
+import { Card, CardHeader, StatusLabel, Avatar, EmptyState, Dot, IconTile, Disclosure } from '../components/ui';
+import { useIsPhone } from '../lib/viewport';
 import { ColumnChart } from '../components/charts';
 import { AppointmentForm } from '../components/forms';
 import { money, money0, moneyShort, fullName, vehicleName, time, relTime, sameDay, startOfDay, addDays, dateShort, weekday } from '../lib/format';
@@ -18,6 +19,7 @@ export default function Dashboard() {
   const totals = useTotals();
   const navigate = useNavigate();
   const [booking, setBooking] = useState(false);
+  const phone = useIsPhone();
   const now = useMemo(() => new Date(), []);
 
   const data = useMemo(() => {
@@ -142,6 +144,39 @@ export default function Dashboard() {
             />
             {data.inShop.length === 0 ? (
               <EmptyState icon={SquareIcon} title="No vehicles in the shop" body="Approved repair orders will show up here." />
+            ) : phone ? (
+              <ul className="divide-y divide-line/70">
+                {data.inShop.map((o) => {
+                  const c = lookup.customer.get(o.customerId);
+                  const v = lookup.vehicle.get(o.vehicleId);
+                  const late = o.promisedAt && new Date(o.promisedAt) < now && WIP_STATUSES.includes(o.status);
+                  return (
+                    <li key={o.id}>
+                      <Link to={`/orders/${o.id}`} className="press flex items-center gap-3 py-3 pl-4 pr-3.5">
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-baseline justify-between gap-3">
+                            <span className="truncate text-base font-semibold text-ink">{vehicleName(v)}</span>
+                            <span className="tabular shrink-0 text-sm text-ink-2">{money(totals(o).total)}</span>
+                          </span>
+                          <span className="block truncate text-sm text-ink-3">
+                            #{o.number} · {fullName(c)}
+                          </span>
+                          <span className="mt-1 flex items-center justify-between gap-3">
+                            <StatusLabel status={o.status} className="text-xs" />
+                            {o.promisedAt && (
+                              <span className={`text-xs ${late ? 'font-medium text-bad' : 'text-ink-3'}`}>
+                                {late ? 'Late · ' : 'Promised '}
+                                {sameDay(o.promisedAt, now) ? time(o.promisedAt) : dateShort(o.promisedAt)}
+                              </span>
+                            )}
+                          </span>
+                        </span>
+                        <Disclosure />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
             ) : (
               <div className="overflow-x-auto">
                 <table className="table [&_td:first-child]:pl-4 [&_td]:px-3 [&_th:first-child]:pl-4 [&_th]:px-3">

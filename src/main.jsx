@@ -5,8 +5,10 @@ import '@fontsource-variable/jetbrains-mono';
 import './index.css';
 import App from './App.jsx';
 import { initPwa } from './lib/pwa';
+import { initViewport } from './lib/viewport';
 
 initPwa();
+initViewport();
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

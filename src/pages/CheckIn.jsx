@@ -150,7 +150,7 @@ function Form({ config, kiosk, locationId }) {
           </p>
         )}
         <Section title="About you">
-          <Field label="Your name">{(id) => <input id={id} className="input h-11 text-base" autoComplete="name" value={f.name} onChange={set('name')} />}</Field>
+          <Field label="Your name">{(id) => <input id={id} className="input h-11 text-base" autoComplete="name" autoCapitalize="words" value={f.name} onChange={set('name')} />}</Field>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Mobile phone">{(id) => <input id={id} type="tel" inputMode="tel" className="input h-11 text-base" autoComplete="tel" value={f.phone} onChange={set('phone')} />}</Field>
             <Field label="Email (optional)">{(id) => <input id={id} type="email" className="input h-11 text-base" autoComplete="email" value={f.email} onChange={set('email')} />}</Field>
@@ -166,7 +166,7 @@ function Form({ config, kiosk, locationId }) {
             {f.vin && <span className="font-mono text-xs">VIN {f.vin}</span>}
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="License plate">{(id) => <input id={id} className="input h-11 text-base uppercase" value={f.plate} onChange={set('plate')} />}</Field>
+            <Field label="License plate">{(id) => <input id={id} autoCapitalize="characters" autoCorrect="off" spellCheck={false} className="input h-11 text-base uppercase" value={f.plate} onChange={set('plate')} />}</Field>
             <Field label="Mileage (optional)">{(id) => <input id={id} inputMode="numeric" className="input h-11 text-base" value={f.mileage} onChange={set('mileage')} />}</Field>
           </div>
         </Section>

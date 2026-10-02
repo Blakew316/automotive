@@ -199,10 +199,10 @@ function Timesheets({ summary, from, to }) {
                       </div>
                     </div>
                     <span className="tabular">{fmtDuration(entryMs(e, now))}</span>
-                    <button className="btn-ghost btn-icon h-7 w-7 opacity-0 group-hover:opacity-100" onClick={() => setEditing(e)} aria-label="Edit entry">
+                    <button className="hover-reveal btn-ghost btn-icon h-7 w-7" onClick={() => setEditing(e)} aria-label="Edit entry">
                       <Pencil size={13} />
                     </button>
-                    <button className="btn-ghost btn-icon h-7 w-7 opacity-0 group-hover:opacity-100" onClick={() => deleteTimeEntry(e.id)} aria-label="Delete entry">
+                    <button className="hover-reveal btn-ghost btn-icon h-7 w-7" onClick={() => deleteTimeEntry(e.id)} aria-label="Delete entry">
                       <Trash2 size={13} />
                     </button>
                   </li>

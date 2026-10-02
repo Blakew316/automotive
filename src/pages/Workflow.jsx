@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Clock, Package, MoreHorizontal, ArrowRight } from 'lucide-react';
 import { useLookup, useTotals, useUI, useScopedShop } from '../store/hooks';
 import { PageHeader, SearchInput, Avatar, Dot, Menu, Segmented } from '../components/ui';
+import { useIsPhone } from '../lib/viewport';
 import { STATUSES, STATUS } from '../lib/workflow';
 import { money, money0, fullName, time, sameDay, dateShort, relTime } from '../lib/format';
 
@@ -50,11 +51,13 @@ export default function Workflow() {
     ...state.technicians.map((t) => ({ value: t.id, label: t.name.split(' ')[0] })),
   ];
 
+  const phone = useIsPhone();
+
   return (
     <>
       <PageHeader
         title="Workflow"
-        subtitle="Drag repair orders between stages. Everything updates instantly."
+        subtitle={phone ? 'Swipe between stages. Tap ••• on a card to move it on.' : 'Drag repair orders between stages. Everything updates instantly.'}
         actions={
           <Link to="/orders/new" className="btn-primary">
             <Plus size={16} strokeWidth={2.2} /> New repair order
@@ -66,8 +69,9 @@ export default function Workflow() {
         <Segmented options={techOptions} value={tech} onChange={setTech} size="sm" className="max-w-full overflow-x-auto" />
       </div>
 
-      <div className="-mx-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:px-6 lg:-mx-10 lg:px-10">
-        <div className="grid min-w-[1100px] grid-cols-5 gap-3">
+      {/* On a phone each stage is a page: swipe and it snaps to the next one, with the one after peeking in. */}
+      <div className="no-scrollbar -mx-4 snap-x snap-mandatory scroll-px-4 overflow-x-auto px-4 pb-4 sm:-mx-6 sm:snap-none sm:px-6 lg:-mx-10 lg:px-10">
+        <div className="grid auto-cols-[86%] grid-flow-col gap-3 sm:min-w-[1100px] sm:auto-cols-auto sm:grid-flow-row sm:grid-cols-5">
           {COLUMNS.map((col) => {
             const list = byStatus[col.id];
             const sum = list.reduce((s, o) => s + totals(o).total, 0);
@@ -86,7 +90,7 @@ export default function Workflow() {
                   setDragId(null);
                   move(id, col.id);
                 }}
-                className={`relative flex min-h-[60vh] flex-col overflow-hidden rounded-xl p-1.5 pt-2 transition-colors ${over === col.id ? 'bg-accent/[0.07] ring-1 ring-accent/30' : 'bg-fill/[0.07]'}`}
+                className={`relative flex min-h-[60vh] snap-start flex-col overflow-hidden rounded-xl p-1.5 pt-2 transition-colors ${over === col.id ? 'bg-accent/[0.07] ring-1 ring-accent/30' : 'bg-fill/[0.07]'}`}
               >
                 <header className="flex items-center justify-between px-2 pb-2 pt-1">
                   <div className="flex items-center gap-2">
@@ -138,14 +142,16 @@ function BoardCard({ order: o, now, dragging, onDragStart, onDragEnd, onMove }) 
   const partsOut = o.services.flatMap((s) => s.items).filter((i) => i.type === 'part' && i.partStatus === 'ordered').length;
   const done = o.services.filter((s) => s.status !== 'declined' && s.done).length;
   const active = o.services.filter((s) => s.status !== 'declined').length;
+  // On a phone a long press shouldn't start a drag (it's the ••• menu there).
+  const phone = useIsPhone();
 
   return (
     <article
-      draggable
+      draggable={!phone}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onClick={() => navigate(`/orders/${o.id}`)}
-      className={`group cursor-pointer rounded-[10px] bg-surface p-3 shadow-card transition-all hover:shadow-pop ${dragging ? 'rotate-1 opacity-50' : ''}`}
+      className={`press group cursor-pointer rounded-[10px] bg-surface p-3 shadow-card transition-all hover:shadow-pop ${dragging ? 'rotate-1 opacity-50' : ''}`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
@@ -157,7 +163,7 @@ function BoardCard({ order: o, now, dragging, onDragStart, onDragEnd, onMove }) 
         <div onClick={(e) => e.stopPropagation()}>
           <Menu
             trigger={({ toggle }) => (
-              <button onClick={toggle} className="btn-ghost btn-icon -mr-1.5 -mt-1 h-6 w-6 opacity-60 group-hover:opacity-100" aria-label="Move">
+              <button onClick={toggle} className="hover-dim btn-ghost btn-icon -mr-1.5 -mt-1 h-6 w-6" aria-label="Move">
                 <MoreHorizontal size={15} />
               </button>
             )}

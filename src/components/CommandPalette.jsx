@@ -66,6 +66,7 @@ function Palette({ onClose }) {
   const navigate = useNavigate();
   const [q, setQ] = useState('');
   const [active, setActive] = useState(0);
+  const [touch] = useState(() => matchMedia('(pointer: coarse)').matches);
   const [dtc, setDtc] = useState(null);
   const [catalog, setCatalog] = useState(null);
   const listRef = useRef(null);
@@ -170,9 +171,16 @@ function Palette({ onClose }) {
 
   let idx = -1;
   return (
-    <div className="fixed inset-0 z-[55] flex justify-center px-4 pt-[12vh]" role="dialog" aria-modal="true" aria-label="Search">
+    // On a phone it drops from the top, above the keyboard, with Cancel where iOS puts it.
+    <div
+      className="fixed inset-x-0 z-[55] flex justify-center px-2 pb-2 pt-[calc(var(--safe-t)+8px)] sm:px-4 sm:pb-0 sm:pt-[12vh]"
+      style={{ top: 'var(--vv-top, 0px)', height: 'var(--vv-height, 100%)' }}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Search"
+    >
       <div className="absolute inset-0 animate-fade-in bg-black/20" onClick={onClose} />
-      <div className="glass relative flex max-h-[64vh] w-full max-w-[620px] animate-sheet-in flex-col overflow-hidden rounded-xl bg-surface/95 shadow-sheet">
+      <div className="glass relative flex h-fit max-h-full w-full max-w-[620px] animate-sheet-in flex-col overflow-hidden rounded-xl bg-surface/95 shadow-sheet sm:max-h-[64vh]">
         <div className="flex items-center gap-3 border-b border-line px-4">
           <Search size={18} strokeWidth={2} className="shrink-0 text-ink-3" />
           <input
@@ -184,11 +192,19 @@ function Palette({ onClose }) {
             }}
             onKeyDown={onKeyDown}
             placeholder="Search customers, vehicles, VINs, RO #, trouble codes…"
-            className="h-14 flex-1 bg-transparent text-lg text-ink outline-none placeholder:text-ink-4"
+            enterKeyHint="go"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="none"
+            spellCheck={false}
+            className="h-14 min-w-0 flex-1 bg-transparent text-lg text-ink outline-none placeholder:text-ink-4"
           />
-          <kbd className="kbd">esc</kbd>
+          <kbd className="kbd coarse:hidden">esc</kbd>
+          <button onClick={onClose} className="hidden h-11 shrink-0 text-[17px] text-accent active:opacity-40 coarse:block">
+            Cancel
+          </button>
         </div>
-        <div ref={listRef} className="overflow-y-auto p-2">
+        <div ref={listRef} className="overflow-y-auto overscroll-contain p-2">
           {flat.length === 0 && <div className="px-3 py-10 text-center text-sm text-ink-3">No results for “{q}”</div>}
           {groups.map((g) => (
             <div key={g.title} className="mb-1">
@@ -196,7 +212,8 @@ function Palette({ onClose }) {
               {g.items.map((item) => {
                 idx += 1;
                 const i = idx;
-                const sel = i === current;
+                // The keyboard selection highlight is for keyboards; on a touch screen every row looks alike.
+                const sel = i === current && !touch;
                 const Icon = item.icon;
                 return (
                   <button
@@ -204,7 +221,7 @@ function Palette({ onClose }) {
                     data-idx={i}
                     onMouseMove={() => setActive(i)}
                     onClick={() => go(item)}
-                    className={`flex w-full items-center gap-3 rounded-[8px] px-3 py-2 text-left transition-colors ${sel ? 'bg-accent text-on-accent' : 'text-ink'}`}
+                    className={`flex w-full items-center gap-3 rounded-[8px] px-3 py-2 text-left transition-colors coarse:min-h-[48px] ${sel ? 'bg-accent text-on-accent' : 'text-ink'}`}
                   >
                     {Icon && <Icon size={16} strokeWidth={1.8} className={`shrink-0 ${sel ? 'text-on-accent' : 'text-ink-3'}`} />}
                     <span className="min-w-0 flex-1">

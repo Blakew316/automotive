@@ -10,6 +10,8 @@ import Scanner, { ScanButton } from '../components/Scanner';
 import { useUI, useScopedShop, useSite } from '../store/hooks';
 import { siteFor, siteOf } from '../lib/locations';
 import { PageHeader, Card, CardHeader, Tabs, SearchInput, Segmented, EmptyState, Modal, Field, Mono, ExternalLink, IconTile } from '../components/ui';
+import { keyboard } from '../lib/keyboard';
+import { useIsPhone } from '../lib/viewport';
 import { SUPPLIERS, B2B_PLATFORMS, OEM_PARTS, oemPartsFor } from '../lib/suppliers';
 import { priceFromMatrix } from '../lib/pricing';
 import { vehicleSpecs } from '../data/vehicleSpecs';
@@ -171,6 +173,7 @@ const GROUP_ICON = { parts: Wrench, tires: Disc3, batteries: BatteryCharging, fl
 const GROUP_TONE = { parts: 'blue', tires: 'slate', batteries: 'teal', fluids: 'sky' };
 
 function Inventory() {
+  const phone = useIsPhone();
   const { state, adjustInventory, saveInventoryItem, deleteInventoryItem } = useScopedShop();
   const { toast } = useUI();
   const [params, setParams] = useSearchParams();
@@ -275,6 +278,34 @@ function Inventory() {
       <Card>
         {rows.length === 0 ? (
           <EmptyState icon={Package} title="No parts match" />
+        ) : phone ? (
+          // iPhone: the part on the left (tap to edit), a big − count + stepper on the right.
+          <ul className="divide-y divide-line/70">
+            {rows.map((p) => {
+              const st = status.get(p.id);
+              const pill = STOCK_STATUS[st.status];
+              return (
+                <li key={p.id} className="flex items-center gap-2 py-2.5 pl-4 pr-2">
+                  <button className="press -my-2.5 min-w-0 flex-1 rounded-[8px] py-2.5 text-left" onClick={() => setEditing(p)} aria-label={`Edit ${p.description}`}>
+                    <span className="block truncate text-base font-semibold text-ink">{p.description}</span>
+                    <span className="block truncate text-sm text-ink-3">
+                      {p.brand} {p.partNumber ? <span className="font-mono text-[13px] text-ink-2">{p.partNumber}</span> : p.sku}
+                      {p.location ? ` · Bin ${p.location}` : ''}
+                    </span>
+                    <span className="mt-1 flex items-center gap-2">
+                      <span className={`pill ${pill.className}`}>{pill.label}</span>
+                      <span className="tabular text-xs text-ink-3">{money(p.cost)} cost</span>
+                    </span>
+                  </button>
+                  <div className="flex shrink-0 items-center rounded-full bg-fill/[0.08]">
+                    <button className="btn-ghost btn-icon h-9 w-9 rounded-full" onClick={() => adjustInventory(p.id, -1)} aria-label="Decrease"><Minus size={15} /></button>
+                    <span className="tabular w-8 text-center text-base font-semibold">{p.qty}</span>
+                    <button className="btn-ghost btn-icon h-9 w-9 rounded-full" onClick={() => adjustInventory(p.id, 1)} aria-label="Increase"><Plus size={15} /></button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         ) : (
           <div className="overflow-x-auto">
             <table className="table">
@@ -325,7 +356,7 @@ function Inventory() {
                       <td className="tabular text-right text-ink-2">{money(p.cost)}</td>
                       <td className="tabular hidden text-right sm:table-cell">{money(priceFromMatrix(p.cost, state.shop.matrix))}</td>
                       <td className="text-right">
-                        <div className="flex justify-end opacity-0 transition-opacity group-hover:opacity-100">
+                        <div className="hover-reveal flex justify-end">
                           {p.partNumber && (
                             <a href={SUPPLIERS[0].search(p.partNumber)} target="_blank" rel="noopener noreferrer" className="btn-ghost btn-icon h-7 w-7" title="Price on RockAuto">
                               <ArrowUpRight size={14} />
@@ -517,12 +548,12 @@ function PartForm({ initial, onClose, onSave, onDelete }) {
       <div className="grid grid-cols-2 gap-3">
         <Field label="Description" className="col-span-2">{(id) => <input id={id} autoFocus className="input" value={f.description} onChange={set('description')} />}</Field>
         <Field label="Brand">{(id) => <input id={id} className="input" value={f.brand} onChange={set('brand')} />}</Field>
-        <Field label="Part number">{(id) => <input id={id} className="input font-mono" value={f.partNumber} onChange={set('partNumber')} />}</Field>
+        <Field label="Part number">{(id) => <input id={id} {...keyboard.code} className="input font-mono" value={f.partNumber} onChange={set('partNumber')} />}</Field>
         <Field label="Internal SKU">{(id) => <input id={id} className="input" value={f.sku} onChange={set('sku')} />}</Field>
         <Field label="Barcode (UPC/EAN)" className="col-span-2">
           {(id) => (
             <div className="flex gap-2">
-              <input id={id} className="input font-mono" value={f.barcode || ''} onChange={set('barcode')} />
+              <input id={id} {...keyboard.code} className="input font-mono" value={f.barcode || ''} onChange={set('barcode')} />
               <ScanButton className="btn-outline btn-icon" label="Scan the part’s barcode" onResult={(barcode) => setF((x) => ({ ...x, barcode }))} />
             </div>
           )}

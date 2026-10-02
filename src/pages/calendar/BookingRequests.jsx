@@ -56,21 +56,22 @@ export default function BookingRequests() {
                         </span>
                       )}
                       {b.phone && (
-                        <span>
+                        <a href={`tel:${b.phone}`} className="hover:text-accent">
                           <Phone size={12} className="mr-1 inline" />
                           {fmtPhone(b.phone)}
-                        </span>
+                        </a>
                       )}
                       {b.email && (
-                        <span>
+                        <a href={`mailto:${b.email}`} className="hover:text-accent">
                           <Mail size={12} className="mr-1 inline" />
                           {b.email}
-                        </span>
+                        </a>
                       )}
                     </div>
                     {b.notes && <p className="mt-1.5 whitespace-pre-line rounded-[8px] bg-fill/[0.06] px-2.5 py-1.5 text-sm">{b.notes}</p>}
                   </div>
-                  <div className="flex gap-2">
+                  {/* On a phone the buttons get their own row under the request, full width. */}
+                  <div className="flex w-full gap-2 pl-[46px] sm:w-auto sm:pl-0 [&>button]:flex-1 sm:[&>button]:flex-none">
                     <button
                       className="btn-secondary btn-sm"
                       onClick={() => {

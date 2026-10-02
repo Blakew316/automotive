@@ -43,7 +43,7 @@ export default function InspectionTemplates() {
                 <Copy size={13} />
               </button>
               {state.inspectionTemplates.length > 1 && (
-                <button className="btn-ghost btn-icon h-7 w-7 opacity-0 group-hover:opacity-100" title="Delete" onClick={() => deleteInspectionTemplate(t.id)}>
+                <button className="hover-reveal btn-ghost btn-icon h-7 w-7" title="Delete" onClick={() => deleteInspectionTemplate(t.id)}>
                   <Trash2 size={13} />
                 </button>
               )}

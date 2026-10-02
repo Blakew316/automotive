@@ -257,10 +257,10 @@ function Booking({ config }) {
                   {services.join(', ')} · {slot.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })} at {time(slot.toISOString())}
                 </p>
                 <div className="space-y-3">
-                  <input className="input h-11 text-[15px]" placeholder="Full name" autoComplete="name" value={f.name} onChange={set('name')} aria-label="Full name" />
+                  <input className="input h-11 text-[15px]" placeholder="Full name" autoComplete="name" autoCapitalize="words" value={f.name} onChange={set('name')} aria-label="Full name" />
                   <input className="input h-11 text-[15px]" placeholder="Mobile phone" type="tel" autoComplete="tel" value={f.phone} onChange={set('phone')} aria-label="Mobile phone" />
-                  <input className="input h-11 text-[15px]" placeholder="Email (optional)" type="email" autoComplete="email" value={f.email} onChange={set('email')} aria-label="Email" />
-                  <input className="input h-11 text-[15px]" placeholder="Vehicle — e.g. 2018 Honda Accord" value={f.vehicle} onChange={set('vehicle')} aria-label="Vehicle" />
+                  <input className="input h-11 text-[15px]" placeholder="Email (optional)" type="email" autoComplete="email" autoCapitalize="none" autoCorrect="off" value={f.email} onChange={set('email')} aria-label="Email" />
+                  <input className="input h-11 text-[15px]" placeholder="Vehicle — e.g. 2018 Honda Accord" autoCapitalize="words" value={f.vehicle} onChange={set('vehicle')} aria-label="Vehicle" />
                   <textarea className="input resize-none text-[15px]" rows={3} placeholder="Anything we should know? (noises, warning lights, waiting vs. drop-off)" value={f.notes} onChange={set('notes')} aria-label="Notes" />
                 </div>
                 {error && <p className="mt-3 text-sm text-bad">{error}</p>}

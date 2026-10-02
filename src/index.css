@@ -10,6 +10,54 @@
  * The public website's "foil" hues (indigo, lilac, azure, teal) add a little life: icon tiles, the
  * sidebar, avatars and a few hairline accents — always as light tints or thin lines, never big blocks.
  */
+/*
+ * Type that steps up a point on touch phones (iOS reads 15–17pt as body), and the safe-area insets
+ * (notch, Dynamic Island, home indicator) as variables. --safe-b drops to 0 while the keyboard is up.
+ */
+:root {
+  --text-sm: 13px;
+  --leading-sm: 18px;
+  --text-base: 14px;
+  --leading-base: 20px;
+  --text-md: 15px;
+  --leading-md: 22px;
+  --safe-t: env(safe-area-inset-top, 0px);
+  --safe-b: env(safe-area-inset-bottom, 0px);
+  --safe-l: env(safe-area-inset-left, 0px);
+  --safe-r: env(safe-area-inset-right, 0px);
+  --navbar: 0px;
+  --tabbar: 0px;
+}
+@media (pointer: coarse) and (max-width: 767px) {
+  :root {
+    --text-sm: 14px;
+    --leading-sm: 19px;
+    --text-base: 15px;
+    --leading-base: 21px;
+    --text-md: 16px;
+    --leading-md: 22px;
+  }
+}
+/* The staff app's iPhone chrome: a 44pt navigation bar and a 49pt tab bar (both hidden from lg up). */
+@media (max-width: 1023px) {
+  :root:has(.app-tabbar) {
+    --navbar: 44px;
+    --tabbar: 49px;
+  }
+}
+:root.kb-open {
+  --safe-b: 0px;
+}
+/* Full-screen pages on a phone (a conversation) cover the tab bar, like iOS pushing a detail screen. */
+@media (max-width: 1023px) {
+  :root:has(.app-tabbar):has(.hide-tabbar) {
+    --tabbar: 0px;
+  }
+  :root:has(.hide-tabbar) .app-tabbar {
+    display: none;
+  }
+}
+
 :root {
   color-scheme: light;
   --canvas: 239 241 244;
@@ -179,6 +227,32 @@
     text-rendering: optimizeLegibility;
     font-feature-settings: 'kern' 1;
     -webkit-tap-highlight-color: transparent;
+    /* Keep our type sizes when the phone rotates to landscape. */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  /* Customer pages (booking, status, pay, check-in) keep clear of the notch in landscape. */
+  body:not(:has(.app-shell)) {
+    padding-left: var(--safe-l);
+    padding-right: var(--safe-r);
+  }
+  /* The staff app is a fixed-height shell: only its own panes scroll, so the page never rubber-bands as a whole. */
+  html:has(.app-shell),
+  html:has(.app-shell) body {
+    overscroll-behavior: none;
+  }
+  /* No double-tap-to-zoom on controls: taps land immediately and quick repeated taps (+/−) don't zoom. */
+  a,
+  button,
+  input,
+  label,
+  select,
+  summary,
+  textarea,
+  [role='button'],
+  [role='tab'],
+  [role='switch'] {
+    touch-action: manipulation;
   }
   body {
     @apply bg-canvas text-ink text-base;
@@ -341,6 +415,10 @@
   .table :where(td) {
     @apply border-b border-line/70 px-4 py-2.5 align-middle text-ink;
   }
+  /* Numbers never break across lines ("17.7 hr"). */
+  .table td.tabular {
+    @apply whitespace-nowrap;
+  }
   .table tbody tr:last-child :where(td) {
     @apply border-b-0;
   }
@@ -370,6 +448,146 @@
   }
   .glass {
     @apply backdrop-blur-xl backdrop-saturate-150;
+  }
+  /* iOS bar material: translucent canvas with a blur, a hairline where it meets the content. */
+  .bar-material {
+    @apply backdrop-blur-xl backdrop-saturate-[1.8];
+    background-color: rgb(var(--canvas) / 0.88);
+  }
+  .no-scrollbar {
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /*
+   * Controls that only appear on hover with a mouse. On touch screens there's no hover, so they're
+   * simply shown.
+   */
+  @media (hover: hover) and (pointer: fine) {
+    .hover-reveal {
+      opacity: 0;
+      transition: opacity 150ms;
+    }
+    .hover-dim {
+      opacity: 0.6;
+      transition: opacity 150ms;
+    }
+    .group:hover .hover-reveal,
+    .group:hover .hover-dim,
+    .hover-reveal:focus-visible,
+    .hover-reveal:focus-within,
+    .hover-dim:focus-visible {
+      opacity: 1;
+    }
+  }
+
+  /* Pressed states for touch: iOS highlights a control while your finger is on it. */
+  @media (hover: none) {
+    .btn-ghost:active,
+    .btn-plain:active,
+    .btn-outline:active {
+      background-color: rgb(var(--fill) / 0.16);
+    }
+    .btn-secondary:active,
+    .btn-danger:active {
+      background-color: rgb(var(--fill) / 0.24);
+    }
+    .btn-primary:active,
+    .btn-dark:active {
+      filter: brightness(0.86);
+    }
+    .table tbody tr.row-link:active,
+    .press:active {
+      background-color: rgb(var(--fill) / 0.1);
+    }
+  }
+
+  /*
+   * Touch screens: 44pt targets (Apple's minimum), iOS-size controls. Small icon buttons keep their
+   * look but get an invisible 44×44 hit area.
+   */
+  @media (pointer: coarse) {
+    .btn {
+      @apply relative h-10 rounded-[10px] px-3.5;
+      font-size: 15px;
+    }
+    .btn::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: max(100%, 44px);
+      height: max(100%, 44px);
+      transform: translate(-50%, -50%);
+    }
+    .btn-plain,
+    .btn-ghost {
+      @apply px-2.5;
+    }
+    .btn-sm {
+      @apply h-[34px] rounded-[9px] px-3;
+      font-size: 13px;
+    }
+    .btn-lg {
+      @apply h-[50px] rounded-xl px-5;
+      font-size: 17px;
+    }
+    .btn-icon {
+      @apply w-10 px-0;
+    }
+    .btn-sm.btn-icon {
+      @apply w-[34px];
+    }
+    .input {
+      @apply h-11 rounded-[10px] px-3;
+    }
+    .chip {
+      @apply h-8 px-3;
+    }
+  }
+}
+
+/*
+ * iOS zooms the page when a field under 16px gets focus. On touch screens every text field is at
+ * least 16px (this sits after the utilities, so it wins over text-sm and friends).
+ */
+@media (pointer: coarse) {
+  :is(input:not([type='checkbox'], [type='radio'], [type='range'], [type='color'], [type='file'], [type='button'], [type='submit'], [type='reset'], [type='image']), select, textarea):not(.text-lg, .text-xl, .text-2xl, .text-3xl, .text-4xl) {
+    font-size: 16px;
+  }
+}
+
+/* iOS Safari only: plain-looking search and date fields (no inset bevel, dates left-aligned like text). */
+@supports (-webkit-touch-callout: none) {
+  .input,
+  input[type='search'],
+  input[type='date'],
+  input[type='time'],
+  input[type='datetime-local'],
+  input[type='month'] {
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  input[type='search']::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  input::-webkit-date-and-time-value {
+    text-align: left;
+    min-height: 1.25em;
+  }
+}
+
+/* Respect Reduce Motion: no slides, springs or fades (spinners keep turning so waiting still reads as waiting). */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.animate-spin, .animate-pulse),
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
   }
 }
 

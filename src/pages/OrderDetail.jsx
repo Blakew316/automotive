@@ -10,6 +10,7 @@ import RecordHistory from '../components/RecordHistory';
 import DictateButton from '../components/Dictate';
 import { newTrackId, publishTrack, revokeTrack, trackPayload, trackFingerprint } from '../lib/tracker';
 import { PageHeader, Card, Tabs, Menu, EmptyState, Modal, SearchInput, InlineText, Toggle } from '../components/ui';
+import { useIsPhone } from '../lib/viewport';
 import ServiceBlock from './order/ServiceBlock';
 import InspectionPanel from './order/InspectionPanel';
 import OrderSidebar, { PaymentModal } from './order/OrderSidebar';
@@ -343,6 +344,33 @@ export default function OrderDetail() {
 
 function Stepper({ status, onPick }) {
   const idx = STATUSES.findIndex((s) => s.id === status);
+  const phone = useIsPhone();
+  // iPhone: a progress bar with the current stage; tap to move it on (action sheet).
+  if (phone)
+    return (
+      <Menu
+        align="left"
+        trigger={({ toggle }) => (
+          <button onClick={toggle} className="card press flex w-full items-center gap-4 px-4 py-3 text-left" aria-label={`Status: ${STATUSES[idx]?.label}. Change status`}>
+            <span className="min-w-0 flex-1">
+              <span className="flex gap-1" aria-hidden="true">
+                {STATUSES.map((s, i) => (
+                  <span key={s.id} className={`h-[5px] flex-1 rounded-full ${i < idx ? 'bg-accent/45' : i === idx ? 'bg-accent' : 'bg-fill/[0.18]'}`} />
+                ))}
+              </span>
+              <span className="mt-2 flex items-baseline justify-between gap-3">
+                <span className="truncate text-base font-semibold text-ink">{STATUSES[idx]?.label}</span>
+                <span className="shrink-0 text-xs text-ink-3">
+                  Step {idx + 1} of {STATUSES.length}
+                </span>
+              </span>
+            </span>
+            <span className="shrink-0 text-base text-accent">Change</span>
+          </button>
+        )}
+        items={STATUSES.filter((s) => s.id !== status).map((s) => ({ label: `Move to ${s.label}`, onClick: () => onPick(s.id) }))}
+      />
+    );
   return (
     <div className="card flex overflow-x-auto p-1">
       {STATUSES.map((s, i) => {
