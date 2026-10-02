@@ -35,6 +35,329 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* features/parts.html: page-local styles (slug-prefixed) */
+
+/* ---------- Shared bits for this page's mocks ---------- */
+.parts-card {
+  display: grid; gap: 10px; min-width: 0; padding: 12px 13px 13px;
+  background: var(--paper); border: 1px solid var(--line-strong); border-radius: 16px; box-shadow: var(--shadow-2);
+  text-align: left;
+}
+.parts-card-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.parts-ico { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 9px; background: var(--accent-soft); color: var(--accent); }
+.parts-ico .icon { width: 17px; height: 17px; }
+.parts-card-title { display: grid; min-width: 0; line-height: 1.25; }
+.parts-card-title b { font-size: 13px; font-weight: 700; color: var(--ink); }
+.parts-card-title small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The part box drawn inside a camera view (hero and scanning art) */
+.pb-shadow { fill: rgba(15, 43, 76, .07); }
+.pb-top { fill: var(--mist-100); stroke: var(--mist-300); stroke-width: 1.4; stroke-linejoin: round; }
+.pb-tape { fill: var(--blue-100); }
+.pb-side { fill: var(--mist-200); stroke: var(--mist-300); stroke-width: 1.4; stroke-linejoin: round; }
+.pb-front { fill: var(--paper); stroke: var(--mist-300); stroke-width: 1.4; }
+.pb-label { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.2; }
+.pb-bars path { stroke: var(--ink); stroke-width: 2.2; }
+.pb-bars path { stroke-dasharray: none; }
+.pb-lines { stroke: var(--mist-300); stroke-width: 3; stroke-linecap: round; }
+.pb-hit { fill: none; stroke: var(--green); stroke-width: 2.2; transform-box: fill-box; transform-origin: center; }
+.pb-ring { fill: none; stroke: var(--green); stroke-width: 2.4; }
+
+/* ---------- Hero: scan a box, the RO gets the part, the PO lands, the bin fills ---------- */
+@media (min-width: 960px) { .parts-hero .page-hero-grid { grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); } }
+.parts-hero-fig { width: 100%; max-width: 560px; justify-self: center; }
+@media (min-width: 600px) { .parts-hero-fig { padding-bottom: 20px; } }
+.parts-hero-stage {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); gap: 16px; align-items: center;
+  padding-top: 2px; isolation: isolate;
+}
+.parts-hero-stage::before { /* a soft glow behind the scene */
+  content: ""; position: absolute; inset: 6% -6% -2%; border-radius: 50%; z-index: -1; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(31, 122, 224, .12), rgba(45, 179, 106, .06) 60%, transparent);
+}
+.parts-phone { width: 100%; max-width: 250px; justify-self: end; }
+.parts-phone > .mock-screen { gap: 9px; padding: 34px 10px 12px; }
+.parts-scan-bar { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: 12.5px; color: var(--ink); }
+.parts-scan-bar > .icon { width: 16px; height: 16px; color: var(--accent); }
+.parts-scan-bar b { flex: 1 1 auto; min-width: 0; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.parts-scan-x { display: grid; place-items: center; flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--mist-100); color: var(--ink-3); }
+.parts-scan-x .icon { width: 12px; height: 12px; stroke-width: 2.2; }
+.parts-vf { width: 100%; aspect-ratio: 1.22; border-radius: 14px; background: linear-gradient(180deg, var(--mist-50), var(--blue-50)); }
+.parts-box { position: absolute; inset: 13% 9% 6%; width: 82%; height: 81%; overflow: visible; }
+.parts-seg { font-size: 12px; }
+.parts-seg > span { padding-inline: 2px; }
+.parts-found { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 7px 9px; border-radius: 11px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-1); }
+.parts-found-ico { display: grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--green-100); color: var(--green-ink); }
+.parts-found-ico .icon { width: 13px; height: 13px; stroke-width: 2.6; }
+.parts-found-txt { display: grid; flex: 1 1 auto; min-width: 0; line-height: 1.25; }
+.parts-found-txt b { font-size: 12.5px; font-weight: 650; color: var(--ink); }
+.parts-found-txt small { font-size: 12px; color: var(--ink-3); }
+.parts-found-qty { flex: none; font-size: 12px; font-weight: 700; color: var(--ink-2); }
+.parts-hero-side { display: grid; gap: 12px; align-content: center; min-width: 0; }
+.parts-pull-chip { justify-self: start; gap: 6px; max-width: 100%; padding: 6px 12px 6px 9px; font-size: 12.5px; white-space: normal; line-height: 1.3; border: 1px solid rgba(45, 179, 106, .4); box-shadow: var(--shadow-2); }
+.parts-pull-chip .icon { width: 14px; height: 14px; stroke-width: 2.6; }
+.parts-po-line { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding: 7px 9px; border-radius: 10px; background: var(--mist-50); font-size: 12.5px; color: var(--ink-2); }
+.parts-po-line b { flex: none; font-size: 12px; color: var(--ink); }
+.parts-po-foot { display: flex; align-items: center; gap: 8px; }
+/* The PO status pill: a column of four labels that rolls one step at a time */
+.parts-po-pill { display: inline-grid; height: 24px; overflow: hidden; border-radius: var(--pill); box-shadow: inset 0 0 0 1px rgba(15, 43, 76, .06); }
+.parts-po-roll { display: grid; grid-auto-rows: 24px; translate: 0 -75%; }
+.parts-po-roll > span { display: grid; place-items: center; padding: 0 11px; font-size: 12px; font-weight: 650; white-space: nowrap; }
+.parts-po-roll .is-draft { background: var(--mist-100); color: var(--ink-3); }
+.parts-po-roll .is-ordered { background: var(--accent-soft); color: var(--accent-ink); }
+.parts-po-roll .is-partial { background: var(--warn-soft); color: var(--warn); }
+.parts-po-roll .is-received { background: var(--green-100); color: var(--green-ink); }
+.parts-po-meter { display: block; height: 6px; border-radius: var(--pill); background: var(--mist-100); overflow: hidden; }
+.parts-po-fill { display: block; height: 100%; border-radius: inherit; background: var(--bar); transform-origin: 0 50%; }
+.parts-hero-fig[data-seq]:not([data-reached~="2"]) .parts-po-roll { translate: 0 0; }
+.parts-hero-fig[data-seq]:not([data-reached~="2"]) .parts-po-fill { scale: 0 1; }
+.parts-hero-fig.is-armed[data-reached~="2"] .parts-po-roll { animation: parts-po-steps 1.7s linear both; }
+.parts-hero-fig.is-armed[data-reached~="2"] .parts-po-fill { animation: parts-po-meter 1.7s linear both; }
+@keyframes parts-po-steps {
+  0%, 12% { translate: 0 0; animation-timing-function: var(--ease-in-out); }
+  22%, 40% { translate: 0 -25%; animation-timing-function: var(--ease-in-out); }
+  50%, 68% { translate: 0 -50%; animation-timing-function: var(--ease-in-out); }
+  78%, 100% { translate: 0 -75%; }
+}
+@keyframes parts-po-meter {
+  0%, 50% { scale: 0 1; animation-timing-function: var(--ease-in-out); }
+  60%, 70% { scale: .66 1; animation-timing-function: var(--ease-in-out); }
+  80%, 100% { scale: 1 1; }
+}
+.parts-bin { gap: 6px; }
+.parts-bin-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.parts-bin-tag { display: inline-flex; padding: 3px 8px; border-radius: 7px; background: var(--ink); color: #fff; font-size: 12px; font-weight: 700; letter-spacing: .06em; }
+.parts-bin-count { display: flex; align-items: baseline; gap: 7px; line-height: 1.1; }
+.parts-bin-count .odometer { font-size: 30px; font-weight: 760; letter-spacing: -0.03em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.parts-bin-count > span:last-child { font-size: 12.5px; color: var(--ink-3); }
+.parts-shelf { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; padding: 6px 6px 0; border-bottom: 3px solid var(--mist-300); }
+.parts-shelf i { aspect-ratio: 1.1; border-radius: 4px 4px 2px 2px; background: var(--blue-100); box-shadow: inset 0 0 0 1.2px rgba(31, 122, 224, .3); position: relative; }
+.parts-shelf i::after { content: ""; position: absolute; left: 42%; right: 42%; top: 0; height: 38%; background: rgba(31, 122, 224, .28); }
+.parts-shelf i[data-at] { background: var(--green-100); box-shadow: inset 0 0 0 1.2px rgba(45, 179, 106, .45); }
+.parts-shelf i[data-at]::after { background: rgba(45, 179, 106, .35); }
+.parts-bin-name { font-size: 12px; color: var(--ink-3); }
+/* App chips: each shows with the step it describes */
+.parts-hero-fig .float-note.note-1 { top: 28px; right: -26px; left: auto; }
+.parts-hero-fig .float-note.note-2 { top: auto; bottom: -14px; left: -30px; right: auto; }
+@media (min-width: 960px) and (max-width: 1099.98px) { .parts-hero-fig .float-note { display: none; } }
+.parts-hero-fig .float-note { transition: filter .45s var(--ease); }
+.parts-hero-fig:not([data-reached~="2"]) .float-note.note-1 { filter: opacity(0); }
+@media (max-width: 599.98px) {
+  .parts-hero-stage { gap: 10px; grid-template-columns: minmax(0, .96fr) minmax(0, 1fr); }
+  .parts-phone > .mock-screen { padding: 30px 8px 10px; gap: 8px; }
+  .parts-phone { border-radius: 28px; padding: 7px; }
+  .parts-phone > .mock-screen { border-radius: 22px; }
+  .parts-seg { display: none; }
+  .parts-scan-bar b { font-size: 12px; }
+  .parts-found { padding: 6px 7px; gap: 6px; }
+  .parts-found-qty { display: none; }
+  .parts-card { padding: 10px; gap: 8px; border-radius: 14px; }
+  .parts-po-line { padding: 6px 7px; font-size: 12px; }
+  .parts-po-line span { min-width: 0; }
+  .parts-bin-count .odometer { font-size: 26px; }
+  .parts-pull-chip { padding: 5px 10px 5px 8px; font-size: 12px; }
+  .parts-hero-side { gap: 10px; }
+}
+
+/* ---------- Pains ---------- */
+.parts-pains { align-items: center; }
+@media (min-width: 900px) { .parts-pains { grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); } }
+.parts-fix .ro-list h3 { font-size: 1.04rem; line-height: 1.3; }
+.parts-fix .ro-list p { margin-top: 3px; color: var(--ink-3); font-size: .97rem; }
+.parts-fix .ro-head .icon-tile { flex: none; }
+
+/* ---------- Inventory ---------- */
+.parts-inv-fig { width: 100%; }
+.parts-inv-win { width: min(100%, 1000px); }
+.parts-inv-win > .mock-screen { gap: 12px; padding: 14px 16px 12px; }
+.parts-inv-top { display: flex; align-items: center; gap: 16px; min-width: 0; }
+.parts-inv-top .mock-title { flex: none; font-size: 17px; }
+.parts-tabs { display: flex; gap: 4px; min-width: 0; overflow: hidden; padding: 3px; border-radius: var(--pill); background: var(--mist-100);
+  -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+.parts-tabs > span { flex: none; padding: 4px 11px; border-radius: var(--pill); font-size: 12px; font-weight: 600; color: var(--ink-3); white-space: nowrap; }
+.parts-tabs > .is-on { background: var(--paper); color: var(--ink); box-shadow: var(--shadow-1); }
+@media (min-width: 1000px) { .parts-tabs { -webkit-mask-image: none; mask-image: none; } }
+.parts-tiles { display: grid; grid-template-columns: 1.15fr repeat(4, minmax(0, 1fr)); gap: 8px; }
+.parts-tile { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-areas: "ico label" "ico val" "ico sub"; column-gap: 9px; row-gap: 1px; align-content: start; padding: 10px 11px; border-radius: 12px; background: var(--paper); border: 1px solid var(--m-line); box-shadow: var(--shadow-1); min-width: 0; }
+.parts-tile.is-total { grid-template-columns: minmax(0, 1fr); grid-template-areas: "label" "val" "sub"; background: var(--wash); border-color: rgba(31, 122, 224, .16); }
+.parts-tile-ico { grid-area: ico; display: grid; place-items: center; width: 28px; height: 28px; margin-top: 2px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); }
+.parts-tile-ico .icon { width: 16px; height: 16px; }
+.parts-tile .mock-label { grid-area: label; font-weight: 550; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.parts-tile-val { grid-area: val; display: grid; align-items: center; min-height: 26px; }
+.parts-tile-val > * { grid-area: 1 / 1; }
+.parts-tile-val strong { font-size: 18px; line-height: 1.3; font-weight: 720; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.parts-tile.is-total .parts-tile-val strong { font-size: 22px; }
+.parts-tile small { grid-area: sub; font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.parts-skel { display: block; width: 72%; height: 12px; border-radius: 6px; background: linear-gradient(90deg, var(--mist-100), var(--mist-200), var(--mist-100)); background-size: 200% 100%; }
+.parts-tile .parts-skel { height: 14px; width: 64%; }
+.parts-inv-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.parts-search { flex: 0 1 300px; min-width: 0; color: var(--ink-4); }
+.parts-search .icon { width: 14px; height: 14px; color: var(--ink-3); }
+.parts-search > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.parts-icon-btn { padding: 5px 8px; }
+.parts-icon-btn .icon, .parts-csv .icon { width: 15px; height: 15px; }
+.parts-inv-seg { flex: none; width: 150px; }
+.parts-csv { margin-left: auto; }
+.parts-table { display: grid; border: 1px solid var(--m-line); border-radius: 12px; overflow: hidden; }
+.parts-rows { display: grid; }
+.parts-tr { display: grid; grid-template-columns: minmax(0, 2.3fr) minmax(0, .95fr) repeat(3, minmax(0, .62fr)) minmax(0, 1.05fr); align-items: center; gap: 10px; padding: 9px 14px; border-top: 1px solid var(--m-line); background: var(--paper); }
+.parts-tr.is-head { border-top: 0; background: var(--mist-50); padding-block: 7px; font-size: 12px; font-weight: 650; color: var(--ink-3); }
+.parts-tr.is-head > span:nth-child(n+3):nth-child(-n+5) { text-align: right; }
+.parts-td-part { display: grid; min-width: 0; line-height: 1.3; }
+.parts-td-part b { font-size: 13px; font-weight: 650; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.parts-td-part small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.parts-td-part .mock-mono { color: var(--ink-2); }
+.parts-td-bin { font-size: 12px; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.parts-td-num { text-align: right; font-size: 13px; font-weight: 650; font-variant-numeric: tabular-nums; color: var(--ink); }
+.parts-td-num.is-zero { color: var(--ink-4); font-weight: 500; }
+.parts-td-num.is-on { color: var(--accent-ink); }
+.parts-td-status { display: grid; align-items: center; justify-items: start; }
+.parts-td-status > * { grid-area: 1 / 1; }
+.parts-td-status .parts-skel { width: 64px; height: 18px; border-radius: var(--pill); }
+.parts-inv-foot { font-size: 12px; color: var(--ink-3); }
+@media (max-width: 899.98px) {
+  .parts-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .parts-tile.is-total { grid-column: 1 / -1; }
+  .parts-inv-seg { display: none; }
+  .parts-tr.is-head { display: none; }
+  .parts-tr { grid-template-columns: repeat(4, max-content) minmax(0, 1fr); grid-template-areas: "part part part part status" "bin stock jobs ord ."; row-gap: 6px; column-gap: 6px; padding: 10px 12px; }
+  .parts-tr:first-child { border-top: 0; }
+  .parts-td-part { grid-area: part; }
+  .parts-td-status { grid-area: status; justify-items: end; }
+  .parts-td-bin { grid-area: bin; }
+  .parts-td-num:nth-child(3) { grid-area: stock; }
+  .parts-td-num:nth-child(4) { grid-area: jobs; }
+  .parts-td-num:nth-child(5) { grid-area: ord; }
+  .parts-td-bin, .parts-td-num { text-align: left; padding: 2px 7px; border-radius: 7px; background: var(--mist-50); font-size: 12px; font-weight: 650; line-height: 1.4; }
+  .parts-td-bin::before, .parts-td-num::before { content: attr(data-k); font-weight: 500; color: var(--ink-3); }
+  .parts-td-bin .mock-mono { font-weight: 600; }
+}
+@media (max-width: 599.98px) {
+  .parts-inv-win > .mock-screen { padding: 12px 10px 10px; gap: 10px; }
+  .parts-inv-top { gap: 10px; }
+  .parts-inv-top .mock-title { font-size: 15px; }
+  .parts-tiles { gap: 6px; }
+  .parts-tile { padding: 8px 9px; column-gap: 7px; }
+  .parts-tile-ico { width: 24px; height: 24px; border-radius: 7px; }
+  .parts-tile-ico .icon { width: 14px; height: 14px; }
+  .parts-tile-val strong { font-size: 16px; }
+  .parts-tile.is-total .parts-tile-val strong { font-size: 19px; }
+  .parts-search { flex: 1 1 auto; }
+  .parts-tr { padding: 9px 9px; column-gap: 4px; }
+  .parts-td-bin, .parts-td-num { padding: 2px 5px; }
+  .parts-td-bin .mock-mono { letter-spacing: -0.02em; }
+}
+@media (max-width: 379.98px) { .parts-td-bin { display: none; } .parts-tr { grid-template-areas: "part part part part status" "stock jobs ord . ."; } }
+.parts-facts { list-style: none; padding: 0; margin: clamp(28px, 1.5rem + 1.5vw, 44px) 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 20px 28px; }
+.parts-facts li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; }
+.parts-facts h3 { font-size: 1.04rem; line-height: 1.3; }
+.parts-facts p { margin-top: 4px; font-size: .96rem; line-height: 1.5; color: var(--ink-3); text-wrap: pretty; }
+.parts-inv-note { max-width: 62em; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+/* ---------- Purchase orders ---------- */
+.parts-po-note { margin-top: clamp(28px, 1.5rem + 1vw, 40px); max-width: 720px; }
+.parts-po-note a { font-weight: 600; white-space: nowrap; }
+/* The last marker: a box drops into the bin when the road reaches it */
+.parts-bin-marker .icon { overflow: visible; }
+.parts-bin-front { fill: var(--paper); }
+.parts-drop { transition: translate .7s var(--spring), opacity .3s var(--ease); }
+.js .parts-po-road .roadmap-step:not(.is-reached) .parts-drop { translate: 0 -9px; opacity: 0; }
+.motion-paused .parts-drop { transition: none; }
+
+/* ---------- Scanning (data-free art) ---------- */
+@media (min-width: 900px) { .parts-scan-split { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); } }
+.parts-uses { list-style: none; padding: 0; margin: 2px 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.parts-uses li { display: flex; align-items: center; gap: 9px; min-height: 44px; padding: 8px 12px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--line); font-size: .95rem; font-weight: 600; color: var(--ink-2); line-height: 1.25; }
+.parts-uses .icon { width: 18px; height: 18px; color: var(--accent); }
+@media (max-width: 379.98px) { .parts-uses { grid-template-columns: minmax(0, 1fr); } }
+.parts-scan-art { min-height: 0; }
+.parts-scan-stage { position: relative; width: 100%; display: grid; place-items: center; isolation: isolate; padding: 8px 0; }
+.parts-scan-stage::before { content: ""; position: absolute; inset: 0 4%; z-index: -1; border-radius: 50%; background: radial-gradient(closest-side, rgba(31, 122, 224, .13), rgba(45, 179, 106, .07) 62%, transparent); }
+.parts-scan-phone { position: relative; width: min(100%, 330px); display: grid; gap: 12px; padding: 44px 14px 16px; border-radius: 40px; background: var(--mist-100); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3); }
+.parts-scan-island { position: absolute; top: 16px; left: 50%; width: 31%; height: 15px; translate: -50% 0; border-radius: var(--pill); background: var(--mist-300); }
+.parts-scan-cam { position: relative; aspect-ratio: 1.05; border-radius: 26px; overflow: hidden; background: linear-gradient(180deg, #eef4fb, #e4eef9 60%, #e6f3ec); border: 1px solid var(--mist-200); }
+.parts-scan-box { position: absolute; inset: 16% 7% 10%; width: 86%; height: 74%; overflow: visible; }
+.parts-scan-box .pb-bars path { stroke-width: 2.6; }
+.parts-brackets { position: absolute; inset: 27% 17% 27%; }
+.parts-brackets-in { position: absolute; inset: 0; }
+.parts-brackets i { position: absolute; width: 24%; height: 24%; border: 0 solid var(--blue); }
+.parts-brackets i:nth-child(1) { top: 0; left: 0; border-width: 4px 0 0 4px; border-top-left-radius: 12px; }
+.parts-brackets i:nth-child(2) { top: 0; right: 0; border-width: 4px 4px 0 0; border-top-right-radius: 12px; }
+.parts-brackets i:nth-child(3) { bottom: 0; left: 0; border-width: 0 0 4px 4px; border-bottom-left-radius: 12px; }
+.parts-brackets i:nth-child(4) { bottom: 0; right: 0; border-width: 0 4px 4px 0; border-bottom-right-radius: 12px; }
+.parts-brackets.is-locked i { border-color: var(--green); }
+.parts-brackets.is-locked .parts-brackets-in { inset: 4%; }
+.parts-scan-art.is-in .parts-brackets:not(.is-locked) .parts-brackets-in { animation: art-pulse 1.05s var(--ease-in-out) 2; transform-origin: center; }
+@keyframes parts-lock { 0% { opacity: 0; scale: 1.22; } 60% { opacity: 1; } }
+.parts-scan-cam .scanline { inset: 27% 17%; }
+.parts-scan-check { position: absolute; right: 11%; bottom: 13%; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--green); color: #fff; box-shadow: 0 0 0 5px rgba(255, 255, 255, .85), var(--shadow-2); }
+.parts-scan-check .icon { width: 24px; height: 24px; stroke-width: 3; }
+.parts-scan-modes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: var(--pill); background: var(--paper); border: 1px solid var(--line); }
+.parts-scan-modes span { display: flex; align-items: center; justify-content: center; gap: 5px; min-height: 32px; border-radius: var(--pill); font-size: 13px; font-weight: 600; color: var(--ink-3); white-space: nowrap; }
+.parts-scan-modes .is-on { background: var(--accent-soft); color: var(--accent-ink); }
+.parts-scan-modes .icon { width: 15px; height: 15px; }
+
+/* ---------- Supplier lookup ---------- */
+@media (min-width: 900px) { .parts-sup-split { grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr); } }
+.parts-sup-fig { width: 100%; max-width: 540px; justify-self: center; }
+.parts-sup-card { width: 100%; display: grid; gap: 10px; padding: 16px; border-radius: 20px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); text-align: left; }
+.parts-sup-field { min-height: 38px; font-size: 13px; gap: 8px; }
+.parts-sup-field .icon { width: 15px; height: 15px; color: var(--ink-3); }
+.parts-sup-q { white-space: nowrap; color: var(--ink); font-weight: 560; }
+.parts-sup-label { margin-top: 2px; font-size: 12px; font-weight: 650; letter-spacing: .02em; color: var(--ink-3); }
+.parts-sup-pills { display: flex; flex-wrap: wrap; gap: 7px; }
+.parts-sup-pill { position: relative; isolation: isolate; display: inline-flex; align-items: center; gap: 7px; min-height: 32px; padding: 5px 11px 5px 10px; border-radius: var(--pill); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); font-size: 13px; font-weight: 620; color: var(--ink-2); white-space: nowrap; }
+.parts-sup-pill > .icon { width: 13px; height: 13px; color: var(--accent); }
+.parts-sup-lit { position: absolute; inset: -1px; z-index: -1; border-radius: inherit; background: var(--accent-soft); box-shadow: inset 0 0 0 1.5px rgba(31, 122, 224, .5); }
+.parts-sup-dot { position: relative; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--mist-300); }
+.parts-sup-dot i { position: absolute; inset: 0; border-radius: 50%; background: var(--dot-ok); box-shadow: 0 0 0 3px rgba(45, 179, 106, .2); }
+.parts-sup-pill.is-link { background: var(--mist-50); border-style: dashed; border-color: var(--line-strong); box-shadow: none; color: var(--ink-3); }
+.parts-sup-pill.is-link > .icon { color: var(--ink-3); }
+@media (max-width: 599.98px) {
+  .parts-sup-card { padding: 13px; }
+  .parts-sup-pill { font-size: 12.5px; padding: 4px 10px 4px 9px; min-height: 30px; }
+}
+
+/* ---------- Tires ---------- */
+.parts-tire-grid { align-items: stretch; }
+.parts-tire-card { display: flex; flex-direction: column; gap: 10px; }
+.parts-tire-card h3 { margin-top: 6px; font-size: 1.15rem; }
+.parts-tire-card h3 + p { margin-top: 0; }
+.parts-tire-ico { overflow: visible; }
+.parts-tire-ico .icon { width: 28px; height: 28px; }
+@keyframes parts-tire-roll { from { opacity: 0; translate: -40px 0; rotate: -320deg; } 70% { opacity: 1; } }
+.parts-tiers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: auto; padding-top: 8px; }
+.parts-tiers span { display: flex; align-items: center; justify-content: center; gap: 4px; min-height: 34px; padding: 4px 6px; border-radius: 10px; background: var(--mist-50); border: 1px solid var(--line); font-size: .86rem; font-weight: 650; color: var(--ink-2); }
+.parts-tiers .is-mid { background: var(--accent-soft); border-color: rgba(31, 122, 224, .3); color: var(--accent-ink); }
+.parts-tiers.is-picked .is-mid { background: var(--green-100); border-color: rgba(45, 179, 106, .5); color: var(--green-ink); }
+.parts-tiers .icon { width: 15px; height: 15px; stroke-width: 2.6; }
+/* The customer's pick: the middle card lifts and a badge pops */
+.parts-tire-card.is-chosen { transform: translateY(-10px); border-color: rgba(45, 179, 106, .45); box-shadow: var(--shadow-2); }
+.js .parts-tire-card.is-chosen.is-in { animation: reveal-shift .8s var(--ease) backwards, parts-lift .75s var(--spring) backwards; animation-delay: calc(var(--i, 0) * 70ms), 1.15s; }
+@keyframes parts-lift { from { transform: none; box-shadow: var(--shadow-1); border-color: var(--line); } }
+.parts-chose { position: absolute; top: -13px; right: 16px; display: inline-flex; align-items: center; gap: 5px; padding: 4px 11px 4px 8px; border-radius: var(--pill); background: var(--green-ink); color: #fff; font-size: .8rem; font-weight: 700; box-shadow: var(--shadow-2); white-space: nowrap; }
+.parts-chose .icon { width: 14px; height: 14px; stroke-width: 2.8; }
+@media (max-width: 959.98px) { .parts-tire-card.is-chosen { transform: none; } .js .parts-tire-card.is-chosen.is-in { animation: reveal-shift .8s var(--ease) backwards; animation-delay: calc(var(--i, 0) * 70ms); } }
+@media (max-width: 639.98px) { .parts-tire-grid { row-gap: 26px; } }
+.parts-dot-fig { margin-top: auto; padding-top: 6px; }
+.parts-dot-fig .mock-stage { justify-items: start; gap: 8px; }
+.parts-dot-code { display: inline-flex; padding: 7px 11px; border-radius: 10px; background: var(--mist-50); border: 1px solid var(--line); font-family: var(--font-mono); font-size: 14px; font-weight: 650; letter-spacing: .02em; color: var(--ink); white-space: nowrap; }
+.parts-dot-date { position: relative; isolation: isolate; padding: 0 2px; }
+.parts-dot-date i { position: absolute; inset: -3px -1px; z-index: -1; border-radius: 5px; background: var(--blue-100); box-shadow: inset 0 -2px 0 var(--blue); }
+.parts-dot-ok .icon { width: 13px; height: 13px; stroke-width: 2.8; }
+/* Cores: the pill steps owed, returned, credited */
+.parts-cores { display: flex; align-items: center; gap: 14px; margin-top: clamp(22px, 1rem + 1.5vw, 34px); padding: 14px 18px; border-radius: var(--r); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); }
+.parts-cores p { flex: 1 1 auto; min-width: 0; color: var(--ink-2); text-wrap: pretty; }
+.parts-cores strong { color: var(--ink); }
+.parts-core-pill { display: inline-grid; flex: none; justify-items: end; }
+.parts-core-pill > * { grid-area: 1 / 1; }
+.parts-core-pill .mock-chip { font-size: 13px; padding: 4px 12px; }
+@media (max-width: 599.98px) {
+  .parts-cores { flex-wrap: wrap; padding: 14px; gap: 10px 12px; }
+  .parts-cores p { flex-basis: calc(100% - 52px); }
+  .parts-core-pill { margin-left: 50px; justify-items: start; }
+}
+</style>
 </head>
 <body data-page="features" data-tab="features" id="top">
 <!-- @partial icons -->
@@ -190,9 +513,12 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
-    <div class="container">
-      <!-- @partial breadcrumbs -->
+  <!-- ===== Hero ===== -->
+  <section class="page-hero parts-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <ol>
     <li><a href="../index.html">Home</a></li>
@@ -202,10 +528,454 @@
 </nav>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Parts, inventory & tires","item":"https://blakew316.github.io/automotive/features/parts.html"}]}</script>
 <!-- @end breadcrumbs -->
-      <h1>Parts on the shelf, on the job <span class="accent-text">and on order.</span></h1>
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-parts"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span>Parts, inventory &amp; tires</p>
+        <h1 id="hero-title">Parts on the shelf, on the job <span class="accent-text">and on order.</span></h1>
+        <p class="lead">See what&rsquo;s in stock, what&rsquo;s spoken for and what&rsquo;s coming. Purchase orders are tracked from order to receipt, cores until they&rsquo;re credited, and a scanner in the browser finds, pulls and counts parts.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=parts">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/parts" data-no-prerender>Open parts in the sample shop</a>
+        </div>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Barcode scanning</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>PO tracking</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Tire DOT log</span>
+        </div>
+      </div>
+
+      <figure class="page-hero-art mock-figure parts-hero-fig" data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="1800" aria-label="Example: a phone scans the barcode on a box of front ceramic brake pads in the sample shop and pulls them onto the repair order. A purchase order for 4 of those pads shows Received, and bin D1-04 now holds 7.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage parts-hero-stage" aria-hidden="true">
+          <!-- 1: the scan line sweeps the box label, the bars flash and a ring pulses -->
+          <div class="mock-phone is-auto parts-phone">
+            <div class="mock-screen">
+              <div class="parts-scan-bar"><svg class="icon"><use href="#i-barcode"/></svg><b>Scan a barcode</b><span class="parts-scan-x"><svg class="icon"><use href="#i-close"/></svg></span></div>
+              <div class="mock-viewfinder parts-vf">
+                <svg class="parts-box" viewBox="0 0 200 136">
+                  <ellipse cx="100" cy="124" rx="78" ry="7" class="pb-shadow"/>
+                  <path class="pb-top" d="M26 40 50 20h126l-24 20z"/>
+                  <path class="pb-tape" d="M92 40l24-20h12l-24 20z"/>
+                  <path class="pb-side" d="M152 40l24-20v80l-24 20z"/>
+                  <rect class="pb-front" x="26" y="40" width="126" height="80" rx="3"/>
+                  <rect class="pb-label" x="40" y="52" width="98" height="58" rx="5"/>
+                  <g class="pb-bars" data-at="0" data-fx="flash" style="--fx-delay: 1.15s">
+                    <path d="M49 60v30M52.5 60v30M57 60v30M61 60v30M64 60v30M69 60v30M73 60v30M76 60v30M81 60v30M85.5 60v30M89 60v30M93 60v30M97 60v30M101 60v30M104 60v30M109 60v30M113 60v30M116.5 60v30M121 60v30M125 60v30M128.5 60v30"/>
+                  </g>
+                  <path class="pb-lines" d="M49 98h44M49 104h28"/>
+                  <rect class="pb-hit" x="44" y="56" width="90" height="38" rx="4" data-at="0" data-fx="pop" style="--fx-delay: 1.1s"/>
+                  <circle class="ring pb-ring" cx="89" cy="75" r="20" data-at="0" data-fx="ring" style="--fx-delay: 1.15s; --fx-n: 2"/>
+                </svg>
+                <span class="scanline" data-at="0" data-fx="scan" style="--fx-delay: .1s"></span>
+              </div>
+              <div class="mock-seg parts-seg" style="--segs:3; --seg:0"><span>Camera</span><span>Photo</span><span>Type</span></div>
+              <div class="parts-found" data-at="0" style="--fx-delay: 1.35s">
+                <span class="parts-found-ico"><svg class="icon"><use href="#i-check"/></svg></span>
+                <span class="parts-found-txt"><b>Ceramic brake pads, front</b><small>Bin D1-04</small></span>
+                <span class="parts-found-qty mock-mono">&times;1</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="parts-hero-side">
+            <!-- 2: the part lands on the repair order -->
+            <span class="mock-chip is-ok parts-pull-chip" data-at="1" data-fx="pop" style="--fx-delay: .3s"><svg class="icon"><use href="#i-check"/></svg><span>Pulled onto the RO &middot; front brake pads</span></span>
+            <!-- 3: the PO steps Draft, Ordered, Partially received, Received -->
+            <div class="parts-card parts-po">
+              <div class="parts-card-head">
+                <span class="parts-ico"><svg class="icon"><use href="#i-document"/></svg></span>
+                <span class="parts-card-title"><b>Purchase order</b><small>Local jobber</small></span>
+              </div>
+              <div class="parts-po-line"><span>Ceramic brake pads, front</span><b class="mock-mono">&times;4</b></div>
+              <div class="parts-po-foot">
+                <span class="parts-po-pill"><span class="parts-po-roll fx-once"><span class="is-draft">Draft</span><span class="is-ordered">Ordered</span><span class="is-partial">Partially received</span><span class="is-received">Received</span></span></span>
+              </div>
+              <span class="parts-po-meter"><span class="parts-po-fill fx-once"></span></span>
+            </div>
+            <!-- 4: the bin count rolls from 3 to 7 -->
+            <div class="parts-card parts-bin">
+              <div class="parts-bin-head"><span class="parts-bin-tag mock-mono">BIN D1-04</span><span class="mock-chip is-ok" data-at="3" data-fx="pop" style="--fx-delay: .5s">+4</span></div>
+              <div class="parts-bin-count"><span class="odometer is-plain" data-odometer="7" data-from="3" data-duration="1.2" data-at="3" data-fx="none" style="--fx-pre: 1">7</span><span>in stock</span></div>
+              <div class="parts-shelf"><i></i><i></i><i></i><i data-at="3" data-fx="drop" style="--fx-delay: .15s"></i><i data-at="3" data-fx="drop" style="--fx-delay: .3s"></i><i data-at="3" data-fx="drop" style="--fx-delay: .45s"></i><i data-at="3" data-fx="drop" style="--fx-delay: .6s"></i></div>
+              <small class="parts-bin-name">Ceramic brake pads, front</small>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true"><span class="dot is-ok"></span><span><strong>PO received</strong><small>4 parts</small></span></div>
+        <div class="float-note note-2" aria-hidden="true"><span class="dot"></span><span><strong>Low stock</strong><small>Reorder &middot; Toyota oil filter</small></span></div>
+      </figure>
     </div>
   </section>
-  <section class="section section-sm" id="related" aria-labelledby="related-title">
+
+  <!-- ===== Pains ===== -->
+  <section class="section section-paper" id="pains" aria-labelledby="pains-title">
+    <div class="container split parts-pains">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-title">Where parts slip</h2>
+        <ul class="signal-list">
+          <li>Ordering the same part twice.</li>
+          <li class="is-critical">Cores never credited.</li>
+          <li>Counting inventory with a clipboard.</li>
+        </ul>
+      </div>
+      <div class="ro-card parts-fix" data-reveal="right">
+        <div class="ro-head">
+          <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span>
+          <div><strong>What changes</strong><small>On the Parts page</small></div>
+        </div>
+        <ul class="checklist ro-list">
+          <li><div><h3>An On order column</h3><p>Every part shows what&rsquo;s already on an open purchase order, so you see it before you order it again.</p></div></li>
+          <li><div><h3>Cores with a status</h3><p>Each core charge is tracked from owed to returned to credited, on its own Cores tab.</p></div></li>
+          <li><div><h3>Counts by scan</h3><p>Scan a part on the shelf and type what you counted. The phone or tablet you already have is the scanner.</p></div></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Inventory ===== -->
+  <section class="section section-tint" id="inventory" aria-labelledby="inventory-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Inventory</p>
+        <h2 id="inventory-title">Inventory that <span class="accent-text">tells you what to do</span></h2>
+        <p class="lead">Every part shows what&rsquo;s on the shelf, what&rsquo;s already pulled onto open jobs and what&rsquo;s on order. Set a min and a max, and the status column says when to reorder.</p>
+      </div>
+
+      <figure class="mock-figure parts-inv-fig" data-reveal data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="1500" aria-label="Example: the sample shop's inventory. Value tiles at cost read $7,635 in total, with parts $1,325, tires $1,688, batteries $944, and fluids and supplies $3,678. Toyota spin-on oil filters show Reorder, ACDelco PF48 oil filters show Low · on order with 12 on order, Cooper Endeavor tires show OK and bulk 0W-20 oil shows Above max.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-window parts-inv-win"><div class="mock-screen">
+            <div class="parts-inv-top">
+              <span class="mock-title">Parts</span>
+              <div class="parts-tabs"><span>Supplier lookup</span><span class="is-on">Inventory</span><span>Purchase orders</span><span>Tires</span><span>Cores</span><span>Maintenance specs</span></div>
+            </div>
+            <!-- 3: the value tiles roll -->
+            <div class="parts-tiles">
+              <div class="parts-tile is-total">
+                <span class="mock-label">Total inventory</span>
+                <span class="parts-tile-val"><i class="parts-skel" data-until="2"></i><strong data-at="2" data-fx="fade"><span class="odometer is-plain" data-odometer="7635" data-group="," data-prefix="$">$7,635</span></strong></span>
+                <small>771 units &middot; 35 SKUs</small>
+              </div>
+              <div class="parts-tile">
+                <span class="parts-tile-ico"><svg class="icon"><use href="#i-wrench"/></svg></span>
+                <span class="mock-label">Parts</span>
+                <span class="parts-tile-val"><i class="parts-skel" data-until="2"></i><strong data-at="2" data-fx="fade" style="--fx-delay: .08s"><span class="odometer is-plain" data-odometer="1325" data-group="," data-prefix="$">$1,325</span></strong></span>
+                <small>203 units</small>
+              </div>
+              <div class="parts-tile">
+                <span class="parts-tile-ico"><svg class="icon"><use href="#i-tire"/></svg></span>
+                <span class="mock-label">Tires</span>
+                <span class="parts-tile-val"><i class="parts-skel" data-until="2"></i><strong data-at="2" data-fx="fade" style="--fx-delay: .16s"><span class="odometer is-plain" data-odometer="1688" data-group="," data-prefix="$">$1,688</span></strong></span>
+                <small>14 units</small>
+              </div>
+              <div class="parts-tile">
+                <span class="parts-tile-ico"><svg class="icon"><use href="#i-bolt"/></svg></span>
+                <span class="mock-label">Batteries</span>
+                <span class="parts-tile-val"><i class="parts-skel" data-until="2"></i><strong data-at="2" data-fx="fade" style="--fx-delay: .24s"><span class="odometer is-plain" data-odometer="944" data-prefix="$">$944</span></strong></span>
+                <small>6 units</small>
+              </div>
+              <div class="parts-tile">
+                <span class="parts-tile-ico"><svg class="icon"><use href="#i-oil"/></svg></span>
+                <span class="mock-label">Fluids &amp; supplies</span>
+                <span class="parts-tile-val"><i class="parts-skel" data-until="2"></i><strong data-at="2" data-fx="fade" style="--fx-delay: .32s"><span class="odometer is-plain" data-odometer="3678" data-group="," data-prefix="$">$3,678</span></strong></span>
+                <small>548 units</small>
+              </div>
+            </div>
+            <div class="parts-inv-tools">
+              <span class="mock-field parts-search"><svg class="icon"><use href="#i-search"/></svg><span>Part #, SKU, barcode, brand, bin</span></span>
+              <span class="mock-btn is-ghost parts-icon-btn"><svg class="icon"><use href="#i-barcode"/></svg></span>
+              <div class="mock-seg parts-inv-seg" style="--segs:2; --seg:0"><span>All</span><span>Low stock</span></div>
+              <span class="mock-btn is-ghost parts-csv"><svg class="icon" viewBox="0 0 24 24"><path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19.5h14"/></svg>CSV</span>
+            </div>
+            <div class="parts-table">
+              <div class="parts-tr is-head"><span>Part</span><span>Bin</span><span>In stock</span><span>On jobs</span><span>Ordered</span><span>Status</span></div>
+              <!-- 1: rows rise in; 2: each status resolves -->
+              <div class="parts-rows" data-at="0" data-fx="stagger">
+                <div class="parts-tr">
+                  <span class="parts-td-part"><b>Oil filter (spin-on)</b><small>Toyota <span class="mock-mono">90915-YZZF1</span> &middot; used Sep 30</small></span>
+                  <span class="parts-td-bin" data-k="Bin "><span class="mock-mono">A1-07</span></span>
+                  <span class="parts-td-num" data-k="In stock ">3</span>
+                  <span class="parts-td-num" data-k="On jobs ">1</span>
+                  <span class="parts-td-num is-zero" data-k="Ordered ">0</span>
+                  <span class="parts-td-status"><i class="parts-skel" data-until="1"></i><span class="mock-chip is-stop" data-at="1" data-fx="pop">Reorder</span></span>
+                </div>
+                <div class="parts-tr">
+                  <span class="parts-td-part"><b>Oil filter</b><small>ACDelco <span class="mock-mono">PF48</span> &middot; used Sep 29</small></span>
+                  <span class="parts-td-bin" data-k="Bin "><span class="mock-mono">A1-04</span></span>
+                  <span class="parts-td-num" data-k="In stock ">4</span>
+                  <span class="parts-td-num is-zero" data-k="On jobs ">0</span>
+                  <span class="parts-td-num is-on" data-k="Ordered ">+12</span>
+                  <span class="parts-td-status"><i class="parts-skel" data-until="1"></i><span class="mock-chip is-warn" data-at="1" data-fx="pop" style="--fx-delay: .22s">Low &middot; on order</span></span>
+                </div>
+                <div class="parts-tr">
+                  <span class="parts-td-part"><b>Endeavor 225/65R17 tire</b><small>Cooper &middot; used Sep 26</small></span>
+                  <span class="parts-td-bin" data-k="Bin "><span class="mock-mono">Tire rack A1</span></span>
+                  <span class="parts-td-num" data-k="In stock ">8</span>
+                  <span class="parts-td-num" data-k="On jobs ">4</span>
+                  <span class="parts-td-num is-zero" data-k="Ordered ">0</span>
+                  <span class="parts-td-status"><i class="parts-skel" data-until="1"></i><span class="mock-chip is-ok" data-at="1" data-fx="pop" style="--fx-delay: .44s">OK</span></span>
+                </div>
+                <div class="parts-tr">
+                  <span class="parts-td-part"><b>Full synthetic 0W-20, per qt</b><small>Bulk &middot; used Oct 1</small></span>
+                  <span class="parts-td-bin" data-k="Bin "><span class="mock-mono">Bulk tank 1</span></span>
+                  <span class="parts-td-num" data-k="In stock ">212</span>
+                  <span class="parts-td-num" data-k="On jobs ">18</span>
+                  <span class="parts-td-num is-zero" data-k="Ordered ">0</span>
+                  <span class="parts-td-status"><i class="parts-skel" data-until="1"></i><span class="mock-chip" data-at="1" data-fx="pop" style="--fx-delay: .66s">Above max</span></span>
+                </div>
+              </div>
+            </div>
+            <div class="parts-inv-foot">4 of 35 SKUs &middot; values at cost &middot; &ldquo;On jobs&rdquo; are parts already pulled onto open repair orders</div>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+
+      <ul class="parts-facts" data-reveal-stagger>
+        <li>
+          <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+          <div><h3>Shelf, jobs and orders</h3><p>The shelf count, the parts already pulled onto open repair orders and the parts on open POs, side by side with the bin and the last time it was used.</p></div>
+        </li>
+        <li>
+          <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg></span>
+          <div><h3>Min and max, worked out</h3><p>Reorder, Low &middot; on order, Above max or OK, from your min, your max and what&rsquo;s already ordered. One tap filters to low stock.</p></div>
+        </li>
+        <li>
+          <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span>
+          <div><h3>Values and CSV</h3><p>Value tiles at cost for parts, tires, batteries, and fluids &amp; supplies. Export the whole list to CSV.</p></div>
+        </li>
+      </ul>
+      <p class="fine-print parts-inv-note" data-reveal>Parts can be transferred between locations when you run more than one. The Maintenance specs tab has sourced specs: each value was checked against an owner&rsquo;s manual, an OEM parts catalog or a retailer&rsquo;s fitment page, and the source is linked.</p>
+    </div>
+  </section>
+
+  <!-- ===== Purchase orders ===== -->
+  <section class="section" id="purchase-orders" aria-labelledby="po-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Purchase orders</p>
+        <h2 id="po-title">Purchase orders, <span class="accent-text">start to finish</span></h2>
+        <p class="lead">Start a PO by vendor, from low stock or from parts needed on repair orders. Mark it ordered, receive it box by box, and stock, cost and the RO catch up when it arrives.</p>
+      </div>
+      <div class="roadmap parts-po-road" style="--steps:4" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="Example purchase order in the sample shop">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-document"/></svg></span>
+            <h3>Draft</h3>
+            <p>Built by vendor, started from low stock or from parts needed on ROs.</p>
+            <span class="roadmap-chip">Draft</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-calendar"/></svg></span>
+            <h3>Ordered</h3>
+            <p>Marked ordered, with the date you expect it. The parts count as on order.</p>
+            <span class="roadmap-chip">Ordered &middot; due Thu</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-barcode"/></svg></span>
+            <h3>Partially received</h3>
+            <p>Scan each box as you unpack it. Whatever hasn&rsquo;t come yet stays on order.</p>
+            <span class="roadmap-chip">4 of 6 received</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker parts-bin-marker" aria-hidden="true">
+              <svg class="icon" viewBox="0 0 24 24">
+                <g class="parts-drop"><rect x="8" y="3.5" width="8" height="7" rx="1.2"/><path d="M12 3.5v2.6"/></g>
+                <path class="parts-bin-front" d="M3.5 11.5h17l-1.6 8a1.5 1.5 0 0 1-1.5 1.2H6.6a1.5 1.5 0 0 1-1.5-1.2z"/>
+                <path d="M9.5 15.5h5"/>
+              </svg>
+            </span>
+            <h3>Received</h3>
+            <p>Stock and cost update, and the RO&rsquo;s part line shows Received.</p>
+            <span class="roadmap-chip">Received</span>
+          </li>
+        </ol>
+      </div>
+      <p class="roadmap-caption">The chips show an example from the sample shop.</p>
+      <div class="callout parts-po-note" data-reveal>
+        <svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>
+        <div>
+          <p class="callout-title">Overdue and due-today POs show on Today.</p>
+          <p>The morning screen lists what should have arrived, next to the cars waiting on it. <a href="workflow.html#today">See the Today screen</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Scanning ===== -->
+  <section class="section section-paper" id="scanning" aria-labelledby="scanning-title">
+    <div class="container split parts-scan-split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Barcode scanning</p>
+        <h2 id="scanning-title">Scan <span class="accent-text">instead of type</span></h2>
+        <p>Scan UPC/EAN, Code 128 and QR barcodes to find parts, pull them onto an RO, receive POs box by box and count inventory.</p>
+        <p>VIN barcodes (Code 39, Code 128, Data Matrix, QR) scan in the VIN decoder, the vehicle form and self check-in.</p>
+        <ul class="parts-uses" aria-label="What a scan does">
+          <li><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>Find a part</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>Pull it onto an RO</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg>Receive a PO</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Count the shelf</li>
+        </ul>
+        <p class="fine-print">It uses the browser&rsquo;s built-in detector, or a decoder bundled for iPhone/Safari and Firefox. A photo of the barcode or typing the code also works.</p>
+      </div>
+      <figure class="page-hero-art parts-scan-art" data-reveal="right" data-reveal-seq data-play aria-label="Illustration: a phone camera frames the barcode on a parts box. A red scan line sweeps across the label, the corner brackets lock on and a green check appears.">
+        <div class="parts-scan-stage" aria-hidden="true">
+          <div class="parts-scan-phone">
+            <span class="parts-scan-island"></span>
+            <div class="parts-scan-cam">
+              <svg class="parts-scan-box" viewBox="0 0 240 170">
+                <ellipse cx="120" cy="156" rx="96" ry="8" class="pb-shadow"/>
+                <path class="pb-top" d="M30 50 60 24h150l-30 26z"/>
+                <path class="pb-tape" d="M108 50l30-26h14l-30 26z"/>
+                <path class="pb-side" d="M180 50l30-26v98l-30 26z"/>
+                <rect class="pb-front" x="30" y="50" width="150" height="98" rx="4"/>
+                <rect class="pb-label" x="46" y="64" width="118" height="70" rx="6"/>
+                <g class="pb-bars" data-seq-i="4" data-fx="flash">
+                  <path d="M56 74v34M60 74v34M65 74v34M69.5 74v34M73 74v34M79 74v34M83 74v34M86.5 74v34M92 74v34M97 74v34M101 74v34M106 74v34M110.5 74v34M115 74v34M119 74v34M124 74v34M129 74v34M133 74v34M138 74v34M142.5 74v34M147 74v34M152 74v34"/>
+                </g>
+                <path class="pb-lines" d="M56 117h52M56 124h32"/>
+              </svg>
+              <span class="parts-brackets fx-once" data-seq-out="5"><span class="parts-brackets-in fx-once"><i></i><i></i><i></i><i></i></span></span>
+              <span class="parts-brackets is-locked" data-seq-i="5" style="--fx: parts-lock; --fx-dur: .55s; --fx-ease: var(--spring)"><span class="parts-brackets-in"><i></i><i></i><i></i><i></i></span></span>
+              <span class="scanline" data-seq-i="1" data-fx="scan" style="--fx-dur: 1.5s"></span>
+              <span class="parts-scan-check" data-seq-i="6" data-fx="pop"><svg class="icon"><use href="#i-check"/></svg></span>
+            </div>
+            <div class="parts-scan-modes"><span class="is-on"><svg class="icon"><use href="#i-camera"/></svg>Camera</span><span>Photo</span><span>Type it</span></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Supplier lookup ===== -->
+  <section class="section" id="suppliers" aria-labelledby="suppliers-title">
+    <div class="container split split-reverse parts-sup-split">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Supplier lookup</p>
+        <h2 id="suppliers-title">Supplier lookup, <span class="accent-text">already filled in</span></h2>
+        <p>Opens RockAuto, NAPA, O&rsquo;Reilly, AutoZone and Advance with the vehicle and part search filled in, plus OEM parts stores by make.</p>
+        <p>PartsTech, Nexpart and WORLDPAC speedDIAL are links.</p>
+        <p class="fine-print">Pricing, stock and fitment come from the supplier&rsquo;s own site, and you order there on your own account.</p>
+      </div>
+      <figure class="mock-figure parts-sup-fig" data-reveal="left" data-reveal-seq data-play aria-label="Example: supplier lookup for the sample shop's 2016 Nissan Altima with brake pads typed in. RockAuto, NAPA, O'Reilly, AutoZone and Advance are ready to open with that search, plus Nissan Parts as the OEM store for the make. PartsTech, Nexpart and WORLDPAC speedDIAL are listed as links.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="parts-sup-card">
+            <div class="parts-card-head">
+              <span class="parts-ico"><svg class="icon"><use href="#i-search"/></svg></span>
+              <span class="parts-card-title"><b>Supplier lookup</b><small>Vehicle and part</small></span>
+            </div>
+            <span class="mock-field is-focus parts-sup-field"><svg class="icon"><use href="#i-search"/></svg><span class="parts-sup-q" data-seq-i="0" data-fx="type" style="--chars: 31">2016 Nissan Altima &middot; brake pads</span><span class="caret"></span></span>
+            <span class="parts-sup-label">Opens with the search filled in</span>
+            <div class="parts-sup-pills">
+              <span class="parts-sup-pill"><i class="parts-sup-lit" data-seq-i="4" data-fx="fade"></i><span class="parts-sup-dot"><i data-seq-i="4" data-fx="pop"></i></span>RockAuto<svg class="icon"><use href="#i-arrow-up-right"/></svg></span>
+              <span class="parts-sup-pill"><i class="parts-sup-lit" data-seq-i="4" data-fx="fade" style="--fx-delay: .22s"></i><span class="parts-sup-dot"><i data-seq-i="4" data-fx="pop" style="--fx-delay: .22s"></i></span>NAPA<svg class="icon"><use href="#i-arrow-up-right"/></svg></span>
+              <span class="parts-sup-pill"><i class="parts-sup-lit" data-seq-i="4" data-fx="fade" style="--fx-delay: .44s"></i><span class="parts-sup-dot"><i data-seq-i="4" data-fx="pop" style="--fx-delay: .44s"></i></span>O&rsquo;Reilly<svg class="icon"><use href="#i-arrow-up-right"/></svg></span>
+              <span class="parts-sup-pill"><i class="parts-sup-lit" data-seq-i="4" data-fx="fade" style="--fx-delay: .66s"></i><span class="parts-sup-dot"><i data-seq-i="4" data-fx="pop" style="--fx-delay: .66s"></i></span>AutoZone<svg class="icon"><use href="#i-arrow-up-right"/></svg></span>
+              <span class="parts-sup-pill"><i class="parts-sup-lit" data-seq-i="4" data-fx="fade" style="--fx-delay: .88s"></i><span class="parts-sup-dot"><i data-seq-i="4" data-fx="pop" style="--fx-delay: .88s"></i></span>Advance<svg class="icon"><use href="#i-arrow-up-right"/></svg></span>
+            </div>
+            <span class="parts-sup-label">OEM parts store for Nissan</span>
+            <div class="parts-sup-pills">
+              <span class="parts-sup-pill"><i class="parts-sup-lit" data-seq-i="7" data-fx="fade"></i><span class="parts-sup-dot"><i data-seq-i="7" data-fx="pop"></i></span>Nissan Parts<svg class="icon"><use href="#i-arrow-up-right"/></svg></span>
+            </div>
+            <hr class="mock-hr">
+            <span class="parts-sup-label">Ordering platforms, as links</span>
+            <div class="parts-sup-pills">
+              <span class="parts-sup-pill is-link"><svg class="icon"><use href="#i-link"/></svg>PartsTech</span>
+              <span class="parts-sup-pill is-link"><svg class="icon"><use href="#i-link"/></svg>Nexpart</span>
+              <span class="parts-sup-pill is-link"><svg class="icon"><use href="#i-link"/></svg>WORLDPAC speedDIAL</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Tires ===== -->
+  <section class="section section-tint" id="tires" aria-labelledby="tires-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Tires</p>
+        <h2 id="tires-title">Good, better, best tires, <span class="accent-text">and the DOT log</span></h2>
+        <p class="lead">Quote tires the way customers shop for them, and keep the numbers you need when a recall comes.</p>
+      </div>
+      <div class="grid grid-3 parts-tire-grid" data-reveal-stagger>
+        <div class="card parts-tire-card" data-reveal-seq>
+          <span class="icon-tile parts-tire-ico"><svg class="icon" aria-hidden="true" data-seq-i="0" style="--fx: parts-tire-roll; --fx-dur: .95s"><use href="#i-tire"/></svg></span>
+          <h3>Three options, one service</h3>
+          <p>Quote good, better and best tire options side by side on one service.</p>
+          <div class="parts-tiers" aria-hidden="true"><span>Good</span><span class="is-mid">Better</span><span>Best</span></div>
+        </div>
+        <div class="card parts-tire-card is-chosen" data-reveal-seq>
+          <span class="parts-chose" data-seq-i="3" data-fx="pop" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg>Customer chose: Better</span>
+          <span class="icon-tile parts-tire-ico"><svg class="icon" aria-hidden="true" data-seq-i="0" style="--fx: parts-tire-roll; --fx-dur: .95s; --fx-delay: .15s"><use href="#i-tire"/></svg></span>
+          <h3>The customer picks</h3>
+          <p>The customer taps their choice on the counter tablet or report link, and the tire line follows it.</p>
+          <div class="parts-tiers is-picked" aria-hidden="true"><span>Good</span><span class="is-mid"><svg class="icon"><use href="#i-check"/></svg>Better</span><span>Best</span></div>
+        </div>
+        <div class="card parts-tire-card" data-reveal-seq>
+          <span class="icon-tile parts-tire-ico"><svg class="icon" aria-hidden="true" data-seq-i="0" style="--fx: parts-tire-roll; --fx-dur: .95s; --fx-delay: .3s"><use href="#i-tire"/></svg></span>
+          <h3>DOT numbers on file</h3>
+          <p>Record each installed tire&rsquo;s DOT TIN with date-code checks and age warnings, and export a registration log for manufacturer registration and recalls.</p>
+          <figure class="mock-figure is-inline parts-dot-fig" data-reveal-seq aria-label="Example: DOT TIN 4B9D UH1R 2324. The date code 2324 reads week 23 of 2024.">
+            <span class="mock-tag">Example · sample shop</span>
+            <div class="mock-stage" aria-hidden="true">
+              <span class="parts-dot-code"><span data-seq-i="1" data-fx="type" style="--chars: 18">DOT 4B9D UH1R <span class="parts-dot-date"><i data-seq-i="5" data-fx="wipe"></i>2324</span></span></span>
+              <span class="mock-chip is-ok parts-dot-ok" data-seq-i="6" data-fx="pop"><svg class="icon"><use href="#i-check"/></svg>Wk 23 2024</span>
+            </div>
+          </figure>
+        </div>
+      </div>
+      <div class="parts-cores" data-reveal data-reveal-seq>
+        <span class="icon-tile icon-tile-sm icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-sync"/></svg></span>
+        <p><strong>Cores, too.</strong> Core charges are tracked from owed to returned to credited.</p>
+        <span class="parts-core-pill" aria-hidden="true">
+          <span class="mock-chip is-warn" data-seq-out="3">Core owed</span>
+          <span data-seq-out="6"><span class="mock-chip" data-seq-i="3" data-fx="pop">Returned</span></span>
+          <span class="mock-chip is-ok" data-seq-i="6" data-fx="pop">Credited</span>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Ordering isn&rsquo;t built into the app.</strong> Supplier sites open with your search filled in, and you order on your own accounts there.</li>
+            <li><strong>No live supplier data:</strong> there&rsquo;s no live pricing, stock check or electronic ordering inside the app. POs are tracked in the app.</li>
+            <li><strong>Scanning</strong> uses the device&rsquo;s camera through the browser. If the camera isn&rsquo;t available, use a photo of the barcode or type the code.</li>
+            <li><strong>Transfers</strong> between locations need more than one location set up.</li>
+            <li><strong>Needs:</strong> nothing extra on one device. To keep stock, POs and cores the same on every device, use <a href="../works-with.html#shop-cloud">Shop Cloud</a>.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Parts questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="parts-faq"><summary>Can I order from my suppliers inside the app?</summary><div class="faq-body"><p>No. Lookup opens their sites pre-filled, and you order there on your own account. The purchase order is tracked in the app.</p></div></details>
+        <details class="faq" name="parts-faq"><summary>Does scanning need special hardware?</summary><div class="faq-body"><p>No. It uses the device camera, a photo of the barcode or typing the code.</p></div></details>
+        <details class="faq" name="parts-faq"><summary>Can I see parts tied up on jobs?</summary><div class="faq-body"><p>Yes, in the On jobs column. It counts parts already pulled onto open repair orders.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Related ===== -->
+  <section class="section section-sm parts-related" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>
       <!-- @partial related -->

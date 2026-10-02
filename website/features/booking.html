@@ -35,6 +35,257 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* features/booking.html: page-local styles (slug-prefixed) */
+
+/* ---------- Hero: open times on a week grid, a request in the tray, a key tag on the key-drop sign ---------- */
+.booking-h1-lead { display: block; text-wrap: balance; }
+.booking-hero h1 .accent-text { text-wrap: balance; }
+@media (min-width: 960px) { .booking-hero .page-hero-grid { grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); } }
+.booking-hero-fig { width: 100%; max-width: 560px; justify-self: center; }
+@media (min-width: 600px) { .booking-hero-fig { padding-bottom: 26px; } }
+.booking-hero-stage {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, .84fr);
+  grid-template-areas: "cal cal" "tray key" "chip key";
+  gap: 14px 14px; align-items: start; justify-items: stretch; padding-top: 4px; isolation: isolate;
+}
+.booking-hero-stage::before { /* a soft glow behind the scene */
+  content: ""; position: absolute; inset: 8% -4% 0; border-radius: 50%; z-index: -1;
+  background: radial-gradient(closest-side, rgba(31, 122, 224, .12), rgba(45, 179, 106, .06) 60%, transparent);
+  pointer-events: none;
+}
+.booking-card {
+  background: var(--paper); border: 1px solid var(--line-strong); border-radius: 18px; box-shadow: var(--shadow-2);
+  text-align: left; min-width: 0;
+}
+.booking-cal { grid-area: cal; width: min(100%, 468px); justify-self: start; display: grid; gap: 12px; padding: 14px 14px 16px; }
+.booking-cal-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.booking-ico { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); }
+.booking-ico .icon { width: 18px; height: 18px; }
+.booking-cal-title { display: grid; flex: 1 1 auto; min-width: 0; line-height: 1.25; }
+.booking-cal-title b { font-size: 14px; font-weight: 700; color: var(--ink); }
+.booking-cal-title small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.booking-week { display: grid; grid-template-columns: 40px repeat(5, minmax(0, 1fr)); gap: 6px; align-items: center; }
+.booking-wd { font-size: 12px; font-weight: 650; color: var(--ink-3); text-align: center; }
+.booking-wd.is-pick { color: var(--accent-ink); }
+.booking-tm { font-size: 12px; font-weight: 600; color: var(--ink-3); text-align: right; padding-right: 2px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.booking-slot { position: relative; height: 26px; border-radius: 8px; background: var(--blue-50); border: 1.5px solid var(--blue-100); }
+.booking-slot.is-taken { border-color: var(--mist-200); background: repeating-linear-gradient(135deg, var(--mist-100) 0 5px, var(--mist-50) 5px 10px); }
+/* Open slots shimmer in a diagonal wave when step 1 plays (--w = column + row) */
+.booking-slot[data-at] { --fx: booking-shimmer; --fx-dur: 1s; --fx-pre: 1; --fx-ease: var(--ease-in-out); --fx-delay: calc(var(--w, 0) * 70ms); }
+@keyframes booking-shimmer { 0% { opacity: .35; } 50% { opacity: 1; background-color: var(--blue-100); border-color: rgba(31, 122, 224, .5); } 100% { opacity: 1; } }
+.booking-slot-on { position: absolute; inset: -1.5px; display: grid; place-items: center; border-radius: 8px; background: var(--blue); color: #fff; box-shadow: 0 0 0 3px var(--accent-ring); }
+.booking-slot-on .icon { width: 15px; height: 15px; stroke-width: 3; }
+.booking-ripple { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; border: 2px solid var(--blue); pointer-events: none; }
+/* The Requests tray (the shop's Calendar) */
+.booking-tray { grid-area: tray; display: grid; gap: 10px; padding: 12px; border-radius: 16px; }
+.booking-tray-head { display: flex; align-items: center; gap: 7px; min-width: 0; font-size: 12.5px; font-weight: 650; color: var(--ink-2); }
+.booking-tray-head .icon { flex: none; width: 16px; height: 16px; color: var(--accent); }
+.booking-tray-head > span:not(.booking-badge) { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.booking-badge { margin-left: auto; flex: none; display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: var(--pill); background: var(--accent); color: #fff; font-size: 12px; font-weight: 700; }
+.booking-tray-slot { position: relative; min-height: 52px; border-radius: 12px; border: 1.5px dashed var(--line-strong); background: var(--mist-50); }
+.booking-req { position: absolute; inset: -1.5px; display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-1); }
+.booking-req[data-at] { --fx: booking-drop; --fx-dur: .7s; --fx-ease: var(--spring); }
+@keyframes booking-drop { from { opacity: 0; translate: 0 -44px; } 50% { opacity: 1; } }
+.booking-req .mock-avatar { width: 30px; height: 30px; }
+.booking-req-txt { display: grid; flex: 1 1 auto; min-width: 0; line-height: 1.25; }
+.booking-req-txt b { font-size: 13px; font-weight: 700; color: var(--ink); }
+.booking-req-txt small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* The printed key-drop sign with the key tag (keytag-art motion from site.css) */
+.booking-keydrop { grid-area: key; position: relative; z-index: 2; margin-top: -34px; }
+.booking-sign { display: block; width: 100%; height: auto; overflow: visible; filter: drop-shadow(0 16px 20px rgba(15, 43, 76, .13)); }
+.booking-sign .s-shadow { fill: var(--mist-200); }
+.booking-sign .s-tape-a { fill: var(--blue-100); }
+.booking-sign .s-tape-b { fill: var(--green-100); }
+.booking-sign .s-qr-frame { fill: var(--paper); stroke: var(--mist-300); stroke-width: 1.5; }
+.booking-sign .s-qr { fill: var(--ink); }
+.booking-sign .s-slot-frame { fill: var(--mist-50); stroke: var(--mist-300); stroke-width: 1.5; }
+.booking-sign .s-slot { fill: var(--ink); }
+.booking-sign .s-title { font: 700 22px/1 var(--font-mono); letter-spacing: .1em; fill: var(--ink); }
+.booking-sign .s-sub { font: 650 15px/1 var(--font); fill: var(--ink-3); }
+.booking-sign .s-keys { font: 700 12px/1 var(--font-mono); letter-spacing: .22em; fill: var(--ink-3); }
+.booking-sign .tag-text { font-size: 14px; letter-spacing: .12em; fill: var(--ink); }
+.booking-ro-chip { grid-area: chip; justify-self: start; align-self: start; gap: 6px; padding: 6px 13px 6px 10px; font-size: 13px; border: 1px solid rgba(45, 179, 106, .4); box-shadow: var(--shadow-2); }
+.booking-ro-chip .icon { width: 15px; height: 15px; }
+/* App chips: each one shows up with the step it describes */
+.booking-hero-fig .float-note.note-1 { top: 34px; right: -18px; left: auto; }
+.booking-hero-fig .float-note.note-2 { top: auto; bottom: -30px; left: -22px; right: auto; }
+@media (min-width: 960px) and (max-width: 1099.98px) { .booking-hero-fig .float-note { display: none; } }
+.booking-hero-fig .float-note { transition: filter .45s var(--ease); }
+.booking-hero-fig:not([data-reached~="0"]) .float-note.note-1,
+.booking-hero-fig:not([data-reached~="2"]) .float-note.note-2 { filter: opacity(0); }
+@media (max-width: 599.98px) {
+  .booking-hero-stage { gap: 12px 10px; grid-template-columns: minmax(0, 1fr) minmax(0, .9fr); }
+  .booking-cal { width: 100%; padding: 12px; }
+  .booking-week { grid-template-columns: 34px repeat(5, minmax(0, 1fr)); gap: 5px; }
+  .booking-slot { height: 22px; }
+  .booking-keydrop { margin-top: -18px; }
+  .booking-tray { padding: 10px; }
+  .booking-req { padding: 7px 8px; gap: 7px; }
+  .booking-req .mock-chip { display: none; }
+  .booking-req-txt small { white-space: normal; }
+  .booking-tray-cal { display: none; }
+  .booking-hero-stage { grid-template-areas: "cal cal" "tray key" "chip chip"; }
+  .booking-ro-chip { justify-self: center; margin-top: 2px; }
+}
+
+/* ---------- Pains ---------- */
+.booking-pains { align-items: center; }
+.booking-pains-side { display: grid; gap: 18px; }
+.booking-pains-art { min-height: 0; }
+.booking-pains-art > svg { width: min(100%, 500px); }
+.booking-pains-art [data-fx="pop"] { transform-box: fill-box; transform-origin: center; }
+.booking-pains-art .p-fill-mist { fill: var(--mist-50); stroke: var(--mist-200); }
+.booking-pains-art .p-island { fill: var(--mist-300); }
+.booking-pains-art .p-taken { fill: var(--mist-200); }
+.booking-pains-art .p-open { fill: var(--paper); stroke: var(--blue-100); stroke-width: 1.5; }
+.booking-pains-art .p-pick { fill: var(--blue); }
+.booking-pains-art .p-line { stroke: var(--ink-4); stroke-width: 3; stroke-linecap: round; stroke-opacity: .55; }
+.booking-pains-art .p-strike { stroke: var(--ink-4); stroke-width: 1.6; stroke-linecap: round; }
+.booking-pains-art .p-qr { fill: var(--ink); }
+.booking-pains-art .p-ok { fill: var(--green); stroke: var(--paper); stroke-width: 3; }
+.booking-pains-art .p-white { fill: none; stroke: #fff; stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; }
+.booking-pains-art .p-dot { fill: var(--ink-4); }
+
+/* ---------- The booking page ---------- */
+.booking-facts { list-style: none; padding: 0; margin: 6px 0 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 228px), 1fr)); gap: 20px 24px; }
+.booking-facts li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start; }
+.booking-facts h3 { font-size: 1.02rem; line-height: 1.3; }
+.booking-facts p { margin-top: 4px; font-size: .95rem; line-height: 1.5; color: var(--ink-3); text-wrap: pretty; }
+.booking-book-fig { width: 100%; max-width: 540px; justify-self: center; }
+.booking-book-stage { justify-items: start; padding: 0 0 8px; }
+@media (min-width: 600px) { .booking-book-stage { padding-left: 4%; } }
+.booking-book-phone { width: min(100%, 274px); }
+.booking-book-phone > .mock-screen { gap: 9px; padding: 38px 12px 14px; }
+.booking-shop { display: flex; align-items: center; gap: 9px; padding-bottom: 9px; border-bottom: 1px solid var(--m-line); line-height: 1.25; }
+.booking-shop b { display: block; font-size: 13px; font-weight: 700; color: var(--ink); }
+.booking-shop small { display: block; font-size: 12px; color: var(--ink-3); }
+.booking-mark { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 9px; background: var(--wash); color: var(--accent); border: 1px solid var(--m-line); }
+.booking-mark .icon { width: 16px; height: 16px; }
+.booking-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; }
+.booking-steps i { height: 4px; border-radius: 2px; background: var(--mist-200); }
+.booking-steps i.is-on { background: var(--blue); }
+.booking-svcs { display: grid; gap: 5px; }
+.booking-svc { display: flex; align-items: center; gap: 8px; min-height: 30px; padding: 5px 9px; border-radius: 10px; border: 1px solid var(--m-line); background: var(--paper); font-size: 12px; font-weight: 560; color: var(--ink-2); }
+.booking-svc > span:first-child { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.booking-svc.is-on { border-color: rgba(31, 122, 224, .45); background: var(--accent-soft); color: var(--ink); }
+.booking-tick { flex: none; display: grid; place-items: center; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--ink-4); }
+.booking-svc.is-on .booking-tick { background: var(--blue); border-color: var(--blue); color: #fff; }
+.booking-tick .icon { width: 10px; height: 10px; stroke-width: 3.4; }
+.booking-days { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 5px; }
+.booking-days > span { display: grid; justify-items: center; padding: 4px 0 5px; border-radius: 10px; border: 1px solid var(--m-line); line-height: 1.2; }
+.booking-days small { font-size: 12px; color: var(--ink-3); }
+.booking-days b { font-size: 15px; font-weight: 700; color: var(--ink); }
+.booking-days > .is-on { background: var(--blue); border-color: var(--blue); }
+.booking-days > .is-on :is(small, b) { color: #fff; }
+.booking-times { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+.booking-time { position: relative; display: grid; place-items: center; height: 30px; border-radius: 9px; border: 1px solid var(--line-strong); background: var(--paper); font-size: 12px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.booking-time.is-taken { background: var(--mist-100); border-color: var(--mist-200); color: var(--ink-4); }
+.booking-time.is-taken[data-at] { --fx: booking-greyout; --fx-dur: .6s; --fx-pre: 1; }
+@keyframes booking-greyout { from { background-color: var(--paper); border-color: var(--line-strong); color: var(--ink); } }
+.booking-strike { position: absolute; left: 16%; right: 16%; top: 50%; height: 1.5px; margin-top: -.75px; border-radius: 1px; background: var(--ink-4); }
+.booking-time-on { position: absolute; inset: -1px; display: grid; place-items: center; border-radius: 9px; background: var(--blue); color: #fff; box-shadow: 0 0 0 3px var(--accent-ring); }
+.booking-continue { width: 100%; min-height: 32px; transition: opacity .4s var(--ease); }
+.booking-book-fig:not([data-reached~="1"]) .booking-continue { opacity: .45; }
+.booking-set { position: absolute; right: 6%; bottom: 64px; z-index: 2; width: 216px; display: grid; gap: 9px; padding: 12px; border-radius: 16px; background: rgba(255, 255, 255, .96); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3); text-align: left; }
+.booking-set-head { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; border-bottom: 1px solid var(--m-line); line-height: 1.25; }
+.booking-set-head .booking-ico { width: 26px; height: 26px; border-radius: 8px; }
+.booking-set-head .booking-ico .icon { width: 15px; height: 15px; }
+.booking-set-head b { display: block; font-size: 13px; font-weight: 700; color: var(--ink); }
+.booking-set-head small { display: block; font-size: 12px; color: var(--ink-3); }
+.booking-set-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--ink-3); }
+.booking-set-row b { font-weight: 650; color: var(--ink); }
+.booking-seg { --segs: 4; --seg: 3; }
+.booking-book-fig[data-reached~="2"] .booking-seg { --seg: 1; }
+.booking-seg > span { transition: color .3s var(--ease); }
+.booking-book-fig[data-reached~="2"] .booking-seg > span:nth-child(2) { color: var(--ink); }
+@media (max-width: 599.98px) {
+  .booking-book-stage { justify-items: center; }
+  .booking-set { position: relative; right: auto; bottom: auto; justify-self: end; margin-top: -18px; margin-right: -4px; width: 208px; }
+}
+
+/* ---------- Front desk ---------- */
+.booking-desk > .card { display: flex; flex-direction: column; gap: 8px; padding: 18px; }
+.booking-desk h3 { font-size: 1.1rem; line-height: 1.3; }
+.booking-desk p { font-size: .95rem; line-height: 1.5; color: var(--ink-3); text-wrap: pretty; }
+.booking-desk-art { position: relative; display: grid; place-items: center; height: 112px; margin-bottom: 8px; padding: 12px; border-radius: 16px; background: var(--mist-50); border: 1px solid var(--line); overflow: hidden; }
+.booking-mini { display: grid; gap: 8px; width: 100%; }
+.booking-mini-row { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 9px; border-radius: 10px; background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); }
+.booking-mini-ico { display: grid; place-items: center; flex: none; width: 22px; height: 22px; border-radius: 7px; background: var(--accent-soft); color: var(--accent); }
+.booking-mini-ico.is-green { background: var(--green-100); color: var(--green-ink); }
+.booking-mini-ico .icon { width: 14px; height: 14px; }
+.booking-mini-bars { display: grid; gap: 5px; flex: 1 1 auto; min-width: 0; }
+.booking-mini-bars i { display: block; height: 5px; width: var(--w, 70%); border-radius: 3px; background: var(--mist-200); }
+.booking-mini-bars i:first-child { height: 6px; background: var(--mist-300); }
+.booking-mini-row .icon.is-end { flex: none; width: 15px; height: 15px; color: var(--ink-3); }
+.booking-mini-av { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--blue-100); box-shadow: inset 0 -7px 0 rgba(31, 122, 224, .14); }
+.booking-mini-av.is-green { background: var(--green-100); box-shadow: inset 0 -7px 0 rgba(45, 179, 106, .16); }
+.booking-mini-map { flex: none; padding: 1px 7px; border-radius: var(--pill); background: var(--accent-soft); color: var(--accent-ink); font-size: 12px; font-weight: 650; }
+.booking-mini-row .mock-tickbox { flex: none; }
+@media (max-width: 559.98px) { .booking-desk-art { height: 100px; } }
+/* Loaner: fuel gauge and the Low fuel flag */
+.booking-fuel { display: grid; grid-template-columns: 112px auto; align-items: center; gap: 12px; }
+.booking-fuel svg { width: 112px; height: auto; overflow: visible; }
+.booking-fuel .g-track { fill: none; stroke: var(--mist-200); stroke-width: 9; stroke-linecap: round; }
+.booking-fuel .g-low { fill: none; stroke: var(--dot-warn); stroke-width: 9; stroke-linecap: round; }
+.booking-fuel .g-tick { stroke: var(--ink-4); stroke-width: 1.6; stroke-linecap: round; }
+.booking-fuel .needle { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
+.booking-fuel .g-hub { fill: var(--ink); }
+.booking-fuel text { font: 700 12px/1 var(--font); fill: var(--ink-3); }
+.booking-fuel-side { display: grid; gap: 6px; justify-items: start; }
+.booking-fuel-side .mock-label { font-size: 12px; }
+.booking-lowfuel { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: var(--pill); background: var(--warn-soft); color: var(--warn); font-size: 12px; font-weight: 700; white-space: nowrap; box-shadow: inset 0 0 0 1px rgba(227, 161, 59, .45); }
+.booking-lowfuel .icon { width: 13px; height: 13px; }
+@keyframes booking-lowfuel { 0% { opacity: 0; scale: .7; } 18% { opacity: 1; scale: 1.06; } 26% { scale: 1; } 38% { opacity: .25; } 52% { opacity: 1; } 66% { opacity: .25; } 80%, 100% { opacity: 1; } }
+
+/* ---------- Lobby screen ---------- */
+.booking-lobby { align-items: center; }
+.booking-lobby-fig { width: 100%; max-width: 640px; justify-self: center; padding-bottom: 22px; }
+.booking-tv { width: 100%; max-width: 620px; aspect-ratio: auto; } /* height by content, so it never clips */
+.booking-tv > .mock-screen { padding: 0; gap: 0; background: var(--canvas); }
+.booking-tv-head { position: relative; display: flex; align-items: center; gap: 10px; padding: 10px 14px 11px; background: var(--paper); border-bottom: 1px solid var(--m-line); }
+.booking-tv-head::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; background: var(--bar); }
+.booking-tv-shop { display: flex; align-items: baseline; gap: 10px; flex: 1 1 auto; min-width: 0; }
+.booking-tv-shop b { font-size: 14px; font-weight: 750; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.booking-tv-shop span { flex: none; padding-left: 10px; border-left: 1px solid var(--line-strong); font-size: 13px; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
+.booking-tv-clock { flex: none; font-size: 15px; font-weight: 650; color: var(--ink); font-variant-numeric: tabular-nums; }
+.booking-tv-body { display: grid; grid-template-columns: minmax(0, 1fr) 148px; gap: 10px; padding: 10px; flex: 1 1 auto; min-height: 0; }
+.booking-tv-list { display: grid; align-content: start; gap: 7px; min-width: 0; }
+.booking-tv-view { --row: 39px; --gap: 5px; height: calc(var(--row) * 5 + var(--gap) * 4); overflow: hidden; }
+.booking-tv-track { transition: translate .8s var(--ease-in-out); }
+.booking-lobby-fig[data-reached~="1"] .booking-tv-track { translate: 0 -33.3333%; }
+.booking-lobby-fig[data-reached~="2"] .booking-tv-track { translate: 0 -66.6667%; }
+.booking-lobby-fig[data-reached="0"] .booking-tv-track { transition: none; }
+.booking-tv-page { display: grid; grid-auto-rows: var(--row); gap: var(--gap); align-content: start; height: calc(var(--row) * 5 + var(--gap) * 4); }
+.booking-tv-row { display: flex; align-items: center; gap: 8px; min-width: 0; padding: 0 8px 0 10px; border-radius: 9px; background: var(--paper); border: 1px solid var(--m-line); box-shadow: var(--shadow-1); }
+.booking-tv-row.is-ready { border-color: rgba(45, 179, 106, .55); box-shadow: inset 0 0 0 1px rgba(45, 179, 106, .35), var(--shadow-1); }
+.booking-tv-who { display: grid; flex: 1 1 auto; min-width: 0; line-height: 1.2; }
+.booking-tv-who b { font-size: 13px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.booking-tv-who small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.booking-tv-est { flex: none; font-size: 12px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.booking-tv-row > .mock-chip, .booking-tv-row > .live-pill { flex: none; }
+.booking-tv-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; }
+.booking-tv-ready { font-weight: 650; color: var(--green-ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.booking-tv-pageno { display: grid; flex: none; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.booking-tv-pageno > span, .booking-tv-msg > span { grid-area: 1 / 1; transition: opacity .45s var(--ease), visibility .45s; }
+.booking-tv-aside { display: grid; align-content: start; gap: 8px; min-width: 0; }
+.booking-tv-card { display: grid; gap: 3px; padding: 9px 10px; border-radius: 10px; background: var(--paper); border: 1px solid var(--m-line); box-shadow: var(--shadow-1); font-size: 12px; line-height: 1.3; color: var(--ink-2); }
+.booking-tv-card b { font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.booking-tv-msg { display: grid; min-height: 88px; align-content: start; font-size: 13px; font-weight: 560; line-height: 1.35; color: var(--ink); }
+.booking-tv-qr { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; align-items: center; }
+.booking-tv-qr svg { width: 44px; height: 44px; fill: var(--ink); }
+@media (max-width: 559.98px) {
+  .booking-tv-body { grid-template-columns: minmax(0, 1fr); }
+  .booking-tv-wifi, .booking-tv-qr, .booking-tv-est, .booking-tv-clock { display: none; }
+  .booking-tv-msg { min-height: 0; }
+  .booking-tv-shop span { display: none; }
+  .booking-tv-view { --row: 38px; }
+  .booking-tv-ready { white-space: normal; }
+}
+
+/* ---------- FAQ ---------- */
+.booking-faq .faq-body a { font-weight: 600; }
+</style>
 </head>
 <body data-page="features" data-tab="features" id="top">
 <!-- @partial icons -->
@@ -190,9 +441,16 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
-    <div class="container">
-      <!-- @partial breadcrumbs -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="booking-qr" viewBox="0 0 21 21"><path d="M0 0h7v1h-7zM8 0h1v1h-1zM12 0h1v1h-1zM14 0h7v1h-7zM0 1h1v1h-1zM6 1h1v1h-1zM8 1h1v1h-1zM11 1h1v1h-1zM14 1h1v1h-1zM20 1h1v1h-1zM0 2h1v1h-1zM2 2h3v1h-3zM6 2h1v1h-1zM8 2h1v1h-1zM10 2h2v1h-2zM14 2h1v1h-1zM16 2h3v1h-3zM20 2h1v1h-1zM0 3h1v1h-1zM2 3h3v1h-3zM6 3h1v1h-1zM8 3h2v1h-2zM12 3h1v1h-1zM14 3h1v1h-1zM16 3h3v1h-3zM20 3h1v1h-1zM0 4h1v1h-1zM2 4h3v1h-3zM6 4h1v1h-1zM10 4h1v1h-1zM12 4h1v1h-1zM14 4h1v1h-1zM16 4h3v1h-3zM20 4h1v1h-1zM0 5h1v1h-1zM6 5h1v1h-1zM8 5h3v1h-3zM12 5h1v1h-1zM14 5h1v1h-1zM20 5h1v1h-1zM0 6h7v1h-7zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM14 6h7v1h-7zM9 7h1v1h-1zM0 8h1v1h-1zM3 8h2v1h-2zM6 8h1v1h-1zM8 8h3v1h-3zM13 8h1v1h-1zM15 8h3v1h-3zM19 8h1v1h-1zM0 9h2v1h-2zM4 9h2v1h-2zM7 9h1v1h-1zM9 9h3v1h-3zM14 9h2v1h-2zM18 9h1v1h-1zM0 10h2v1h-2zM4 10h4v1h-4zM9 10h5v1h-5zM16 10h1v1h-1zM18 10h3v1h-3zM0 11h3v1h-3zM4 11h2v1h-2zM9 11h1v1h-1zM11 11h1v1h-1zM18 11h2v1h-2zM2 12h1v1h-1zM5 12h2v1h-2zM8 12h5v1h-5zM14 12h3v1h-3zM18 12h1v1h-1zM20 12h1v1h-1zM8 13h5v1h-5zM14 13h1v1h-1zM16 13h1v1h-1zM19 13h1v1h-1zM0 14h7v1h-7zM10 14h4v1h-4zM16 14h1v1h-1zM20 14h1v1h-1zM0 15h1v1h-1zM6 15h1v1h-1zM9 15h1v1h-1zM14 15h1v1h-1zM16 15h3v1h-3zM20 15h1v1h-1zM0 16h1v1h-1zM2 16h3v1h-3zM6 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM12 16h1v1h-1zM14 16h1v1h-1zM17 16h1v1h-1zM19 16h1v1h-1zM0 17h1v1h-1zM2 17h3v1h-3zM6 17h1v1h-1zM11 17h3v1h-3zM15 17h2v1h-2zM0 18h1v1h-1zM2 18h3v1h-3zM6 18h1v1h-1zM10 18h1v1h-1zM12 18h2v1h-2zM16 18h1v1h-1zM19 18h2v1h-2zM0 19h1v1h-1zM6 19h1v1h-1zM8 19h1v1h-1zM10 19h2v1h-2zM13 19h4v1h-4zM18 19h2v1h-2zM0 20h7v1h-7zM9 20h1v1h-1zM14 20h2v1h-2zM19 20h2v1h-2z"/></symbol>
+  </svg>
+
+  <!-- ===== Hero ===== -->
+  <section class="page-hero booking-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <ol>
     <li><a href="../index.html">Home</a></li>
@@ -202,9 +460,527 @@
 </nav>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Booking, check-in & front desk","item":"https://blakew316.github.io/automotive/features/booking.html"}]}</script>
 <!-- @end breadcrumbs -->
-      <h1>Bookings that fit your day. <span class="accent-text">Check-ins that open the RO.</span></h1>
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-booking"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>Booking, check-in &amp; front desk</p>
+        <h1 id="hero-title"><span class="booking-h1-lead">Bookings that fit your day.</span> <span class="accent-text">Check-ins that open the RO.</span></h1>
+        <p class="lead">A booking page that only offers times you actually have open, a key-drop QR code for after hours, and a lobby screen that answers &ldquo;is it ready yet?&rdquo; Each self check-in opens a repair order on your signed-in shop devices.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=booking">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/calendar" data-no-prerender>Open the calendar in the sample shop</a>
+        </div>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Only real open times</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>After-hours key drop</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Lobby screen</span>
+        </div>
+      </div>
+
+      <figure class="page-hero-art mock-figure booking-hero-fig" data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="1900" aria-label="Example: the sample shop's open times for the week, with Thursday at 9:30 AM picked, and Rachel K.'s booking request waiting in Calendar, Requests. Key tag 14 hangs on the printed key-drop sign with its QR code, checked off, and a chip reads Repair order opened, key tag 14.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage booking-hero-stage" aria-hidden="true">
+          <!-- 1: open slots shimmer, Thursday 9:30 is tapped, the request drops into the tray -->
+          <div class="booking-card booking-cal">
+            <div class="booking-cal-head">
+              <span class="booking-ico"><svg class="icon"><use href="#i-calendar"/></svg></span>
+              <span class="booking-cal-title"><b>Open times this week</b><small>Main Street Auto Service · online booking</small></span>
+              <span class="mock-chip is-idle">30 min</span>
+            </div>
+            <div class="booking-week">
+              <span></span><span class="booking-wd">Mon</span><span class="booking-wd">Tue</span><span class="booking-wd">Wed</span><span class="booking-wd is-pick">Thu</span><span class="booking-wd">Fri</span>
+              <span class="booking-tm">8:00</span>
+              <span class="booking-slot is-taken"></span>
+              <span class="booking-slot" data-at="0" style="--w: 1"></span>
+              <span class="booking-slot is-taken"></span>
+              <span class="booking-slot is-taken"></span>
+              <span class="booking-slot" data-at="0" style="--w: 4"></span>
+              <span class="booking-tm">9:30</span>
+              <span class="booking-slot" data-at="0" style="--w: 1"></span>
+              <span class="booking-slot is-taken"></span>
+              <span class="booking-slot" data-at="0" style="--w: 3"></span>
+              <span class="booking-slot" data-at="0" style="--w: 4">
+                <span class="ring booking-ripple" data-at="0" data-fx="ring" style="--fx-n: 2; --fx-dur: .9s; --fx-delay: .85s"></span>
+                <span class="booking-slot-on" data-at="0" data-fx="pop" style="--fx-delay: 1s"><svg class="icon"><use href="#i-check"/></svg></span>
+              </span>
+              <span class="booking-slot is-taken"></span>
+              <span class="booking-tm">11:00</span>
+              <span class="booking-slot is-taken"></span>
+              <span class="booking-slot" data-at="0" style="--w: 3"></span>
+              <span class="booking-slot" data-at="0" style="--w: 4"></span>
+              <span class="booking-slot is-taken"></span>
+              <span class="booking-slot" data-at="0" style="--w: 6"></span>
+              <span class="booking-tm">1:30</span>
+              <span class="booking-slot" data-at="0" style="--w: 3"></span>
+              <span class="booking-slot" data-at="0" style="--w: 4"></span>
+              <span class="booking-slot is-taken"></span>
+              <span class="booking-slot" data-at="0" style="--w: 6"></span>
+              <span class="booking-slot" data-at="0" style="--w: 7"></span>
+            </div>
+          </div>
+          <div class="booking-card booking-tray">
+            <div class="booking-tray-head"><svg class="icon"><use href="#i-calendar-check"/></svg><span><span class="booking-tray-cal">Calendar &rarr; </span>Requests</span><span class="booking-badge" data-at="0" data-fx="pop" style="--fx-delay: 1.75s">1</span></div>
+            <div class="booking-tray-slot">
+              <div class="booking-req" data-at="0" style="--fx-delay: 1.3s">
+                <span class="mock-avatar">RK</span>
+                <span class="booking-req-txt"><b>Rachel K.</b><small>Thu 9:30 AM · Oil &amp; filter</small></span>
+                <span class="mock-chip">New</span>
+              </div>
+            </div>
+          </div>
+          <!-- 2: the key tag swings on the key-drop sign; 3: the check draws -->
+          <div class="booking-keydrop">
+            <svg class="keytag-art booking-sign" viewBox="6 -40 352 362">
+              <rect class="s-shadow" x="25" y="-17" width="330" height="334" rx="20"/>
+              <rect class="art-ink art-paper" x="18" y="-24" width="330" height="334" rx="20" stroke-opacity=".3"/>
+              <rect class="s-tape-a" x="44" y="-34" width="46" height="18" rx="3" transform="rotate(-7 67 -25)" opacity=".9"/>
+              <rect class="s-tape-b" x="276" y="-34" width="46" height="18" rx="3" transform="rotate(6 299 -25)" opacity=".95"/>
+              <rect class="art-blue-fill" x="38" y="-4" width="46" height="5" rx="2.5"/>
+              <rect class="art-green-fill" x="88" y="-4" width="46" height="5" rx="2.5"/>
+              <text class="s-title" x="37" y="28">KEY DROP</text>
+              <text class="s-sub" x="38" y="50">Scan to check in</text>
+              <rect class="s-qr-frame" x="32" y="62" width="106" height="106" rx="12"/>
+              <use class="s-qr" href="#booking-qr" x="40" y="70" width="90" height="90"/>
+              <rect class="s-slot-frame" x="32" y="190" width="106" height="78" rx="14"/>
+              <path class="art-ink art-accent" d="M77 203l8 8 8-8" stroke-width="2.4"/>
+              <rect class="s-slot" x="48" y="221" width="74" height="9" rx="4.5"/>
+              <text class="s-keys" x="85" y="254" text-anchor="middle">KEYS</text>
+              <rect class="art-ink art-paper" x="188" y="18" width="64" height="28" rx="11"/>
+              <circle class="art-ink art-thin art-soft" cx="202" cy="32" r="3.5"/>
+              <circle class="art-ink art-thin art-soft" cx="238" cy="32" r="3.5"/>
+              <path class="art-ink" d="M220 46v12" stroke-width="5"/>
+              <g data-at="1" style="--fx: booking-drop; --fx-dur: .8s; --fx-ease: var(--spring)">
+                <g class="swing">
+                  <circle class="art-ink" cx="220" cy="82" r="24" stroke-width="3"/>
+                  <path class="art-ink art-thin" d="M199.6 70.4a24 24 0 0 1 12-11" stroke-opacity=".55"/>
+                  <g class="fob">
+                    <path class="art-ink" d="M206 101c-4 4-8 9-10 15"/>
+                    <rect class="art-ink art-lilac" x="150" y="116" width="62" height="100" rx="26"/>
+                    <circle class="art-ink art-paper" cx="181" cy="142" r="10"/>
+                    <path class="art-ink art-thin" d="M177.6 143h6.8v4.6h-6.8zM179 143v-2a2 2 0 0 1 4 0v2"/>
+                    <circle class="art-ink art-paper" cx="181" cy="168" r="10"/>
+                    <path class="art-ink art-thin" d="M177.6 169h6.8v4.6h-6.8zM179 169v-2a2 2 0 0 1 4-.6"/>
+                    <circle class="art-ink art-soft" cx="181" cy="194" r="6"/>
+                    <rect class="art-ink art-paper" x="172" y="214" width="18" height="12" rx="3"/>
+                    <path class="art-ink art-paper" d="M175 226h12v56l-6 9-6-9z"/>
+                    <path class="art-ink art-thin" d="M187 238h-4v6h4M187 254h-4v6h4M187 268h-4v5h4" stroke-opacity=".7"/>
+                    <path class="art-ink art-thin" d="M181 232v44" stroke-opacity=".35"/>
+                  </g>
+                  <g class="tag">
+                    <path class="art-ink art-paper" d="M258 126h50l16 16v130a8 8 0 0 1-8 8h-66a8 8 0 0 1-8-8V142z"/>
+                    <circle class="art-tint" cx="283" cy="145" r="11"/>
+                    <circle class="art-ink art-thin art-paper" cx="283" cy="145" r="5.5"/>
+                    <path class="art-ink art-thin" d="M236 101c15 10 31 24 47 41" stroke-opacity=".8"/>
+                    <rect class="art-tint" x="243" y="166" width="80" height="24"/>
+                    <text class="tag-text" x="283" y="183" text-anchor="middle">TAG 14</text>
+                    <rect class="art-ink art-thin art-paper" x="255" y="204" width="14" height="14" rx="4"/>
+                    <path class="tag-check art-ink art-accent" data-at="2" style="--fx: tag-check; --fx-dur: .9s" d="M257 210l5 5 11-13" stroke-width="2.6"/>
+                    <path class="art-ink art-thin" d="M277 211h34M256 234h55M256 250h40" stroke-opacity=".32"/>
+                  </g>
+                </g>
+              </g>
+            </svg>
+          </div>
+          <!-- 4: the repair order opens -->
+          <span class="mock-chip is-ok booking-ro-chip" data-at="3"><svg class="icon"><use href="#i-document"/></svg>Repair order opened · key tag 14</span>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-calendar"/></svg></span>
+          <span><strong>Booking request · Thursday morning</strong><small>Rachel K. · 2018 Subaru Forester</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Self check-in · key tag 14</strong><small>Harper N. · 2019 Tesla Model 3</small></span>
+        </div>
+      </figure>
     </div>
   </section>
+
+  <!-- ===== Pains ===== -->
+  <section class="section section-paper" id="pains" aria-labelledby="pains-title">
+    <div class="container split booking-pains">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-title">Where the morning backs up</h2>
+        <ul class="signal-list">
+          <li>A line at the counter at 8 AM.</li>
+          <li>After-hours drop-offs with a note on the dash.</li>
+          <li>Booking by phone tag.</li>
+          <li class="is-critical">Double-booked mornings.</li>
+        </ul>
+      </div>
+      <div class="booking-pains-side">
+        <figure class="page-hero-art booking-pains-art" data-reveal="right" data-reveal-seq data-play aria-label="Illustration: three customers wait in line at the counter under a clock at eight. An arrow leads to a phone that offers only open times, with one picked, a key-drop QR code, and a repair order with a green check.">
+          <svg viewBox="0 0 480 280" aria-hidden="true">
+            <ellipse class="art-tint" cx="252" cy="150" rx="226" ry="124" opacity=".6"/>
+            <!-- the 8 AM line -->
+            <g data-seq-i="0">
+              <circle class="art-ink art-paper" cx="70" cy="62" r="27"/>
+              <path class="art-ink art-thin" d="M70 39v4M70 81v4M47 62h4M89 62h4" stroke-opacity=".6"/>
+              <path class="art-ink" d="M70 62l-12.5 7.2M70 62V44" stroke-width="2.6"/>
+              <circle class="p-dot" cx="70" cy="62" r="2.6"/>
+              <path class="art-ink art-thin" d="M14 248h226" stroke-opacity=".3"/>
+              <rect class="art-ink art-soft" x="164" y="120" width="36" height="24" rx="5"/>
+              <path class="art-ink art-thin" d="M182 144v7"/>
+              <rect class="art-ink art-tint" x="146" y="150" width="76" height="12" rx="4"/>
+              <rect class="art-ink art-paper" x="152" y="162" width="64" height="86" rx="6"/>
+              <path class="art-ink art-thin" d="M162 182h44M162 196h30" stroke-opacity=".35"/>
+              <circle class="art-ink art-paper" cx="118" cy="150" r="11"/>
+              <path class="art-ink art-soft" d="M101 248v-62a17 17 0 0 1 34 0v62"/>
+              <circle class="art-ink art-paper" cx="78" cy="152" r="11"/>
+              <path class="art-ink art-lilac" d="M61 248v-60a17 17 0 0 1 34 0v60"/>
+              <circle class="art-ink art-paper" cx="38" cy="150" r="11"/>
+              <path class="art-ink art-soft" d="M21 248v-62a17 17 0 0 1 34 0v62"/>
+            </g>
+            <g data-seq-i="1" data-fx="pop">
+              <path class="art-ink art-paper" d="M58 104h40a8 8 0 0 1 8 8v12a8 8 0 0 1-8 8H82l-8 8v-8H58a8 8 0 0 1-8-8v-12a8 8 0 0 1 8-8z"/>
+              <circle class="p-dot" cx="66" cy="118" r="2.6"/><circle class="p-dot" cx="78" cy="118" r="2.6"/><circle class="p-dot" cx="90" cy="118" r="2.6"/>
+            </g>
+            <!-- the hand-off -->
+            <path class="art-ink art-accent" data-seq-i="2" data-fx="draw" pathLength="1" d="M238 128c14-14 30-17 44-10" stroke-width="2.4"/>
+            <path class="art-ink art-accent" data-seq-i="2" data-fx="pop" style="--fx-delay: .6s" d="M272 108l11 10-14 4" stroke-width="2.4"/>
+            <!-- the phone with real open times -->
+            <g data-seq-i="3">
+              <g class="art-float">
+                <rect class="art-ink art-paper" x="298" y="30" width="108" height="212" rx="22"/>
+                <rect class="p-fill-mist" x="306" y="38" width="92" height="196" rx="16"/>
+                <rect class="p-island" x="338" y="45" width="28" height="7" rx="3.5"/>
+                <path class="p-line" d="M316 68h46"/>
+                <path class="p-line" d="M316 78h30" stroke-width="2.4" stroke-opacity=".35"/>
+                <rect class="p-open" x="316" y="92" width="22" height="16" rx="5"/>
+                <rect class="p-taken" x="341" y="92" width="22" height="16" rx="5"/><path class="p-strike" d="M345 100h14"/>
+                <rect class="p-open" x="366" y="92" width="22" height="16" rx="5"/>
+                <rect class="p-taken" x="316" y="113" width="22" height="16" rx="5"/><path class="p-strike" d="M320 121h14"/>
+                <rect class="p-open" x="341" y="113" width="22" height="16" rx="5"/>
+                <rect class="p-taken" x="366" y="113" width="22" height="16" rx="5"/><path class="p-strike" d="M370 121h14"/>
+                <rect class="p-open" x="316" y="134" width="22" height="16" rx="5"/>
+                <rect class="p-open" x="341" y="134" width="22" height="16" rx="5"/>
+                <rect class="p-taken" x="366" y="134" width="22" height="16" rx="5"/><path class="p-strike" d="M370 142h14"/>
+                <g data-seq-i="4" data-fx="pop">
+                  <rect class="p-pick" x="341" y="113" width="22" height="16" rx="5"/>
+                  <path class="p-white" d="M346.5 121l3.6 3.6 6.8-7"/>
+                </g>
+                <rect class="p-pick" x="316" y="200" width="72" height="20" rx="10" opacity=".9"/>
+              </g>
+            </g>
+            <!-- the key-drop QR code -->
+            <g data-seq-i="5" data-fx="pop">
+              <rect class="art-ink art-paper" x="262" y="168" width="58" height="72" rx="11"/>
+              <use class="p-qr" href="#booking-qr" x="270" y="176" width="42" height="42"/>
+              <path class="p-line" d="M272 228h38" stroke-width="2.6"/>
+            </g>
+            <!-- the repair order -->
+            <g data-seq-i="6">
+              <g transform="rotate(5 441 172)">
+                <rect class="art-ink art-paper" x="412" y="124" width="58" height="96" rx="10"/>
+                <path d="M421 138h19" stroke="var(--blue)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M443 138h18" stroke="var(--green)" stroke-width="4" stroke-linecap="round"/>
+                <path class="art-ink art-thin" d="M421 156h40M421 170h32M421 184h38M421 198h26" stroke-opacity=".32"/>
+              </g>
+            </g>
+            <g data-seq-i="7" data-fx="pop">
+              <circle class="p-ok" cx="458" cy="220" r="15"/>
+              <path class="p-white" d="M451 220.5l4.8 4.8 9-9.6"/>
+            </g>
+          </svg>
+        </figure>
+        <div class="callout" data-reveal="right">
+          <svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg>
+          <div>
+            <p class="callout-title">The paperwork is already started</p>
+            <p>Customers request a real open time or check themselves in, and the repair order is waiting on your signed-in devices.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== The booking page ===== -->
+  <section class="section section-tint" id="booking-page" aria-labelledby="booking-page-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Online booking</p>
+        <h2 id="booking-page-title">A booking page that <span class="accent-text">knows your schedule</span></h2>
+        <p>Customers pick the work and a time from your own booking page. It works on any phone, with no app or login.</p>
+        <ul class="booking-facts">
+          <li>
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>
+            <div><h3>Real open times</h3><p>Customers choose services and see real open times: business hours minus booked appointments, up to your bookings-at-once capacity.</p></div>
+          </li>
+          <li>
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span>
+            <div><h3>Your rules</h3><p>Slots of 15, 30, 45 or 60 minutes, the notice you need, up to 90 days ahead, and a message on the page.</p></div>
+          </li>
+          <li>
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg></span>
+            <div><h3>You accept each one</h3><p>Requests land in Calendar &rarr; Requests on your signed-in devices. Accept one and the customer and vehicle are added or matched, the appointment is booked, and a confirmation text is ready to send.</p></div>
+          </li>
+          <li>
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
+            <div><h3>Returning customers</h3><p>On the same phone, their details are filled in for them.</p></div>
+          </li>
+          <li>
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg></span>
+            <div><h3>Day and week views</h3><p>Day and week calendar views, and an .ics download for Google, Apple or Outlook calendars.</p></div>
+          </li>
+          <li>
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg></span>
+            <div><h3>Share it anywhere</h3><p>Link it from your website, your Google profile or a text.</p></div>
+          </li>
+        </ul>
+      </div>
+      <figure class="mock-figure booking-book-fig" data-reveal="left" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="1600" aria-label="Example: the sample shop's booking page on a phone. Full synthetic oil and filter service and a tire rotation are picked for Thursday the 8th. The booked times are greyed out and struck through, and 9:30 AM is selected. Beside it, the shop's online booking settings show 30-minute slots, 2 bookings at once and booking up to 21 days ahead.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage booking-book-stage" aria-hidden="true">
+          <div class="mock-phone is-auto booking-book-phone"><div class="mock-screen">
+            <div class="booking-shop"><span class="booking-mark"><svg class="icon"><use href="#i-wrench"/></svg></span><span><b>Main Street Auto Service</b><small>Schedule your visit</small></span></div>
+            <div class="booking-steps"><i class="is-on"></i><i class="is-on"></i><i></i></div>
+            <span class="mock-label">What do you need?</span>
+            <div class="booking-svcs">
+              <span class="booking-svc is-on"><span>Full synthetic oil &amp; filter service</span><span class="booking-tick"><svg class="icon"><use href="#i-check"/></svg></span></span>
+              <span class="booking-svc is-on"><span>Tire rotation &amp; pressure check</span><span class="booking-tick"><svg class="icon"><use href="#i-check"/></svg></span></span>
+              <span class="booking-svc"><span>Front brake pads &amp; rotors</span><span class="booking-tick"></span></span>
+            </div>
+            <span class="mock-label">Pick a time</span>
+            <div class="booking-days">
+              <span><small>Mon</small><b>5</b></span>
+              <span><small>Tue</small><b>6</b></span>
+              <span><small>Wed</small><b>7</b></span>
+              <span class="is-on"><small>Thu</small><b>8</b></span>
+              <span><small>Fri</small><b>9</b></span>
+            </div>
+            <div class="booking-times">
+              <span class="booking-time">8:00 AM</span>
+              <span class="booking-time is-taken" data-at="0">8:30 AM<i class="booking-strike" data-at="0" data-fx="grow-x" style="--fx-dur: .45s"></i></span>
+              <span class="booking-time is-taken" data-at="0" style="--fx-delay: .15s">9:00 AM<i class="booking-strike" data-at="0" data-fx="grow-x" style="--fx-dur: .45s; --fx-delay: .15s"></i></span>
+              <span class="booking-time">9:30 AM<span class="booking-time-on" data-at="1" data-fx="pop">9:30 AM</span></span>
+              <span class="booking-time">10:00 AM</span>
+              <span class="booking-time is-taken" data-at="0" style="--fx-delay: .3s">10:30 AM<i class="booking-strike" data-at="0" data-fx="grow-x" style="--fx-dur: .45s; --fx-delay: .3s"></i></span>
+              <span class="booking-time is-taken" data-at="0" style="--fx-delay: .45s">11:00 AM<i class="booking-strike" data-at="0" data-fx="grow-x" style="--fx-dur: .45s; --fx-delay: .45s"></i></span>
+              <span class="booking-time">11:30 AM</span>
+              <span class="booking-time">1:00 PM</span>
+            </div>
+            <span class="mock-btn booking-continue">Continue</span>
+          </div></div>
+          <div class="booking-set">
+            <div class="booking-set-head"><span class="booking-ico"><svg class="icon"><use href="#i-calendar-check"/></svg></span><span><b>Online booking</b><small>Your settings</small></span></div>
+            <span class="booking-set-row"><span>Slot length (min)</span></span>
+            <div class="mock-seg booking-seg"><span>15</span><span>30</span><span>45</span><span>60</span></div>
+            <span class="booking-set-row"><span>Bookings at once</span><b>2</b></span>
+            <span class="booking-set-row"><span>Book up to</span><b>21 days</b></span>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <p class="mock-caption">Times that are already booked aren&rsquo;t offered.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Self check-in ===== -->
+  <section class="section section-paper" id="check-in" aria-labelledby="check-in-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Self check-in</p>
+        <h2 id="check-in-title">Self check-in <span class="accent-text">and key drop</span></h2>
+        <p class="lead">Print the key-drop sign or set a tablet in the lobby. Customers check themselves in, day or night, and the details land on a repair order.</p>
+      </div>
+      <div class="roadmap" style="--steps:4" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="Example self check-in in the sample shop">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-qr"/></svg></span>
+            <h3>Scan or tap</h3>
+            <p>Scan the QR code on the printable key-drop sign, or use the lobby tablet in kiosk mode.</p>
+            <span class="roadmap-chip">QR scanned</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-vin"/></svg></span>
+            <h3>Fill it in</h3>
+            <p>Enter their details, the vehicle (the VIN barcode can be scanned), the concern, the key tag and how they&rsquo;re getting around.</p>
+            <span class="roadmap-chip">VIN scanned</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-signature"/></svg></span>
+            <h3>Sign</h3>
+            <p>Sign a diagnosis authorization with your dollar limit.</p>
+            <span class="roadmap-chip">Signed</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-document"/></svg></span>
+            <h3>The RO opens</h3>
+            <p>A repair order opens on your signed-in shop devices, matched to the customer (by phone, then email) and vehicle (by plate or VIN), attached to today&rsquo;s appointment, with the signature saved.</p>
+            <span class="roadmap-chip">Repair order opened</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Front desk ===== -->
+  <section class="section" id="front-desk" aria-labelledby="front-desk-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Front desk</p>
+        <h2 id="front-desk-title">The front desk <span class="accent-text">at a glance</span></h2>
+        <p class="lead">One screen for the counter: who checked in, who&rsquo;s waiting, where the loaners are and which rides are due.</p>
+      </div>
+      <div class="grid grid-4 booking-desk" data-reveal-stagger>
+        <article class="card value-card">
+          <div class="booking-desk-art" aria-hidden="true">
+            <div class="booking-mini">
+              <span class="booking-mini-row"><span class="booking-mini-ico"><svg class="icon"><use href="#i-qr"/></svg></span><span class="booking-mini-bars"><i style="--w: 72%"></i><i style="--w: 46%"></i></span><svg class="icon is-end"><use href="#i-key"/></svg></span>
+              <span class="booking-mini-row"><span class="booking-mini-ico"><svg class="icon"><use href="#i-device-tablet"/></svg></span><span class="booking-mini-bars"><i style="--w: 58%"></i><i style="--w: 64%"></i></span><svg class="icon is-end"><use href="#i-key"/></svg></span>
+            </div>
+          </div>
+          <h3>Today&rsquo;s check-ins</h3>
+          <p>Each self check-in from the key drop or the lobby tablet, with the key tag, how they&rsquo;re getting around and when they need the car back.</p>
+        </article>
+        <article class="card value-card">
+          <div class="booking-desk-art" aria-hidden="true">
+            <div class="booking-mini">
+              <span class="booking-mini-row"><span class="booking-mini-av"></span><span class="booking-mini-bars"><i style="--w: 64%"></i><i style="--w: 40%"></i></span><svg class="icon is-end"><use href="#i-clock"/></svg></span>
+              <span class="booking-mini-row"><span class="booking-mini-av is-green"></span><span class="booking-mini-bars"><i style="--w: 52%"></i><i style="--w: 58%"></i></span><svg class="icon is-end"><use href="#i-clock"/></svg></span>
+            </div>
+          </div>
+          <h3>Customers waiting in the lobby</h3>
+          <p>Who&rsquo;s waiting and for how long. On the lobby screen, their cars come right after the ready ones.</p>
+        </article>
+        <article class="card value-card" data-reveal-seq>
+          <div class="booking-desk-art" aria-hidden="true">
+            <div class="booking-fuel">
+              <svg viewBox="0 0 120 76">
+                <path class="g-track" d="M15 60a45 45 0 0 1 90 0"/>
+                <path class="g-low" d="M15 60a45 45 0 0 1 13.18-31.82"/>
+                <path class="g-tick" d="M60 21v6M32.4 32.4l4.3 4.3M87.6 32.4l-4.3 4.3"/>
+                <line class="needle" data-seq-i="1" data-fx="sweep" x1="60" y1="60" x2="60" y2="24" style="--from: 45deg; --to: -45deg; transform-origin: 60px 60px"/>
+                <circle class="g-hub" cx="60" cy="60" r="4.5"/>
+                <text x="15" y="75" text-anchor="middle">E</text><text x="105" y="75" text-anchor="middle">F</text>
+              </svg>
+              <span class="booking-fuel-side">
+                <span class="mock-label">Back in</span>
+                <span class="booking-lowfuel" data-seq-i="4" style="--fx: booking-lowfuel; --fx-dur: 1.6s"><svg class="icon"><use href="#i-alert"/></svg>Low fuel</span>
+              </span>
+            </div>
+          </div>
+          <h3>Loaner board</h3>
+          <p>Out with the odometer, fuel and a signed loaner agreement. Back in with the new readings, and low fuel is flagged.</p>
+        </article>
+        <article class="card value-card" data-reveal-seq>
+          <div class="booking-desk-art" aria-hidden="true">
+            <div class="booking-mini">
+              <span class="booking-mini-row"><span class="mock-tickbox"><i data-seq-i="2" data-fx="tick"></i></span><span class="booking-mini-ico is-green"><svg class="icon"><use href="#i-pin"/></svg></span><span class="booking-mini-bars"><i style="--w: 66%"></i><i style="--w: 44%"></i></span><span class="booking-mini-map">Map</span></span>
+              <span class="booking-mini-row"><span class="mock-tickbox"><i data-seq-i="3" data-fx="tick"></i></span><span class="booking-mini-ico is-green"><svg class="icon"><use href="#i-pin"/></svg></span><span class="booking-mini-bars"><i style="--w: 54%"></i><i style="--w: 62%"></i></span><span class="booking-mini-map">Map</span></span>
+            </div>
+          </div>
+          <h3>Shuttle rides</h3>
+          <p>Today&rsquo;s drop-offs and pick-ups with times, addresses, a map link and a done checkbox.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Lobby screen ===== -->
+  <section class="section section-tint" id="lobby" aria-labelledby="lobby-title">
+    <div class="container split split-wide-right booking-lobby">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Lobby screen</p>
+        <h2 id="lobby-title">A <span class="accent-text"><span class="nowrap">waiting-room</span> screen</span></h2>
+        <p>Run it on a TV from a shop device. It lists every vehicle&rsquo;s status by first name and last initial, ready cars first, with rotating messages, your Wi-Fi details and the check-in QR code, and pages through long lists on its own.</p>
+        <ul class="checklist">
+          <li>First name and last initial only. No prices, no phone numbers.</li>
+          <li>Ready cars first, then the cars of customers who are waiting.</li>
+          <li>Open it from Front Desk &rarr; Lobby screen on a shop device.</li>
+        </ul>
+      </div>
+      <figure class="mock-figure booking-lobby-fig" data-reveal="right" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="2400" aria-label="Example: the sample shop's lobby TV, Main Street Auto Service, Vehicle status. Avery T.'s 2020 Honda Accord and Elijah B.'s 2019 Honda CR-V are ready for pickup, Jordan M.'s 2018 Ford F-150 is being worked on, and Priya R.'s 2021 Toyota Camry is up next. The side panel shows a shop message, the guest Wi-Fi and a check-in QR code. Page 1 of 2.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-tv booking-tv"><div class="mock-screen">
+            <div class="booking-tv-head">
+              <span class="booking-tv-shop"><b>Main Street Auto Service</b><span>Vehicle status</span></span>
+              <span class="booking-tv-clock">9:41 AM</span>
+            </div>
+            <div class="booking-tv-body">
+              <div class="booking-tv-list">
+                <div class="booking-tv-view"><div class="booking-tv-track">
+                  <div class="booking-tv-page">
+                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Avery T.</b><small>2020 Honda Accord</small></span><span class="live-pill"><span class="live-dot"></span>Ready for pickup</span></div>
+                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Elijah B.</b><small>2019 Honda CR-V</small></span><span class="live-pill"><span class="live-dot"></span>Ready for pickup</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Jordan M.</b><small>2018 Ford F-150</small></span><span class="booking-tv-est">Est. 11:30 AM</span><span class="mock-chip">Being worked on</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Priya R.</b><small>2021 Toyota Camry</small></span><span class="booking-tv-est">Est. 10:30 AM</span><span class="mock-chip is-idle">Up next</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2020 Ram 1500</small></span><span class="booking-tv-est">Est. 1:00 PM</span><span class="mock-chip">Being worked on</span></div>
+                  </div>
+                  <div class="booking-tv-page">
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2016 Nissan Altima</small></span><span class="booking-tv-est">Est. 2:00 PM</span><span class="mock-chip is-idle">Up next</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Jordan M.</b><small>2020 Chevrolet Silverado 1500</small></span><span class="booking-tv-est">Est. 4:00 PM</span><span class="mock-chip is-warn">Waiting on parts</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Harper N.</b><small>2019 Tesla Model 3</small></span><span class="mock-chip is-idle">Inspecting</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Lena K.</b><small>2019 BMW 330i</small></span><span class="mock-chip is-idle">Inspecting</span></div>
+                  </div>
+                  <div class="booking-tv-page">
+                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Avery T.</b><small>2020 Honda Accord</small></span><span class="live-pill"><span class="live-dot"></span>Ready for pickup</span></div>
+                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Elijah B.</b><small>2019 Honda CR-V</small></span><span class="live-pill"><span class="live-dot"></span>Ready for pickup</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Jordan M.</b><small>2018 Ford F-150</small></span><span class="booking-tv-est">Est. 11:30 AM</span><span class="mock-chip">Being worked on</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Priya R.</b><small>2021 Toyota Camry</small></span><span class="booking-tv-est">Est. 10:30 AM</span><span class="mock-chip is-idle">Up next</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2020 Ram 1500</small></span><span class="booking-tv-est">Est. 1:00 PM</span><span class="mock-chip">Being worked on</span></div>
+                  </div>
+                </div></div>
+                <div class="booking-tv-foot">
+                  <span class="booking-tv-ready">Ready vehicles: please see the front counter.</span>
+                  <span class="booking-tv-pageno"><span data-until="1">Page 1 of 2</span><span data-at="1" data-until="2" data-fx="fade">Page 2 of 2</span><span data-at="2" data-fx="fade">Page 1 of 2</span></span>
+                </div>
+              </div>
+              <div class="booking-tv-aside">
+                <div class="booking-tv-card booking-tv-msg">
+                  <span data-until="1">Ask us about our maintenance plans. A quick text keeps you on schedule.</span>
+                  <span data-at="1" data-until="2" data-fx="fade">Free multi-point inspection with every visit.</span>
+                  <span data-at="2" data-fx="fade">Ask us about our maintenance plans. A quick text keeps you on schedule.</span>
+                </div>
+                <div class="booking-tv-card booking-tv-wifi"><b>Free Wi-Fi</b><span>MainStreet-Guest</span><span>Password: tuneup2026</span></div>
+                <div class="booking-tv-card booking-tv-qr"><svg viewBox="0 0 21 21"><use href="#booking-qr"/></svg><span><b>Checking in?</b><br>Scan to skip the line</span></div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> <a href="../works-with.html#shop-cloud">Shop Cloud</a> for real open times, the booking inbox and self check-in, whether on the lobby tablet or a customer&rsquo;s own phone.</li>
+            <li><strong>Requests and check-ins</strong> appear on your devices once one is signed in and open. A device checks about every minute while it&rsquo;s open.</li>
+            <li><strong>Without Shop Cloud,</strong> the booking page sends the request by text or email instead, and shows your business hours rather than live open times.</li>
+            <li><strong>Server-sent texts:</strong> confirmation and day-before reminder texts need Shop Cloud and your Twilio number, and are off until you switch them on.</li>
+            <li><strong>The lobby screen</strong> is a staff page, so run it from a shop device. Changes made on other devices show once they sync through Shop Cloud, and the check-in QR code shows when self check-in is on.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section booking-faq" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Booking questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="booking-faq"><summary>Will it double-book us?</summary><div class="faq-body"><p>It offers only open times, up to your bookings-at-once capacity, and you accept each request.</p></div></details>
+        <details class="faq" name="booking-faq"><summary>Can customers check in after hours?</summary><div class="faq-body"><p>Yes, at the key drop from their own phone, with <a href="../works-with.html#shop-cloud">Shop Cloud</a>. The repair order is there the next time a shop device is signed in and open.</p></div></details>
+        <details class="faq" name="booking-faq"><summary>Can I put a Book online button on my own website?</summary><div class="faq-body"><p>Yes. In Settings &rarr; Website, copy your booking link or the ready-to-paste Book online button.</p></div></details>
+        <details class="faq" name="booking-faq"><summary>Do appointments go to Google Calendar?</summary><div class="faq-body"><p>Download upcoming appointments as an .ics file and open it in Google, Apple or Outlook calendars.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Related ===== -->
   <section class="section section-sm" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>

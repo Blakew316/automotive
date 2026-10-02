@@ -220,7 +220,8 @@ Behaviour (site.js):
 - hover opens after 70ms and closes after 200ms;
 - Escape closes it and returns focus;
 - it closes on focus-out, outside click, pageswap and pagehide;
-- it is `inert` when closed.
+- it is `inert` when closed;
+- without JS it still opens on hover and on keyboard focus (`:focus-within`).
 
 ### Tab bar and More sheet (partials/tabbar.html)
 
@@ -259,6 +260,7 @@ sync renders it as `{{motionToggle}}`. Never hand-write a second copy in a page.
   - SMIL arts in `[data-play]` figures pause;
   - tilt is off.
 - If the page loads already paused (`motion-parked`), sequences rest on their final frame and the CTA car parks mid-road on "Paid".
+- Without JS the toggle is hidden (it needs site.js).
 
 ### CTA road band (partials/cta.html; omitted on demo, privacy and 404)
 
@@ -1440,6 +1442,7 @@ The `.tag-text` can read SERVICE, DEMO and so on.
 | Ticker | static wrapped pills | frozen | one static row | animates |
 | Roadmap | full, all chips | scroll-driven (no animation) | as scrolled | full, all chips |
 | Header ticks / label | hidden | static | hidden | not created |
+| Pause toggle | shown | pressed, "Play animations" | hidden | hidden |
 | Tilt | off | off | — | off |
 | Page transitions | off | on | — | on |
 

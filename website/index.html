@@ -35,6 +35,212 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* index.html: page-local styles (slug-prefixed) */
+.index-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* Hero: the Today card */
+.index-today .mock-appbar { padding-bottom: 8px; border-bottom: 1px solid var(--m-line); }
+.index-today .mock-section-title .mock-chip { padding: 0 7px; line-height: 1.5; }
+.index-today .mock-row { min-height: 32px; padding-block: 6px; }
+.index-today .mock-bars { height: 46px; }
+@media (max-width: 559.98px) {
+  .index-tiles.mock-tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .index-tiles > :nth-child(-n+3) { grid-column: span 2; }
+  .index-tiles > :nth-child(n+4) { grid-column: span 3; }
+  .index-today .mock-tile strong { font-size: 17px; }
+}
+
+/* Hero chips: they sit on the card's lower corners, clear of the tag, the title bar and the tiles */
+.index-hero-fig { padding-bottom: 26px; }
+.index-hero-fig .float-note.note-1 { top: auto; bottom: 74px; left: -30px; }
+.index-hero-fig .float-note.note-2 { top: auto; bottom: 0; right: -14px; }
+
+/* Feature ticker band (Reduce Motion wraps it into pills; keep them compact on phones) */
+.index-ticker { position: relative; }
+@media (prefers-reduced-motion: reduce) and (max-width: 599.98px) {
+  .index-ticker .ticker-item { padding: 5px 11px; font-size: .86rem; gap: 7px; }
+  .index-ticker .ticker-item .icon { width: 16px; height: 16px; }
+}
+
+/* Chapters */
+.index-chapter .section-copy .checklist { margin-block: 2px; }
+.index-chapter .section-copy .checklist li { color: var(--ink-2); }
+.index-chapter .mock-figure { width: 100%; }
+
+/* Customer-page header inside phone mocks (shop name first, two-tone bar) */
+.index-cust-head { display: grid; gap: 2px; padding-bottom: 9px; position: relative; }
+.index-cust-head::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 1px; background: var(--bar); opacity: .85; }
+.index-cust-head strong { font-size: 14px; font-weight: 750; letter-spacing: -0.02em; color: var(--ink); }
+.index-cust-head span { font-size: 12px; color: var(--ink-3); }
+.index-cust-head.is-sm strong { font-size: 13px; }
+
+/* Ch 1: check-in phone */
+.index-checkin .mock-stage { padding-bottom: 8px; }
+.index-checkin-phone { width: min(100%, 284px); }
+.index-checkin-phone > .mock-screen { gap: 9px; }
+.index-field-group { display: grid; gap: 4px; }
+.index-field-group > .mock-label { font-weight: 600; }
+.index-vf.mock-viewfinder { width: 100%; aspect-ratio: auto; height: 62px; }
+.index-vf .mock-barcode { height: 30px; width: 70%; }
+.index-vin { display: flex; justify-content: center; padding-top: 2px; }
+.index-vin .slot-roll { font-size: 12px; }
+.index-vin .slot-roll.is-boxed { gap: 2px; }
+.index-vin .slot-roll.is-boxed .slot-cell { width: 1.32ch; }
+.index-vin-car { display: inline-flex; align-items: center; justify-content: center; gap: 5px; font-size: 12px; font-weight: 650; color: var(--green-ink); }
+.index-vin-car .icon { width: 14px; height: 14px; }
+.index-keyrow { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px; }
+.index-keyrow .mock-field { gap: 8px; }
+.index-keyrow .mock-label { font-weight: 550; }
+.index-keyrow b { font-family: var(--font-mono); font-weight: 700; }
+.index-sig { display: grid; gap: 4px; padding: 8px 10px 4px; border-radius: 10px; border: 1px dashed var(--line-strong); background: var(--mist-50); }
+.index-sig svg { width: 100%; height: 40px; }
+.index-sig.is-sm { padding: 6px 8px 2px; }
+.index-sig.is-sm svg { height: 30px; }
+.index-checkin .mock-stage { justify-items: center; }
+.index-checkin-done {
+  position: relative; z-index: 3; margin-top: -24px;
+  display: inline-flex; align-items: center; gap: 9px; padding: 10px 14px 10px 12px; border-radius: 14px;
+  background: rgba(255, 255, 255, .95); border: 1px solid var(--line); box-shadow: var(--shadow-2);
+  font-size: 13px; font-weight: 650; color: var(--ink); white-space: nowrap;
+}
+
+/* Ch 2: inspection tablet + approval phone */
+.index-approve .card-stage.is-pair { padding-bottom: 14%; }
+.index-approve .card-stage.is-pair > .card-deal:first-child { width: 74%; }
+.index-approve .card-stage.is-pair > .card-deal:nth-child(2) { width: 37%; min-width: 0; margin-bottom: -16%; }
+.index-approve .mock-tablet > .mock-screen { gap: 10px; }
+.index-insp { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 10px; align-items: start; }
+.index-insp .mock-check { padding: 5px 8px; min-height: 30px; gap: 7px; }
+.index-insp-side { display: grid; gap: 8px; justify-items: center; }
+.index-insp-side .mock-gauge { max-width: 140px; }
+.index-photo { position: relative; display: grid; gap: 6px; justify-items: start; width: 100%; }
+.index-photo svg { width: 100%; height: auto; display: block; }
+.index-photo .mock-chip { font-size: 12px; }
+.index-photo-circle { stroke: var(--dot-stop); }
+.index-approve-phone > .mock-screen { padding: 30px 10px 12px; }
+.index-phone-stack { display: grid; }
+.index-phone-stack > * { grid-area: 1 / 1; min-width: 0; }
+.index-bubble-slot { display: grid; }
+.index-bubble-slot > * { grid-area: 1 / 1; }
+.index-bubble-slot .mock-bubble { max-width: 100%; }
+.index-typing { --fx: index-typing-life; --fx-dur: .9s; opacity: 0; align-self: start; justify-self: end; }
+@keyframes index-typing-life { 0% { opacity: 0; } 18%, 78% { opacity: 1; } 100% { opacity: 0; } }
+.index-approve-page { display: grid; gap: 6px; align-content: start; }
+.index-tog-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 28px; padding: 3px 0; border-bottom: 1px solid var(--m-line); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.index-tog-row > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.index-tog.mock-toggle { width: 30px; height: 18px; }
+.index-tog.mock-toggle::after { width: 14px; height: 14px; }
+.index-approve[data-reached~="4"] .index-tog { background: var(--green); }
+.index-approve[data-reached~="4"] .index-tog::after { translate: 12px 0; }
+.index-tog-row:nth-child(3) .index-tog, .index-tog-row:nth-child(3) .index-tog::after { transition-delay: .12s; }
+.index-tog-row:nth-child(4) .index-tog, .index-tog-row:nth-child(4) .index-tog::after { transition-delay: .24s; }
+.index-tog-row:nth-child(5) .index-tog, .index-tog-row:nth-child(5) .index-tog::after { transition-delay: .36s; }
+.index-approve-page { padding-bottom: 34px; }
+.index-approve-stamp { position: absolute; left: 50%; bottom: 14px; z-index: 4; translate: -50% 0; }
+@media (max-width: 599.98px) {
+  .index-approve .card-stage.is-pair { padding-bottom: 30%; }
+  .index-approve .card-stage.is-pair > .card-deal:first-child { width: 100%; }
+  .index-approve .card-stage.is-pair > .card-deal:nth-child(2) { width: 60%; margin-bottom: -34%; margin-right: -2%; }
+  .index-insp { grid-template-columns: minmax(0, 1fr); }
+  .index-insp-side { width: 40%; justify-self: start; }
+}
+
+/* Ch 3: board */
+.index-work-head { display: grid; gap: 24px 56px; margin-bottom: clamp(28px, 1.5rem + 1.5vw, 48px); }
+.index-work-head .section-head { margin-bottom: 0; }
+@media (min-width: 900px) { .index-work-head { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); align-items: end; } }
+.index-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.index-points li { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 12px; align-items: start; }
+.index-points li p { color: var(--ink-2); padding-top: 4px; }
+.index-points .index-points-link { grid-template-columns: minmax(0, 1fr); padding-left: 48px; }
+.index-points .index-points-link .link-arrow { justify-self: start; }
+.index-board .board-frame { width: 100%; max-width: 1100px; }
+@media (max-width: 699.98px) {
+  .index-board .mock-board { padding-top: 5px; }
+  .index-board .mock-board > .mock-col { padding-inline: 6px; }
+}
+.index-swap { display: inline-grid; }
+.index-swap > * { grid-area: 1 / 1; justify-self: end; }
+
+/* Ch 4: invoice + reader */
+.index-pay-scene { grid-template-columns: minmax(0, 1fr) auto; align-items: end; justify-items: stretch; gap: 22px; max-width: 520px; }
+.index-pay .mock-paper { width: 100%; padding-bottom: 56px; }
+.index-paid-stamp { position: absolute; left: 18px; bottom: 14px; }
+.index-reader-wrap { position: relative; padding-left: 26px; padding-bottom: 6px; }
+.index-card { position: absolute; left: -10px; top: 34%; z-index: 2; width: 64px; height: auto; rotate: -10deg; filter: drop-shadow(0 6px 10px rgba(15, 43, 76, .16)); --fx: index-card-glide; --fx-dur: .9s; }
+@keyframes index-card-glide { from { opacity: 0; translate: -70px 30px; rotate: -24deg; } 70% { opacity: 1; } }
+.index-reader-ok { display: grid; place-items: center; align-content: center; gap: 2px; width: 100%; height: 100%; }
+.index-reader-ok svg { width: 26px; height: 26px; }
+@media (max-width: 599.98px) {
+  .index-pay-scene { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .index-reader-wrap { justify-self: end; margin: -44px 14px 0 0; padding: 0; z-index: 3; }
+  .index-reader-wrap .mock-reader { width: 112px; }
+  .index-card { left: -50px; top: 30%; width: 56px; }
+}
+
+/* Ch 5: follow-up */
+.index-fu-win { width: min(100%, 460px); }
+.index-fu-win > .mock-screen { gap: 12px; }
+.index-fu-top { display: flex; align-items: center; gap: 12px; }
+.index-fu-oil { flex: none; }
+.index-fu-odo { display: grid; gap: 1px; min-width: 0; }
+.index-fu-num { font-family: var(--font-mono); font-size: 24px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: var(--ink); }
+.index-fu-due { margin-left: auto; }
+.index-fu-meter { display: grid; gap: 6px; padding: 10px 12px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.index-fu-title { padding-top: 2px; }
+.index-fu-list .mock-row > span:last-child { display: grid; gap: 1px; -webkit-line-clamp: unset; }
+.index-fu-list .mock-row > .mock-tickbox { flex: none; display: grid; overflow: visible; }
+.index-fu-list b { font-size: 12.5px; font-weight: 650; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.index-fu-list small { font-size: 12px; color: var(--ink-3); }
+.index-fu-new { border-color: rgba(31, 122, 224, .35); background: var(--accent-soft); }
+
+/* Customer pages */
+.index-pages-grid { display: grid; gap: clamp(32px, 2rem + 2vw, 72px); align-items: center; }
+@media (min-width: 1000px) { .index-pages-grid { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } }
+.index-pages-fig .mock-phone { width: 100%; }
+.index-pages-fig .card-stage.is-trio > .card-deal:nth-child(1) { margin-right: -1.5%; }
+.index-pages-fig .card-stage.is-trio > .card-deal:nth-child(3) { margin-left: -1.5%; }
+.index-cp .mock-line { font-size: 12px; padding: 5px 0; border-bottom: 1px dashed var(--m-line); }
+.index-cp .mock-line > :last-child { font-weight: 650; }
+.index-cp { gap: 9px; }
+.index-cp .mock-btn { min-height: 32px; }
+.index-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.index-slots span { padding: 6px 4px; border-radius: 9px; border: 1px solid var(--line-strong); text-align: center; font-size: 12px; font-weight: 600; white-space: nowrap; }
+.index-slots .is-on { background: var(--accent-soft); border-color: var(--blue); color: var(--accent-ink); }
+.index-cp-status { font-size: 17px; font-weight: 750; letter-spacing: -0.02em; }
+.index-cp-amount { font-size: 26px; font-weight: 750; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.index-cp .live-pill { align-self: start; }
+.index-cp .mock-timeline { gap: 10px; }
+.index-cp .mock-timeline li { font-size: 12px; gap: 8px; }
+.index-powered { margin-top: auto; padding-top: 8px; font-size: 12px; line-height: 1.3; color: var(--ink-3); text-align: center; }
+.index-pages-pills { justify-content: center; margin-top: clamp(32px, 2rem + 1vw, 48px); }
+
+/* Built in */
+.index-built { display: grid; gap: 36px; align-items: start; }
+@media (min-width: 980px) { .index-built { grid-template-columns: minmax(0, .72fr) minmax(0, 2fr); gap: 56px; } }
+.index-fact { position: sticky; top: calc(var(--header-offset, 80px) + 24px); padding: 26px; border-radius: var(--r-lg); background: var(--wash); border: 1px solid rgba(31, 122, 224, .14); }
+@media (max-width: 979.98px) { .index-fact { position: static; } }
+.index-fact .link-arrow { font-size: .95rem; }
+
+/* Bring your shop */
+.index-sources { font-size: .95rem; color: var(--ink-3) !important; }
+.index-accounts { padding: clamp(22px, 1rem + 1.5vw, 32px); }
+.index-accounts-head { display: flex; gap: 14px; align-items: flex-start; }
+.index-accounts-head h3 { font-size: 1.12rem; }
+.index-accounts-head p { margin-top: 4px; color: var(--ink-3); font-size: .95rem; }
+.index-accounts .pill-cloud { margin-top: 20px; }
+.index-import { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--line); }
+.index-import-file, .index-import-ok { display: inline-flex; align-items: center; gap: 7px; padding: 6px 11px; border-radius: 10px; font-size: .86rem; font-weight: 600; }
+.index-import-file { font-family: var(--font-mono); background: var(--mist-50); border: 1px solid var(--line); color: var(--ink-2); }
+.index-import-ok { background: var(--green-100); color: var(--green-ink); }
+.index-import .icon { width: 16px; height: 16px; }
+.index-import-flow { width: 64px; height: 16px; flex: none; }
+
+/* FAQ */
+.index-faq { align-items: start; }
+@media (min-width: 900px) { .index-faq { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } }
+</style>
 </head>
 <body data-page="home" id="top">
 <!-- @partial icons -->
@@ -190,9 +396,694 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
+  <svg class="index-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="index-mark" viewBox="-8 -190 507 250"><path transform="translate(-5.74 0)" fill="#0F2B4C" d="M54.32 0H103.27L124.51 -83.98C127.93 -97.78 130 -112.67 132.2 -127.81C134.52 -112.43 136.84 -97.41 140.26 -83.98L161.5 0H210.33L258.91 -181.88H211.18L193.24 -101.44C189.58 -84.59 186.65 -64.09 183.84 -44.8C180.66 -64.09 177.49 -84.59 173.46 -101.44L154.3 -181.88H110.47L91.19 -101.44C87.16 -84.35 83.98 -63.72 80.81 -44.31C77.88 -63.72 74.95 -84.35 71.41 -101.44L53.47 -181.88H5.74ZM284.81 0H327.9V-56.76H358.05C399.8 -56.76 425.56 -81.54 425.56 -119.02C425.56 -156.25 400.29 -181.88 359.27 -181.88H284.81ZM327.9 -90.82V-146.97H350.12C370.38 -146.97 380.88 -136.11 380.88 -119.02C380.88 -102.17 370.38 -90.82 350.24 -90.82ZM496.86 -181.88H453.77V0H496.86Z"/><rect x="0" y="40" width="238.56" height="12" fill="#1F7AE0"/><rect x="252.56" y="40" width="238.56" height="12" fill="#2DB36A"/></symbol>
+  </svg>
+
+  <!-- ===== Hero ===== -->
+  <section class="hero" id="hero" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div class="hero-in">
+        <p class="chip chip-soft">WPI Driveline Shop Management System</p>
+        <h1 id="hero-title">Every car, from check-in to paid, <span class="accent-text">in one system.</span></h1>
+        <p class="lead">Shop management for independent auto repair shops. Each car moves from the key drop to the inspection, the approval, the bay, the invoice and the follow-up, on the counter PC, the bay tablet and your phone, and each device keeps working when the internet drops.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="demo.html">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="app/" data-no-prerender>Try the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-wifi-off"/></svg>Works offline</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>Installs on iPhone, iPad, Android, Mac &amp; PC</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Card payments and texting on your own Stripe &amp; Twilio accounts</span>
+        </div>
+      </div>
+
+      <figure class="hero-visual mock-figure index-hero-fig" data-tilt-scope data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" aria-label="Example: the Today screen of the sample shop, with five totals, four cars that need attention and a chart of what was invoiced over the last 14 days">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="card-stage mock-stage" aria-hidden="true">
+          <div class="card-deal">
+            <div class="app-card" data-tilt="12">
+              <div class="mock-screen index-today">
+                <div class="mock-appbar"><svg class="mock-logo" viewBox="0 0 22 22"><rect x=".5" y=".5" width="21" height="21" rx="6" fill="#fff" stroke="#DCE5F0"/><use href="#index-mark" x="3" y="5.5" width="16" height="11"/></svg>Today · Main Street Auto Service</div>
+                <div class="mock-today">
+                  <div class="mock-tiles index-tiles">
+                    <div class="mock-tile is-wash"><span class="mock-label">In the shop</span><strong><span class="odometer is-plain" data-odometer="5" data-at="0">5</span></strong><small>7 on the lot</small></div>
+                    <div class="mock-tile"><span class="mock-label">Billed today</span><strong><span class="odometer is-plain" data-odometer="699" data-group="," data-prefix="$" data-at="0" style="--odo-base: .12s">$699</span></strong><small>2 invoices</small></div>
+                    <div class="mock-tile"><span class="mock-label">Awaiting approval</span><strong><span class="odometer is-plain" data-odometer="1899" data-group="," data-prefix="$" data-at="0" style="--odo-base: .24s">$1,899</span></strong><small>3 open estimates</small></div>
+                    <div class="mock-tile"><span class="mock-label">Ready for pickup</span><strong><span class="odometer is-plain" data-odometer="2" data-at="0" style="--odo-base: .36s">2</span></strong><small>$699 to collect</small></div>
+                    <div class="mock-tile"><span class="mock-label">Receivables</span><strong><span class="odometer is-plain" data-odometer="1742" data-group="," data-prefix="$" data-at="0" style="--odo-base: .48s">$1,742</span></strong><small>6 unpaid</small></div>
+                  </div>
+                  <div class="mock-section-title">Needs attention <span class="mock-chip is-idle">4</span></div>
+                  <div class="mock-rows" data-at="1" data-fx="stagger">
+                    <div class="mock-row"><span class="mock-dot is-stop"></span><span>2018 Ford F-150 is past its promise time</span><span class="mock-chip is-stop">Late</span></div>
+                    <div class="mock-row"><span class="mock-dot is-warn"></span><span>2020 Chevrolet Silverado 1500 waiting on parts</span><span class="mock-chip is-warn">Parts</span></div>
+                  </div>
+                  <div class="mock-rows" data-at="2" data-fx="stagger">
+                    <div class="mock-row"><span class="mock-dot"></span><span>2019 BMW 330i estimate needs a follow-up</span><span class="mock-chip">Follow up</span></div>
+                    <div class="mock-row"><span class="mock-dot is-ok"></span><span>Ready · $254.52 due · Avery T.</span><span class="mock-chip is-ok">Ready</span></div>
+                  </div>
+                  <div class="mock-section-title">Invoiced, last 14 days</div>
+                  <div class="mock-bars" data-at="3" data-fx="stagger" style="--fx: bar-grow; --fx-stagger: 40ms">
+                    <span style="--h:.46"></span><span style="--h:.62"></span><span style="--h:.38"></span><span style="--h:.7"></span><span style="--h:.55"></span><span style="--h:.2"></span><span style="--h:.12"></span><span style="--h:.58"></span><span style="--h:.8"></span><span style="--h:.49"></span><span style="--h:.66"></span><span style="--h:.74"></span><span style="--h:.31"></span><span class="is-hi" style="--h:.52"></span>
+                  </div>
+                </div>
+              </div>
+              <span class="app-card-sheen"></span>
+            </div>
+          </div>
+          <div class="app-card-shadow"></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span class="note-msgs" data-cycle>
+            <span class="is-active"><strong>Estimate approved · $482.01</strong><small>Priya R. · 2021 Camry SE</small></span>
+            <span><strong>Payment received · $254.52</strong><small>Avery T. · posted to the RO</small></span>
+          </span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-chat"/></svg></span>
+          <span class="note-msgs" data-cycle>
+            <span class="is-active"><strong>Text sent to Avery T.</strong><small>Your Accord is ready · live status link</small></span>
+            <span><strong>Marcus R. started a job</strong><small>Water pump · 2020 Ram 1500</small></span>
+          </span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Feature ticker ===== -->
+  <section class="index-ticker" id="feature-ticker" aria-labelledby="ticker-title">
+    <h2 class="visually-hidden" id="ticker-title">What's inside</h2>
+    <ul class="visually-hidden">
+      <li>Repair orders</li><li>Digital inspections</li><li>Online approvals</li><li>Workflow board</li><li>Tech time clock</li><li>Online booking</li><li>Self check-in</li><li>Pay links</li><li>Counter card readers</li><li>Purchase orders</li><li>Barcode scanning</li><li>Tire DOT log</li><li>Fleet accounts</li><li>Auto Diagnosis</li><li>VIN decoder</li><li>QuickBooks Online sync</li><li>Payroll export</li><li>Lobby screen</li><li>iPhone &amp; iPad app</li>
+    </ul>
+    <div class="ticker" aria-hidden="true">
+      <div class="ticker-track">
+        <div class="ticker-group"><span class="ticker-item"><svg class="icon"><use href="#i-document"/></svg>Repair orders</span><span class="ticker-item"><svg class="icon"><use href="#i-inspection"/></svg>Digital inspections</span><span class="ticker-item"><svg class="icon"><use href="#i-signature"/></svg>Online approvals</span><span class="ticker-item"><svg class="icon"><use href="#i-board"/></svg>Workflow board</span><span class="ticker-item"><svg class="icon"><use href="#i-timer"/></svg>Tech time clock</span><span class="ticker-item"><svg class="icon"><use href="#i-calendar-check"/></svg>Online booking</span><span class="ticker-item"><svg class="icon"><use href="#i-qr"/></svg>Self check-in</span><span class="ticker-item"><svg class="icon"><use href="#i-link"/></svg>Pay links</span><span class="ticker-item"><svg class="icon"><use href="#i-card-reader"/></svg>Counter card readers</span><span class="ticker-item"><svg class="icon"><use href="#i-tag"/></svg>Purchase orders</span><span class="ticker-item"><svg class="icon"><use href="#i-barcode"/></svg>Barcode scanning</span><span class="ticker-item"><svg class="icon"><use href="#i-tire"/></svg>Tire DOT log</span><span class="ticker-item"><svg class="icon"><use href="#i-truck"/></svg>Fleet accounts</span><span class="ticker-item"><svg class="icon"><use href="#i-diagnostics"/></svg>Auto Diagnosis</span><span class="ticker-item"><svg class="icon"><use href="#i-vin"/></svg>VIN decoder</span><span class="ticker-item"><svg class="icon"><use href="#i-ledger"/></svg>QuickBooks Online sync</span><span class="ticker-item"><svg class="icon"><use href="#i-clock"/></svg>Payroll export</span><span class="ticker-item"><svg class="icon"><use href="#i-tv"/></svg>Lobby screen</span><span class="ticker-item"><svg class="icon"><use href="#i-device-phone"/></svg>iPhone &amp; iPad app</span></div>
+        <div class="ticker-group"><span class="ticker-item"><svg class="icon"><use href="#i-document"/></svg>Repair orders</span><span class="ticker-item"><svg class="icon"><use href="#i-inspection"/></svg>Digital inspections</span><span class="ticker-item"><svg class="icon"><use href="#i-signature"/></svg>Online approvals</span><span class="ticker-item"><svg class="icon"><use href="#i-board"/></svg>Workflow board</span><span class="ticker-item"><svg class="icon"><use href="#i-timer"/></svg>Tech time clock</span><span class="ticker-item"><svg class="icon"><use href="#i-calendar-check"/></svg>Online booking</span><span class="ticker-item"><svg class="icon"><use href="#i-qr"/></svg>Self check-in</span><span class="ticker-item"><svg class="icon"><use href="#i-link"/></svg>Pay links</span><span class="ticker-item"><svg class="icon"><use href="#i-card-reader"/></svg>Counter card readers</span><span class="ticker-item"><svg class="icon"><use href="#i-tag"/></svg>Purchase orders</span><span class="ticker-item"><svg class="icon"><use href="#i-barcode"/></svg>Barcode scanning</span><span class="ticker-item"><svg class="icon"><use href="#i-tire"/></svg>Tire DOT log</span><span class="ticker-item"><svg class="icon"><use href="#i-truck"/></svg>Fleet accounts</span><span class="ticker-item"><svg class="icon"><use href="#i-diagnostics"/></svg>Auto Diagnosis</span><span class="ticker-item"><svg class="icon"><use href="#i-vin"/></svg>VIN decoder</span><span class="ticker-item"><svg class="icon"><use href="#i-ledger"/></svg>QuickBooks Online sync</span><span class="ticker-item"><svg class="icon"><use href="#i-clock"/></svg>Payroll export</span><span class="ticker-item"><svg class="icon"><use href="#i-tv"/></svg>Lobby screen</span><span class="ticker-item"><svg class="icon"><use href="#i-device-phone"/></svg>iPhone &amp; iPad app</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Journey ===== -->
+  <section class="section section-tint" id="journey" aria-labelledby="journey-title">
     <div class="container">
-      <h1>Every car, from check-in to paid, <span class="accent-text">in one system.</span></h1>
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">One car, one day</p>
+        <h2 id="journey-title">Follow one car from the key drop <span class="accent-text">to the next visit.</span></h2>
+        <p class="lead">This is one car from the sample shop: a 2021 Toyota Camry SE, in for its 30,000-mile service. Scroll, and it drives.</p>
+      </div>
+      <div class="roadmap" style="--steps:5" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="Example repair order journey in the sample shop">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-key"/></svg></span>
+            <h3><a href="#ch-checkin">Check-in</a></h3>
+            <span class="roadmap-chip">7:30 AM · Checked in</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-inspection"/></svg></span>
+            <h3><a href="#ch-approve">Inspect &amp; approve</a></h3>
+            <span class="roadmap-chip">Approved · $482.01</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-wrench"/></svg></span>
+            <h3><a href="#ch-work">In the bay</a></h3>
+            <span class="roadmap-chip">In progress · Kim P.</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-card-reader"/></svg></span>
+            <h3><a href="#ch-pay">Payment</a></h3>
+            <span class="roadmap-chip">Paid · RO closed</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-oil"/></svg></span>
+            <h3><a href="#ch-followup">Follow-up</a></h3>
+            <span class="roadmap-chip">Oil reminder lined up</span>
+          </li>
+        </ol>
+      </div>
+      <p class="roadmap-caption">Times, names and amounts are an example from the sample shop.</p>
+    </div>
+  </section>
+
+  <!-- ===== Chapter 1: Check-in ===== -->
+  <section class="section section-paper index-chapter" id="ch-checkin" data-stage="Check-in" aria-labelledby="ch-checkin-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Stop 1 · Check-in</p>
+        <h2 id="ch-checkin-title">Check-in: the repair order is waiting <span class="accent-text">when you open up</span></h2>
+        <p>Customers request a time from your booking page, and it only offers times you have open. You accept the request, and the customer and vehicle are added or matched.</p>
+        <p>After hours, they scan the QR code on the key-drop sign, enter their details and concern, scan the VIN barcode, note the key tag, and sign a diagnosis authorization up to your dollar limit.</p>
+        <p>The repair order opens on your shop devices as soon as one is signed in and open. It's matched to the customer and vehicle and attached to today's appointment.</p>
+        <p class="fine-print">Real open times and check-in from a customer's own phone use <a href="works-with.html#shop-cloud">Shop Cloud</a>.</p>
+        <a class="link-arrow" href="features/booking.html">Booking &amp; check-in <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <figure class="mock-figure index-checkin" data-reveal="right" data-reveal-seq aria-label="Example: a key-drop self check-in on a customer's phone for Sofia C.'s 2020 Toyota RAV4 XLE, with the VIN scanned, a signed diagnosis authorization and the repair order opened on key tag 14">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-phone is-auto index-checkin-phone">
+            <div class="mock-screen">
+              <div class="index-cust-head"><strong>Main Street Auto Service</strong><span>Check in your vehicle</span></div>
+              <div class="index-field-group">
+                <span class="mock-label">Your name</span>
+                <span class="mock-field is-focus"><span data-seq-i="0" data-fx="type" style="--chars:8">Sofia C.</span></span>
+              </div>
+              <div class="index-field-group">
+                <span class="mock-label">Mobile</span>
+                <span class="mock-field"><span data-seq-i="1" data-fx="type" style="--chars:14">(217) 555-0107</span></span>
+              </div>
+              <div class="index-field-group">
+                <span class="mock-label">Scan the VIN on the door jamb</span>
+                <div class="mock-viewfinder index-vf"><span class="mock-barcode"></span><span class="scanline" data-seq-i="2" data-fx="scan"></span></div>
+                <div class="index-vin" data-seq-i="3" data-fx="fade"><span class="slot-roll is-boxed" data-slots="2T3P1RFV7LC159666" data-charset="vin" data-check="8">2T3P1RFV7LC159666</span></div>
+                <span class="index-vin-car" data-seq-i="6" data-fx="fade"><svg class="icon"><use href="#i-check-circle"/></svg>2020 Toyota RAV4 XLE</span>
+              </div>
+              <div class="index-keyrow">
+                <span class="mock-field"><span class="mock-label">Key tag</span><b>14</b></span>
+                <span class="mock-field"><span class="mock-label">Keys</span>Drop box</span>
+              </div>
+              <div class="index-sig">
+                <span class="mock-label">Up to $150 to inspect and diagnose</span>
+                <svg viewBox="0 0 200 46" preserveAspectRatio="none"><path data-seq-i="6" data-fx="draw" pathLength="1" d="M8 32c7-12 13-21 18-15s-6 19 1 14 11-22 17-18-3 17 4 13 9-12 15-9 4 9 11 4 9-10 16-7 2 8 9 5 12-8 20-6M110 30c10-3 30-4 46-2" fill="none" stroke="#0F2B4C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+          </div>
+          <span class="index-checkin-done" data-seq-i="8" data-fx="pop"><span class="live-dot"></span>Repair order opened · key tag 14</span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Chapter 2: Inspect & approve ===== -->
+  <section class="section index-chapter" id="ch-approve" data-stage="Inspect &amp; approve" aria-labelledby="ch-approve-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Stop 2 · Inspect &amp; approve</p>
+        <h2 id="ch-approve-title">Inspect and approve: <span class="accent-text">show them what you found</span></h2>
+        <p>The tech works the 37-point inspection on a phone or tablet: ratings, brake pads in millimeters and tread in 32nds on color gauges, and photos with arrows and circles drawn on.</p>
+        <p>Text or email the report link. The customer approves or declines each service with a typed name and signature. The decision is applied to the RO within a minute on any signed-in shop device that's open.</p>
+        <ul class="checklist">
+          <li>Every authorization is logged: who, how, when, which services and the amount.</li>
+          <li>The report never shows your costs, margins, tech pay or internal notes.</li>
+        </ul>
+        <p class="fine-print">Texting from your shop number uses <a href="works-with.html#shop-cloud">Shop Cloud</a> and your Twilio account; without them the link goes out from your device's Messages app. Online approvals use Shop Cloud.</p>
+        <a class="link-arrow" href="features/inspections.html">Inspections &amp; approvals <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <figure class="mock-figure index-approve" data-reveal="left" data-play data-seq="6" data-loops="1" data-step="5" data-reached="0 1 2 3 4 5" aria-label="Example: a tablet inspection checklist for a 2021 Camry SE with tread at 6/32 and a circled brake-fluid photo, and the customer's phone showing four services approved and signed">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="card-stage is-pair mock-stage" aria-hidden="true">
+          <div class="card-deal">
+            <div class="mock-tablet is-auto tilt" data-tilt="6">
+              <div class="mock-screen">
+                <div class="mock-appbar"><svg class="mock-logo" viewBox="0 0 22 22"><rect x=".5" y=".5" width="21" height="21" rx="6" fill="#fff" stroke="#DCE5F0"/><use href="#index-mark" x="3" y="5.5" width="16" height="11"/></svg>Inspection · 2021 Camry SE<small>Kim P.</small></div>
+                <div class="index-insp">
+                  <div class="mock-checklist" data-at="0" data-fx="stagger" style="--fx: tick-pop">
+                    <div class="mock-check"><span class="mock-tickbox"><i></i></span><span>Engine oil</span><span class="mock-rating">Good</span></div>
+                    <div class="mock-check"><span class="mock-tickbox"><i></i></span><span>Engine air filter</span><span class="mock-rating is-soon">Soon</span></div>
+                    <div class="mock-check"><span class="mock-tickbox"><i></i></span><span>Cabin air filter</span><span class="mock-rating is-soon">Soon</span></div>
+                    <div class="mock-check"><span class="mock-tickbox"><i></i></span><span>Tires</span><span class="mock-rating">Good</span></div>
+                    <div class="mock-check"><span class="mock-tickbox"><i></i></span><span>Brake fluid</span><span class="mock-rating is-soon">Soon</span></div>
+                  </div>
+                  <div class="index-insp-side">
+                    <svg class="mock-gauge" viewBox="0 0 120 84">
+                      <path class="g-track" d="M15 60a45 45 0 0 1 90 0"/>
+                      <path class="g-band is-stop" d="M15 60a45 45 0 0 1 8.2-25.9"/>
+                      <path class="g-band is-warn" d="M23.2 34.1a45 45 0 0 1 22.6-16.8"/>
+                      <path class="g-band is-ok" d="M45.8 17.3a45 45 0 0 1 59.2 42.7"/>
+                      <line class="needle" data-at="1" data-fx="sweep" x1="60" y1="60" x2="60" y2="24" style="--from:-90deg; --to:-22deg; transform-origin: 60px 60px"/>
+                      <circle class="g-hub" cx="60" cy="60" r="4"/>
+                      <text x="60" y="80" text-anchor="middle">Tread 6/32</text>
+                    </svg>
+                    <div class="index-photo">
+                      <svg viewBox="0 0 140 92">
+                        <rect x="0" y="0" width="140" height="92" rx="10" fill="#EEF3F9"/>
+                        <path d="M0 70h140" stroke="#DCE5F0" stroke-width="2"/>
+                        <rect x="44" y="30" width="46" height="40" rx="7" fill="#fff" stroke="#9AAAC0" stroke-width="2"/>
+                        <rect x="56" y="20" width="22" height="12" rx="3" fill="#E3A13B" stroke="#9A5D12" stroke-width="1.5"/>
+                        <path d="M50 44h34M50 54h34" stroke="#C3CEDC" stroke-width="2" stroke-dasharray="4 3"/>
+                        <rect x="51" y="57" width="32" height="10" rx="2" fill="#E9D7A8"/>
+                        <path class="index-photo-circle" data-at="2" data-fx="draw" pathLength="1" d="M67 13c22 0 37 13 37 34s-15 36-37 36-38-14-37-35c1-20 17-33 40-34" fill="none" stroke-width="3" stroke-linecap="round"/>
+                      </svg>
+                      <span class="mock-chip is-warn">Brake fluid · photo</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-deal" style="--deal-delay: 120ms">
+            <div class="mock-phone is-auto tilt index-approve-phone" data-tilt="8">
+              <div class="mock-screen">
+                <div class="index-phone-stack">
+                  <div class="mock-thread" data-until="4">
+                    <div class="mock-thread-meta">Today 7:33 AM</div>
+                    <div class="index-bubble-slot">
+                      <div class="mock-typing index-typing" data-at="3"><i></i><i></i><i></i></div>
+                      <div class="mock-bubble out" data-at="3" data-fx="bubble" style="--fx-delay: .8s">Hi Priya, your Camry's estimate is ready<span class="mock-linkcard"><b>Main Street Auto Service</b><span>Inspection &amp; estimate</span></span></div>
+                    </div>
+                  </div>
+                  <div class="index-approve-page" data-at="4" data-fx="fade">
+                    <div class="index-cust-head is-sm"><strong>Main Street Auto Service</strong><span>Approve services</span></div>
+                    <div class="index-tog-row"><span>Oil &amp; filter</span><span class="mock-toggle index-tog"></span></div>
+                    <div class="index-tog-row"><span>Tire rotation</span><span class="mock-toggle index-tog"></span></div>
+                    <div class="index-tog-row"><span>Air filters</span><span class="mock-toggle index-tog"></span></div>
+                    <div class="index-tog-row"><span>Brake fluid</span><span class="mock-toggle index-tog"></span></div>
+                    <div class="index-sig is-sm">
+                      <span class="mock-label">Priya Raman</span>
+                      <svg viewBox="0 0 200 40" preserveAspectRatio="none"><path data-at="4" data-fx="draw" style="--fx-delay: .7s" pathLength="1" d="M8 28c6-10 11-18 15-12s-5 15 1 11 10-18 15-15-2 14 4 11 9-10 14-8 4 8 10 3 9-8 15-6M100 26c12-3 34-4 52-2" fill="none" stroke="#0F2B4C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </div>
+                  </div>
+                </div>
+                <span class="stamp index-approve-stamp" data-at="5">Approved</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Chapter 3: In the bay ===== -->
+  <section class="section section-tint index-chapter" id="ch-work" data-stage="In the bay" aria-labelledby="ch-work-title">
+    <div class="container">
+      <div class="index-work-head">
+        <div class="section-head" data-reveal>
+          <p class="eyebrow">Stop 3 · In the bay</p>
+          <h2 id="ch-work-title">In the bay: <span class="accent-text">everyone can see where the car is</span></h2>
+          <p class="lead">Every open repair order sits on the workflow board: Estimate, Approved, In Progress, Waiting on Parts, Ready for Pickup.</p>
+        </div>
+        <ul class="index-points" data-reveal-stagger>
+          <li><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-timer"/></svg></span><p>When the tech taps Start on the time clock, they're clocked in and the RO moves to In Progress.</p></li>
+          <li><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span><p>Parts still on order show on the card, and every move has Undo.</p></li>
+          <li><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span><p>Stage changes are time-stamped. With <a href="works-with.html#shop-cloud">Shop Cloud</a> they update the customer's live status page.</p></li>
+          <li class="index-points-link"><a class="link-arrow" href="features/workflow.html">Workflow &amp; tech clock <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></li>
+        </ul>
+      </div>
+      <figure class="mock-figure index-board" data-reveal data-play data-seq="5" data-loops="1" data-step="4" data-reached="0 1 2 3 4" aria-label="Example: the sample shop's workflow board, with a 2021 Camry SE moved from Approved through In Progress to Ready for Pickup and a Silverado's part received">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-window board-frame"><div class="mock-screen">
+            <div class="mock-board">
+              <div class="mock-col is-optional" data-col="estimate"><div class="mock-col-head"><span>Estimate</span><span class="mock-count">3</span></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 Tesla Model 3</strong></div><div class="mock-card-meta"><span>Harper N.</span></div><div class="mock-card-foot"><span>Services 0/3</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2021 Jeep Wrangler</strong></div><div class="mock-card-meta"><span>Wesley G.</span></div><div class="mock-card-foot"><span>Services 0/3</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 BMW 330i</strong></div><div class="mock-card-meta"><span>Lena K.</span></div><div class="mock-card-foot"><span>Services 0/1</span></div></div>
+              </div>
+              <div class="mock-col" data-col="approved"><div class="mock-col-head"><span>Approved</span><span class="mock-count">1</span></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2016 Nissan Altima</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Carlos M.</span><span class="mock-chip">1:00 PM</span></div><div class="mock-card-foot"><span>Services 0/2</span></div></div>
+              </div>
+              <div class="mock-col" data-col="progress"><div class="mock-col-head"><span>In Progress</span><span class="mock-count">2</span></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2018 Ford F-150</strong><span class="mock-avatar">LO</span></div><div class="mock-card-meta"><span>Jordan M.</span><span class="mock-chip is-stop">11:30 AM</span></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2020 Ram 1500</strong><span class="mock-avatar">MR</span></div><div class="mock-card-meta"><span>Carlos M.</span><span class="mock-chip">12:00 PM</span></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
+              </div>
+              <div class="mock-col is-optional" data-col="parts"><div class="mock-col-head"><span>Waiting on Parts</span><span class="mock-count">1</span></div>
+                <div class="mock-card">
+                  <div class="mock-card-top"><strong>2020 Silverado 1500</strong><span class="mock-avatar">MR</span></div>
+                  <div class="mock-card-meta"><span>Jordan M.</span></div>
+                  <div class="mock-card-foot"><span>Services 0/2</span><span class="index-swap"><span class="mock-chip is-warn" data-until="2">Parts on order 1</span><span class="mock-chip is-ok" data-at="2" data-fx="pop">Received</span></span></div>
+                </div>
+              </div>
+              <div class="mock-col" data-col="ready"><div class="mock-col-head"><span>Ready for Pickup</span><span class="mock-count">3</span></div>
+                <div class="mock-card" data-path="approved progress progress ready ready">
+                  <span class="mock-done-dot" data-at="4" data-fx="pop"></span>
+                  <div class="mock-card-top"><strong>2021 Camry SE</strong><span class="mock-avatar">KP</span></div>
+                  <div class="mock-card-meta"><span>Priya R.</span><span class="mock-chip">10:30 AM</span></div>
+                  <div class="mock-card-foot"><span>Timer <span class="odometer is-plain" data-odometer="01:12" data-from="00:00" data-duration=".4" data-at="1">01:12</span></span></div>
+                </div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2020 Honda Accord</strong><span class="mock-avatar">KP</span></div><div class="mock-card-meta"><span>Avery T.</span></div><div class="mock-card-foot"><span>Services 2/3</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 Honda CR-V</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Elijah B.</span></div><div class="mock-card-foot"><span>Services 2/2</span></div></div>
+              </div>
+            </div>
+          </div></div>
+          <div class="mock-toast">Moved to <b data-toast-col>In Progress</b> · Undo</div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Chapter 4: Payment ===== -->
+  <section class="section section-paper index-chapter" id="ch-pay" data-stage="Payment" aria-labelledby="ch-pay-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Stop 4 · Payment</p>
+        <h2 id="ch-pay-title">Payment: the exact balance, <span class="accent-text">by text or at the counter</span></h2>
+        <p>A real PDF invoice is built in the browser. Text a pay link for the exact balance (a new link voids the old one), or press Take payment and the counter reader shows the amount.</p>
+        <p>The payment posts to the RO on your signed-in shop devices, with the card brand, last four and Stripe's fee, and the RO closes when it's paid in full.</p>
+        <p class="fine-print">Money goes straight to your own Stripe account at Stripe's standard rates. Online payments use <a href="works-with.html#shop-cloud">Shop Cloud</a>.</p>
+        <a class="link-arrow" href="features/payments.html">Payments &amp; card readers <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <figure class="mock-figure index-pay" data-reveal="right" data-reveal-seq aria-label="Example: the invoice for a 2021 Camry SE totaling $482.01, paid by card on a countertop reader and stamped paid">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="scene index-pay-scene">
+            <div class="mock-paper" data-seq-i="0" data-fx="feed">
+              <div class="mock-paper-head"><strong>INVOICE</strong><span>2021 Camry SE</span></div>
+              <div class="mock-line"><span>Full synthetic oil &amp; filter service</span><span>$159.38</span></div>
+              <div class="mock-line"><span>Tire rotation &amp; pressure check</span><span>$58.00</span></div>
+              <div class="mock-line"><span>Engine &amp; cabin air filters</span><span>$98.60</span></div>
+              <div class="mock-line"><span>Brake fluid exchange</span><span>$136.90</span></div>
+              <div class="mock-line is-muted"><span>Shop supplies</span><span>$14.50</span></div>
+              <div class="mock-line is-muted"><span>Tax</span><span>$14.63</span></div>
+              <div class="mock-total"><span>Total</span><span class="odometer is-plain" data-odometer="482.01" data-decimals="2" data-prefix="$" data-duration="1.4">$482.01</span></div>
+              <span class="stamp is-green is-lg index-paid-stamp" data-seq-i="8">Paid</span>
+            </div>
+            <div class="index-reader-wrap">
+              <svg class="index-card" data-seq-i="3" viewBox="0 0 64 42"><rect x="1" y="1" width="62" height="40" rx="6" fill="#EAF2FC" stroke="#9DBFE8" stroke-width="1.5"/><rect x="8" y="10" width="11" height="8" rx="2" fill="#E3C77A"/><path d="M8 28h22M8 33h14" stroke="#9DBFE8" stroke-width="2.4" stroke-linecap="round"/><path d="M50 14a6 6 0 0 1 0 9M54 11a10 10 0 0 1 0 15" fill="none" stroke="#9DBFE8" stroke-width="1.6" stroke-linecap="round"/></svg>
+              <div class="mock-reader">
+                <div class="mock-reader-screen">
+                  <strong data-seq-out="6">$482.01</strong>
+                  <span class="is-approved index-reader-ok" data-seq-i="6" data-fx="fade"><svg viewBox="0 0 24 24"><path data-seq-i="7" data-fx="draw" pathLength="1" d="M6 12.5l4 4L18 8.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Approved</span>
+                </div>
+                <svg class="mock-reader-arcs" viewBox="0 0 46 30" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                  <path class="ring" data-seq-i="4" data-fx="ring" d="M15 8a10 10 0 0 1 0 14"/><path class="ring" data-seq-i="4" data-fx="ring" d="M22 4a16 16 0 0 1 0 22"/><path class="ring" data-seq-i="4" data-fx="ring" d="M29 1a22 22 0 0 1 0 28"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Chapter 5: Follow-up ===== -->
+  <section class="section index-chapter" id="ch-followup" data-stage="Follow-up" aria-labelledby="ch-followup-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Stop 5 · Follow-up</p>
+        <h2 id="ch-followup-title">Follow-up: the next visit <span class="accent-text">lines itself up</span></h2>
+        <p>Follow-up lists build themselves from your own history:</p>
+        <ul class="checklist">
+          <li>Oil-service reminders, by time or by projected mileage since the last oil service.</li>
+          <li>Declined work that hasn't been done since.</li>
+          <li>Review requests after closed visits.</li>
+          <li>Customers you haven't seen in a while.</li>
+        </ul>
+        <p>Your team sends them in one pass from your business number or email, or one tap at a time. Turn on automatic appointment confirmations and day-before reminders, and the server sends them from your Twilio number even when no device is open.</p>
+        <p class="fine-print">Sending in one pass and the automatic messages use <a href="works-with.html#shop-cloud">Shop Cloud</a> with Twilio or Resend. Automatic confirmations and reminders are off until you turn them on.</p>
+        <a class="link-arrow" href="features/customers.html">Customers &amp; follow-ups <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <figure class="mock-figure index-followup" data-reveal="left" data-reveal-seq aria-label="Example: a 2021 Camry SE whose projected mileage has passed 35,120 and is due for oil service, added to a list of three oil-service reminders that are sent together">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-window index-fu-win"><div class="mock-screen">
+            <div class="index-fu-top">
+              <span class="icon-tile index-fu-oil" data-seq-i="3" data-fx="pulse" style="--fx-n: 1"><svg class="icon"><use href="#i-oil"/></svg></span>
+              <div class="index-fu-odo">
+                <span class="mock-label">2021 Camry SE · projected miles</span>
+                <span class="index-fu-num"><span class="odometer is-plain" data-odometer="35120" data-from="34870" data-group="," data-duration="1.3">35,120</span></span>
+              </div>
+              <span class="mock-chip is-warn index-fu-due" data-seq-i="3" data-fx="pop">Due</span>
+            </div>
+            <div class="index-fu-meter"><span class="mock-label">Since the last oil service</span><div class="mock-meter is-warn" style="--fill:1; --limit:.98"></div><span class="mock-sub">5,000 miles or 6 months, whichever comes first</span></div>
+            <div class="mock-section-title index-fu-title"><span>Oil service · ready to send</span><span class="mock-btn" data-seq-i="7" data-fx="press">Send all</span></div>
+            <div class="mock-rows index-fu-list">
+              <div class="mock-row index-fu-new" data-seq-i="5" data-fx="drop"><span class="mock-tickbox"><i data-seq-i="8" data-fx="tick"></i></span><span><b>Priya R. · 2021 Camry SE</b><small>Oil service due for your Camry</small></span></div>
+              <div class="mock-row"><span class="mock-tickbox"><i data-seq-i="8" data-fx="tick" style="--fx-delay: .18s"></i></span><span><b>Elijah B. · 2019 Honda CR-V</b><small>Oil service due for your CR-V</small></span></div>
+              <div class="mock-row"><span class="mock-tickbox"><i data-seq-i="8" data-fx="tick" style="--fx-delay: .36s"></i></span><span><b>Carlos M. · 2016 Nissan Altima</b><small>Oil service due for your Altima</small></span></div>
+            </div>
+          </div></div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Customer pages ===== -->
+  <section class="section section-wash" id="customer-pages" aria-labelledby="customer-pages-title">
+    <div class="container">
+      <div class="index-pages-grid">
+        <div class="section-copy" data-reveal="left">
+          <p class="eyebrow">What your customers see</p>
+          <h2 id="customer-pages-title">Your customers see <span class="accent-text">your shop's name</span></h2>
+          <p>Customers never download an app, and there's no account to set up. Booking, self check-in, the inspection report and approvals, the live status page, the pay page and the fleet portal all open on any phone.</p>
+          <p>Each one leads with your shop's name and ends with a small "Powered by WPI Driveline Shop Management System" line. None of them show your costs, margins or internal notes.</p>
+          <p class="fine-print">These pages use <a href="works-with.html#shop-cloud">Shop Cloud</a>.</p>
+        </div>
+        <figure class="mock-figure index-pages-fig" data-reveal="right" data-play data-tilt-scope aria-label="Example: three customer pages from the sample shop on phones, each headed Main Street Auto Service: a booking page, a live status page showing the car ready for pickup, and a pay page">
+          <span class="mock-tag">Example · sample shop</span>
+          <div class="card-stage is-trio mock-stage" aria-hidden="true">
+            <div class="card-deal" style="--deal-delay: 0ms">
+              <div class="mock-phone tilt" data-tilt="4">
+                <div class="mock-screen index-cp">
+                  <div class="index-cust-head is-sm"><strong>Main Street Auto Service</strong><span>Book a visit</span></div>
+                  <span class="mock-label">Pick a time · Tuesday</span>
+                  <div class="index-slots"><span>8:00 AM</span><span class="is-on">9:30 AM</span><span>11:00 AM</span><span>1:30 PM</span></div>
+                  <span class="mock-label">Your vehicle</span>
+                  <span class="mock-field">2021 Toyota Camry SE</span>
+                  <span class="mock-label">What do you need?</span>
+                  <span class="mock-field">Oil change</span>
+                  <span class="mock-btn">Request this time</span>
+                  <span class="mock-sub">The shop will confirm by text.</span>
+                  <span class="index-powered">Powered by WPI Driveline Shop Management System</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-deal" style="--deal-delay: 120ms">
+              <div class="mock-phone tilt" data-tilt="8">
+                <div class="mock-screen index-cp">
+                  <div class="index-cust-head is-sm"><strong>Main Street Auto Service</strong><span>Hi Priya, here's your 2021 Camry SE</span></div>
+                  <div class="index-cp-status">Ready for pickup</div>
+                  <ol class="mock-timeline" data-reveal-seq>
+                    <li><span class="mock-tl-dot is-done" data-seq-i="0" data-fx="pop"></span><span>Checked in &amp; inspected</span><span class="mock-time">7:30 AM</span></li>
+                    <li><span class="mock-tl-dot is-done" data-seq-i="1" data-fx="pop"></span><span>Work approved</span><span class="mock-time">7:35 AM</span></li>
+                    <li><span class="mock-tl-dot is-done" data-seq-i="2" data-fx="pop"></span><span>Being worked on</span><span class="mock-time">8:40 AM</span></li>
+                    <li><span class="mock-tl-dot is-late" data-seq-i="3" data-fx="pop"></span><span>Ready for pickup</span><span class="mock-time">10:15 AM</span></li>
+                  </ol>
+                  <span class="live-pill"><span class="live-dot"></span>Updated just now</span>
+                  <div class="mock-line"><span>Balance due</span><span>$482.01</span></div>
+                  <span class="index-powered">Powered by WPI Driveline Shop Management System</span>
+                </div>
+              </div>
+            </div>
+            <div class="card-deal" style="--deal-delay: 240ms">
+              <div class="mock-phone tilt" data-tilt="4">
+                <div class="mock-screen index-cp">
+                  <div class="index-cust-head is-sm"><strong>Main Street Auto Service</strong><span>2020 Honda Accord EX-L</span></div>
+                  <span class="mock-label">Balance due</span>
+                  <div class="index-cp-amount">$254.52</div>
+                  <div class="mock-line"><span>Invoice total</span><span>$254.52</span></div>
+                  <span class="mock-btn">Pay $254.52</span>
+                  <span class="mock-sub">Pay by card. The shop sees your payment.</span>
+                  <span class="index-powered">Powered by WPI Driveline Shop Management System</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </figure>
+      </div>
+      <div class="pill-cloud index-pages-pills" data-reveal-stagger>
+        <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Booking page</span>
+        <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-qr"/></svg>Self check-in</span>
+        <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspection report</span>
+        <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Live status</span>
+        <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Pay page</span>
+        <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet portal</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Built in ===== -->
+  <section class="section section-paper" id="built-in" aria-labelledby="built-in-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Built in</p>
+        <h2 id="built-in-title">What's in <span class="accent-text">every copy</span></h2>
+      </div>
+      <div class="index-built">
+        <div class="fact index-fact" data-reveal="left">
+          <span class="odometer" data-odometer="4073" data-group="," data-label="4,073 vehicle models built in">4,073</span>
+          <p class="fact-caption"><strong>vehicle models built in</strong>, from 435 makes, model years through 2027 (NHTSA vPIC data).</p>
+          <a class="link-arrow" href="features/diagnosis.html">Auto Diagnosis &amp; vehicle data <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+        <div class="promise-grid" data-reveal-stagger>
+          <div class="promise"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-wifi-off"/></svg></span><h3>Works offline</h3><p>Each device keeps the shop's records and installs from the browser on iPhone, iPad, Android, Mac and PC.</p></div>
+          <div class="promise"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg></span><h3>Your accounts, your money</h3><p>Payments go straight to your own Stripe account, and the services you connect bill you directly.</p></div>
+          <div class="promise"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><h3>Assistant drafts wait for staff</h3><p>The AI assistant never sends on its own. The optional AI receptionist is the exception: it says it's a virtual assistant and can text callers your booking link or directions.</p></div>
+          <div class="promise"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg></span><h3>Customer pages never show your costs</h3><p>Reports, status and pay pages leave out costs, margins, tech pay and internal notes.</p></div>
+          <div class="promise"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg></span><h3>Every change has a history</h3><p>Six months of changes with one-click restore, with <a href="works-with.html#shop-cloud">Shop Cloud</a>.</p></div>
+          <div class="promise"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-cloud"/></svg></span><h3>Backed up every night</h3><p>The last 14 nightly backups are kept, with Shop Cloud.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Features grid ===== -->
+  <section class="section" id="features-grid" aria-labelledby="features-grid-title">
+    <div class="container">
+      <div class="section-head-row" data-reveal>
+        <div class="section-head">
+          <p class="eyebrow">Features</p>
+          <h2 id="features-grid-title">Every part of the shop, <span class="accent-text">one system</span></h2>
+          <p class="lead">Twelve areas, in the order a car moves through your day.</p>
+        </div>
+        <a class="link-arrow" href="features.html">All features <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <!-- @partial featuresCards -->
+<div class="grid grid-3" data-reveal-stagger>
+  <a class="card card-link feature-card" href="features/booking.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>
+    <h3>Booking, check-in &amp; front desk</h3>
+    <p>Only real open times. A key-drop check-in opens the RO.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/messaging.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+    <h3>Texting, calls &amp; email</h3>
+    <p>One thread per customer, from your own number.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/customers.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
+    <h3>Customers &amp; follow-ups</h3>
+    <p>Oil-service reminders, declined work and win-backs from your own history.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/workflow.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span>
+    <h3>Workflow board, Today &amp; tech clock</h3>
+    <p>Every car by stage. One-tap job timers.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/inspections.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span>
+    <h3>Inspections &amp; approvals</h3>
+    <p>37 points, photos and a yes from their phone.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/diagnosis.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span>
+    <h3>Auto Diagnosis &amp; vehicle data</h3>
+    <p>Recalls, owner reports and your own fixes, ranked. VINs decode on the device.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/parts.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span>
+    <h3>Parts, inventory &amp; tires</h3>
+    <p>On the shelf, on the job, on order. Scan it.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/repair-orders.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+    <h3>Estimates, ROs &amp; invoices</h3>
+    <p>One record from estimate to paid receipt, with real PDFs.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/payments.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg></span>
+    <h3>Payments &amp; card readers</h3>
+    <p>Pay links for the exact balance. Readers that know the amount.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/fleet.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span>
+    <h3>Fleet &amp; business accounts</h3>
+    <p>Terms, PM plans, statements and a portal.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/reports.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span>
+    <h3>Reports, payroll &amp; QuickBooks</h3>
+    <p>Your numbers, goals, payroll exports and a daily QuickBooks entry.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="features/ai.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
+    <h3>AI assistant</h3>
+    <p>First drafts from Claude. Your team has the last word.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card card-soft" href="features.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg></span>
+    <h3>See every feature</h3>
+    <p>All twelve parts in the order a car meets them, with what each one needs.</p>
+    <span class="link-arrow">All features <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+</div>
+<!-- @end featuresCards -->
+    </div>
+  </section>
+
+  <!-- ===== Bring your shop ===== -->
+  <section class="section section-tint" id="bring-your-shop" aria-labelledby="bring-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Switching</p>
+        <h2 id="bring-title">Bring your shop <span class="accent-text">with you.</span></h2>
+        <p>Import any CSV export or pasted spreadsheet of customers and vehicles, or of parts inventory. Column names used by common shop systems are recognized automatically, and you confirm every match in a preview before anything is saved. Duplicates are caught by phone, email, VIN and part number.</p>
+        <p class="index-sources">For example, exports from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks, Excel or Google Sheets.</p>
+        <div class="cluster">
+          <a class="link-arrow" href="demo.html#switching">Switching <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          <a class="link-arrow" href="works-with.html">Integrations <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+      </div>
+      <div class="card index-accounts" data-reveal="right">
+        <div class="index-accounts-head">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-plug"/></svg></span>
+          <div>
+            <h3 id="accounts-title">Works with your own accounts</h3>
+            <p>Through <a href="works-with.html#shop-cloud">Shop Cloud</a>. Each service bills your shop directly.</p>
+          </div>
+        </div>
+        <div class="pill-cloud" data-reveal-stagger role="list" aria-labelledby="accounts-title">
+          <span class="provider-pill" role="listitem"><span class="provider-dot"></span>Stripe</span>
+          <span class="provider-pill" role="listitem"><span class="provider-dot"></span>Twilio</span>
+          <span class="provider-pill" role="listitem"><span class="provider-dot"></span>Resend</span>
+          <span class="provider-pill" role="listitem"><span class="provider-dot"></span>QuickBooks Online</span>
+          <span class="provider-pill" role="listitem"><span class="provider-dot"></span>Smartcar</span>
+          <span class="provider-pill" role="listitem"><span class="provider-dot"></span>Anthropic (Claude)</span>
+          <span class="provider-pill is-builtin" role="listitem"><span class="provider-dot is-on"></span>NHTSA data (built in)</span>
+        </div>
+        <div class="index-import" aria-hidden="true">
+          <span class="index-import-file"><svg class="icon"><use href="#i-import"/></svg>customers.csv</span>
+          <svg class="index-import-flow" viewBox="0 0 80 20"><path class="flow-line is-blue" d="M4 10H76"/></svg>
+          <span class="index-import-ok"><svg class="icon"><use href="#i-check-circle"/></svg>Preview, then save</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Runs on its own:</strong> each device keeps the shop's records and works offline. The sample shop is made-up data that runs in your browser.</li>
+            <li><strong>Needs:</strong> <a href="works-with.html#shop-cloud">Shop Cloud</a> to share records between devices and for customer links, online booking, self check-in, online approvals, texting from your shop number, card payments and QuickBooks.</li>
+            <li>Card payments and texting run on your own Stripe and Twilio accounts, which bill you directly. Without them, texts open in your device's Messages app and you record payments by hand.</li>
+            <li>Self check-ins, online approvals, booking requests and card payments land on your signed-in shop devices. A device checks about every minute while it's open.</li>
+            <li>It installs from the browser; it isn't in the app stores. Imports cover customers, vehicles and parts, not past repair orders.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section section-paper" id="faq" aria-labelledby="faq-title">
+    <div class="container split index-faq">
+      <div class="section-head" data-reveal="left">
+        <p class="eyebrow">FAQ</p>
+        <h2 id="faq-title">Good questions</h2>
+        <p class="lead">The short answers. The rest are on the questions page.</p>
+        <a class="link-arrow mt-3" href="faq.html">All questions <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <div class="faq-list" data-reveal="right">
+        <details class="faq" name="home-faq"><summary>What does it cost?</summary><div class="faq-body"><p>We don't publish prices. Tell us about your shop in a <a href="demo.html">demo request</a>, and ask how <a href="works-with.html#shop-cloud">Shop Cloud</a> is set up and billed for you. Services you connect (Stripe, Twilio, Resend, Anthropic, Smartcar, Intuit) bill your shop directly at their own rates.</p></div></details>
+        <details class="faq" name="home-faq"><summary>Is it in the App Store?</summary><div class="faq-body"><p>No. It installs from the browser on iPhone, iPad, Android, Mac or PC and opens full screen with its own icon.</p></div></details>
+        <details class="faq" name="home-faq"><summary>Can I look around before talking to anyone?</summary><div class="faq-body"><p>Yes. <a href="app/" data-no-prerender>Try the sample shop</a>; it runs in your browser.</p></div></details>
+        <details class="faq" name="home-faq"><summary>Does it work without internet?</summary><div class="faq-body"><p>Yes, on each device. Sharing between devices, customer links and outside services use Shop Cloud.</p></div></details>
+        <details class="faq" name="home-faq"><summary>Do I need Twilio and Stripe?</summary><div class="faq-body"><p>No. Without them, texts open in your device's Messages app and are still logged, and you record payments by hand.</p></div></details>
+        <details class="faq" name="home-faq"><summary>Can I bring my data?</summary><div class="faq-body"><p>Customers, vehicles and parts, from a CSV. Past repair orders aren't imported.</p></div></details>
+      </div>
     </div>
   </section>
 </main>

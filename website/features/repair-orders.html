@@ -35,6 +35,236 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* ===== features/repair-orders.html (page-local; classes prefixed repair-orders-) ===== */
+
+/* Hero: an invoice printer feeding the Camry RO, with the RO's job-profit meter beside it */
+.repair-orders-hero { width: 100%; }
+.repair-orders-stage { position: relative; display: block; width: min(100%, 520px); padding: 4px 168px 52px 0; }
+.repair-orders-press { position: relative; display: grid; justify-items: center; width: 100%; max-width: 330px; }
+.repair-orders-printer { position: relative; z-index: 2; display: block; width: 100%; height: auto; overflow: visible; }
+.repair-orders-slot { fill: var(--mist-300); }
+.repair-orders-slot-in { fill: #9fb1c6; }
+.repair-orders-led { fill: var(--green); }
+.repair-orders-feed { position: relative; z-index: 1; width: calc(100% - 34px); margin-top: -12px; }
+.repair-orders-sheet { width: 100%; gap: 4px; padding: 18px 14px 14px; border-radius: 2px 2px 12px 12px; }
+.repair-orders-sheet::before { display: none; }
+.repair-orders-shop { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 650; color: var(--ink-2); }
+.repair-orders-shop i { flex: none; width: 16px; height: 16px; border-radius: 5px; background: var(--wash); box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .22); }
+.repair-orders-shop span { margin-left: auto; font-weight: 500; color: var(--ink-3); }
+.repair-orders-kind { display: inline-grid; perspective: 400px; }
+.repair-orders-kind > span { grid-area: 1 / 1; display: block; transform-origin: 50% 100%; }
+.repair-orders-lines { display: grid; gap: 4px; }
+.repair-orders-lines .mock-line { padding: 1px 0; }
+.repair-orders-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; min-height: 40px; margin-top: 6px; padding-top: 8px; border-top: 1px dashed var(--m-line); }
+.repair-orders-foot small { max-width: 60%; font-size: 12px; line-height: 1.3; color: var(--ink-3); }
+.repair-orders-pdf { flex: none; margin: 0 4px 2px 0; --fx-delay: .3s; }
+
+.repair-orders-gp {
+  position: absolute; right: 0; top: 54px; z-index: 3; display: grid; gap: 6px; width: 178px;
+  padding: 12px 12px 12px; border-radius: 16px; background: var(--paper);
+  border: 1px solid var(--line-strong); box-shadow: var(--shadow-3);
+}
+.repair-orders-gp-head { display: flex; align-items: baseline; justify-content: space-between; gap: 6px; }
+.repair-orders-gp-head > span:last-child { font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.repair-orders-gauge { max-width: none; margin-top: 2px; }
+.repair-orders-gauge .g-band { stroke-linecap: round; }
+.repair-orders-gauge .g-tick { stroke: var(--ink-2); stroke-width: 2; stroke-dasharray: 3 3; stroke-linecap: round; fill: none; }
+.repair-orders-gauge text { font-size: 13px; font-weight: 650; fill: var(--ink-3); }
+.repair-orders-gp-big { display: flex; align-items: baseline; justify-content: center; gap: 6px; margin-top: -6px; font-size: 26px; font-weight: 750; letter-spacing: -0.02em; line-height: 1.1; color: var(--green-ink); }
+.repair-orders-gp-big small { font-size: 13px; font-weight: 650; letter-spacing: .04em; color: var(--ink-3); }
+.repair-orders-gp-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding-top: 8px; border-top: 1px solid var(--m-line); text-align: center; }
+.repair-orders-gp-stats b { display: block; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--ink); }
+.repair-orders-gp-stats small { display: block; font-size: 12px; color: var(--ink-3); }
+.repair-orders-hero .float-note.note-1 { top: auto; bottom: -2px; left: -18px; }
+.repair-orders-hero .float-note.note-2 { top: 336px; bottom: auto; right: -12px; }
+/* Narrow columns (phones, and the 960-1179px two-column hero): the profit card sits under the sheet */
+@media (min-width: 960px) and (max-width: 1179.98px) { .repair-orders-hero .float-note { display: none; } }
+@media (max-width: 599.98px), (min-width: 960px) and (max-width: 1179.98px) {
+  .repair-orders-stage { display: grid; justify-items: center; padding: 0; }
+  .repair-orders-press { max-width: 340px; }
+  .repair-orders-gp {
+    position: relative; top: auto; right: auto; width: min(100%, 340px); margin-top: 12px;
+    grid-template-columns: 124px minmax(0, 1fr); column-gap: 14px; row-gap: 4px; align-items: center;
+  }
+  .repair-orders-gp-head { grid-column: 1 / -1; }
+  .repair-orders-gauge { grid-row: 2 / span 2; }
+  .repair-orders-gp-big { justify-content: flex-start; margin-top: 0; }
+  .repair-orders-gp-stats { text-align: left; padding-top: 6px; }
+}
+
+/* Where margin slips */
+.repair-orders-fix { position: relative; overflow: hidden; display: grid; gap: 16px; padding: clamp(22px, 1rem + 1.6vw, 36px); border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2); }
+.repair-orders-fix::before { content: ""; position: absolute; inset: 0 0 auto; height: 6px; background: var(--bar); }
+.repair-orders-fix h3 { font-size: clamp(1.3rem, 1.1rem + .7vw, 1.65rem); letter-spacing: -0.02em; }
+.repair-orders-fix > p { color: var(--ink-2); font-size: 1.04rem; }
+.repair-orders-jumps { list-style: none; padding: 0; margin: 4px 0 0; display: grid; gap: 0; border-top: 1px dashed var(--line-strong); }
+.repair-orders-jumps a { display: flex; align-items: center; gap: 12px; padding: 13px 2px; border-bottom: 1px dashed var(--line-strong); text-decoration: none; color: var(--ink); font-weight: 600; }
+.repair-orders-jumps .icon-tile { width: 36px; height: 36px; border-radius: 11px; }
+.repair-orders-jumps .icon-tile .icon { width: 19px; height: 19px; }
+.repair-orders-jumps .chev { width: 18px; height: 18px; margin-left: auto; color: var(--ink-4); transition: transform var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
+@media (hover: hover) { .repair-orders-jumps a:hover .chev { transform: translateX(4px); color: var(--accent); } .repair-orders-jumps a:hover { color: var(--accent-ink); } }
+.repair-orders-jumps a:active { background: var(--mist-50); }
+
+/* Pricing cards */
+.repair-orders-cards > .card { display: flex; flex-direction: column; gap: 10px; }
+.repair-orders-cards > .card > * { min-width: 0; }
+.repair-orders-cards .mock-figure.is-inline { width: 100%; }
+.repair-orders-cards > .card > h3 { margin-top: 6px; font-size: 1.15rem; }
+.repair-orders-cards > .card > p { color: var(--ink-3); }
+.repair-orders-cards > .card > p a { color: var(--accent-ink); }
+@media (max-width: 639.98px) { .repair-orders-cards > .card { display: grid; } .repair-orders-cards > .card > h3 { margin-top: 0; } }
+.mock-figure.is-inline.repair-orders-matrix { margin-top: auto; padding: 12px 12px 10px; border-radius: 14px; background: var(--mist-50); border: 1px solid var(--line); }
+.repair-orders-matrix .mock-stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; justify-items: stretch; }
+.repair-orders-matrix .mock-bars { height: 70px; gap: 5px; }
+.repair-orders-matrix .mock-bars > span { border-radius: 4px 4px 1px 1px; }
+.repair-orders-matrix-axis { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--ink-3); }
+.repair-orders-matrix-axis b { color: var(--ink); font-weight: 650; }
+.repair-orders-matrix-ex { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 10px; background: var(--paper); border: 1px solid var(--m-line); font-size: 12px; }
+.repair-orders-matrix-ex > span:first-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.repair-orders-matrix-ex b { margin-left: auto; flex: none; font-variant-numeric: tabular-nums; font-weight: 650; white-space: nowrap; }
+.repair-orders-matrix-ex b i { font-style: normal; color: var(--ink-3); font-weight: 500; }
+
+.repair-orders-sum { display: grid; gap: 5px; }
+.repair-orders-sum .mock-line em { display: inline-block; min-width: 30px; margin-right: 6px; padding: 0 4px; border-radius: 4px; background: var(--blue-50); font-family: var(--font-mono); font-size: 12px; font-style: normal; font-weight: 700; line-height: 1.5; text-align: center; color: var(--accent-ink); }
+.repair-orders-sum .mock-total { font-size: 13px; }
+.repair-orders-search { gap: 7px; }
+.repair-orders-search .icon { width: 14px; height: 14px; color: var(--ink-3); flex: none; }
+.repair-orders-menu-row { display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 10px; background: var(--paper); border: 1px solid var(--m-line); }
+.repair-orders-menu-row > span:first-child { display: grid; min-width: 0; }
+.repair-orders-menu-row b { font-size: 12px; font-weight: 650; line-height: 1.3; }
+.repair-orders-menu-row small { font-size: 12px; color: var(--ink-3); }
+.repair-orders-menu-row .mock-btn { margin-left: auto; flex: none; min-height: 24px; padding: 3px 10px; }
+
+/* Know the profit: the RO screen with GP per service, memory and the profit meter */
+.repair-orders-ro { width: min(100%, 560px); }
+.repair-orders-ro > .mock-screen { gap: 8px; }
+.repair-orders-ro .mock-appbar small { font-weight: 550; }
+.repair-orders-svcs { display: grid; gap: 6px; }
+.repair-orders-svc { display: grid; gap: 3px; padding: 9px 11px; border-radius: 12px; border: 1px solid var(--m-line); background: var(--paper); }
+.repair-orders-svc-top { display: flex; align-items: baseline; gap: 8px; font-size: 13px; }
+.repair-orders-svc-top strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 650; }
+.repair-orders-svc-top > span { margin-left: auto; flex: none; font-weight: 700; font-variant-numeric: tabular-nums; }
+.repair-orders-svc-gp { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.repair-orders-svc-gp b { font-weight: 700; color: var(--green-ink); }
+.repair-orders-svc-gp .repair-orders-hrs { margin-left: auto; color: var(--ink-2); }
+.repair-orders-swap { display: inline-grid; justify-items: end; }
+.repair-orders-swap > * { grid-area: 1 / 1; }
+.repair-orders-mem { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; margin: 3px -4px -2px; padding: 6px 8px; border-radius: 9px; background: rgba(31, 122, 224, .05); font-size: 12px; color: var(--ink-2); }
+.repair-orders-mem > svg { flex: none; width: 14px; height: 14px; color: var(--accent); }
+.repair-orders-mem b { color: var(--ink); font-weight: 650; }
+.repair-orders-mem .repair-orders-swap { margin-left: auto; }
+.repair-orders-mem .mock-chip { line-height: 1.6; }
+.repair-orders-mem .mock-chip.is-ghost { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 1px var(--line-strong); }
+.repair-orders-meter { display: grid; gap: 8px; padding: 10px 12px 12px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.repair-orders-meter-head { display: flex; align-items: baseline; justify-content: space-between; font-size: 12px; color: var(--ink-3); }
+.repair-orders-meter-head .mock-label { text-transform: uppercase; letter-spacing: .08em; }
+.repair-orders-meter-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; text-align: center; }
+.repair-orders-meter-stats b { display: block; font-size: 17px; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: var(--ink); }
+.repair-orders-meter-stats b.is-ok { color: var(--green-ink); }
+.repair-orders-meter-stats small { display: block; font-size: 12px; color: var(--ink-3); }
+.repair-orders-bar { position: relative; height: 8px; border-radius: var(--pill); background: var(--mist-200); }
+.repair-orders-bar-fill { position: absolute; inset: 0 auto 0 0; width: 74%; border-radius: inherit; background: var(--green); transform-origin: 0 50%; }
+.repair-orders-bar-target { position: absolute; left: 55%; top: -4px; bottom: -4px; width: 2px; border-radius: 1px; background: var(--ink-2); }
+.repair-orders-bar-target::after { content: "55%"; position: absolute; left: 50%; top: 100%; margin-top: 3px; translate: -50% 0; font-size: 12px; font-weight: 650; color: var(--ink-3); }
+.repair-orders-meter { padding-bottom: 26px; }
+.repair-orders-profit-copy h3 { margin-top: 8px; font-size: 1.2rem; }
+.repair-orders-memory-note { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; padding: 18px; border-radius: var(--r); background: rgba(255, 255, 255, .72); border: 1px solid var(--line); }
+.repair-orders-memory-note h3 { margin: 0 0 4px; font-size: 1.08rem; }
+.repair-orders-memory-note p { color: var(--ink-2); font-size: .98rem; }
+
+/* The details: tabs with small one-pass figures */
+.repair-orders-tabs .tabs-list { margin-bottom: 4px; }
+@media (max-width: 599.98px) {
+  .repair-orders-tabs .tabs-list { display: grid; grid-template-columns: 1fr 1fr; width: 100%; border-radius: 20px; }
+  .repair-orders-tabs .tabs-list [role="tab"] { padding: 10px 8px; border-radius: 16px; text-align: center; white-space: normal; line-height: 1.25; }
+  .repair-orders-tabs .tabs-thumb { display: none; }
+  .repair-orders-tabs .tabs-list:has(.tabs-thumb.is-on) [role="tab"][aria-selected="true"] { background: var(--paper); box-shadow: var(--shadow-1); }
+}
+.repair-orders-panel { display: grid; gap: 28px; align-items: center; }
+@media (min-width: 900px) { .repair-orders-panel { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 56px; } }
+.repair-orders-panel-copy { display: grid; gap: 14px; align-content: start; }
+.repair-orders-panel-copy h3 { font-size: clamp(1.3rem, 1.1rem + .7vw, 1.6rem); letter-spacing: -0.02em; }
+.repair-orders-panel-copy > p:not(.fine-print) { color: var(--ink-2); }
+.mock-figure.is-inline.repair-orders-mini { padding: 14px; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2); }
+.repair-orders-mini > .mock-stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; justify-items: stretch; }
+
+/* Comebacks: two RO chips joined by a link line */
+.repair-orders-cb { display: grid; grid-template-columns: minmax(0, 1fr) 96px minmax(0, 1fr); align-items: center; }
+.repair-orders-rochip { display: grid; gap: 2px; padding: 10px 12px; border-radius: 14px; background: var(--mist-50); border: 1px solid var(--m-line); min-width: 0; }
+.repair-orders-rochip strong { font-size: 13px; font-weight: 650; }
+.repair-orders-rochip small { font-size: 12px; color: var(--ink-3); }
+.repair-orders-rochip.is-now { background: var(--blue-50); border-color: rgba(31, 122, 224, .3); }
+.repair-orders-link { position: relative; display: grid; justify-items: center; align-items: center; height: 64px; }
+.repair-orders-link > * { grid-area: 1 / 1; }
+.repair-orders-link-line { position: relative; width: 100%; height: 3px; border-radius: 2px; background: repeating-linear-gradient(90deg, var(--blue-100) 0 5px, transparent 5px 9px); }
+.repair-orders-link-line > i { position: absolute; inset: 0; border-radius: inherit; background: var(--blue); transform-origin: 0 50%; }
+.repair-orders-link .mock-chip { position: relative; z-index: 1; translate: 0 -20px; box-shadow: 0 0 0 3px var(--paper); }
+@media (max-width: 599.98px) {
+  .repair-orders-cb { grid-template-columns: minmax(0, 1fr); }
+  .repair-orders-link { height: 46px; justify-items: start; padding-left: 26px; }
+  .repair-orders-link-line { width: 46px; rotate: 90deg; translate: -22px 0; }
+  .repair-orders-link .mock-chip { translate: 0 0; margin-left: 14px; }
+}
+.repair-orders-nc { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border-radius: 12px; border: 1px dashed var(--line-strong); font-size: 12px; }
+.repair-orders-nc > span:first-child { min-width: 0; flex: 1 1 auto; font-weight: 600; }
+.repair-orders-nc s { flex: none; color: var(--ink-4); font-variant-numeric: tabular-nums; }
+.repair-orders-nc b { flex: none; font-weight: 700; }
+.repair-orders-cost { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); }
+.repair-orders-cost .mock-dot { flex: none; }
+
+/* Cores: a three-stop track and a status pill */
+.repair-orders-core { display: flex; align-items: center; gap: 10px; }
+.repair-orders-core > div { display: grid; gap: 1px; min-width: 0; }
+.repair-orders-core strong { font-size: 13px; font-weight: 650; }
+.repair-orders-core small { font-size: 12px; color: var(--ink-3); }
+.repair-orders-pill { display: inline-grid; margin-left: auto; flex: none; }
+.repair-orders-pill > * { grid-area: 1 / 1; justify-self: end; }
+.repair-orders-track { list-style: none; margin: 0; padding: 4px 4px 0; display: grid; grid-template-columns: auto minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: start; }
+.repair-orders-stop { display: grid; justify-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--ink-2); min-width: 64px; }
+.repair-orders-stop > span { position: relative; display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--paper); box-shadow: inset 0 0 0 2px var(--mist-300); }
+.repair-orders-stop > span > i { width: 22px; height: 22px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 4px var(--blue-100); }
+.repair-orders-stop.is-last > span > i { background: var(--green); box-shadow: 0 0 0 4px var(--green-100); }
+.repair-orders-join { position: relative; height: 4px; margin: 9px -22px 0; border-radius: 2px; background: var(--mist-200); }
+.repair-orders-join > i { position: absolute; inset: 0; border-radius: inherit; background: var(--blue); transform-origin: 0 50%; }
+.repair-orders-join.is-late > i { background: linear-gradient(90deg, var(--blue), var(--green)); }
+
+/* Transportation: modes and a loaner fuel gauge */
+.repair-orders-modes { display: flex; flex-wrap: wrap; gap: 6px; }
+.repair-orders-modes > span { padding: 4px 10px; border-radius: var(--pill); background: var(--mist-50); border: 1px solid var(--m-line); font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.repair-orders-modes > span.is-on { background: var(--accent-soft); border-color: rgba(31, 122, 224, .35); color: var(--accent-ink); }
+.repair-orders-loaner { display: grid; grid-template-columns: 128px minmax(0, 1fr); gap: 14px; align-items: center; padding: 10px 12px; border-radius: 14px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.repair-orders-loaner .mock-gauge { max-width: 128px; }
+.repair-orders-loaner .mock-gauge .g-track { stroke-width: 8; }
+.repair-orders-loaner .mock-gauge .g-band { stroke-width: 8; }
+.repair-orders-loaner .mock-gauge .g-mark { stroke: var(--ink-4); stroke-width: 2; stroke-linecap: round; }
+.repair-orders-loaner .mock-gauge text { font-size: 13px; fill: var(--ink-3); }
+.repair-orders-loaner-info { display: grid; gap: 4px; min-width: 0; }
+.repair-orders-loaner-info strong { font-size: 13px; font-weight: 650; }
+.repair-orders-loaner-info small { font-size: 12px; color: var(--ink-3); }
+.repair-orders-loaner-info .mock-chip { justify-self: start; white-space: normal; }
+@media (max-width: 399.98px) { .repair-orders-loaner { grid-template-columns: 104px minmax(0, 1fr); gap: 10px; } }
+
+/* Documents: four thumbnails deal in */
+.repair-orders-docs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; padding: 4px 2px 0; perspective: 900px; }
+.repair-orders-doc { display: grid; gap: 5px; align-content: start; aspect-ratio: 8.5 / 11; padding: 9px 8px; border-radius: 6px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); }
+.repair-orders-doc > b { font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: .02em; color: var(--ink); overflow: hidden; text-overflow: clip; white-space: nowrap; }
+.repair-orders-doc > i { display: block; height: 4px; border-radius: 2px; background: var(--mist-200); }
+.repair-orders-doc > i:nth-of-type(2) { width: 80%; }
+.repair-orders-doc > i:nth-of-type(3) { width: 64%; }
+.repair-orders-doc > i:nth-of-type(4) { width: 88%; }
+.repair-orders-doc > i:nth-of-type(5) { width: 56%; }
+.repair-orders-doc > i.is-total { width: 46%; margin-left: auto; margin-top: 4px; background: var(--ink-4); }
+.repair-orders-doc:nth-child(1) { rotate: -3deg; }
+.repair-orders-doc:nth-child(2) { rotate: 1.5deg; }
+.repair-orders-doc:nth-child(3) { rotate: -1.5deg; }
+.repair-orders-doc:nth-child(4) { rotate: 3deg; }
+.repair-orders-doc:nth-child(4) > b { color: var(--green-ink); }
+.repair-orders-doc-names { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; font-size: 12px; font-weight: 600; text-align: center; color: var(--ink-2); }
+.repair-orders-acts { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.repair-orders-acts .mock-btn { min-height: 26px; padding: 4px 11px; }
+@media (max-width: 399.98px) { .repair-orders-doc > b { font-size: 12px; letter-spacing: -0.02em; } .repair-orders-docs, .repair-orders-doc-names { gap: 7px; } }
+</style>
 </head>
 <body data-page="features" data-tab="features" id="top">
 <!-- @partial icons -->
@@ -190,9 +420,11 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
-    <div class="container">
-      <!-- @partial breadcrumbs -->
+  <section class="page-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <ol>
     <li><a href="../index.html">Home</a></li>
@@ -202,9 +434,463 @@
 </nav>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Estimates, ROs & invoices","item":"https://blakew316.github.io/automotive/features/repair-orders.html"}]}</script>
 <!-- @end breadcrumbs -->
-      <h1>One record from estimate <span class="accent-text">to paid receipt.</span></h1>
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-repair-orders"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>Estimates, repair orders &amp; invoices</p>
+        <h1 id="hero-title">One record from estimate <span class="accent-text">to paid receipt.</span></h1>
+        <p class="lead">Labor, parts, fees and sublet on one repair order, priced the same way every time, with the profit on each job in plain sight. Real PDF estimates, work orders, invoices and receipts come straight out of it.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=repair-orders">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/orders" data-no-prerender>Open repair orders in the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>PDF estimates &amp; invoices</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Profit on every job</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Labor &amp; parts memory</span>
+        </div>
+      </div>
+      <figure class="page-hero-art mock-figure repair-orders-hero" data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="1700" aria-label="Example: the sample shop's repair order for a 2021 Camry SE printed as a PDF invoice, with oil and filter service, tire rotation, engine and cabin air filters, a brake fluid exchange, shop supplies and tax, total $482.01. Beside it, the job profit meter reads 74% GP against a 55% target.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage repair-orders-stage" aria-hidden="true">
+          <div class="repair-orders-press">
+            <svg class="repair-orders-printer" viewBox="0 0 330 70" focusable="false">
+              <path class="art-ink art-thin art-paper" d="M86 24V6.5A3.5 3.5 0 0 1 89.5 3h151a3.5 3.5 0 0 1 3.5 3.5V24"/>
+              <path class="art-ink art-thin" d="M104 11h78M104 16.5h50" stroke-opacity=".28"/>
+              <path class="art-ink art-soft" d="M26 30a10 10 0 0 1 10-10h258a10 10 0 0 1 10 10"/>
+              <rect class="art-ink art-tint" x="3" y="28" width="324" height="36" rx="13"/>
+              <path class="art-ink art-thin" d="M22 38h70" stroke-opacity=".3"/>
+              <rect class="art-ink art-thin art-paper" x="222" y="35" width="56" height="13" rx="4.5"/>
+              <path class="art-ink art-thin" d="M230 41.5h22" stroke-opacity=".45"/>
+              <circle class="repair-orders-led" data-at="0" data-fx="pulse" cx="298" cy="41.5" r="5"/>
+              <rect class="repair-orders-slot" x="14" y="53" width="302" height="8" rx="4"/>
+              <rect class="repair-orders-slot-in" x="22" y="56" width="286" height="2.5" rx="1.25"/>
+            </svg>
+            <div class="repair-orders-feed">
+              <div class="mock-paper repair-orders-sheet" data-at="0" data-fx="feed">
+                <div class="repair-orders-shop"><i></i>Main Street Auto Service<span>Priya R.</span></div>
+                <div class="mock-paper-head">
+                  <strong class="repair-orders-kind"><span data-until="3">ESTIMATE</span><span data-at="3" data-fx="flip">INVOICE</span></strong>
+                  <span>2021 Camry SE</span>
+                </div>
+                <div class="repair-orders-lines" data-at="1" data-fx="stagger" style="--fx: fx-wipe; --fx-dur: .5s; --fx-stagger: 130ms">
+                  <div class="mock-line"><span>Full synthetic oil &amp; filter service</span><span>$159.38</span></div>
+                  <div class="mock-line"><span>Tire rotation &amp; pressure check</span><span>$58.00</span></div>
+                  <div class="mock-line"><span>Engine &amp; cabin air filters</span><span>$98.60</span></div>
+                  <div class="mock-line"><span>Brake fluid exchange</span><span>$136.90</span></div>
+                  <div class="mock-line is-muted"><span>Shop supplies</span><span>$14.50</span></div>
+                  <div class="mock-line is-muted"><span>Tax</span><span>$14.63</span></div>
+                  <div class="mock-total"><span>Total</span><span>$482.01</span></div>
+                </div>
+                <div class="repair-orders-foot">
+                  <small>Warranty: 24 months / 24,000 miles on parts and labor</small>
+                  <span class="stamp is-lg repair-orders-pdf" data-at="3">PDF</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="repair-orders-gp" data-at="2" data-fx="rise">
+            <div class="repair-orders-gp-head"><span class="mock-label">Job profit</span><span>Target 55%</span></div>
+            <svg class="mock-gauge repair-orders-gauge" viewBox="0 0 160 92" focusable="false">
+              <path class="g-track" d="M18 84a62 62 0 0 1 124 0"/>
+              <path class="g-band is-ok" data-at="2" data-fx="draw" style="--fx-delay: .25s; --fx-dur: 1.2s" pathLength="1" d="M18 84A62 62 0 0 1 122.44 38.8"/>
+              <path class="g-tick" d="M87.8 34.6L91.6 10.9"/>
+              <text x="97" y="17">55%</text>
+              <line class="needle" data-at="2" data-fx="sweep" x1="80" y1="84" x2="80" y2="36" style="--from: -90deg; --to: 43deg; --fx-delay: .25s; transform-origin: 80px 84px"/>
+              <circle class="g-hub" cx="80" cy="84" r="5"/>
+            </svg>
+            <div class="repair-orders-gp-big"><span class="odometer is-plain" data-odometer="74" data-suffix="%" data-duration="1.4">74%</span><small>GP</small></div>
+            <div class="repair-orders-gp-stats">
+              <span><b>$345.48</b><small>GP</small></span>
+              <span><b>$172.74</b><small>per labor hr</small></span>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-replay"/></svg></span>
+          <span><strong>Done 11× on Toyota Camrys</strong><small>Oil &amp; filter service · usually 0.5 h</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Above your GP target</strong><small>74% GP · target 55%</small></span>
+        </div>
+      </figure>
     </div>
   </section>
+
+  <section class="section" id="pains" aria-labelledby="pains-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-title">Where margin <span class="accent-text">slips</span></h2>
+        <ul class="signal-list">
+          <li>Two advisors, two prices for the same brake job.</li>
+          <li>Shop supplies forgotten. Tax on labor guessed.</li>
+          <li class="is-critical">You find out a job lost money at month end.</li>
+          <li>Comebacks cost money nobody tracks.</li>
+        </ul>
+      </div>
+      <div class="repair-orders-fix" data-reveal="right">
+        <span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg></span>
+        <h3>Price it once. See the profit every time.</h3>
+        <p>Set the math once and it's applied every time, and every service shows its profit before the estimate goes out.</p>
+        <ul class="repair-orders-jumps">
+          <li><a href="#pricing"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>Rates, a parts matrix and canned jobs<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+          <li><a href="#profit"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-gauge"/></svg></span>Profit on every service<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+          <li><a href="#details"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>Comebacks, cores and loaners<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tint" id="pricing" aria-labelledby="pricing-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Pricing</p>
+        <h2 id="pricing-title">Priced the way <span class="accent-text">your shop prices</span></h2>
+        <p class="lead">Your rates, your parts matrix and your menu of canned jobs, set once in Settings and used on every estimate.</p>
+      </div>
+      <div class="grid grid-3 repair-orders-cards" data-reveal-stagger>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-ledger"/></svg></span>
+          <h3>Every kind of line</h3>
+          <p>Labor, part, fee and sublet lines. Shop supplies as a percent of labor with a dollar cap. Discounts in % or $, taken off before tax. Sales tax that can include labor, and tax-exempt customers.</p>
+          <figure class="mock-figure is-inline repair-orders-matrix" data-reveal-seq aria-label="Example: the totals on the sample shop's 2021 Camry SE repair order. Labor $290.00, parts $159.38, fees $3.50, shop supplies at 5% of labor with a $35 cap $14.50, and tax at 8.25% with labor not taxed $14.63, for a total of $482.01.">
+            <span class="mock-tag">Example · sample shop</span>
+            <div class="mock-stage" aria-hidden="true">
+              <div class="repair-orders-sum" data-seq-i="0" data-fx="stagger" style="--fx-stagger: 80ms">
+                <div class="mock-line"><span><em>LAB</em>Labor · 2.0 h</span><span>$290.00</span></div>
+                <div class="mock-line"><span><em>PRT</em>Parts</span><span>$159.38</span></div>
+                <div class="mock-line"><span><em>FEE</em>Fees</span><span>$3.50</span></div>
+                <div class="mock-line is-muted"><span>Shop supplies · 5%, cap $35</span><span>$14.50</span></div>
+                <div class="mock-line is-muted"><span>Tax 8.25% · labor not taxed</span><span>$14.63</span></div>
+                <div class="mock-total"><span>Total</span><span>$482.01</span></div>
+              </div>
+            </div>
+          </figure>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span>
+          <h3>Canned jobs</h3>
+          <p>A service menu with categories and menu hours. Search it and add a job to the RO, or build a blank service line by line. The same canned jobs feed <a href="booking.html">online booking</a> and <a href="fleet.html">fleet PM plans</a>.</p>
+          <figure class="mock-figure is-inline repair-orders-matrix" data-reveal-seq aria-label="Example: searching the sample shop's service menu for fluid finds Brake fluid exchange, 0.8 hours in Brakes, and Transmission fluid exchange, 1.2 hours in Maintenance.">
+            <span class="mock-tag">Example · sample shop</span>
+            <div class="mock-stage" aria-hidden="true">
+              <span class="mock-field is-focus repair-orders-search"><svg class="icon"><use href="#i-search"/></svg><span data-seq-i="0" data-fx="type" style="--chars: 5">fluid</span></span>
+              <div class="repair-orders-menu-row" data-seq-i="2"><span><b>Brake fluid exchange</b><small>Brakes · 0.8 h</small></span><span class="mock-btn is-soft">Add</span></div>
+              <div class="repair-orders-menu-row" data-seq-i="3"><span><b>Transmission fluid exchange</b><small>Maintenance · 1.2 h</small></span><span class="mock-btn is-soft">Add</span></div>
+            </div>
+          </figure>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
+          <h3>A parts markup matrix</h3>
+          <p>Sell price = cost × (1 + markup), with tiers by unit cost. A small part carries a bigger markup than a big one, and nobody does the math at the counter.</p>
+          <figure class="mock-figure is-inline repair-orders-matrix" data-reveal-seq aria-label="Example: the sample shop's parts markup matrix, eight tiers by unit cost from 150% markup on parts up to $5 down to 30% over $500. A $15.00 engine air filter sells for $28.50.">
+            <span class="mock-tag">Example · sample shop</span>
+            <div class="mock-stage" aria-hidden="true">
+              <div class="mock-bars">
+                <span data-seq-i="0" data-fx="grow-y" style="--h: 1"></span>
+                <span data-seq-i="0" data-fx="grow-y" style="--h: .8"></span>
+                <span class="is-hi" data-seq-i="0" data-fx="grow-y" style="--h: .6"></span>
+                <span data-seq-i="0" data-fx="grow-y" style="--h: .47"></span>
+                <span data-seq-i="0" data-fx="grow-y" style="--h: .37"></span>
+                <span data-seq-i="0" data-fx="grow-y" style="--h: .3"></span>
+                <span data-seq-i="0" data-fx="grow-y" style="--h: .25"></span>
+                <span data-seq-i="0" data-fx="grow-y" style="--h: .2"></span>
+              </div>
+              <div class="repair-orders-matrix-axis"><span>Up to $5 · <b>150%</b></span><span>Over $500 · <b>30%</b></span></div>
+              <div class="repair-orders-matrix-ex" data-seq-i="2" data-fx="fade"><span>Engine air filter · 90% tier</span><b>$15.00 <i>→</i> $28.50</b></div>
+            </div>
+          </figure>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg></span>
+          <h3>Each service on its own terms</h3>
+          <p>Approve or decline each service on its own, with its own cause and correction and its own assigned tech. The customer's concern and the promised time sit on the RO.</p>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-gauge"/></svg></span>
+          <h3>Your rates</h3>
+          <p>Shop labor rate, default tech cost per hour, sales tax and shop supplies, set once. Each location can override its labor rate and sales tax.</p>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+          <h3>Your terms on paper</h3>
+          <p>Your warranty text and your estimate and invoice terms print at the bottom of every document.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-wash" id="profit" aria-labelledby="profit-title">
+    <div class="container split split-reverse">
+      <div class="section-copy repair-orders-profit-copy" data-reveal="right">
+        <p class="eyebrow">Job profitability</p>
+        <h2 id="profit-title">Know the profit <span class="accent-text">before you say yes</span></h2>
+        <p>Every service shows GP $, GP % and GP per labor hour after parts, sublet and the assigned tech's pay.</p>
+        <p>The profit meter on the RO adds it up for the whole job and marks your GP target. A service under the target shows amber or red, so a thin estimate gets a second look before it goes out.</p>
+        <div class="repair-orders-memory-note">
+          <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg></span>
+          <div>
+            <h3>Labor &amp; parts memory</h3>
+            <p>Add a job and the RO shows how often your shop has done it, the hours it usually took and the parts that went in. It looks at the same model first, then the same make, then any vehicle. One tap applies the hours or adds the parts with last cost and vendor.</p>
+          </div>
+        </div>
+        <p class="fine-print">GP uses each tech's pay rate, or your default tech cost per hour. You set the GP target with your shop goals in <a href="reports.html">Reports</a>.</p>
+      </div>
+      <figure class="mock-figure repair-orders-profit" data-reveal="left" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="1800" aria-label="Example: the sample shop's 2021 Camry SE repair order. Each of its four services shows GP percent, GP dollars and GP per labor hour, from 64% to 85%. Labor memory fills in the usual 0.3 hours for the air filters, and the job comes to 74% GP against a 55% target.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-window repair-orders-ro"><div class="mock-screen">
+            <div class="mock-appbar">Repair order · 2021 Camry SE<small>Kim P. · 4 services</small></div>
+            <div class="repair-orders-svcs">
+              <div class="repair-orders-svc">
+                <div class="repair-orders-svc-top"><strong>Full synthetic oil &amp; filter service</strong><span>$159.38</span></div>
+                <div class="repair-orders-svc-gp"><span>GP <b><span class="odometer is-plain" data-odometer="69" data-suffix="%" data-at="0">69%</span></b></span><span class="odometer is-plain" data-odometer="110.48" data-decimals="2" data-prefix="$" data-at="0">$110.48</span><span>$220.96/hr</span><span class="repair-orders-hrs">0.5 hr</span></div>
+              </div>
+              <div class="repair-orders-svc">
+                <div class="repair-orders-svc-top"><strong>Tire rotation &amp; pressure check</strong><span>$58.00</span></div>
+                <div class="repair-orders-svc-gp"><span>GP <b><span class="odometer is-plain" data-odometer="85" data-suffix="%" data-at="0">85%</span></b></span><span class="odometer is-plain" data-odometer="49.20" data-decimals="2" data-prefix="$" data-at="0">$49.20</span><span>$123.00/hr</span><span class="repair-orders-hrs">0.4 hr</span></div>
+              </div>
+              <div class="repair-orders-svc">
+                <div class="repair-orders-svc-top"><strong>Engine &amp; cabin air filters</strong><span>$98.60</span></div>
+                <div class="repair-orders-svc-gp"><span>GP <b><span class="odometer is-plain" data-odometer="64" data-suffix="%" data-at="0">64%</span></b></span><span class="odometer is-plain" data-odometer="63.00" data-decimals="2" data-prefix="$" data-at="0">$63.00</span><span class="repair-orders-swap"><span data-until="2">&nbsp;</span><span data-at="2" data-fx="fade" style="--fx-delay: .45s">$210.00/hr</span></span><span class="repair-orders-hrs repair-orders-swap"><span data-until="2">– hr</span><span data-at="2" data-fx="left" style="--fx-delay: .3s">0.3 hr</span></span></div>
+                <div class="repair-orders-mem">
+                  <svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>
+                  <span>Done <b>22×</b> on Toyota vehicles · usually <b>0.3 h</b></span>
+                  <span class="repair-orders-swap"><span class="mock-chip is-ghost" data-until="2">Use 0.3 h</span><span class="mock-chip is-ok" data-at="2" data-fx="pop" style="--fx-delay: .6s">✓ Matches past jobs</span></span>
+                </div>
+              </div>
+              <div class="repair-orders-svc">
+                <div class="repair-orders-svc-top"><strong>Brake fluid exchange</strong><span>$136.90</span></div>
+                <div class="repair-orders-svc-gp"><span>GP <b><span class="odometer is-plain" data-odometer="79" data-suffix="%" data-at="0">79%</span></b></span><span class="odometer is-plain" data-odometer="108.30" data-decimals="2" data-prefix="$" data-at="0">$108.30</span><span>$135.38/hr</span><span class="repair-orders-hrs">0.8 hr</span></div>
+              </div>
+            </div>
+            <div class="repair-orders-meter">
+              <div class="repair-orders-meter-head"><span class="mock-label">Job profit</span><span>Target 55% GP</span></div>
+              <div class="repair-orders-meter-stats">
+                <div><b class="is-ok"><span class="odometer is-plain" data-odometer="74" data-suffix="%" data-at="1">74%</span></b><small>GP%</small></div>
+                <div><b><span class="odometer is-plain" data-odometer="345.48" data-decimals="2" data-prefix="$" data-at="1">$345.48</span></b><small>GP$</small></div>
+                <div><b><span class="odometer is-plain" data-odometer="172.74" data-decimals="2" data-prefix="$" data-at="1">$172.74</span></b><small>GP / labor hr</small></div>
+              </div>
+              <div class="repair-orders-bar"><span class="repair-orders-bar-fill" data-at="1" data-fx="grow-x" style="--fx-dur: 1.1s"></span><span class="repair-orders-bar-target"></span></div>
+            </div>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-paper" id="details" aria-labelledby="details-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">On every RO</p>
+        <h2 id="details-title">The details that <span class="accent-text">save the margin</span></h2>
+        <p class="lead">The small things that leak money between the estimate and the receipt, kept on the same record.</p>
+      </div>
+      <div class="repair-orders-tabs" data-tabs data-reveal>
+        <div class="tabs-list" role="tablist" aria-label="Repair order details">
+          <span class="tabs-thumb" aria-hidden="true"></span>
+          <button role="tab" id="ro-t-comebacks" aria-controls="ro-p-comebacks" aria-selected="true" type="button">Comebacks &amp; warranty</button>
+          <button role="tab" id="ro-t-cores" aria-controls="ro-p-cores" aria-selected="false" type="button">Cores</button>
+          <button role="tab" id="ro-t-transport" aria-controls="ro-p-transport" aria-selected="false" type="button">Transportation</button>
+          <button role="tab" id="ro-t-docs" aria-controls="ro-p-docs" aria-selected="false" type="button">Documents</button>
+        </div>
+
+        <div role="tabpanel" id="ro-p-comebacks" aria-labelledby="ro-t-comebacks">
+          <div class="repair-orders-panel">
+            <div class="repair-orders-panel-copy">
+              <h3>Comebacks you can see</h3>
+              <p>Mark an RO as a comeback and it links back to the original RO and the tech who did the work. The comebacks and no-charge report adds them up by tech.</p>
+              <p>Any service can be no charge as shop warranty, comeback or goodwill. The customer pays nothing for it, and its cost still counts against the job's profit.</p>
+            </div>
+            <figure class="mock-figure is-inline repair-orders-mini" data-reveal-seq aria-label="Example: today's repair order for a 2020 Ram 1500 marked as a comeback and linked to its earlier visit and the tech who did that work. The cooling system pressure test is no charge, a $145.00 service whose cost still counts.">
+              <span class="mock-tag">Example · sample shop</span>
+              <div class="mock-stage" aria-hidden="true">
+                <div class="repair-orders-cb">
+                  <div class="repair-orders-rochip" data-seq-i="0"><span class="mock-label">Earlier visit</span><strong>2020 Ram 1500</strong><small>Closed · Kim P.</small></div>
+                  <div class="repair-orders-link">
+                    <span class="repair-orders-link-line"><i data-seq-i="1" data-fx="grow-x" style="--fx-dur: .7s"></i></span>
+                    <span class="mock-chip is-warn" data-seq-i="2" data-fx="pop">Comeback</span>
+                  </div>
+                  <div class="repair-orders-rochip is-now" data-seq-i="0" style="--fx-delay: .12s"><span class="mock-label">Today</span><strong>2020 Ram 1500</strong><small>In progress · Marcus R.</small></div>
+                </div>
+                <div class="repair-orders-nc" data-seq-i="3"><span>Cooling system pressure test &amp; leak diagnosis</span><s>$145.00</s><b>No charge</b></div>
+                <div class="repair-orders-cost" data-seq-i="4" data-fx="fade"><span class="mock-dot is-warn"></span>Comeback · its cost still counts in GP</div>
+              </div>
+            </figure>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="ro-p-cores" aria-labelledby="ro-t-cores" hidden>
+          <div class="repair-orders-panel">
+            <div class="repair-orders-panel-copy">
+              <h3>Core charges that come back</h3>
+              <p>Put a core charge on a part line and it's tracked from owed to returned to credited.</p>
+              <p>Parts → Cores lists every core still waiting to go back, so a battery core in the back room doesn't turn into money you never see again.</p>
+              <a class="link-arrow" href="parts.html">Parts, inventory &amp; tires <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            </div>
+            <figure class="mock-figure is-inline repair-orders-mini" data-reveal-seq aria-label="Example: an $18.00 AGM battery core charge on a 2018 Ford F-150, stepping from To return to Returned to Credited.">
+              <span class="mock-tag">Example · sample shop</span>
+              <div class="mock-stage" aria-hidden="true">
+                <div class="repair-orders-core">
+                  <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-bolt"/></svg></span>
+                  <div><strong>AGM battery · core $18.00</strong><small>2018 Ford F-150</small></div>
+                  <span class="repair-orders-pill">
+                    <span class="mock-chip is-warn" data-seq-out="2">To return</span>
+                    <span data-seq-out="4"><span class="mock-chip" data-seq-i="2" data-fx="pop">Returned</span></span>
+                    <span class="mock-chip is-ok" data-seq-i="4" data-fx="pop">Credited</span>
+                  </span>
+                </div>
+                <ol class="repair-orders-track">
+                  <li class="repair-orders-stop"><span><i data-seq-i="0" data-fx="pop"></i></span>To return</li>
+                  <li class="repair-orders-join"><i data-seq-i="1" data-fx="grow-x"></i></li>
+                  <li class="repair-orders-stop"><span><i data-seq-i="2" data-fx="pop"></i></span>Returned</li>
+                  <li class="repair-orders-join is-late"><i data-seq-i="3" data-fx="grow-x"></i></li>
+                  <li class="repair-orders-stop is-last"><span><i data-seq-i="4" data-fx="pop"></i></span>Credited</li>
+                </ol>
+              </div>
+            </figure>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="ro-p-transport" aria-labelledby="ro-t-transport" hidden>
+          <div class="repair-orders-panel">
+            <div class="repair-orders-panel-copy">
+              <h3>How they're getting around</h3>
+              <p>Each RO records how the customer gets around while you have the car: waiting, drop-off, shuttle ride, rental car or a loaner.</p>
+              <p>A loaner is checked out and back in with odometer and fuel and a signed agreement, so a loaner that comes back low is on the record.</p>
+            </div>
+            <figure class="mock-figure is-inline repair-orders-mini" data-reveal-seq aria-label="Example: a repair order with Loaner picked as transportation. Loaner 1, a 2022 Toyota Corolla, checked out at 21,450 miles with the fuel gauge at 3/4.">
+              <span class="mock-tag">Example · sample shop</span>
+              <div class="mock-stage" aria-hidden="true">
+                <div class="repair-orders-modes" data-seq-i="0" data-fx="fade"><span>Waiting</span><span>Drop-off</span><span>Shuttle ride</span><span class="is-on">Loaner</span><span>Rental car</span></div>
+                <div class="repair-orders-loaner" data-seq-i="1">
+                  <svg class="mock-gauge" viewBox="0 0 120 76" focusable="false">
+                    <path class="g-track" d="M14 62a46 46 0 0 1 92 0"/>
+                    <path class="g-band is-stop" d="M14 62a46 46 0 0 1 3.5-17.6"/>
+                    <path class="g-mark" d="M27.5 29.5l4.3 4.3M60 10v6M92.5 29.5l-4.3 4.3"/>
+                    <text x="8" y="75">E</text>
+                    <text x="104" y="75">F</text>
+                    <line class="needle" data-seq-i="2" data-fx="sweep" x1="60" y1="62" x2="60" y2="26" style="--from: -90deg; --to: 45deg; transform-origin: 60px 62px"/>
+                    <circle class="g-hub" cx="60" cy="62" r="4.5"/>
+                  </svg>
+                  <div class="repair-orders-loaner-info">
+                    <strong>Loaner 1 · 2022 Toyota Corolla</strong>
+                    <small>Out 8:05 AM · 21,450 mi · fuel 3/4</small>
+                    <span class="mock-chip" data-seq-i="4" data-fx="pop">Jordan M. · 2020 Silverado 1500</span>
+                  </div>
+                </div>
+              </div>
+            </figure>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="ro-p-docs" aria-labelledby="ro-t-docs" hidden>
+          <div class="repair-orders-panel">
+            <div class="repair-orders-panel-copy">
+              <h3>Real PDFs from the RO</h3>
+              <p>Estimates, work orders, invoices and receipts are real PDFs, built in the browser from the RO. Print them or download them. On an iPhone or iPad the PDF goes to the share sheet for Mail, Messages or Files.</p>
+              <p>Email from your shop's own address attaches the PDF for you. The <a href="ai.html">AI assistant</a> and <a href="diagnosis.html">Auto Diagnosis</a> open right from the RO.</p>
+              <p class="fine-print">Email from your shop's address uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> with your own Resend account.</p>
+            </div>
+            <figure class="mock-figure is-inline repair-orders-mini" data-reveal-seq aria-label="Example: the four documents a repair order makes, an estimate, a work order, an invoice and a receipt, with print, download, email and share.">
+              <span class="mock-tag">Example · sample shop</span>
+              <div class="mock-stage" aria-hidden="true">
+                <div class="repair-orders-docs" data-seq-i="0" data-fx="stagger" style="--fx: card-deal; --fx-dur: .9s; --fx-stagger: 120ms">
+                  <div class="repair-orders-doc"><b>EST</b><i></i><i></i><i></i><i></i><i></i><i class="is-total"></i></div>
+                  <div class="repair-orders-doc"><b>WO</b><i></i><i></i><i></i><i></i><i></i><i class="is-total"></i></div>
+                  <div class="repair-orders-doc"><b>INV</b><i></i><i></i><i></i><i></i><i></i><i class="is-total"></i></div>
+                  <div class="repair-orders-doc"><b>PAID</b><i></i><i></i><i></i><i></i><i></i><i class="is-total"></i></div>
+                </div>
+                <div class="repair-orders-doc-names" data-seq-i="3" data-fx="fade"><span>Estimate</span><span>Work order</span><span>Invoice</span><span>Receipt</span></div>
+                <div class="repair-orders-acts" data-seq-i="4" data-fx="fade"><span class="mock-btn is-ghost">Print</span><span class="mock-btn is-ghost">Download PDF</span><span class="mock-btn is-soft">Email</span><span class="mock-btn is-soft">Share</span></div>
+              </div>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-tint" id="how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">How it flows</p>
+        <h2 id="how-title">From estimate <span class="accent-text">to paid receipt</span></h2>
+        <p class="lead">One repair order carries the job the whole way. Nothing is retyped between the estimate, the work order and the invoice.</p>
+      </div>
+      <div class="roadmap" style="--steps:4" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="Example repair order in the sample shop">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-document"/></svg></span>
+            <h3>Estimate</h3>
+            <p>Canned jobs from your menu, hours from labor memory, part prices from your matrix.</p>
+            <span class="roadmap-chip">Estimate sent</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-check-circle"/></svg></span>
+            <h3>Approved</h3>
+            <p>A yes or no on each service, so one no doesn't hold up the rest.</p>
+            <span class="roadmap-chip">Approved · 4 of 4</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-wrench"/></svg></span>
+            <h3>Work order</h3>
+            <p>The tech, the promised time, and cause and correction for each service.</p>
+            <span class="roadmap-chip">Work order printed</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-card-reader"/></svg></span>
+            <h3>Invoice &amp; receipt</h3>
+            <p>A real PDF to print, email or share, then a receipt once it's paid.</p>
+            <span class="roadmap-chip">Paid in full</span>
+          </li>
+        </ol>
+      </div>
+      <p class="roadmap-caption">The chips follow an example repair order from the sample shop.</p>
+    </div>
+  </section>
+
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> nothing extra. Repair orders, the pricing matrix, the profit figures and the PDFs are built in.</li>
+            <li><strong>Sending from your shop:</strong> texting or emailing from your shop's own number or address uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> with your own Twilio or Resend account. Without them, texts and emails open in your device's Messages or Mail app instead.</li>
+            <li><strong>Part costs</strong> come from your inventory or what you type in. Supplier lookup opens the supplier's own site; there's no live supplier pricing inside the app. See <a href="parts.html">Parts, inventory &amp; tires</a>.</li>
+            <li><strong>Profit stays inside:</strong> GP uses each tech's pay rate, or your default tech cost per hour. Estimates and invoices show prices, never your costs or GP.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head-row" data-reveal>
+        <div class="section-head">
+          <p class="eyebrow">FAQ</p>
+          <h2 id="faq-title">Repair order questions</h2>
+        </div>
+        <a class="link-arrow" href="../faq.html">All questions <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="ro-faq"><summary>Can I set my own markup tiers?</summary><div class="faq-body"><p>Yes, by unit cost. Each tier has its own markup, and a part's sell price is its cost × (1 + markup).</p></div></details>
+        <details class="faq" name="ro-faq"><summary>Tax-exempt fleets and labor tax?</summary><div class="faq-body"><p>Both supported. Mark a business account tax exempt with its tax ID, and turn on tax on labor if your state taxes it.</p></div></details>
+        <details class="faq" name="ro-faq"><summary>How is GP figured?</summary><div class="faq-body"><p>After parts, sublet and the assigned tech's pay. Labor cost uses that tech's pay rate, or your default tech cost per hour when no tech is set.</p></div></details>
+        <details class="faq" name="ro-faq"><summary>Can each location have its own rates?</summary><div class="faq-body"><p>Yes, labor rate and sales tax. Estimates and invoices also use that location's own details.</p></div></details>
+        <details class="faq" name="ro-faq"><summary>Do customers see my margins?</summary><div class="faq-body"><p>No. Estimates, invoices and the customer's report show prices, not your costs or GP.</p></div></details>
+      </div>
+    </div>
+  </section>
+
   <section class="section section-sm" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>
