@@ -2,7 +2,7 @@
 // engine and file sync, and offers the "first device uploads, other devices join" flows.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { SyncEngine, downloadAll } from './engine';
-import { syncApi, shopAdmin } from './api';
+import { syncApi, shopAdmin, mfaOk } from './api';
 import { startMediaSync } from './mediaSync';
 import { stateFromRows, recordsOf, keyOf, lookup } from './records';
 import { same } from './merge';
@@ -69,7 +69,23 @@ export function useShopSync({ stateRef, cloud, commit, update, applyRemote, sync
 
   const cfg = useMemo(() => cloudConfig({ cloud }), [cloud]);
   const signedIn = Boolean(cfg && session && session.url === cfg.url);
-  const staff = signedIn && isStaffSession(session);
+  // The owner can require two-step sign-in for a role: someone in it who's signed in without it
+  // (set before the rule changed) is asked to set it up rather than silently losing the shop's data.
+  const [twoStepNeeded, setTwoStepNeeded] = useState(false);
+  const sessionToken = session?.access;
+  useEffect(() => {
+    if (!signedIn || !isStaffSession(session)) return undefined;
+    let alive = true;
+    mfaOk(cfg)
+      .then((ok) => alive && setTwoStepNeeded(ok === false))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+    // Checked again whenever the session's token changes (sign-in, hourly refresh).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signedIn, sessionToken, cfg]);
+  const staff = signedIn && isStaffSession(session) && !twoStepNeeded;
   const active = Boolean(conf.enabled && cfg && conf.url === cfg.url);
 
   const persist = useCallback((meta = metaRef.current) => {
@@ -242,6 +258,7 @@ export function useShopSync({ stateRef, cloud, commit, update, applyRemote, sync
       joinedAt: conf.joinedAt,
       signedIn,
       staff,
+      twoStepNeeded: signedIn && twoStepNeeded,
       session,
       status,
       device,
@@ -255,6 +272,6 @@ export function useShopSync({ stateRef, cloud, commit, update, applyRemote, sync
       renameDevice,
       kickMedia: () => mediaRef.current?.kick(),
     }),
-    [cfg, active, conf.joinedAt, signedIn, staff, session, status, device, cloudHasData, cloudError, upload, join, leave, syncNow, renameDevice],
+    [cfg, active, conf.joinedAt, signedIn, staff, twoStepNeeded, session, status, device, cloudHasData, cloudError, upload, join, leave, syncNow, renameDevice],
   );
 }

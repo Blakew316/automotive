@@ -19,6 +19,7 @@ import KeysSettings from './settings/KeysSettings';
 import PhoneSettings from './settings/PhoneSettings';
 import StripeSettings from './settings/StripeSettings';
 import ConnectedCarsSettings from './settings/ConnectedCarsSettings';
+import TwoStepSettings from './settings/TwoStepSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
 
@@ -121,6 +122,7 @@ export default function Settings() {
           <>
             <SharingSection />
             <SyncSection />
+            <TwoStepSettings />
           </>
         )}
         {tab === 'data' && (

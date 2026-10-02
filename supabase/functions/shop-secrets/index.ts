@@ -23,7 +23,7 @@ const NAMES = [
 const SETTINGS = new Set(["ai_model", "ai_monthly_cap", "twilio_phone"]);
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
-const fail = (message: string, status = 400) => json({ error: message, message }, status);
+const fail = (message: string, status = 400, code?: string) => json({ error: message, message, code }, status);
 
 function claims(req: Request): Record<string, any> | null {
   const token = (req.headers.get("Authorization") || "").replace(/^Bearer\s+/i, "");
@@ -46,11 +46,25 @@ async function rpc(fn: string, args: Record<string, unknown> = {}) {
   return data;
 }
 
+/**
+ * Two-step sign-in: someone who uses an authenticator app (or whose role must) has to have entered
+ * its code this session. The database decides, from the caller's own token.
+ */
+async function twoStepOk(req: Request) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/shop_mfa_ok`, {
+    method: "POST",
+    headers: { apikey: SERVICE, Authorization: req.headers.get("Authorization") || "", "Content-Type": "application/json" },
+    body: "{}",
+  }).catch(() => null);
+  return Boolean(res?.ok && (await res.json().catch(() => false)) === true);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return fail("POST only", 405);
   const meta = claims(req)?.app_metadata || {};
   if (!meta.autoshop_staff) return fail("Shop staff only", 403);
+  if (!(await twoStepOk(req))) return fail("Enter the code from your authenticator app to continue", 401, "mfa_required");
   const role = meta.autoshop_role || "advisor";
   const body = await req.json().catch(() => ({}));
   try {

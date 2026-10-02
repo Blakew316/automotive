@@ -14,7 +14,7 @@ export function syncLabel(sync) {
   const s = sync?.status || {};
   if (!sync?.enabled) return '';
   if (s.phase === 'signed-out') return 'Signed out — sign in to sync';
-  if (s.phase === 'not-staff') return 'This login isn’t shop staff';
+  if (s.phase === 'not-staff') return sync.session?.mfa ? 'Enter your sign-in code to sync' : 'This login isn’t shop staff';
   if (s.phase === 'offline') return s.pending ? `Offline · ${s.pending} change${s.pending === 1 ? '' : 's'} waiting` : 'Offline';
   if (s.phase === 'error') return 'Sync problem — retrying';
   if (s.phase === 'syncing' || s.pending) return s.pending ? `Syncing · ${s.pending} left` : 'Syncing…';

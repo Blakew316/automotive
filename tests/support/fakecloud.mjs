@@ -1,6 +1,7 @@
 // In-memory stand-in for the AutoShop Pro Supabase project, mirroring the SQL functions' rules.
+import { newSecret, checkTotp } from './totp.mjs';
 export function fakeCloud() {
-  const db = { records: new Map(), seq: 0, history: [], backups: [], files: new Map(), public: new Map(), users: new Map(), inbox: [], calls: [], secrets: new Map(), aiCalls: [], aiUsage: 0, phone: { configured: false, connected: false, number: '+15125550100', optOuts: [], aiReady: true }, phoneEvents: [], sms: [], dials: [], outbox: new Map(), pay: { configured: false, connected: false, mode: 'test' }, links: new Map(), payEvents: [], refunds: [], checkouts: [], qbo: { configured: false, connected: false, env: 'sandbox', company: 'Main Street Auto LLC', error: null, accounts: [], entries: new Map(), authorizes: [], posts: [] }, cars: { configured: false, connected: new Map(), links: [], reads: 0, nextReading: null } };
+  const db = { records: new Map(), seq: 0, history: [], backups: [], files: new Map(), public: new Map(), users: new Map(), inbox: [], calls: [], secrets: new Map(), aiCalls: [], aiUsage: 0, phone: { configured: false, connected: false, number: '+15125550100', optOuts: [], aiReady: true }, phoneEvents: [], sms: [], dials: [], outbox: new Map(), pay: { configured: false, connected: false, mode: 'test' }, links: new Map(), payEvents: [], refunds: [], checkouts: [], qbo: { configured: false, connected: false, env: 'sandbox', company: 'Main Street Auto LLC', error: null, accounts: [], entries: new Map(), authorizes: [], posts: [] }, cars: { configured: false, connected: new Map(), links: [], reads: 0, nextReading: null }, mfaRoles: [], challenges: new Map() };
   let evSeq = 0;
   let payId = 0;
   // A row in shop_pay_events, as the stripe-webhook function would write it.
@@ -19,19 +20,27 @@ export function fakeCloud() {
   let n = 0;
   const id = () => `u-${++n}`;
 
-  function issue(u) {
-    const access = `${b64({ alg: 'HS256', typ: 'JWT' })}.${b64({ sub: u.id, email: u.email, role: 'authenticated', app_metadata: u.app_metadata, user_metadata: u.user_metadata, exp: Math.floor(Date.now() / 1000) + 3600, n: ++n })}.sig`;
+  const factorsOf = (u) => (u.factors || []).filter((f) => f.status === 'verified');
+  const userView = (u) => ({ id: u.id, email: u.email, user_metadata: u.user_metadata, factors: (u.factors || []).map(({ secret, ...f }) => (void secret, f)) });
+  function issue(u, aal = 'aal1') {
+    const access = `${b64({ alg: 'HS256', typ: 'JWT' })}.${b64({ sub: u.id, email: u.email, role: 'authenticated', aal, app_metadata: u.app_metadata, user_metadata: u.user_metadata, exp: Math.floor(Date.now() / 1000) + 3600, n: ++n })}.sig`;
     const r = `r-${++n}`;
-    tokens.set(access, u.id);
-    refresh.set(r, u.id);
-    return { access_token: access, refresh_token: r, expires_in: 3600, user: { id: u.id, email: u.email, user_metadata: u.user_metadata } };
+    tokens.set(access, { uid: u.id, aal });
+    refresh.set(r, { uid: u.id, aal });
+    return { access_token: access, refresh_token: r, expires_in: 3600, user: userView(u) };
   }
   const who = (req) => {
     const t = (req.headers().authorization || '').replace(/^Bearer /, '');
-    const uid = tokens.get(t);
-    return uid ? db.users.get(uid) : null;
+    const s = tokens.get(t);
+    const u = s ? db.users.get(s.uid) : null;
+    if (u) u._aal = s.aal;
+    return u;
   };
-  const staff = (u) => Boolean(u?.app_metadata?.autoshop_staff) && !u.banned;
+  // is_shop_staff(): staff, and — for anyone with an authenticator app or in a role that requires
+  // one — a session that used its code (shop_mfa_ok).
+  const mfaOk = (u) => u?._aal === 'aal2' || (!factorsOf(u).length && !db.mfaRoles.includes(u?.app_metadata?.autoshop_role));
+  const member = (u) => Boolean(u?.app_metadata?.autoshop_staff) && !u.banned;
+  const staff = (u) => member(u) && mfaOk(u);
   const key = (c, i) => `${c}/${i}`;
 
   function push(u, changes, actor, device) {
@@ -79,8 +88,47 @@ export function fakeCloud() {
         const u = [...db.users.values()].find((x) => x.email === b.email && x.password === b.password && !x.banned);
         return u ? json(200, issue(u)) : json(400, { error_description: 'Invalid login credentials' });
       }
-      const uid = refresh.get(b.refresh_token);
-      return uid ? json(200, issue(db.users.get(uid))) : json(400, { error_description: 'Invalid Refresh Token: Refresh Token Not Found' });
+      const r = refresh.get(b.refresh_token);
+      return r ? json(200, issue(db.users.get(r.uid), r.aal)) : json(400, { error_description: 'Invalid Refresh Token: Refresh Token Not Found' });
+    }
+    if (p === '/auth/v1/user' && m === 'GET') {
+      const u = who(req);
+      return u ? json(200, userView(u)) : json(401, { msg: 'JWT expired' });
+    }
+    // Two-step sign-in (Supabase Auth MFA, TOTP).
+    if (p.startsWith('/auth/v1/factors')) {
+      const u = who(req);
+      if (!u) return json(401, { msg: 'JWT expired' });
+      u.factors ||= [];
+      const [, , , , fid, op] = p.split('/');
+      const f = fid && u.factors.find((x) => x.id === fid);
+      if (p === '/auth/v1/factors' && m === 'POST') {
+        const b = body();
+        const secret = newSecret();
+        const nf = { id: `f-${++n}`, factor_type: b.factor_type, friendly_name: b.friendly_name, status: 'unverified', created_at: new Date().toISOString(), secret };
+        u.factors.push(nf);
+        db.calls.push('enroll');
+        return json(200, { id: nf.id, type: 'totp', totp: { qr_code: 'data:image/svg+xml;utf-8,<svg/>', secret, uri: `otpauth://totp/${encodeURIComponent(b.issuer)}:${encodeURIComponent(u.email)}?secret=${secret}&issuer=${encodeURIComponent(b.issuer)}` } });
+      }
+      if (!f) return json(404, { msg: 'Factor not found' });
+      if (op === 'challenge') {
+        const cid = `c-${++n}`;
+        db.challenges.set(cid, f.id);
+        return json(200, { id: cid, expires_at: Math.floor(Date.now() / 1000) + 300 });
+      }
+      if (op === 'verify') {
+        const b = body();
+        if (db.challenges.get(b.challenge_id) !== f.id) return json(422, { msg: 'Challenge not found' });
+        if (!checkTotp(f.secret, b.code)) return json(422, { msg: 'Invalid TOTP code entered', error_code: 'mfa_verification_failed' });
+        db.challenges.delete(b.challenge_id);
+        f.status = 'verified';
+        return json(200, issue(u, 'aal2'));
+      }
+      if (m === 'DELETE') {
+        if (f.status === 'verified' && u._aal !== 'aal2') return json(403, { msg: 'AAL2 required to unenroll verified factor' });
+        u.factors = u.factors.filter((x) => x.id !== f.id);
+        return json(200, { id: f.id });
+      }
     }
     if (p === '/auth/v1/user' && m === 'PUT') {
       const u = who(req);
@@ -97,6 +145,14 @@ export function fakeCloud() {
       const fn = p.slice('/rest/v1/rpc/'.length);
       const b = body();
       const visible = staff(u);
+      if (fn === 'shop_mfa_ok') return json(200, mfaOk(u));
+      if (fn === 'shop_mfa_policy') return json(200, member(u) ? db.mfaRoles : null);
+      if (fn === 'shop_mfa_policy_set') {
+        if (!visible || u.app_metadata.autoshop_role !== 'owner') return json(403, { message: 'Only the owner can change this' });
+        if (b.roles.includes('owner') && u._aal !== 'aal2') return json(403, { message: 'Turn on two-step sign-in for yourself first' });
+        db.mfaRoles = [...new Set(b.roles)].sort();
+        return json(200, db.mfaRoles);
+      }
       if (fn === 'shop_outbox_schedule' || fn === 'shop_outbox_cancel') {
         if (!visible) return json(400, { message: 'Shop staff only' });
         if (fn === 'shop_outbox_cancel') {
@@ -410,7 +466,7 @@ export function fakeCloud() {
       if (!staff(u)) return json(403, { error: 'Shop staff only', message: 'Shop staff only' });
       const b = body();
       const owner = u.app_metadata.autoshop_role === 'owner';
-      const view = (x) => ({ id: x.id, email: x.email, name: x.user_metadata?.name || '', role: x.app_metadata.autoshop_role, staffId: x.app_metadata.autoshop_staff_id, active: staff(x), lastSignIn: null, mustChange: Boolean(x.user_metadata?.must_change_password) });
+      const view = (x) => ({ id: x.id, email: x.email, name: x.user_metadata?.name || '', role: x.app_metadata.autoshop_role, staffId: x.app_metadata.autoshop_staff_id, active: member(x), lastSignIn: null, mustChange: Boolean(x.user_metadata?.must_change_password), twoStep: factorsOf(x).length > 0 });
       if (b.action === 'list') return json(200, { users: [...db.users.values()].map(view) });
       if (!owner && b.action !== 'prune') return json(403, { message: 'Only the owner can change logins' });
       if (b.action === 'invite') {
@@ -434,6 +490,11 @@ export function fakeCloud() {
         const x = db.users.get(b.userId);
         if (b.role) x.app_metadata.autoshop_role = b.role;
         if (b.staffId !== undefined) x.app_metadata.autoshop_staff_id = b.staffId;
+        return json(200, { user: view(x) });
+      }
+      if (b.action === 'resetTwoStep') {
+        const x = db.users.get(b.userId);
+        x.factors = [];
         return json(200, { user: view(x) });
       }
       if (b.action === 'prune') return json(200, { ok: true });
