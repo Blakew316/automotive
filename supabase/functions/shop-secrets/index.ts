@@ -19,8 +19,9 @@ const NAMES = [
   "stripe_secret_key", "stripe_webhook_secret",
   "quickbooks_client_id", "quickbooks_client_secret",
   "smartcar_client_id", "smartcar_client_secret",
+  "resend_api_key", "email_from", "email_reply_to", "resend_webhook_secret",
 ];
-const SETTINGS = new Set(["ai_model", "ai_monthly_cap", "twilio_phone"]);
+const SETTINGS = new Set(["ai_model", "ai_monthly_cap", "twilio_phone", "email_from", "email_reply_to"]);
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
 const fail = (message: string, status = 400, code?: string) => json({ error: message, message, code }, status);

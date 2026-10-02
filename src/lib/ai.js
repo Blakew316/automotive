@@ -37,6 +37,16 @@ export const KEY_GROUPS = [
     ],
   },
   {
+    title: 'Email from your address (Resend)',
+    setup: { to: '/settings?tab=messaging#email', label: 'Verify your domain in Settings → Messaging' },
+    keys: [
+      { name: 'resend_api_key', label: 'API key', hint: 'resend.com → API Keys → Create (Sending access). Starts with re_', ready: true },
+      { name: 'email_from', label: 'Send from', hint: 'e.g. Main Street Auto <service@mainstreetauto.com>', setting: true, ready: true },
+      { name: 'email_reply_to', label: 'Replies go to', hint: 'Optional — e.g. your shop’s inbox, office@mainstreetauto.com', setting: true, ready: true, optional: true },
+      { name: 'resend_webhook_secret', label: 'Webhook signing secret', hint: 'resend.com → Webhooks → your endpoint → Signing secret (whsec_…)', ready: true, optional: true },
+    ],
+  },
+  {
     title: 'QuickBooks Online',
     setup: { to: '/accounting?tab=export', label: 'Connect in Accounting → QuickBooks' },
     keys: [

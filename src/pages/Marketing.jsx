@@ -313,7 +313,7 @@ function Campaigns({ onQueue }) {
           </Field>
         </div>
         <div className="flex justify-end border-t border-line/70 px-4 py-3">
-          <button className="btn-primary" disabled={!audience.length || !f.body.trim()} onClick={() => onQueue({ recipients: audience, initialBody: f.body, name: f.name || 'Campaign' })}>
+          <button className="btn-primary" disabled={!audience.length || !f.body.trim()} onClick={() => onQueue({ recipients: audience, initialBody: f.body, name: f.name || 'Campaign', channel: f.channel })}>
             <Send size={14} /> Review & send
           </button>
         </div>

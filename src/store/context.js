@@ -7,3 +7,5 @@ export const SyncContext = createContext(null);
 export const PhoneContext = createContext(null);
 // Online payments through the shop's Stripe account; see PayLine.jsx.
 export const PayContext = createContext(null);
+// Email from the shop's own address through its Resend account; see EmailLine.jsx.
+export const EmailContext = createContext(null);

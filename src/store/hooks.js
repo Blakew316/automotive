@@ -1,5 +1,5 @@
 import { useContext, useMemo } from 'react';
-import { ShopContext, UIContext, SyncContext, PhoneContext, PayContext } from './context';
+import { ShopContext, UIContext, SyncContext, PhoneContext, PayContext, EmailContext } from './context';
 import { totalsCalculator } from '../lib/pricing';
 import { canAccess } from '../lib/access';
 import { isMulti, siteList, scopeState } from '../lib/locations';
@@ -25,6 +25,12 @@ const NO_PAY = { status: null, ready: false, refresh: () => {}, ensureLink: null
 /** Online card payments through the shop's Stripe account (components/PayLine.jsx). */
 export function usePay() {
   return useContext(PayContext) || NO_PAY;
+}
+
+const NO_EMAIL = { status: null, ready: false, refresh: () => {}, send: null };
+/** Email from the shop's own address, with PDFs and delivery tracking (components/EmailLine.jsx). */
+export function useEmail() {
+  return useContext(EmailContext) || NO_EMAIL;
 }
 
 export function useUI() {
