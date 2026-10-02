@@ -149,10 +149,12 @@ function Thread({ customer, onBack }) {
     if (!body) return;
     if (!direct) return setComposing({ body });
     setSending(true);
+    // Clear the box right away (like any messaging app); put the text back if it doesn't send.
+    setReply('');
     try {
       await line.send({ customer, body, orderId: open?.id || null });
-      setReply('');
     } catch (e) {
+      setReply((cur) => cur || body);
       toast(e.message || 'The text didn’t send', { tone: 'error' });
     } finally {
       setSending(false);
