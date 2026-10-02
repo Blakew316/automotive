@@ -35,8 +35,15 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin || !url.href.startsWith(scope)) return;
 
   if (req.mode === 'navigate') {
-    // Network first so updates show right away; the cached shell when offline.
-    event.respondWith(fetch(req).catch(() => caches.match(INDEX)));
+    // Network first, past the browser's HTTP cache (GitHub Pages lets it keep a page for 10 minutes),
+    // so a new version shows on the next open; the cached shell when offline.
+    event.respondWith(fetch(req.url, { cache: 'no-cache', credentials: 'same-origin' }).catch(() => caches.match(INDEX)));
+    return;
+  }
+
+  // The app asks for index.html to see whether a new version is out: always the server's copy.
+  if (url.href === INDEX) {
+    event.respondWith(fetch(req, { cache: 'no-cache' }).catch(() => caches.match(INDEX)));
     return;
   }
 
