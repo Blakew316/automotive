@@ -4,8 +4,11 @@
 
 /*
  * Design tokens — navy and light grey. Light grey canvas, white cards and a white sidebar, with navy
- * for actions, links and the current page. Everything else stays neutral grey; status color (green/amber/red) is
- * reserved for meaning and appears only as dots, thin tints and small pills.
+ * for actions, links and the current page. Status color (green/amber/red) is reserved for meaning and
+ * appears only as dots, thin tints and small pills.
+ *
+ * The public website's "foil" hues (indigo, lilac, azure, teal) add a little life: icon tiles, the
+ * sidebar, avatars and a few hairline accents — always as light tints or thin lines, never big blocks.
  */
 :root {
   color-scheme: light;
@@ -36,6 +39,14 @@
   --violet: 90 104 150;
   --grid: 28 59 107;
   --shadow-ring: 15 23 42;
+  --hue-indigo: 77 86 191;
+  --hue-lilac: 122 92 196;
+  --hue-azure: 47 118 186;
+  --hue-teal: 14 132 120;
+  --hue-amber: 176 110 20;
+  --hue-rose: 190 70 98;
+  --haze: 0.09;
+  --foil-ink: linear-gradient(90deg, rgb(var(--hue-indigo)), rgb(var(--hue-lilac)) 50%, rgb(var(--hue-azure)));
   --series-1: #2f62b0;
   --series-2: #13968a;
   --series-3: #9aa3af;
@@ -71,6 +82,13 @@
     --violet: 150 160 210;
     --grid: 140 172 226;
     --shadow-ring: 255 255 255;
+    --hue-indigo: 146 156 246;
+    --hue-lilac: 182 158 240;
+    --hue-azure: 112 172 232;
+    --hue-teal: 72 200 182;
+    --hue-amber: 232 172 80;
+    --hue-rose: 236 128 156;
+    --haze: 0.07;
     --series-1: #4a82da;
     --series-2: #16a08f;
     --series-3: #7d8696;
@@ -106,6 +124,13 @@
   --violet: 150 160 210;
   --grid: 140 172 226;
   --shadow-ring: 255 255 255;
+  --hue-indigo: 146 156 246;
+  --hue-lilac: 182 158 240;
+  --hue-azure: 112 172 232;
+  --hue-teal: 72 200 182;
+  --hue-amber: 232 172 80;
+  --hue-rose: 236 128 156;
+  --haze: 0.07;
   --series-1: #4a82da;
   --series-2: #16a08f;
   --series-3: #7d8696;
@@ -203,6 +228,8 @@
   }
   .btn-primary {
     @apply btn bg-accent text-on-accent shadow-[0_1px_2px_rgb(0_0_0/0.1)] hover:brightness-[1.12] active:brightness-95;
+    /* Navy that leans toward the site's indigo at the far edge. */
+    background-image: linear-gradient(120deg, rgb(var(--accent)) 35%, rgb(var(--hue-indigo) / 0.9) 135%);
   }
   .btn-dark {
     @apply btn bg-graphite text-white hover:brightness-125 active:brightness-110;
@@ -267,7 +294,28 @@
   }
   .eyebrow::before {
     content: '';
-    @apply h-[3px] w-4 rounded-full bg-brand;
+    @apply h-[3px] w-4 rounded-full;
+    background: var(--foil-ink);
+  }
+  /* The website's holographic "foil" as a thin line: indigo → lilac → azure. */
+  .bg-foil-ink {
+    background: var(--foil-ink);
+  }
+  /* A faint wash of the foil hues at the top of each page — light enough to read as atmosphere, not color. */
+  .foil-haze {
+    background:
+      radial-gradient(55% 100% at 88% 0%, rgb(var(--hue-lilac) / var(--haze)), transparent 72%),
+      radial-gradient(45% 90% at 52% 0%, rgb(var(--hue-azure) / calc(var(--haze) * 0.8)), transparent 70%),
+      radial-gradient(40% 80% at 12% 0%, rgb(var(--hue-indigo) / calc(var(--haze) * 0.7)), transparent 70%);
+  }
+  /* A 2px foil line along the top edge of a card. */
+  .foil-top {
+    @apply relative overflow-hidden;
+  }
+  .foil-top::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-[2px];
+    background: var(--foil-ink);
   }
   /* Quiet icon tile used for modules, KPIs and card headers: a light tint, never a solid fill. */
   .icon-tile {

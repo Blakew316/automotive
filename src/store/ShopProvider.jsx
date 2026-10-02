@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { produce, setAutoFreeze, isDraft, current } from 'immer';
 import { ShopContext, SyncContext } from './context';
-import { createSeed, CANNED_JOBS } from '../data/seed';
+// Demo data is only needed on a device with no saved shop, so it loads on demand.
+const loadSeed = () => import('../data/seed');
 import { migrate } from './defaults';
 import { newTireQuote, tireLabel } from '../lib/tires';
 import { priceFromMatrix, orderTotals } from '../lib/pricing';
@@ -48,7 +49,7 @@ async function loadStore() {
       // Unreadable: start from demo data.
     }
   }
-  return { state: migrate(stored || createSeed()), sync: saved.sync, idb, legacy, fromIdb: Boolean(saved.state) };
+  return { state: migrate(stored || (await loadSeed()).createSeed()), sync: saved.sync, idb, legacy, fromIdb: Boolean(saved.state) };
 }
 
 const now = () => new Date().toISOString();
@@ -912,8 +913,9 @@ function ShopStore({ boot, children }) {
           else s[collection].push(data);
         }),
 
-      resetDemo: () => commit(migrate(createSeed())),
-      clearAll: () => {
+      resetDemo: async () => commit(migrate((await loadSeed()).createSeed())),
+      clearAll: async () => {
+        const { createSeed, CANNED_JOBS } = await loadSeed();
         const prev = stateRef.current;
         commit({
           ...createSeed(),

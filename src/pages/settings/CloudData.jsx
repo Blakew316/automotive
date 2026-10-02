@@ -41,7 +41,7 @@ export function SyncSection() {
     });
   const upload = (fresh) =>
     run('Uploading…', async () => {
-      if (fresh) clearAll();
+      if (fresh) await clearAll();
       await sync.upload();
       toast(fresh ? 'Shared data is on — starting with an empty shop' : 'Shared data is on — uploading this device’s data', { tone: 'success' });
     });

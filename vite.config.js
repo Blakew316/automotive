@@ -24,4 +24,15 @@ function serviceWorker() {
 
 export default defineConfig({
   plugins: [react(), serviceWorker()],
+  build: {
+    rollupOptions: {
+      output: {
+        // React and the router change rarely: keep them in their own long-cached file so an app
+        // update only re-downloads the app's own code.
+        manualChunks(id) {
+          if (/node_modules\/(react|react-dom|scheduler|react-router|react-router-dom|@remix-run)\//.test(id)) return 'react'
+        },
+      },
+    },
+  },
 })

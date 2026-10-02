@@ -1,21 +1,46 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import ShopProvider from './store/ShopProvider';
 import UIProvider from './store/UIProvider';
 import Layout from './components/Layout';
 import { Spinner } from './components/ui';
-import Dashboard from './pages/Dashboard';
-import Workflow from './pages/Workflow';
-import Orders from './pages/Orders';
-import OrderDetail from './pages/OrderDetail';
-import NewOrder from './pages/NewOrder';
-import Customers from './pages/Customers';
-import CustomerDetail from './pages/CustomerDetail';
-import Vehicles from './pages/Vehicles';
-import VehicleDetail from './pages/VehicleDetail';
 import NotFound from './pages/NotFound';
 
-const Calendar = lazy(() => import('./pages/Calendar'));
+// Every page loads on demand, so the first screen appears quickly even on a shop tablet. The pages
+// used all day are fetched in the background right after, so moving between them stays instant.
+const EVERYDAY = {
+  Dashboard: () => import('./pages/Dashboard'),
+  Workflow: () => import('./pages/Workflow'),
+  Orders: () => import('./pages/Orders'),
+  OrderDetail: () => import('./pages/OrderDetail'),
+  NewOrder: () => import('./pages/NewOrder'),
+  Customers: () => import('./pages/Customers'),
+  CustomerDetail: () => import('./pages/CustomerDetail'),
+  Vehicles: () => import('./pages/Vehicles'),
+  VehicleDetail: () => import('./pages/VehicleDetail'),
+  Calendar: () => import('./pages/Calendar'),
+  Messages: () => import('./pages/Messages'),
+};
+const Dashboard = lazy(EVERYDAY.Dashboard);
+const Workflow = lazy(EVERYDAY.Workflow);
+const Orders = lazy(EVERYDAY.Orders);
+const OrderDetail = lazy(EVERYDAY.OrderDetail);
+const NewOrder = lazy(EVERYDAY.NewOrder);
+const Customers = lazy(EVERYDAY.Customers);
+const CustomerDetail = lazy(EVERYDAY.CustomerDetail);
+const Vehicles = lazy(EVERYDAY.Vehicles);
+const VehicleDetail = lazy(EVERYDAY.VehicleDetail);
+const Calendar = lazy(EVERYDAY.Calendar);
+const Messages = lazy(EVERYDAY.Messages);
+
+function usePrefetchEveryday() {
+  useEffect(() => {
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 1200));
+    const id = idle(() => Object.values(EVERYDAY).forEach((load) => load().catch(() => {})));
+    return () => (window.cancelIdleCallback ? window.cancelIdleCallback(id) : clearTimeout(id));
+  }, []);
+}
+
 const VinDecoder = lazy(() => import('./pages/VinDecoder'));
 const Parts = lazy(() => import('./pages/Parts'));
 const Library = lazy(() => import('./pages/Library'));
@@ -27,7 +52,6 @@ const SharedReport = lazy(() => import('./pages/SharedReport'));
 const CatalogHome = lazy(() => import('./pages/catalog/CatalogHome'));
 const CatalogMake = lazy(() => import('./pages/catalog/CatalogMake'));
 const CatalogModel = lazy(() => import('./pages/catalog/CatalogModel'));
-const Messages = lazy(() => import('./pages/Messages'));
 const Tech = lazy(() => import('./pages/Tech'));
 const Team = lazy(() => import('./pages/Team'));
 const Accounting = lazy(() => import('./pages/Accounting'));
@@ -54,6 +78,7 @@ const Loading = () => (
 );
 
 export default function App() {
+  usePrefetchEveryday();
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <UIProvider>

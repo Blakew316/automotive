@@ -96,7 +96,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <section className="card mb-6 overflow-hidden">
+      <section className="card foil-top mb-6 overflow-hidden">
         <div className="flex flex-wrap items-end justify-between gap-4 px-5 pb-5 pt-6 sm:px-7 sm:pt-7">
           <div className="min-w-0">
             <div className="eyebrow mb-2">{now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
@@ -120,7 +120,7 @@ export default function Dashboard() {
           <HeroStat icon={Receipt} tone="teal" label="Billed today" value={money0(data.billedToday)} sub={`${data.invoicedTodayCount} invoice${data.invoicedTodayCount === 1 ? '' : 's'}`} to="/orders?status=ready" />
           <HeroStat icon={FileText} tone="sky" label="Awaiting approval" value={money0(data.estimateValue)} sub={`${data.estimates.length} open estimates`} to="/orders?status=estimate" />
           <HeroStat icon={Car} tone="green" label="Ready for pickup" value={data.ready.length} sub={`${money0(data.readyBalance)} to collect`} to="/orders?status=ready" />
-          <HeroStat icon={Wallet} tone="slate" label="Receivables" value={money0(data.receivableTotal)} sub={`${data.receivableCount} unpaid`} to="/accounts" />
+          <HeroStat icon={Wallet} tone="amber" label="Receivables" value={money0(data.receivableTotal)} sub={`${data.receivableCount} unpaid`} to="/accounts" />
         </div>
       </section>
 
@@ -335,10 +335,10 @@ function ModuleStrip() {
   const tiles = [
     { to: '/messages', icon: MessageSquare, tone: 'blue', title: 'Messages', meta: unread ? `${unread} unread` : 'All caught up' },
     { to: '/calendar', icon: CalendarDays, tone: 'sky', title: 'Bookings', meta: requests ? `${requests} to confirm` : 'No new requests' },
-    { to: '/tech', icon: Timer, tone: 'slate', title: 'Tech clock', meta: `${clocked} clocked in` },
+    { to: '/tech', icon: Timer, tone: 'lilac', title: 'Tech clock', meta: `${clocked} clocked in` },
     { to: '/parts?tab=orders', icon: Truck, tone: 'teal', title: 'Parts & POs', meta: onOrder ? `${onOrder} on order` : low ? `${low} low stock` : 'Stock OK' },
-    { to: '/marketing', icon: Megaphone, tone: 'blue', title: 'Marketing', meta: followUps ? `${followUps} follow-ups ready` : 'All caught up' },
-    { to: '/accounting', icon: Landmark, tone: 'graphite', title: 'Accounting', meta: 'P&L · QuickBooks' },
+    { to: '/marketing', icon: Megaphone, tone: 'rose', title: 'Marketing', meta: followUps ? `${followUps} follow-ups ready` : 'All caught up' },
+    { to: '/accounting', icon: Landmark, tone: 'navy', title: 'Accounting', meta: 'P&L · QuickBooks' },
   ];
   return (
     <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">

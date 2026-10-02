@@ -49,15 +49,34 @@ export function Card({ className = '', children, ...rest }) {
   );
 }
 
-/** Icon tile tints by tone — navy or neutral grey, kept light so color never dominates. */
-const NAVY = 'bg-accent/[0.09] text-accent';
-const GREY = 'bg-fill/[0.12] text-ink-2';
-const TONES = { blue: NAVY, sky: NAVY, graphite: NAVY, green: NAVY, slate: GREY, teal: GREY };
+/**
+ * Icon tile tints by tone — the website's foil hues, as a light wash with a hairline ring, so color
+ * adds life without ever becoming a block. Older tone names map onto the same palette.
+ */
+const TINT = {
+  navy: 'bg-accent/[0.09] text-accent ring-accent/[0.12]',
+  indigo: 'bg-hue-indigo/[0.1] text-hue-indigo ring-hue-indigo/[0.14]',
+  lilac: 'bg-hue-lilac/[0.1] text-hue-lilac ring-hue-lilac/[0.14]',
+  azure: 'bg-hue-azure/[0.1] text-hue-azure ring-hue-azure/[0.14]',
+  teal: 'bg-hue-teal/[0.1] text-hue-teal ring-hue-teal/[0.14]',
+  amber: 'bg-hue-amber/[0.11] text-hue-amber ring-hue-amber/[0.16]',
+  rose: 'bg-hue-rose/[0.1] text-hue-rose ring-hue-rose/[0.14]',
+  green: 'bg-ok/[0.1] text-ok ring-ok/[0.14]',
+  grey: 'bg-fill/[0.12] text-ink-2 ring-fill/[0.1]',
+};
+const TONES = { ...TINT, blue: TINT.indigo, sky: TINT.azure, graphite: TINT.navy, slate: TINT.lilac };
+/** A stable hue for something without one of its own (a card title, a person's name). */
+const AUTO = ['indigo', 'azure', 'lilac', 'teal', 'navy'];
+const autoTone = (key = '', list = AUTO) => {
+  let h = 0;
+  for (const ch of String(key)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return list[h % list.length];
+};
 
 export function IconTile({ icon, tone = 'blue', size = 32, className = '' }) {
   const Icon = icon;
   return (
-    <span className={`icon-tile ${TONES[tone] || TONES.blue} ${className}`} style={{ width: size, height: size }}>
+    <span className={`icon-tile ring-1 ring-inset ${TONES[tone] || TONES.blue} ${className}`} style={{ width: size, height: size }}>
       <Icon size={Math.round(size * 0.5)} strokeWidth={1.9} />
     </span>
   );
@@ -67,7 +86,7 @@ export function CardHeader({ title, subtitle, actions, icon: Icon, tone }) {
   return (
     <div className="card-header">
       <div className="flex min-w-0 items-center gap-2.5">
-        {Icon && (tone ? <IconTile icon={Icon} tone={tone} size={28} /> : <Icon size={16} strokeWidth={1.75} className="shrink-0 text-ink-3" />)}
+        {Icon && <IconTile icon={Icon} tone={tone || autoTone(typeof title === 'string' ? title : '')} size={28} />}
         <div className="min-w-0">
           <h2 className="card-title truncate">{title}</h2>
           {subtitle && <p className="truncate text-xs text-ink-3">{subtitle}</p>}
@@ -164,10 +183,11 @@ export function Tabs({ tabs, value, onChange, className = '' }) {
             key={t.value}
             data-active={active}
             onClick={() => onChange(t.value)}
-            className={`relative -mb-px flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 pb-2.5 pt-1 text-sm font-medium transition-colors ${
-              active ? 'border-accent text-ink' : 'border-transparent text-ink-3 hover:text-ink'
+            className={`relative -mb-px flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent pb-2.5 pt-1 text-sm font-medium transition-colors ${
+              active ? 'text-ink' : 'text-ink-3 hover:text-ink'
             }`}
           >
+            {active && <span className="bg-foil-ink absolute inset-x-0 -bottom-[2px] h-[2px] rounded-full" />}
             {t.icon && <t.icon size={15} strokeWidth={1.8} className={active ? 'text-accent' : ''} />}
             {t.label}
             {t.count != null && <span className="tabular text-xs text-ink-4">{t.count}</span>}
@@ -195,11 +215,20 @@ export function StatusLabel({ status, className = '' }) {
   );
 }
 
+const AVATAR = {
+  indigo: 'bg-hue-indigo/[0.13] text-hue-indigo',
+  lilac: 'bg-hue-lilac/[0.13] text-hue-lilac',
+  azure: 'bg-hue-azure/[0.13] text-hue-azure',
+  teal: 'bg-hue-teal/[0.13] text-hue-teal',
+  amber: 'bg-hue-amber/[0.14] text-hue-amber',
+  rose: 'bg-hue-rose/[0.12] text-hue-rose',
+};
+
 export function Avatar({ person, name, size = 32, className = '' }) {
   const text = person ? initials(person) : (name || '?').split(' ').map((w) => w[0]).slice(0, 2).join('').toUpperCase();
   return (
     <span
-      className={`inline-flex shrink-0 select-none items-center justify-center rounded-full bg-fill/[0.16] font-semibold text-ink-2 ${className}`}
+      className={`inline-flex shrink-0 select-none items-center justify-center rounded-full font-semibold ${AVATAR[autoTone(text + (person?.id || name || ''), Object.keys(AVATAR))]} ${className}`}
       style={{ width: size, height: size, fontSize: Math.max(10, size * 0.38) }}
     >
       {text}
