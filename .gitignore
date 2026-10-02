@@ -24,3 +24,6 @@ dist-ssr
 *.sw?
 scripts/vpic/.cache/
 __pycache__/
+
+# Test output (screenshots, logs, bundles)
+test-results/

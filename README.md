@@ -268,3 +268,17 @@ npm run build:pages    # website + app as deployed (dist/ and dist/app/)
 ```
 
 Deploys to GitHub Pages via `.github/workflows/deploy.yml` (`npm run build:pages`).
+
+### Tests
+
+```bash
+npm run test:unit        # app logic (sync merging, pay periods)
+npm run test:functions   # every Supabase Edge Function, with Supabase, Twilio, Anthropic, Stripe, Intuit and Smartcar mocked
+npm run build:pages && npm run test:e2e   # browser suites against the built site
+npm test                 # all of it
+```
+
+- **Browser suites** (`tests/e2e/`) drive the real built app in Chromium against an in-memory stand-in for the shop's Supabase project (`tests/support/fakecloud.mjs`), so they need no accounts or network. They cover every area of the app, including a light, dark and phone-size visual tour of each screen.
+- Run one or a few by name, e.g. `node tests/run.mjs --e2e online-payments phone-texting`. Screenshots, downloads and logs land in `test-results/`.
+- Chromium comes from `CHROMIUM_PATH`, a `PLAYWRIGHT_BROWSERS_PATH` folder, or `npx playwright-core install chromium`.
+- **CI** (`.github/workflows/ci.yml`) runs lint, the build, the logic and server-function tests, and the browser suites in four parallel groups on every pull request; screenshots and logs from a failed group are attached to the run.
