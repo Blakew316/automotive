@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -49,7 +51,7 @@
   .privacy-layout { display: grid; gap: clamp(28px, 1.5rem + 1.5vw, 44px); }
   @media (min-width: 1024px) {
     .privacy-layout { grid-template-columns: 252px minmax(0, 720px); gap: 72px; align-items: start; }
-    .privacy-layout .toc { position: sticky; top: calc(var(--header-h) + 28px); }
+    .privacy-layout .toc { position: sticky; top: calc(var(--header-offset) + 28px); }
     .privacy-layout .toc ol { grid-template-columns: 1fr; }
   }
   .toc { padding: 20px 22px; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); }
@@ -59,7 +61,7 @@
   .toc a { position: relative; display: flex; align-items: center; gap: 10px; min-height: 44px; border-bottom: 1px solid var(--line); color: var(--ink-2); font-weight: 550; font-size: .96rem; text-decoration: none; transition: color var(--dur-1) var(--ease); }
   .toc li:last-child a { border-bottom: 0; }
   .toc a::before { content: counter(toc, decimal-leading-zero); font-family: var(--font-mono); font-size: .76rem; color: var(--ink-4); letter-spacing: 0; transition: color var(--dur-1) var(--ease); }
-  .toc a:hover { color: var(--accent); }
+  @media (hover: hover) { .toc a:hover { color: var(--accent); } }
   .toc a[aria-current="true"] { color: var(--ink); }
   .toc a[aria-current="true"]::before { color: var(--accent); }
   @media (min-width: 1024px) {
@@ -77,7 +79,7 @@
   .privacy-body .form-list p { color: var(--ink-3); font-size: .96rem; margin-top: 2px; }
   .privacy-contact { display: grid; gap: 10px; margin-top: 18px; }
   .privacy-contact a { display: inline-flex; align-items: center; gap: 12px; min-height: 44px; color: var(--ink); text-decoration: none; font-weight: 600; }
-  .privacy-contact a:hover { color: var(--accent); }
+  @media (hover: hover) { .privacy-contact a:hover { color: var(--accent); } }
   .privacy-contact .icon { color: var(--accent); }
   .updated { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: .92rem; }
 </style>

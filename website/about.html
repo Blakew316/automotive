@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -56,7 +58,7 @@
   @media (min-width: 600px) and (max-width: 1099.98px) { .values-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (min-width: 1100px) { .values-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
   .value-card h3 { font-size: 1.14rem; }
-  .value-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); background: var(--foil); }
+  @media (hover: hover) { .value-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); background: var(--foil); } }
   @media (max-width: 599.98px) {
     .value-card { display: grid; grid-template-columns: auto 1fr; column-gap: 16px; align-items: start; }
     .value-card .icon-tile { grid-row: span 2; }
@@ -96,14 +98,14 @@
   .panel-links a { display: flex; align-items: center; gap: 10px; min-height: 48px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: .98rem; color: var(--ink-2); text-decoration: none; transition: color var(--dur-1) var(--ease); }
   .panel-links a .icon { color: var(--accent); }
   .panel-links a .chev { margin-left: auto; width: 16px; height: 16px; color: var(--ink-4); transition: transform var(--dur-2) var(--ease); }
-  .panel-links a:hover { color: var(--ink); }
-  .panel-links a:hover .chev { transform: translateX(3px); color: var(--accent); }
+  @media (hover: hover) { .panel-links a:hover { color: var(--ink); } }
+  @media (hover: hover) { .panel-links a:hover .chev { transform: translateX(3px); color: var(--accent); } }
   .engine-panel .pill-cloud .chip { background: rgba(255, 255, 255, .72); }
 
   /* Visit us */
   .visit-rows { display: grid; gap: 10px; margin-top: 26px; }
   .visit-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: var(--r); background: var(--paper); border: 1px solid var(--line); text-decoration: none; color: var(--ink); transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease); }
-  .visit-row:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: var(--line-strong); }
+  @media (hover: hover) { .visit-row:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: var(--line-strong); } }
   .visit-row small { display: block; font-size: .74rem; font-weight: 650; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-3); }
   .visit-row strong { display: block; font-weight: 600; line-height: 1.35; overflow-wrap: anywhere; }
   .visit-row .chev { margin-left: auto; width: 18px; height: 18px; color: var(--ink-4); }

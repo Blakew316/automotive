@@ -124,6 +124,7 @@ const tokens = (page) => {
     root,
     canonical,
     name: esc(biz.name),
+    shortName: esc(biz.shortName || biz.name),
     phone: esc(biz.phone),
     tel: esc(biz.phoneE164),
     email: esc(biz.email),

@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -83,7 +85,7 @@
   .faq-layout { display: grid; gap: 32px; }
   @media (min-width: 960px) {
     .faq-layout { grid-template-columns: 290px minmax(0, 1fr); gap: clamp(40px, 4vw, 72px); align-items: start; }
-    .faq-side { position: sticky; top: calc(var(--header-h) + 28px); }
+    .faq-side { position: sticky; top: calc(var(--header-offset) + 28px); }
   }
   .faq-tools { display: none; }
   .js .faq-tools { display: grid; gap: 14px; }
@@ -94,7 +96,7 @@
   .faq-search .input::-webkit-search-cancel-button, .faq-search .input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
   .faq-clear { position: absolute; right: 5px; top: 50%; translate: 0 -50%; width: 44px; height: 44px; display: grid; place-items: center; border: 0; padding: 0; background: none; color: var(--ink-2); border-radius: 50%; }
   .faq-clear::before { content: ""; position: absolute; inset: 8px; border-radius: 50%; background: var(--stone-100); transition: background-color var(--dur-1) var(--ease); }
-  .faq-clear:hover::before { background: var(--stone-200); }
+  @media (hover: hover) { .faq-clear:hover::before { background: var(--stone-200); } }
   .faq-clear .icon { position: relative; width: 16px; height: 16px; stroke-width: 2.2; }
   .faq-clear[hidden] { display: none; }
   .faq-kbd { position: absolute; right: 18px; top: 50%; translate: 0 -50%; pointer-events: none; color: var(--ink-3); }
@@ -105,7 +107,7 @@
   .faq-count strong { color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
   .faq-count::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
 
-  .faq-topics { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--gutter) * -1); padding: 2px var(--gutter) 6px; scroll-padding-inline: var(--gutter); scroll-snap-type: x proximity; }
+  .faq-topics { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin-inline: calc(var(--edge-left) * -1) calc(var(--edge-right) * -1); padding: 2px var(--edge-right) 6px var(--edge-left); scroll-padding-inline: var(--edge-left) var(--edge-right); scroll-snap-type: x proximity; }
   .faq-topics::-webkit-scrollbar { display: none; }
   .topic {
     flex: none; scroll-snap-align: start; display: inline-flex; align-items: center; gap: 9px;
@@ -116,8 +118,8 @@
     -webkit-tap-highlight-color: transparent;
   }
   .topic > .icon { width: 18px; height: 18px; color: var(--accent); transition: transform var(--dur-2) var(--spring); }
-  .topic:hover { border-color: var(--line-strong); }
-  .topic:hover > .icon { transform: rotate(-8deg) scale(1.08); }
+  @media (hover: hover) { .topic:hover { border-color: var(--line-strong); } }
+  @media (hover: hover) { .topic:hover > .icon { transform: rotate(-8deg) scale(1.08); } }
   .topic:active { transform: scale(.97); }
   .topic-count { min-width: 28px; padding: 3px 8px; border-radius: var(--pill); background: var(--stone-100); color: var(--ink-3); font-size: .78rem; font-weight: 650; text-align: center; font-variant-numeric: tabular-nums; transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
   .topic[aria-pressed="true"] { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 34%, transparent); color: var(--accent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
@@ -127,7 +129,7 @@
   @media (min-width: 960px) {
     .faq-topics { flex-direction: column; overflow: visible; margin: 4px 0 0; padding: 0; gap: 3px; }
     .topic { justify-content: flex-start; padding: 0 8px 0 13px; border-radius: 14px; border-color: transparent; background: transparent; }
-    .topic:hover { background: rgba(43, 37, 34, .045); border-color: transparent; }
+    @media (hover: hover) { .topic:hover { background: rgba(43, 37, 34, .045); border-color: transparent; } }
     .topic .topic-count { margin-left: auto; }
     .topic[aria-pressed="true"] { background: var(--paper); border-color: var(--line); color: var(--ink); box-shadow: var(--shadow-1); }
     .topic[aria-pressed="true"] > .icon { color: var(--accent); }
@@ -141,13 +143,13 @@
   }
 
   /* Groups */
-  .faq-group { scroll-margin-top: calc(var(--header-h) + 24px); }
+  .faq-group { scroll-margin-top: calc(var(--header-offset) + 24px); }
   .faq-group:not([hidden]) ~ .faq-group { margin-top: clamp(36px, 1.8rem + 1.6vw, 60px); }
   .faq-group[hidden] { display: none; }
   .faq-group-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
   .faq-group-head h2 { font-size: clamp(1.35rem, 1.1rem + .8vw, 1.8rem); letter-spacing: -0.025em; }
   .faq-group-head .badge { margin-left: auto; font-variant-numeric: tabular-nums; }
-  .faq { scroll-margin-top: calc(var(--header-h) + 24px); }
+  .faq { scroll-margin-top: calc(var(--header-offset) + 24px); }
   .faq.is-entering { animation: rise-in .38s var(--ease) both; }
   .faq-body .text-link { font-weight: 550; }
   .faq summary { text-wrap: pretty; } /* no one-word last lines ("...my / mower?") on phones */

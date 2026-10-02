@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -55,7 +57,7 @@
   .role-label { margin-top: 4px; font-size: .78rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
   .role-list { gap: 10px; font-size: .97rem; color: var(--ink-2); }
   .role-card .btn { align-self: flex-start; margin-top: auto; }
-  .role-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); background: var(--foil); }
+  @media (hover: hover) { .role-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); background: var(--foil); } }
   @media (min-width: 700px) { .roles-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   .roles-note { max-width: 760px; margin-bottom: clamp(24px, 1.5rem + 1vw, 40px); }
 
@@ -456,19 +458,19 @@
             <div class="form-grid form-grid-2">
               <div class="field">
                 <label class="field-label" for="c-name">Full name <span class="req">*</span></label>
-                <input class="input" id="c-name" name="name" type="text" autocomplete="name" required data-label="Name" data-error="Please enter your name.">
+                <input class="input" id="c-name" name="name" type="text" autocomplete="name" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="next" required data-label="Name" data-error="Please enter your name.">
                 <p class="field-error" id="c-name-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your name.</span></p>
               </div>
               <div class="field">
                 <label class="field-label" for="c-phone">Phone <span class="req">*</span></label>
-                <input class="input" id="c-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required data-label="Phone" data-error="Please enter your phone number.">
+                <input class="input" id="c-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" enterkeyhint="next" required data-label="Phone" data-error="Please enter your phone number.">
                 <p class="field-error" id="c-phone-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your phone number.</span></p>
               </div>
             </div>
 
             <div class="field">
               <label class="field-label" for="c-email">Email <span class="req">*</span></label>
-              <input class="input" id="c-email" name="email" type="email" autocomplete="email" required data-label="Email" data-error="Please enter a valid email address.">
+              <input class="input" id="c-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next" required data-label="Email" data-error="Please enter a valid email address.">
               <p class="field-error" id="c-email-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter a valid email address.</span></p>
             </div>
 

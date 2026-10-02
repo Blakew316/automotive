@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -33,7 +35,7 @@
 <!-- @end jsonld -->
 <style>
   /* Leave room for the sticky header plus the in-page sub-nav when jumping to a section */
-  html { scroll-padding-top: calc(var(--header-h) + 84px); }
+  html { scroll-padding-top: calc(var(--header-offset) + 84px); }
 
   /* Comfortable touch targets for the text links and small buttons on this page */
   main .link-arrow { min-height: 44px; }
@@ -85,13 +87,13 @@
 
   /* ---------- In-page sub-nav (sticky pills) ---------- */
   .subnav {
-    position: sticky; top: var(--header-h); z-index: 40;
+    position: sticky; top: var(--header-offset); z-index: 40;
     background: rgba(250, 248, 245, .88);
     -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
     border-block: 1px solid var(--line);
   }
   .subnav .subnav-list {
-    position: relative; list-style: none; margin: 0 calc(var(--gutter) * -1); padding: 9px var(--gutter);
+    position: relative; list-style: none; margin: 0 calc(var(--edge-right) * -1) 0 calc(var(--edge-left) * -1); padding: 9px var(--edge-right) 9px var(--edge-left);
     display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
   }
   .subnav-list::-webkit-scrollbar { display: none; }
@@ -109,7 +111,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   .subnav-link .icon { width: 1.05em; height: 1.05em; color: var(--accent); }
-  .subnav-link:hover { color: var(--ink); background: rgba(43, 37, 34, .045); }
+  @media (hover: hover) { .subnav-link:hover { color: var(--ink); background: rgba(43, 37, 34, .045); } }
   .subnav-link[aria-current="true"] { color: var(--ink); background: var(--paper); border-color: var(--line); box-shadow: var(--shadow-1); }
   @media (max-width: 639.98px) { .subnav-link { padding: 8px 14px; font-size: .9rem; } }
 
@@ -151,7 +153,7 @@
   }
   .lamp svg { width: clamp(30px, 1.2rem + 1.5vw, 46px); height: auto; aspect-ratio: 1; overflow: visible; transition: filter .3s var(--ease); }
   .lamp-label { max-width: 100%; font-size: .74rem; font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink-3); text-align: center; overflow-wrap: anywhere; transition: color .25s var(--ease); }
-  .lamp:hover { color: var(--ink-4); border-color: var(--line-strong); }
+  @media (hover: hover) { .lamp:hover { color: var(--ink-4); border-color: var(--line-strong); } }
   .lamp:active { transform: scale(.96); }
   .lamp:focus-visible { border-radius: 16px; }
   .lamp[aria-pressed="true"] {
@@ -173,7 +175,7 @@
     transition: background-color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease), transform var(--dur-1) var(--ease);
   }
   .dash-check .icon { color: #e0900f; }
-  .dash-check:hover { border-color: var(--ink-4); }
+  @media (hover: hover) { .dash-check:hover { border-color: var(--ink-4); } }
   .dash-check:active { transform: scale(.97); }
   .dash-check[aria-disabled="true"] { opacity: .6; }
   @keyframes lamp-flicker { 0% { opacity: .2; } 20% { opacity: 1; } 32% { opacity: .45; } 48%, 100% { opacity: 1; } }
@@ -220,7 +222,7 @@
   .ld-note .icon { color: var(--accent); margin-top: 1px; }
 
   .lamp-jump {
-    position: fixed; z-index: 45; left: 50%; bottom: calc(var(--tabbar-h) + 14px);
+    position: fixed; z-index: 45; left: 50%; bottom: calc(max(var(--tabbar-h), var(--safe-bottom)) + 14px);
     display: inline-flex; align-items: center; gap: 8px; min-height: 44px; max-width: calc(100vw - 32px); padding: 10px 18px;
     border-radius: var(--pill); background: var(--ink); color: var(--ivory); text-decoration: none;
     font-size: .92rem; font-weight: 600; white-space: nowrap; box-shadow: var(--shadow-3);
@@ -273,7 +275,7 @@
     -webkit-tap-highlight-color: transparent;
   }
   .mile-btn small { font-size: .72rem; font-weight: 550; letter-spacing: 0; color: var(--ink-4); }
-  .mile-btn:hover { border-color: var(--ink-4); transform: translateY(-1px); }
+  @media (hover: hover) { .mile-btn:hover { border-color: var(--ink-4); transform: translateY(-1px); } }
   .mile-btn:active { transform: scale(.97); }
   .mile-btn[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--ivory); box-shadow: 0 10px 22px -12px rgba(43, 37, 34, .65); }
   .mile-btn[aria-pressed="true"] small { color: rgba(250, 248, 245, .62); }
@@ -305,7 +307,7 @@
   .storage { display: grid; gap: clamp(32px, 2rem + 2vw, 64px); }
   .storage > * { min-width: 0; }
   @media (min-width: 960px) { .storage { grid-template-columns: .86fr 1.14fr; align-items: start; } }
-  @media (min-width: 960px) and (min-height: 880px) { .storage-head { position: sticky; top: calc(var(--header-h) + 96px); } }
+  @media (min-width: 960px) and (min-height: 880px) { .storage-head { position: sticky; top: calc(var(--header-offset) + 96px); } }
   .storage-head .lead { margin-top: 16px; }
   .storage-head .eyebrow { margin-bottom: 14px; }
   .can-art { width: min(100%, 320px); height: auto; margin-top: 22px; overflow: visible; }
@@ -327,7 +329,7 @@
   .tip { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: start; padding: clamp(18px, .8rem + .8vw, 24px); border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); }
   .tip h3 { font-size: 1.1rem; }
   .tip p { margin-top: 6px; color: var(--ink-3); font-size: .97rem; }
-  .tip:hover .icon-tile { transform: rotate(-6deg); background: var(--foil); }
+  @media (hover: hover) { .tip:hover .icon-tile { transform: rotate(-6deg); background: var(--foil); } }
   @media (max-width: 959.98px) {
     /* Phones and the 2-up tablet grid: icon sits beside the title and the copy uses the full card width */
     .tip { gap: 10px 14px; align-items: center; align-content: start; padding: 16px 18px; }

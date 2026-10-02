@@ -12,6 +12,9 @@
   const $$ = (sel, scope = d) => Array.from(scope.querySelectorAll(sel));
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
 
+  // iOS Safari only shows :active (pressed) styles once the page listens for touches.
+  d.addEventListener("touchstart", () => {}, { passive: true });
+
   /* ------------------------------------------------------------------
      Header state + scroll progress car + roadmap progress (one rAF loop)
      ------------------------------------------------------------------ */
@@ -483,10 +486,32 @@
     box.focus({ preventScroll: true });
     box.scrollIntoView({ behavior: reduceMotion.matches ? "auto" : "smooth", block: "center" });
   };
-  window.CCA = { validateFields, submitForm, showSuccess, showError, summarize };
+  // Return moves to the next field, like a native form (the fields say enterkeyhint="next");
+  // after the last one the form's normal Enter behaviour applies. Textareas keep their newlines.
+  const TEXT_ENTRY = /^(text|tel|email|number|url|password)$/;
+  const nextField = (scope, from) => {
+    if (!(from instanceof HTMLInputElement) || !TEXT_ENTRY.test(from.type)) return null;
+    const fields = $$("input, select, textarea", scope).filter(
+      (el) => !el.disabled && !el.closest("[hidden], .hp-field") && el.getClientRects().length &&
+        (!(el instanceof HTMLInputElement) || TEXT_ENTRY.test(el.type) || /^(date|time|datetime-local|month)$/.test(el.type))
+    );
+    const i = fields.indexOf(from);
+    return i > -1 ? fields[i + 1] || null : null;
+  };
+
+  window.CCA = { validateFields, submitForm, showSuccess, showError, summarize, nextField };
 
   $$("form[data-form]").forEach((form) => {
     form.setAttribute("novalidate", "");
+    if (form.dataset.form !== "manual") {
+      form.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" || e.isComposing || e.shiftKey || e.defaultPrevented) return;
+        const next = nextField(form, e.target);
+        if (!next) return;
+        e.preventDefault();
+        next.focus();
+      });
+    }
     form.addEventListener("input", (e) => {
       const field = e.target.closest(".field");
       if (field && field.classList.contains("is-invalid")) fieldError(field, "");
@@ -536,6 +561,32 @@
     d.addEventListener("pointerover", handler, { passive: true });
     d.addEventListener("touchstart", handler, { passive: true });
     d.addEventListener("focusin", handler);
+  }
+
+  /* ------------------------------------------------------------------
+     Apple Maps on Apple devices. The HTML links to Google Maps, which works
+     everywhere; iPhone, iPad and Mac open Apple Maps instead. (iPadOS
+     reports itself as "Macintosh".) target/rel stay as authored.
+     ------------------------------------------------------------------ */
+  const isApple = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent) || /^(Mac|iPhone|iPad|iPod)/.test(navigator.platform || "");
+  if (isApple) {
+    let address = "";
+    try {
+      const a = JSON.parse(d.getElementById("business-data").textContent).address || {};
+      const region = [a.addressRegion, a.postalCode].filter(Boolean).join(" ");
+      address = [a.streetAddress, a.addressLocality, region].filter(Boolean).join(", ");
+    } catch { /* no structured data: fall back to each link's own query */ }
+    $$('a[href*="google."][href*="/maps"]').forEach((link) => {
+      let url;
+      try { url = new URL(link.href); } catch { return; }
+      if (!/(^|\.)google\.[a-z.]+$/.test(url.hostname) || !url.pathname.startsWith("/maps")) return;
+      const query = url.searchParams.get("query") || url.searchParams.get("q") || address;
+      if (!query) return;
+      const directions = /\bdirections\b/i.test(link.textContent) || Boolean(link.querySelector('use[href="#i-directions"]'));
+      link.href = directions && address
+        ? `https://maps.apple.com/?daddr=${encodeURIComponent(address)}`
+        : `https://maps.apple.com/?q=${encodeURIComponent(query)}`;
+    });
   }
 
   /* ------------------------------------------------------------------
