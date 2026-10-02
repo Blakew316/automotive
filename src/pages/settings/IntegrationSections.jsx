@@ -6,6 +6,7 @@ import { cloudConfig, cloudSession, signIn, signOut, testConnection, isStaffSess
 import { SHOP_CLOUD } from '../../lib/cloudDefaults';
 import { serviceHistory, toCsv, HISTORY_COLUMNS } from '../../lib/serviceHistory';
 import { isoDate, addDays, number } from '../../lib/format';
+import { PRODUCT } from '../../brand/artwork';
 
 const policySql = (bucket, email = 'you@yourshop.com') => `-- Run once in Supabase → SQL Editor.
 -- Staff are accounts with a flag only the database owner can set.
@@ -87,7 +88,7 @@ export function SharingSection() {
           <div className="flex items-start gap-3 rounded-[10px] border border-line bg-raised p-3">
             <ShieldCheck size={18} className="mt-0.5 shrink-0 text-accent" />
             <div className="text-sm">
-              <div className="font-medium">Connected to the WPI Driveline cloud</div>
+              <div className="font-medium">{`Connected to the ${PRODUCT} cloud`}</div>
               <div className="text-ink-2">
                 Your shop’s own Supabase project with a private-write <code className="font-mono text-xs">{bucket}</code> bucket and customer inbox. Sign in once on each device to publish share links, keep your booking page’s open times current, and receive bookings, approvals and messages.
               </div>
@@ -114,7 +115,7 @@ export function SharingSection() {
           </div>
           {!builtIn && (
             <button className="btn-plain btn-sm mt-2" onClick={() => updateShop({ cloud: { ...SHOP_CLOUD } })}>
-              Use the WPI Driveline cloud
+              {`Use the ${PRODUCT} cloud`}
             </button>
           )}
         </details>

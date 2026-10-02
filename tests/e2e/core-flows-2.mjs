@@ -84,11 +84,23 @@ ok(s.shop.goals.aro === 700, 'ARO target saved');
 await page.getByRole('slider').first().fill('25');
 await page.getByText('Added profit / year').waitFor();
 
-// ---- Website: the public site published alongside the app (details covered in site.mjs).
+// ---- Your website & booking button: the shop's own site (none by default) and the booking link to put on it.
 await page.goto(BASE + '/settings?tab=website');
-const site = await page.getByLabel('Website link').inputValue();
-ok(site === ROOT, 'website link points at the public site');
-ok((await page.getByRole('link', { name: 'Book a service' }).getAttribute('href')) === site + 'appointment.html', 'book-a-service page linked');
+const web = page.locator('#website');
+await web.getByRole('heading', { name: 'Your website & booking button' }).waitFor();
+ok((await web.getByLabel('Website address', { exact: true }).inputValue()) === '', 'no website address by default (never the product site)');
+ok((await web.getByRole('link', { name: 'Open' }).count()) === 0, 'no Open button until the shop has a website');
+const bookLink = await web.getByLabel('Booking link', { exact: true }).inputValue();
+ok(bookLink.startsWith(`${ROOT}app/book?`), `booking link opens the app's booking page (${bookLink.slice(0, 48)}…)`);
+ok((await web.getByRole('button', { name: 'Copy booking link' }).count()) === 1, 'booking link has a copy button');
+ok((await web.getByLabel('Book online button code').inputValue()) === `<a href="${bookLink}">Book online</a>`, 'ready-to-paste Book online button code');
+ok(!(await web.innerText()).match(/published (together )?with|website\/|sync\.mjs|appointment\.html/i), 'no old shop-website wording or repo instructions');
+const addr = web.getByLabel('Website address', { exact: true });
+await addr.fill('www.mainstreetauto.example');
+await addr.press('Enter');
+await web.getByRole('link', { name: 'Open' }).waitFor();
+ok((await web.getByRole('link', { name: 'Open' }).getAttribute('href')) === 'https://www.mainstreetauto.example', 'own website saved with https and opens from Settings');
+ok((await store()).shop.website.url === 'https://www.mainstreetauto.example', 'website address stored on the shop');
 
 // ---- Roles: set a PIN for the advisor, switch to them, check access.
 await page.goto(BASE + '/team?tab=access');

@@ -11,7 +11,8 @@ import { SHOP_CLOUD } from '../lib/cloudDefaults';
 import { PAY_PROVIDERS } from '../lib/messaging';
 import { B2B_PLATFORMS } from '../lib/suppliers';
 import { appointmentsIcs } from '../lib/ics';
-import { bookingLink, websiteLink } from '../lib/booking';
+import { bookingLink, websiteLink, webHref } from '../lib/booking';
+import { PRODUCT } from '../brand/artwork';
 
 const STATUS_STYLE = {
   on: 'border-ok/40 bg-ok/[0.08] text-ok',
@@ -70,7 +71,7 @@ export default function Integrations() {
         {
           icon: Cloud,
           name: 'Shop Cloud',
-          by: cfg?.url === SHOP_CLOUD.url ? 'WPI Driveline cloud · Supabase' : 'Supabase (your own project)',
+          by: cfg?.url === SHOP_CLOUD.url ? `${PRODUCT} cloud · Supabase` : 'Supabase (your own project)',
           body: 'Share links for reports, photos and video; online approvals with e-signature; customer replies; and the online booking inbox.',
           status: signedIn ? ['on', 'Connected'] : cfg ? ['setup', 'Sign in on this device'] : ['setup', 'Not set up'],
           action: <Link to="/settings?tab=cloud" className="btn-secondary btn-sm">{cfg ? 'Manage' : 'Set up'}</Link>,
@@ -85,14 +86,14 @@ export default function Integrations() {
         },
         {
           icon: Globe,
-          name: 'Shop website',
-          by: 'Your public website',
-          body: 'Services, specials, FAQ and contact pages for your shop. Its booking form sends requests to Calendar and its contact and fleet forms to Messages.',
+          name: 'Your website',
+          by: 'Your shop’s own site',
+          body: 'Link your shop’s own website and add a Book online button that opens your booking page.',
           status: site ? ['on', 'Live'] : ['setup', 'Add address'],
           action: (
             <span className="flex gap-1.5">
               {site && (
-                <a href={site} target="_blank" rel="noopener noreferrer" className="btn-secondary btn-sm">
+                <a href={webHref(site)} target="_blank" rel="noopener noreferrer" className="btn-secondary btn-sm">
                   Open <ExtIcon size={12} />
                 </a>
               )}
@@ -250,7 +251,7 @@ export default function Integrations() {
           icon: Smartphone,
           name: 'Mobile app',
           by: 'iPhone · iPad · Android',
-          body: 'Install WPI Driveline on phones and tablets from the browser — it opens full-screen like a native app and works offline. Techs can clock in and snap inspection photos from the bay.',
+          body: `Install ${PRODUCT} on phones and tablets from the browser — it opens full-screen like a native app and works offline. Techs can clock in and snap inspection photos from the bay.`,
           status: ['builtin', 'Install'],
           action: <Link to="/settings?tab=general#install" className="btn-secondary btn-sm">How to</Link>,
         },
@@ -267,16 +268,19 @@ export default function Integrations() {
             <h2 className="section-label mb-2">{g.title}</h2>
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {g.items.map((it) => (
-                <Card key={it.name} className="flex flex-col p-4">
+                <Card key={it.name} className="flex flex-col p-4" role="group" aria-label={it.name}>
                   <div className="flex items-start gap-3">
                     <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-fill/[0.08] text-ink-2">
                       <it.icon size={18} strokeWidth={1.8} />
                     </span>
+                    {/* The by-line runs under the status too, so a long one (the cloud's full name) wraps instead of squeezing. */}
                     <div className="min-w-0 flex-1">
-                      <div className="font-semibold">{it.name}</div>
-                      <div className="truncate text-xs text-ink-3">{it.by}</div>
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0 font-semibold">{it.name}</div>
+                        <span className={`chip shrink-0 ${STATUS_STYLE[it.status[0]]}`}>{it.status[1]}</span>
+                      </div>
+                      <div className="text-xs text-ink-3">{it.by}</div>
                     </div>
-                    <span className={`chip ${STATUS_STYLE[it.status[0]]}`}>{it.status[1]}</span>
                   </div>
                   <p className="mt-3 flex-1 text-sm text-ink-2">{it.body}</p>
                   <div className="mt-3 flex justify-end">{it.action}</div>

@@ -1,25 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://blakew316.github.io/automotive/about.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/appointment.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/brands.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/careers.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/contact.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/faq.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/fleet.html</loc></url>
   <url><loc>https://blakew316.github.io/automotive/</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/resources.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/brakes.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/diagnostics.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/electrical-battery.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/engine-repair.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/heating-ac.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/inspections.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/oil-change.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/small-engine-repair.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/suspension-steering.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/tires-alignment.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/services/transmission.html</loc></url>
-  <url><loc>https://blakew316.github.io/automotive/specials.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/about.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/demo.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/faq.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/ai.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/booking.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/customers.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/diagnosis.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/fleet.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/inspections.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/messaging.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/parts.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/payments.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/repair-orders.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/reports.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/features/workflow.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/mobile.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/security.html</loc></url>
+  <url><loc>https://blakew316.github.io/automotive/works-with.html</loc></url>
 </urlset>

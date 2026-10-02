@@ -8,6 +8,7 @@ import { accountSummary, accountPayments, termsLabel } from '../lib/accounts';
 import { portalLink } from '../lib/fleetPortal';
 import { payLink } from '../lib/messaging';
 import { money, fullName, vehicleName, date, dateShort, phone } from '../lib/format';
+import { PoweredBy } from '../brand/Logo';
 
 export default function Statement() {
   const { id } = useParams();
@@ -162,6 +163,7 @@ export default function Statement() {
           {portalUrl && <p>Invoices, payments and maintenance schedules for every unit: {portalUrl}</p>}
           {c.account?.invoiceNote && <p>{c.account.invoiceNote}</p>}
           <p>Questions about this statement? Call {shop.phone}.</p>
+          <PoweredBy name={shop.name} className="pt-2" />
         </footer>
       </article>
     </div>

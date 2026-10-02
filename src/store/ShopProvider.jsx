@@ -19,6 +19,7 @@ import { diffStates, applyToDraft } from '../lib/sync/records';
 import { useShopSync } from '../lib/sync/useShopSync';
 import { useUI } from './hooks';
 import { Spinner } from '../components/ui';
+import { PRODUCT } from '../brand/artwork';
 
 // State is replaced, never mutated in place, and unchanged records keep their identity between
 // versions — that is what lets saving and syncing touch only what changed.
@@ -941,7 +942,7 @@ function ShopStore({ boot, children }) {
         });
       },
       importData: (data) => {
-        if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not a WPI Driveline backup file');
+        if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error(`Not a ${PRODUCT} backup file`);
         commit(migrate(data));
       },
     };

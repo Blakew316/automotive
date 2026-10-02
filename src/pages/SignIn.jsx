@@ -6,7 +6,8 @@ import { LogIn, KeyRound, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useShop, useSync, useUI } from '../store/hooks';
 import { Spinner, Field } from '../components/ui';
 import { Logo } from '../brand/Logo';
-import { otherName } from '../brand/artwork';
+import { PRODUCT, otherName } from '../brand/artwork';
+import { usePageTitle } from '../brand/title';
 import TwoStepSetup from '../components/TwoStepSetup';
 import { signIn, signOut, changePassword, isStaffSession, sessionClaims, needsCode, twoStepFactors, verifyCode } from '../lib/cloudShare';
 import { syncApi, mfaOk } from '../lib/sync/api';
@@ -30,6 +31,7 @@ export default function SignIn() {
   const [pending, setPending] = useState(waiting ? sync.session : null);
   const [factorId, setFactorId] = useState('');
   const [code, setCode] = useState('');
+  usePageTitle(`Sign in — ${PRODUCT}`);
 
   useEffect(() => {
     if (step !== 'code' || !pending || factorId) return;

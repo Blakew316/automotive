@@ -5,7 +5,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { CreditCard, Lock, CheckCircle2, Link2Off, Phone, FlaskConical } from 'lucide-react';
-import { ShopBrand } from '../brand/Logo';
+import { PoweredBy, ShopBrand } from '../brand/Logo';
+import { titleName, usePageTitle } from '../brand/title';
 import { EmptyState, Spinner } from '../components/ui';
 import { payFunction } from '../lib/payments';
 import { SHOP_CLOUD } from '../lib/cloudDefaults';
@@ -22,6 +23,7 @@ export default function Pay() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(valid ? '' : 'This payment link is incomplete. Please contact the shop.');
   const [busy, setBusy] = useState(false);
+  usePageTitle(data ? `Pay ${titleName(data.shop)}` : '');
 
   useEffect(() => {
     if (!valid) return undefined;
@@ -113,6 +115,7 @@ export default function Pay() {
             <Phone size={16} /> Questions? Call {fmtPhone(data.phone)}
           </a>
         )}
+        <PoweredBy name={data.shop} className="pt-4" />
       </main>
     </div>
   );

@@ -1,15 +1,26 @@
-// The WPI Driveline logo, from the brand's stacked artwork (07-wpi-driveline-stacked.svg): outlined
-// glyphs, so it renders the same everywhere with no font. One source for the app's <Logo>, the
-// website's logo files and every icon (scripts/brand-assets.mjs).
+// The WPI Driveline Shop Management System logo and name, from the brand's stacked artwork
+// (07-wpi-driveline-stacked.svg): outlined glyphs, so it renders the same everywhere with no font.
+// One source for the app's <Logo>, the website's logo files and every icon (scripts/brand-assets.mjs).
 //
 // Coordinates are the artwork's own, rounded to 0.01. "WPI" spans x 0–491 above two bars (blue, then
 // green); DRIVELINE and the tagline are centered under it.
 
 export const COLORS = { navy: '#0F2B4C', blue: '#1F7AE0', green: '#2DB36A', slate: '#6B7A90' };
 
-export const BRAND = 'WPI Driveline';
-/** The shop's name when it isn't the brand's own — for showing next to the logo without repeating it. */
-export const otherName = (name) => (name && name.trim().toLowerCase() !== BRAND.toLowerCase() ? name.trim() : '');
+/** The product's name — the one source for every title, label and sentence that names it. */
+export const PRODUCT = 'WPI Driveline Shop Management System';
+/** The short form, only where space is tight (Home Screen label, short_name). */
+export const SHORT = 'WPI Driveline';
+/** An alias of SHORT, kept so existing imports still work. */
+export const BRAND = SHORT;
+
+/** True when a shop's name is blank or is the product's own (short or full, any case). */
+export const isBrandName = (name) => {
+  const n = String(name ?? '').trim().toLowerCase();
+  return !n || n === SHORT.toLowerCase() || n === PRODUCT.toLowerCase();
+};
+/** The shop's name when it isn't the product's own, otherwise '' — so the logo is never repeated as text. */
+export const otherName = (name) => (isBrandName(name) ? '' : String(name).trim());
 
 /** "WPI": baseline at y 0, cap height 182. */
 export const WPI = { x: -5.74, y: 0, d: 'M54.32 0H103.27L124.51 -83.98C127.93 -97.78 130 -112.67 132.2 -127.81C134.52 -112.43 136.84 -97.41 140.26 -83.98L161.5 0H210.33L258.91 -181.88H211.18L193.24 -101.44C189.58 -84.59 186.65 -64.09 183.84 -44.8C180.66 -64.09 177.49 -84.59 173.46 -101.44L154.3 -181.88H110.47L91.19 -101.44C87.16 -84.35 83.98 -63.72 80.81 -44.31C77.88 -63.72 74.95 -84.35 71.41 -101.44L53.47 -181.88H5.74ZM284.81 0H327.9V-56.76H358.05C399.8 -56.76 425.56 -81.54 425.56 -119.02C425.56 -156.25 400.29 -181.88 359.27 -181.88H284.81ZM327.9 -90.82V-146.97H350.12C370.38 -146.97 380.88 -136.11 380.88 -119.02C380.88 -102.17 370.38 -90.82 350.24 -90.82ZM496.86 -181.88H453.77V0H496.86Z' };
@@ -29,7 +40,7 @@ export const TAGLINE = { x: -70.73, y: 218.93, d: 'M9.74 0.37C14.87 0.37 17.83 -
 export const VIEWBOX = { full: [-81, -190, 653, 418], lockup: [-81, -190, 653, 361], mark: [-8, -190, 507, 250] };
 
 /** A standalone SVG document for one version. ink: the navy parts; sub: the tagline. */
-export function logoSvg(variant = 'full', { ink = COLORS.navy, sub = COLORS.slate, title = 'WPI Driveline' } = {}) {
+export function logoSvg(variant = 'full', { ink = COLORS.navy, sub = COLORS.slate, title = PRODUCT } = {}) {
   const [x, y, w, h] = VIEWBOX[variant];
   const path = (p, fill) => `<path transform="translate(${p.x} ${p.y})" fill="${fill}" d="${p.d}"/>`;
   const bar = ([bx, by, bw, bh], fill) => `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" fill="${fill}"/>`;

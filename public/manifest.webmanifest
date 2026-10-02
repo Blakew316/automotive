@@ -1,7 +1,7 @@
 {
-  "name": "WPI Driveline",
-  "short_name": "WPI Shop",
-  "description": "WPI Driveline shop management system — repair orders, workflow, inspections, time clock, parts and customer messaging.",
+  "name": "WPI Driveline Shop Management System",
+  "short_name": "WPI Driveline",
+  "description": "WPI Driveline Shop Management System — repair orders, workflow, inspections, time clock, parts and customer messaging.",
   "id": "./",
   "start_url": "./",
   "scope": "./",

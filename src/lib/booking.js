@@ -33,25 +33,24 @@ export function bookingConfig(state, { includeBusy = false } = {}) {
   };
 }
 
-/**
- * The shop's public website (website/ in this repo): its own address if one is set, otherwise the
- * copy published with the app — the app is served from <site>/app/, so the site is one level up.
- */
+/** The shop's own website, as entered in Settings → Website & booking button, or '' when none is set. */
 export function websiteLink(state) {
-  return state.shop.website?.url?.trim() || defaultWebsite();
+  return state.shop.website?.url?.trim() || '';
 }
 
-export function defaultWebsite() {
+/** An address as a link: one typed without a scheme ("www.myshop.com") opens as https. */
+export const webHref = (url) => (!url || /^[a-z][a-z\d+.-]*:\/\//i.test(url) ? url : `https://${url}`);
+
+/**
+ * The product's own site (the WPI Driveline Shop Management System marketing site), where the app is
+ * published with it: the app is served from <site>/app/, so the site is one level up. '' when the app
+ * runs on its own (dev server, another host). Used for the Powered by link, the sample-shop banner and
+ * About links — never as a shop's website.
+ */
+export function productSite() {
   if (typeof window === 'undefined') return '';
   const base = import.meta.env?.BASE_URL || '/';
   return /\/app\/$/.test(base) ? `${window.location.origin}${base.replace(/app\/$/, '')}` : '';
-}
-
-/** A page on the public website, e.g. websitePage(state, 'appointment.html'). */
-export function websitePage(state, page) {
-  const site = websiteLink(state);
-  if (!site) return '';
-  return new URL(page, site.endsWith('/') || /\.html?$/.test(site) ? site : `${site}/`).href;
 }
 
 /** Scheduled appointment intervals for the booking window (times only — no names). */

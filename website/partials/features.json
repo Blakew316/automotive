@@ -1,0 +1,486 @@
+{
+  "_readme": "The marketing site's information architecture. sync.mjs builds the mega menu, More sheet, footer, breadcrumbs, related cards, home feature cards, the features.html directory and finder data, and the demo form's interest cards from this file. check.mjs verifies every features/<slug>.html has an entry (and vice versa), short <= 24 and line <= 40 characters, and that related, stage and pain slugs exist. Feature order is shop-day order.",
+  "stages": [
+    {
+      "id": "checkin",
+      "label": "Check-in",
+      "chapter": "ch-checkin",
+      "feature": "booking"
+    },
+    {
+      "id": "approve",
+      "label": "Inspect & approve",
+      "chapter": "ch-approve",
+      "feature": "inspections"
+    },
+    {
+      "id": "bay",
+      "label": "In the bay",
+      "chapter": "ch-work",
+      "feature": "workflow"
+    },
+    {
+      "id": "pay",
+      "label": "Payment",
+      "chapter": "ch-pay",
+      "feature": "payments"
+    },
+    {
+      "id": "followup",
+      "label": "Follow-up",
+      "chapter": "ch-followup",
+      "feature": "customers"
+    }
+  ],
+  "groups": [
+    {
+      "id": "before",
+      "title": "Before the car arrives",
+      "icon": "i-calendar-check",
+      "line": "Booking, check-in, messages and follow-ups."
+    },
+    {
+      "id": "bay",
+      "title": "In the bay",
+      "icon": "i-wrench",
+      "line": "The board, inspections, diagnosis and parts."
+    },
+    {
+      "id": "counter",
+      "title": "At the counter",
+      "icon": "i-document",
+      "line": "Estimates, invoices, payments and fleet accounts."
+    },
+    {
+      "id": "desk",
+      "title": "Behind the desk",
+      "icon": "i-chart",
+      "line": "Reports, payroll, QuickBooks and the AI assistant."
+    }
+  ],
+  "everywhere": {
+    "id": "everywhere",
+    "title": "Everywhere",
+    "icon": "i-device-tablet",
+    "line": "The app itself, your data and the accounts it works with.",
+    "items": [
+      {
+        "title": "iPhone & iPad",
+        "href": "mobile.html",
+        "icon": "i-device-phone",
+        "blurb": "Installs from the browser on iPhone, iPad, Android, Mac and PC, opens full screen and keeps working when the internet drops."
+      },
+      {
+        "title": "Security & your data",
+        "href": "security.html",
+        "icon": "i-shield",
+        "blurb": "Roles decide what each person can open. With Shop Cloud: two-step sign-in, change history and nightly backups."
+      },
+      {
+        "title": "Integrations",
+        "href": "works-with.html",
+        "icon": "i-link",
+        "blurb": "What Shop Cloud runs, and what each outside account turns on: Stripe, Twilio, Resend, QuickBooks Online, Smartcar and Anthropic."
+      }
+    ]
+  },
+  "roles": [
+    {
+      "id": "all",
+      "label": "All"
+    },
+    {
+      "id": "owner",
+      "label": "Owner"
+    },
+    {
+      "id": "manager",
+      "label": "Shop manager"
+    },
+    {
+      "id": "advisor",
+      "label": "Service advisor"
+    },
+    {
+      "id": "tech",
+      "label": "Technician"
+    }
+  ],
+  "features": [
+    {
+      "slug": "booking",
+      "title": "Booking, check-in & front desk",
+      "short": "Booking & check-in",
+      "line": "Real open times, key-drop check-in",
+      "blurb": "Only real open times. A key-drop check-in opens the RO.",
+      "icon": "i-calendar-check",
+      "group": "before",
+      "appRoute": "calendar",
+      "demoLabel": "Open the calendar in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor"
+      ],
+      "needs": "Shop Cloud for real open times, the booking inbox and remote check-in",
+      "related": [
+        "messaging",
+        "workflow",
+        "fleet"
+      ]
+    },
+    {
+      "slug": "messaging",
+      "title": "Texting, calls & email",
+      "short": "Texting, calls & email",
+      "line": "One thread per customer",
+      "blurb": "One thread per customer, from your own number.",
+      "icon": "i-chat",
+      "group": "before",
+      "appRoute": "messages",
+      "demoLabel": "Open messages in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor"
+      ],
+      "needs": "Shop Cloud and your Twilio number; Resend for email",
+      "related": [
+        "inspections",
+        "booking",
+        "ai"
+      ]
+    },
+    {
+      "slug": "customers",
+      "title": "Customers & follow-ups",
+      "short": "Customers & follow-ups",
+      "line": "Oil-service and declined-work lists",
+      "blurb": "Oil-service reminders, declined work and win-backs from your own history.",
+      "icon": "i-users",
+      "group": "before",
+      "appRoute": "marketing",
+      "demoLabel": "Open follow-ups in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor"
+      ],
+      "needs": "Optional: Shop Cloud with Twilio, Resend or Smartcar",
+      "related": [
+        "messaging",
+        "fleet",
+        "ai"
+      ]
+    },
+    {
+      "slug": "workflow",
+      "title": "Workflow board, Today & tech clock",
+      "short": "Workflow & tech clock",
+      "line": "Every car by stage, one-tap timers",
+      "blurb": "Every car by stage. One-tap job timers.",
+      "icon": "i-board",
+      "group": "bay",
+      "appRoute": "workflow",
+      "demoLabel": "Open the board in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor",
+        "tech"
+      ],
+      "needs": "Nothing extra (Shop Cloud to share the board)",
+      "related": [
+        "inspections",
+        "parts",
+        "reports"
+      ]
+    },
+    {
+      "slug": "inspections",
+      "title": "Inspections & approvals",
+      "short": "Inspections & approvals",
+      "line": "Photos, ratings and a yes by phone",
+      "blurb": "37 points, photos and a yes from their phone.",
+      "icon": "i-inspection",
+      "group": "bay",
+      "appRoute": "orders",
+      "demoLabel": "Open repair orders in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor",
+        "tech"
+      ],
+      "needs": "Shop Cloud for share links, online approvals and live status",
+      "related": [
+        "messaging",
+        "repair-orders",
+        "payments"
+      ]
+    },
+    {
+      "slug": "diagnosis",
+      "title": "Auto Diagnosis & vehicle data",
+      "short": "Auto Diagnosis",
+      "line": "Recalls, owner reports, your fixes",
+      "blurb": "Recalls, owner reports and your own fixes, ranked. VINs decode on the device.",
+      "icon": "i-diagnostics",
+      "group": "bay",
+      "appRoute": "diagnose",
+      "demoLabel": "Open Auto Diagnosis in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor",
+        "tech"
+      ],
+      "needs": "Internet for NHTSA lookups; Shop Cloud and your Anthropic key for the AI test plan",
+      "related": [
+        "workflow",
+        "parts",
+        "ai"
+      ],
+      "featured": true
+    },
+    {
+      "slug": "parts",
+      "title": "Parts, inventory & tires",
+      "short": "Parts, inventory & tires",
+      "line": "Stock, POs, scanning, tire DOT log",
+      "blurb": "On the shelf, on the job, on order. Scan it.",
+      "icon": "i-barcode",
+      "group": "bay",
+      "appRoute": "parts",
+      "demoLabel": "Open parts in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor",
+        "tech"
+      ],
+      "needs": "Nothing extra",
+      "related": [
+        "repair-orders",
+        "diagnosis",
+        "reports"
+      ]
+    },
+    {
+      "slug": "repair-orders",
+      "title": "Estimates, ROs & invoices",
+      "short": "Estimates & ROs",
+      "line": "One record, estimate to receipt",
+      "blurb": "One record from estimate to paid receipt, with real PDFs.",
+      "icon": "i-document",
+      "group": "counter",
+      "appRoute": "orders",
+      "demoLabel": "Open repair orders in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor",
+        "tech"
+      ],
+      "needs": "Nothing extra",
+      "related": [
+        "inspections",
+        "payments",
+        "parts"
+      ]
+    },
+    {
+      "slug": "payments",
+      "title": "Payments & card readers",
+      "short": "Payments & card readers",
+      "line": "Exact-balance pay links and readers",
+      "blurb": "Pay links for the exact balance. Readers that know the amount.",
+      "icon": "i-card-reader",
+      "group": "counter",
+      "appRoute": "orders",
+      "demoLabel": "Open repair orders in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor"
+      ],
+      "needs": "Shop Cloud and your Stripe account",
+      "related": [
+        "fleet",
+        "reports",
+        "inspections"
+      ]
+    },
+    {
+      "slug": "fleet",
+      "title": "Fleet & business accounts",
+      "short": "Fleet accounts",
+      "line": "Terms, PM plans, statements",
+      "blurb": "Terms, PM plans, statements and a portal.",
+      "icon": "i-truck",
+      "group": "counter",
+      "appRoute": "accounts",
+      "demoLabel": "Open accounts in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor"
+      ],
+      "needs": "Shop Cloud for the fleet portal",
+      "related": [
+        "payments",
+        "reports",
+        "customers"
+      ]
+    },
+    {
+      "slug": "reports",
+      "title": "Reports, payroll & QuickBooks",
+      "short": "Reports & QuickBooks",
+      "line": "Goals, payroll export, daily journal",
+      "blurb": "Your numbers, goals, payroll exports and a daily QuickBooks entry.",
+      "icon": "i-chart",
+      "group": "desk",
+      "appRoute": "reports",
+      "demoLabel": "Open reports in the sample shop",
+      "roles": [
+        "owner",
+        "manager"
+      ],
+      "needs": "Shop Cloud and your own Intuit developer app for QuickBooks; Resend for the daily summary",
+      "related": [
+        "payments",
+        "workflow",
+        "fleet"
+      ],
+      "note": "Accounting, QuickBooks setup and payroll are owner-only."
+    },
+    {
+      "slug": "ai",
+      "title": "AI assistant",
+      "short": "AI assistant",
+      "line": "Drafts your team reviews first",
+      "blurb": "First drafts from Claude. Your team has the last word.",
+      "icon": "i-sparkle",
+      "group": "desk",
+      "appRoute": "orders",
+      "demoLabel": "Open repair orders in the sample shop",
+      "roles": [
+        "owner",
+        "manager",
+        "advisor",
+        "tech"
+      ],
+      "needs": "Shop Cloud and your Anthropic API key",
+      "related": [
+        "messaging",
+        "diagnosis",
+        "repair-orders"
+      ]
+    }
+  ],
+  "pains": [
+    {
+      "slug": "lost-cars",
+      "label": "Cars get lost between bays",
+      "features": [
+        "workflow"
+      ]
+    },
+    {
+      "slug": "approval-callbacks",
+      "label": "Estimates wait on callbacks",
+      "features": [
+        "inspections",
+        "messaging"
+      ]
+    },
+    {
+      "slug": "status-calls",
+      "label": "Customers keep calling for status",
+      "features": [
+        "inspections",
+        "messaging"
+      ]
+    },
+    {
+      "slug": "phone-tag",
+      "label": "Booking by phone tag",
+      "features": [
+        "booking"
+      ]
+    },
+    {
+      "slug": "counter-line",
+      "label": "A line at the counter at 8 AM",
+      "features": [
+        "booking"
+      ]
+    },
+    {
+      "slug": "paper-hours",
+      "label": "Tech hours live on paper",
+      "features": [
+        "workflow",
+        "reports"
+      ]
+    },
+    {
+      "slug": "pricing",
+      "label": "Every advisor prices it differently",
+      "features": [
+        "repair-orders"
+      ]
+    },
+    {
+      "slug": "parts-orders",
+      "label": "Parts orders slip",
+      "features": [
+        "parts"
+      ]
+    },
+    {
+      "slug": "card-payments",
+      "label": "Card payments need a second system",
+      "features": [
+        "payments"
+      ]
+    },
+    {
+      "slug": "month-end",
+      "label": "Month-end in QuickBooks takes forever",
+      "features": [
+        "reports"
+      ]
+    },
+    {
+      "slug": "no-return",
+      "label": "Customers don't come back",
+      "features": [
+        "customers"
+      ]
+    },
+    {
+      "slug": "fleet-billing",
+      "label": "Fleet invoices and statements by hand",
+      "features": [
+        "fleet"
+      ]
+    },
+    {
+      "slug": "check-engine",
+      "label": "Check-engine jobs eat the day",
+      "features": [
+        "diagnosis"
+      ]
+    },
+    {
+      "slug": "writing",
+      "label": "Writing texts and estimates takes ages",
+      "features": [
+        "ai",
+        "messaging"
+      ]
+    }
+  ]
+}

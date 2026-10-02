@@ -47,7 +47,7 @@ const ACTIONS = [
   { label: 'Add expense', to: '/accounting?tab=expenses', icon: Receipt, keywords: 'bill cost accounting' },
   { label: 'Clock in / start a job', to: '/tech', icon: Timer, keywords: 'time clock punch' },
   { label: 'Online booking settings', to: '/settings?tab=booking', icon: Globe, keywords: 'schedule book online' },
-  { label: 'Shop website', to: '/settings?tab=website', icon: Globe, keywords: 'website site public google contact' },
+  { label: 'Website & booking button', to: '/settings?tab=website', icon: Globe, keywords: 'website site book online button link embed google' },
   { label: 'Tire registration log', to: '/parts?tab=tires', icon: Package, keywords: 'tires dot tin registration recall' },
   { label: 'Goals & growth planner', to: '/reports?tab=goals', icon: ChartColumn, keywords: 'targets scorecard roi calculator' },
   { label: 'Marketing automations', to: '/marketing', icon: Megaphone, keywords: 'reminders follow up review request automation' },

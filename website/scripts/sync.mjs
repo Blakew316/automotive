@@ -1,149 +1,358 @@
 #!/usr/bin/env node
 /**
- * sync.mjs: keeps every standalone page in step with the shared partials
- * and the shop details in business.json.
+ * sync.mjs: keeps every standalone page in step with the shared partials, business.json and
+ * partials/features.json.
  *
  * Each page is a complete HTML document. Shared regions are marked like:
  *   <!-- @partial header --> ...generated... <!-- @end header -->
- * and are regenerated from partials/<name>.html. Shop details inside page
- * content are marked with data-biz="key" (text) or data-biz-href="key" (links).
+ * and are regenerated on every run, from partials/<name>.html or from a generator below
+ * (jsonld, breadcrumbs, related, featuresCards, featuresDirectory, finderChips, finderData,
+ * featuresInterests, contact-email). An unknown partial name throws.
+ *
+ * Tokens such as {{root}}, {{name}}, {{appLink}} or {{signInLink}} are filled in the partials and
+ * in page content alike. An unknown token is left in place, and check.mjs fails on it.
  *
  * Usage:
- *   node scripts/sync.mjs              # every page + sitemap.xml/robots.txt
- *   node scripts/sync.mjs about.html   # only the pages you name
+ *   node scripts/sync.mjs                    # every page + sitemap.xml/robots.txt
+ *   node scripts/sync.mjs about.html         # only the pages you name
  */
 import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+// Folders that hold pages. A new website subfolder must be added here and in check.mjs.
+const PAGE_DIRS = ["", "features"];
+
 const biz = JSON.parse(readFileSync(join(ROOT, "business.json"), "utf8"));
-const services = JSON.parse(readFileSync(join(ROOT, "partials/services.json"), "utf8"));
+const ia = JSON.parse(readFileSync(join(ROOT, "partials/features.json"), "utf8"));
 const partial = (name) => readFileSync(join(ROOT, "partials", `${name}.html`), "utf8").trimEnd();
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const icon = (id, cls = "icon") => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
+const arrow = icon("i-arrow-right");
 
-/* ---------- hours ---------- */
-const DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
-const DAY_SHORT = { Mo: "Mon", Tu: "Tue", We: "Wed", Th: "Thu", Fr: "Fri", Sa: "Sat", Su: "Sun" };
-const DAY_LONG = { Mo: "Monday", Tu: "Tuesday", We: "Wednesday", Th: "Thursday", Fr: "Friday", Sa: "Saturday", Su: "Sunday" };
-const fmtTime = (hhmm) => {
-  const [h, m] = hhmm.split(":").map(Number);
-  const ampm = h >= 12 ? "PM" : "AM";
-  const h12 = h % 12 === 0 ? 12 : h % 12;
-  return `${h12}:${String(m).padStart(2, "0")}\u00a0${ampm}`;
-};
-const dayHours = Object.fromEntries(DAYS.map((d) => [d, null]));
-for (const g of biz.hours) for (const d of g.days) dayHours[d] = { opens: g.opens, closes: g.closes };
-const dayLabel = (d) => (dayHours[d] ? `${fmtTime(dayHours[d].opens)} – ${fmtTime(dayHours[d].closes)}` : "Closed");
-const groups = [];
-for (const d of DAYS) {
-  const label = dayLabel(d);
-  const last = groups[groups.length - 1];
-  if (last && last.label === label) last.days.push(d);
-  else groups.push({ label, days: [d] });
-}
-const groupName = (days) => (days.length === 1 ? DAY_SHORT[days[0]] : `${DAY_SHORT[days[0]]} – ${DAY_SHORT[days.at(-1)]}`);
-const hoursList = groups
-  .map((g) => `        <li data-days="${g.days.join(" ")}"><span>${groupName(g.days)}</span><span>${g.label}</span></li>`)
-  .join("\n");
-const hoursRows = DAYS.map(
-  (d) => `      <tr data-day="${d}"><th scope="row">${DAY_LONG[d]}</th><td>${dayLabel(d)}</td></tr>`
-).join("\n");
-const hoursShort = groups
-  .filter((g) => g.label !== "Closed")
-  .map((g) => `${groupName(g.days).replace(" – ", "–")} ${g.label.replace(" – ", "–")}`)
-  .join(" · ");
-
-/* ---------- generated lists ---------- */
-const svcHref = (s) => `{{root}}services/${s.slug}.html`;
-const servicesMega = services
-  .map(
-    (s) =>
-      `              <a class="mega-item" href="${svcHref(s)}"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#${s.icon}"/></svg></span><span class="mega-text"><strong>${esc(s.title)}</strong><small>${esc(s.blurb)}</small></span></a>`
-  )
-  .join("\n");
-const servicesSheet = services
-  .map((s) => `      <li><a href="${svcHref(s)}"><svg class="icon" aria-hidden="true"><use href="#${s.icon}"/></svg>${esc(s.title)}<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>`)
-  .join("\n");
-const servicesFooter = services.map((s) => `        <li><a href="${svcHref(s)}">${esc(s.title)}</a></li>`).join("\n");
-
-const cityLine = `${biz.city}, ${biz.region} ${biz.postalCode}`.trim();
 const site = biz.siteUrl.replace(/\/$/, "");
+const basePath = (biz.basePath || "/").replace(/\/?$/, "/");
+const appPath = (biz.appPath || "app/").replace(/^\//, "").replace(/\/?$/, "/");
+const signInPath = (biz.signInPath || "app/signin").replace(/^\//, "");
+const features = ia.features;
+const bySlug = Object.fromEntries(features.map((f) => [f.slug, f]));
+const featureHref = (slug) => `{{root}}features/${slug}.html`;
 
-const jsonld = () => {
+/* ---------- generated lists (header mega menu, More sheet, footer) ---------- */
+const featuresMega = ia.groups
+  .map((g) => {
+    const items = features
+      .filter((f) => f.group === g.id)
+      .map(
+        (f) =>
+          `                <a class="mega-item" href="${featureHref(f.slug)}"><span class="icon-tile icon-tile-sm">${icon(f.icon)}</span><span class="mega-text"><strong>${esc(f.short)}</strong><small>${esc(f.line)}</small></span></a>`
+      )
+      .join("\n");
+    return `              <div class="mega-col">\n                <p class="mega-label">${esc(g.title)}</p>\n${items}\n              </div>`;
+  })
+  .join("\n");
+const featuresSheet = features
+  .map((f) => `      <li><a href="${featureHref(f.slug)}">${icon(f.icon)}${esc(f.short)}${icon("i-chevron-right", "icon chev")}</a></li>`)
+  .join("\n");
+const featuresFooter = features.map((f) => `        <li><a href="${featureHref(f.slug)}">${esc(f.short)}</a></li>`).join("\n");
+
+const motionToggle =
+  `<button class="motion-toggle" type="button" aria-pressed="false">${icon("i-pause", "icon mt-pause")}${icon("i-play", "icon mt-play")}<span class="motion-toggle-label">Pause animations</span></button>`;
+
+// Footer "Talk to us": a mailto and/or tel link when business.json has them, else the demo form.
+const contactRow = () => {
+  const rows = [];
+  if (biz.email) rows.push(`<a class="footer-contact" href="mailto:${esc(biz.email)}">${icon("i-mail")}<span>${esc(biz.email)}</span></a>`);
+  if (biz.phone && biz.phoneE164) rows.push(`<a class="footer-contact" href="tel:${esc(biz.phoneE164)}">${icon("i-phone")}<span>${esc(biz.phone)}</span></a>`);
+  if (!rows.length) rows.push(`<a class="footer-contact" href="{{root}}demo.html?topic=question">${icon("i-chat")}<span>Use the demo form</span></a>`);
+  return `      <p class="footer-talk">\n${rows.map((r) => `        ${r}`).join("\n")}\n      </p>`;
+};
+
+// The header lockup: logo.svg inlined (so it paints with the page), decorative, without its <title>.
+const logoInline = () => {
+  const svg = readFileSync(join(ROOT, "assets/img/logo.svg"), "utf8")
+    .replace(/<\?xml[^>]*\?>\s*/g, "")
+    .replace(/<!--[\s\S]*?-->/g, "")
+    .replace(/<title>[\s\S]*?<\/title>/g, "")
+    .trim();
+  return svg.replace(/^<svg\b([^>]*)>/, (m, attrs) => {
+    const viewBox = (attrs.match(/\sviewBox="([^"]+)"/) || [])[1] || "-81 -190 653 361";
+    const [, , w, h] = viewBox.split(/\s+/).map(Number);
+    const height = 46;
+    const width = Math.round((w / h) * height);
+    return `<svg class="brand-logo" viewBox="${viewBox}" width="${width}" height="${height}" aria-hidden="true" focusable="false">`;
+  });
+};
+
+// "Shop Cloud" in generated copy always links its definition.
+const cloudLink = (text) => esc(text).replace(/Shop Cloud/g, `<a href="{{root}}works-with.html#shop-cloud">Shop Cloud</a>`);
+const needsLine = (needs) => {
+  const optional = /^Optional:\s*/i.test(needs);
+  const body = needs.replace(/^Optional:\s*/i, "");
+  const text = /^Nothing extra/i.test(body) ? body.charAt(0).toLowerCase() + body.slice(1) : body;
+  return `<strong>${optional ? "Optional:" : "Needs:"}</strong> ${cloudLink(text)}`;
+};
+
+/* ---------- generated partials (built from features.json and page context) ---------- */
+const featureCard = (f, indent) =>
+  [
+    `${indent}<a class="card card-link feature-card" href="${featureHref(f.slug)}">`,
+    `${indent}  <span class="icon-tile">${icon(f.icon)}</span>`,
+    `${indent}  <h3>${esc(f.title)}</h3>`,
+    `${indent}  <p>${esc(f.blurb)}</p>`,
+    `${indent}  <span class="link-arrow">Learn more ${arrow}</span>`,
+    `${indent}</a>`,
+  ].join("\n");
+
+const featuresCards = () =>
+  [
+    `<div class="grid grid-3" data-reveal-stagger>`,
+    ...features.map((f) => featureCard(f, "  ")),
+    `  <a class="card card-link feature-card card-soft" href="{{root}}features.html">`,
+    `    <span class="icon-tile">${icon("i-grid")}</span>`,
+    `    <h3>See every feature</h3>`,
+    `    <p>All twelve parts in the order a car meets them, with what each one needs.</p>`,
+    `    <span class="link-arrow">All features ${arrow}</span>`,
+    `  </a>`,
+    `</div>`,
+  ].join("\n");
+
+const featureSlugOf = (page) => (page.match(/^features\/([\w-]+)\.html$/) || [])[1];
+
+const breadcrumbs = (page) => {
+  const f = bySlug[featureSlugOf(page)];
+  if (!f) throw new Error(`${page}: the breadcrumbs partial is only for features/<slug>.html pages listed in features.json`);
   const data = {
     "@context": "https://schema.org",
-    "@type": "AutoRepair",
-    name: biz.name,
-    description: "Auto and small engine repair: maintenance, diagnostics, brakes, engines, A/C, tires and more.",
-    url: site + "/",
-    image: site + "/assets/img/og-image.png",
-    logo: site + "/assets/img/icon-512.png",
-    telephone: biz.phoneE164,
-    email: biz.email,
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: biz.street,
-      addressLocality: biz.city,
-      addressRegion: biz.region,
-      postalCode: biz.postalCode,
-      addressCountry: biz.country,
-    },
-    openingHoursSpecification: biz.hours.map((g) => ({
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: g.days.map((d) => DAY_LONG[d]),
-      opens: g.opens,
-      closes: g.closes,
-    })),
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: `${site}/` },
+      { "@type": "ListItem", position: 2, name: "Features", item: `${site}/features.html` },
+      { "@type": "ListItem", position: 3, name: f.title, item: `${site}/features/${f.slug}.html` },
+    ],
   };
-  if (biz.timeZone) data.additionalProperty = { "@type": "PropertyValue", name: "timeZone", value: biz.timeZone };
+  return [
+    `<nav class="breadcrumb" aria-label="Breadcrumb">`,
+    `  <ol>`,
+    `    <li><a href="{{root}}index.html">Home</a></li>`,
+    `    <li><a href="{{root}}features.html">Features</a></li>`,
+    `    <li><span aria-current="page">${esc(f.title)}</span></li>`,
+    `  </ol>`,
+    `</nav>`,
+    `<script type="application/ld+json">${JSON.stringify(data)}</script>`,
+  ].join("\n");
+};
+
+const related = (page) => {
+  const f = bySlug[featureSlugOf(page)];
+  if (!f) throw new Error(`${page}: the related partial is only for features/<slug>.html pages listed in features.json`);
+  return [`<div class="grid grid-3 related" data-related data-reveal-stagger>`, ...f.related.map((s) => featureCard(bySlug[s], "  ")), `</div>`].join("\n");
+};
+
+const roleAttr = (roles) => (roles || []).join(" ");
+const dirCard = (f) => {
+  const cls = ["card", "dir-card", f.featured ? "is-feature" : ""].filter(Boolean).join(" ");
+  return [
+    `          <article class="${cls}" id="dir-${f.slug}" data-slug="${f.slug}" data-roles="${roleAttr(f.roles)}">`,
+    `            <div class="dir-card-head">`,
+    `              <span class="icon-tile">${icon(f.icon)}</span>`,
+    `              <div><h4>${esc(f.title)}</h4><p class="dir-card-kicker">${esc(f.line)}</p></div>`,
+    `            </div>`,
+    `            <p>${esc(f.blurb)}</p>`,
+    `            <p class="dir-card-needs">${icon("i-info")}<span>${needsLine(f.needs)}</span></p>`,
+    f.note ? `            <p class="dir-card-note">${esc(f.note)}</p>` : "",
+    `            <div class="dir-card-foot">`,
+    `              <a class="link-arrow" href="${featureHref(f.slug)}">Learn more<span class="visually-hidden"> about ${esc(f.title)}</span> ${arrow}</a>`,
+    `              <a class="link-arrow" href="{{appLink}}${esc(f.appRoute)}" data-no-prerender>${esc(f.demoLabel)} ${icon("i-arrow-up-right")}</a>`,
+    `            </div>`,
+    `          </article>`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+};
+const everywhereCard = (item) =>
+  [
+    `          <article class="card dir-card">`,
+    `            <div class="dir-card-head">`,
+    `              <span class="icon-tile">${icon(item.icon)}</span>`,
+    `              <div><h4>${esc(item.title)}</h4></div>`,
+    `            </div>`,
+    `            <p>${cloudLink(item.blurb)}</p>`,
+    `            <div class="dir-card-foot">`,
+    `              <a class="link-arrow" href="{{root}}${esc(item.href)}">Learn more<span class="visually-hidden"> about ${esc(item.title)}</span> ${arrow}</a>`,
+    `            </div>`,
+    `          </article>`,
+  ].join("\n");
+
+const featuresDirectory = () => {
+  const groups = [
+    ...ia.groups.map((g) => ({ ...g, cards: features.filter((f) => f.group === g.id).map(dirCard) })),
+    { ...ia.everywhere, cards: ia.everywhere.items.map(everywhereCard) },
+  ];
+  const nav = groups
+    .map((g) => `      <li><a href="#grp-${g.id}">${icon(g.icon)}${esc(g.title)}<span class="count">${g.cards.length}</span></a></li>`)
+    .join("\n");
+  const sections = groups
+    .map((g) =>
+      [
+        `    <section class="dir-group" id="grp-${g.id}" aria-labelledby="grp-${g.id}-title">`,
+        `      <div class="dir-group-head" data-reveal>`,
+        `        <span class="icon-tile icon-tile-sm">${icon(g.icon)}</span>`,
+        `        <div>`,
+        `          <h3 id="grp-${g.id}-title">${esc(g.title)}</h3>`,
+        `          <p>${esc(g.line)}</p>`,
+        `        </div>`,
+        `      </div>`,
+        `      <div class="dir-cards" data-reveal-stagger>`,
+        ...g.cards,
+        `      </div>`,
+        `    </section>`,
+      ].join("\n")
+    )
+    .join("\n");
+  return [
+    `<div class="dir">`,
+    `  <nav class="dir-nav" aria-label="Feature groups" data-dir-nav>`,
+    `    <p class="dir-nav-label">Jump to</p>`,
+    `    <ol>`,
+    nav,
+    `      <li class="dir-nav-pill" aria-hidden="true"></li>`,
+    `    </ol>`,
+    `  </nav>`,
+    `  <div class="dir-groups">`,
+    sections,
+    `  </div>`,
+    `</div>`,
+  ].join("\n");
+};
+
+// Role chips for the directory (features.html): button[data-role] that site.js wires to .dir-card[data-roles].
+const roleChips = () =>
+  [
+    `<div class="role-chips" role="group" aria-label="Show features for">`,
+    ...ia.roles.map((r) => `  <button class="role-chip" type="button" data-role="${r.id}" aria-pressed="${r.id === "all"}">${esc(r.label)}</button>`),
+    `</div>`,
+  ].join("\n");
+
+// Pain chips for the bottleneck finder (features.html #finder), one per features.json pains[].
+const finderChips = () =>
+  [
+    `<div class="finder-chips" role="group" aria-label="What&rsquo;s slowing your shop down?" data-reveal-stagger="fade">`,
+    ...ia.pains.map(
+      (p) =>
+        `  <button class="finder-chip" type="button" data-pain="${p.slug}" aria-pressed="false">${icon(bySlug[p.features[0]].icon, "icon i-off")}${icon("i-check", "icon i-on")}${esc(p.label)}</button>`
+    ),
+    `</div>`,
+  ].join("\n");
+
+// The finder's pain → feature map. JSON inside <script>, so "<" is escaped.
+const finderData = (page, t) => {
+  const data = {
+    pains: ia.pains.map((p) => ({ slug: p.slug, label: p.label, features: p.features })),
+    features: features.map((f) => ({ slug: f.slug, title: f.title, short: f.short, icon: f.icon, href: `${t.root}features/${f.slug}.html` })),
+  };
+  return `<script type="application/json" id="finder-data">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`;
+};
+
+// The demo form's "What to see" cards: one checkbox per feature, valued and titled with its title.
+const featuresInterests = () =>
+  [
+    `<div class="choice-grid interest-grid">`,
+    ...features.map(
+      (f) =>
+        `  <label class="choice"><input type="checkbox" name="interests" value="${esc(f.title)}" data-slug="${f.slug}" data-title="${esc(f.title)}" data-label="Interested in"><span class="choice-card">${icon(f.icon)}<span class="choice-text"><span class="choice-name">${esc(f.title)}</span><small>${esc(f.line)}</small></span></span></label>`
+    ),
+    `</div>`,
+  ].join("\n");
+
+// A mailto link when business.json has an email; nothing otherwise (the demo form's error fallback looks for it).
+const contactEmail = () => (biz.email ? `<a class="contact-email" href="mailto:${esc(biz.email)}">${icon("i-mail")}<span>${esc(biz.email)}</span></a>` : "");
+
+const jsonld = () => {
+  const org = {
+    "@type": "Organization",
+    "@id": `${site}/#org`,
+    name: biz.company || biz.shortName || biz.name,
+    url: `${site}/`,
+    logo: `${site}/assets/img/icon-512.png`,
+  };
+  if (biz.email) org.email = biz.email;
   const sameAs = Object.values(biz.social || {}).filter(Boolean);
-  if (sameAs.length) data.sameAs = sameAs;
-  return `<script type="application/ld+json" id="business-data">${JSON.stringify(data)}</script>`;
+  if (sameAs.length) org.sameAs = sameAs;
+  const data = {
+    "@context": "https://schema.org",
+    "@graph": [
+      org,
+      {
+        "@type": "SoftwareApplication",
+        "@id": `${site}/#app`,
+        name: biz.name,
+        alternateName: biz.shortName,
+        applicationCategory: "BusinessApplication",
+        applicationSubCategory: "Auto repair shop management",
+        operatingSystem: "Web browser; installs on iPhone, iPad, Android, Mac and PC",
+        description: biz.description,
+        url: `${site}/${appPath}`,
+        image: `${site}/assets/img/og-image.png`,
+        publisher: { "@id": `${site}/#org` },
+        featureList: features.map((f) => f.title),
+        softwareHelp: { "@type": "WebPage", url: `${site}/faq.html` },
+      },
+      { "@type": "WebSite", "@id": `${site}/#website`, name: biz.name, url: `${site}/`, publisher: { "@id": `${site}/#org` } },
+    ],
+  };
+  return `<script type="application/ld+json" id="product-data">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`;
 };
 
 /* ---------- pages ---------- */
 const listPages = () => {
   const out = [];
-  for (const dir of ["", "services"]) {
+  for (const dir of PAGE_DIRS) {
     const abs = join(ROOT, dir);
     if (!existsSync(abs)) continue;
-    for (const f of readdirSync(abs)) if (f.endsWith(".html")) out.push(join(dir, f));
+    for (const f of readdirSync(abs)) if (f.endsWith(".html")) out.push(join(dir, f).replace(/\\/g, "/"));
   }
   return out.sort();
 };
 
-const tokens = (page) => {
+const attr = (s) => String(s).replace(/"/g, "&quot;");
+
+const tokens = (page, src) => {
   const depth = page.split("/").length - 1;
   // 404.html is served at arbitrary URLs, so it uses root-absolute paths (under basePath).
-  const root = page === "404.html" ? (biz.basePath || "/").replace(/\/?$/, "/") : "../".repeat(depth);
-  const path = page.replace(/\\/g, "/");
-  const canonical = path === "index.html" ? `${site}/` : `${site}/${path}`;
+  const root = page === "404.html" ? basePath : "../".repeat(depth);
+  const canonical = page === "index.html" ? `${site}/` : `${site}/${page}`;
+  const title = ((src.match(/<title>([^<]*)<\/title>/) || [])[1] || biz.name).trim();
+  const description = ((src.match(/<meta name="description" content="([^"]*)"/) || [])[1] || biz.description).trim();
   return {
     root,
     canonical,
+    pageTitle: attr(title),
+    pageDescription: attr(description),
     name: esc(biz.name),
     shortName: esc(biz.shortName || biz.name),
+    company: esc(biz.company || biz.shortName || biz.name),
     tagline: esc(biz.tagline || ""),
-    phone: esc(biz.phone),
-    tel: esc(biz.phoneE164),
-    email: esc(biz.email),
-    street: esc(biz.street),
-    cityLine: esc(cityLine),
-    mapsUrl: esc(biz.mapsUrl),
+    description: esc(biz.description || ""),
+    email: esc(biz.email || ""),
+    phone: esc(biz.phone || ""),
+    tel: esc(biz.phoneE164 || ""),
     siteUrl: esc(site),
+    basePath: esc(basePath),
     formEndpoint: esc(biz.formEndpoint || ""),
     inboxUrl: esc(biz.shopInbox?.url || ""),
     inboxKey: esc(biz.shopInbox?.key || ""),
-    staffLink: biz.staffAppUrl ? `<span aria-hidden="true">&middot;</span><a href="${esc(biz.staffAppUrl)}">Staff sign-in</a>` : "",
     year: String(new Date().getFullYear()),
-    servicesMega,
-    servicesSheet,
-    servicesFooter,
-    hoursList,
-    hoursRows,
-    hoursShort: esc(hoursShort),
+    appLink: `${root}${appPath}`,
+    signInLink: `<a href="${root}${signInPath}" data-no-prerender>Sign in</a>`,
+    logoInline: logoInline(),
+    motionToggle,
+    contactRow: contactRow(),
+    featuresMega,
+    featuresSheet,
+    featuresFooter,
   };
 };
 
@@ -153,15 +362,46 @@ const fill = (tpl, t) => {
   return once(once(tpl));
 };
 
+const HEAD_EXTRA = [
+  `<link rel="canonical" href="{{canonical}}">`,
+  `<meta property="og:type" content="website">`,
+  `<meta property="og:site_name" content="{{name}}">`,
+  `<meta property="og:title" content="{{pageTitle}}">`,
+  `<meta property="og:description" content="{{pageDescription}}">`,
+  `<meta property="og:url" content="{{canonical}}">`,
+  `<meta property="og:image" content="{{siteUrl}}/assets/img/og-image.png">`,
+  `<meta property="og:image:width" content="1200">`,
+  `<meta property="og:image:height" content="630">`,
+  `<meta property="og:image:alt" content="{{name}} logo">`,
+  `<meta name="twitter:card" content="summary_large_image">`,
+].join("\n");
+
 const PARTIALS = {
-  head: () => partial("head") + `\n<link rel="canonical" href="{{canonical}}">\n<meta property="og:url" content="{{canonical}}">\n<meta property="og:site_name" content="{{name}}">\n<meta property="og:type" content="website">\n<meta property="og:image" content="{{siteUrl}}/assets/img/og-image.png">\n<meta name="twitter:card" content="summary_large_image">`,
+  head: () => partial("head") + "\n" + HEAD_EXTRA,
   icons: () => partial("icons"),
   header: () => partial("header"),
   tabbar: () => partial("tabbar"),
   cta: () => partial("cta"),
   footer: () => partial("footer"),
-  jsonld: () => jsonld(),
-  "hours-table": () => `<table class="hours-table">\n  <caption class="visually-hidden">Shop hours</caption>\n  <tbody>\n{{hoursRows}}\n  </tbody>\n</table>`,
+  jsonld,
+  breadcrumbs,
+  related,
+  featuresCards,
+  featuresDirectory,
+  roleChips,
+  finderChips,
+  finderData,
+  featuresInterests,
+  "contact-email": contactEmail,
+};
+
+// Which header/tab entry a page lights up. Feature pages are "features"; works-with.html is "integrations".
+const navKeys = (page, src) => {
+  let navKey = (src.match(/<body[^>]*\bdata-page="([\w-]+)"/) || [])[1] || "";
+  let tabKey = (src.match(/<body[^>]*\bdata-tab="([\w-]+)"/) || [])[1] || "";
+  if (page.startsWith("features/")) navKey = tabKey = "features";
+  if (page === "works-with.html") navKey = "integrations";
+  return { navKey, tabKey: tabKey || navKey };
 };
 
 const markActive = (html, navKey, tabKey, pagePath, root) => {
@@ -196,43 +436,21 @@ const markCurrentLinks = (html, pagePath) => {
   });
 };
 
-const BIZ_TEXT = (t) => ({
-  name: t.name,
-  phone: t.phone,
-  email: t.email,
-  street: t.street,
-  cityLine: t.cityLine,
-  address: `${t.street}, ${t.cityLine}`,
-  addressLines: `${t.street}<br>${t.cityLine}`,
-  hoursShort: t.hoursShort,
-});
-const BIZ_HREF = (t) => ({ tel: `tel:${t.tel}`, mailto: `mailto:${t.email}`, maps: t.mapsUrl });
-
 const syncPage = (page) => {
   const file = join(ROOT, page);
   const src = readFileSync(file, "utf8");
-  const t = tokens(page);
-  const navKey = (src.match(/<body[^>]*\bdata-page="([\w-]+)"/) || [])[1] || "";
-  const tabKey = (src.match(/<body[^>]*\bdata-tab="([\w-]+)"/) || [])[1] || navKey;
+  const t = tokens(page, src);
+  const { navKey, tabKey } = navKeys(page, src);
 
   let out = src.replace(/<!-- @partial ([\w-]+) -->[\s\S]*?<!-- @end \1 -->/g, (m, name) => {
     if (!PARTIALS[name]) throw new Error(`${page}: unknown partial "${name}"`);
-    let body = fill(PARTIALS[name](), t);
+    let body = fill(PARTIALS[name](page, t), t);
     if (name === "header" || name === "tabbar") body = markActive(body, navKey, tabKey, page, t.root);
     if (["header", "tabbar", "footer"].includes(name)) body = markCurrentLinks(body, page);
     return `<!-- @partial ${name} -->\n${body}\n<!-- @end ${name} -->`;
   });
-
-  const text = BIZ_TEXT(t);
-  out = out.replace(/(<([a-z][a-z0-9]*)\b[^>]*\bdata-biz="([\w-]+)"[^>]*>)([\s\S]*?)(<\/\2>)/g, (m, open, tag, key, inner, close) =>
-    key in text ? `${open}${text[key]}${close}` : m
-  );
-  const href = BIZ_HREF(t);
-  out = out.replace(/<a\b[^>]*\bdata-biz-href="([\w-]+)"[^>]*>/g, (tag, key) =>
-    key in href ? tag.replace(/\bhref="[^"]*"/, `href="${href[key]}"`) : tag
-  );
-  // Plain {{root}} tokens may be used inside page content for convenience.
-  out = out.replace(/\{\{root\}\}/g, t.root);
+  // Every known token may be used in page content too ({{root}}, {{appLink}}, {{signInLink}}, {{name}} ...).
+  out = fill(out, t);
 
   if (out !== src) {
     writeFileSync(file, out);
@@ -241,7 +459,7 @@ const syncPage = (page) => {
   return false;
 };
 
-const args = process.argv.slice(2).map((a) => relative(ROOT, join(process.cwd(), a)));
+const args = process.argv.slice(2).map((a) => relative(ROOT, join(process.cwd(), a)).replace(/\\/g, "/"));
 const pages = args.length ? args : listPages();
 let changed = 0;
 for (const p of pages) if (syncPage(p)) changed++;
@@ -250,6 +468,7 @@ console.log(`sync: ${pages.length} page(s) checked, ${changed} updated`);
 if (!args.length) {
   const urls = listPages()
     .filter((p) => !/^(404|privacy)\.html$/.test(p))
+    .sort((a, b) => (a === "index.html" ? -1 : b === "index.html" ? 1 : 0))
     .map((p) => (p === "index.html" ? `${site}/` : `${site}/${p}`));
   writeFileSync(
     join(ROOT, "sitemap.xml"),

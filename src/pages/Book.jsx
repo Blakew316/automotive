@@ -3,7 +3,8 @@
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CalendarX, Check, ChevronLeft, MapPin, Phone, MessageSquare, Mail, CircleCheck, Clock } from 'lucide-react';
-import { ShopBrand } from '../brand/Logo';
+import { PoweredBy, ShopBrand } from '../brand/Logo';
+import { titleName, usePageTitle } from '../brand/title';
 import { EmptyState, Spinner } from '../components/ui';
 import { decodeConfig, slotsForDay, bookableDays } from '../lib/booking';
 import { parseShareSource, submitToInbox } from '../lib/cloudShare';
@@ -73,6 +74,7 @@ function Booking({ config }) {
   const [done, setDone] = useState(false);
   const [error, setError] = useState('');
   const now = useMemo(() => new Date(), []);
+  usePageTitle(`Book a visit — ${titleName(shop.name)}`);
 
   const minutes = Math.max(30, services.reduce((s, t) => s + (config.services.find((x) => x.title === t)?.minutes || 60), 0));
   const days = useMemo(() => bookableDays(config, now).map((d) => ({ d, slots: slotsForDay(config, d, minutes, now) })), [config, minutes, now]);
@@ -285,6 +287,7 @@ function Booking({ config }) {
             )}
           </>
         )}
+        <PoweredBy name={shop.name} className="mt-10" />
       </main>
     </div>
   );

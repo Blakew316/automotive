@@ -173,6 +173,7 @@ r = await qb('post', { journals: [day1], map });
 ok(r.body.results[0].status === 'created' && world.je.get('SALES-20261001').Line.length === 4, 'daily journal posted');
 const arLine = world.je.get('SALES-20261001').Line.find((l) => l.JournalEntryLineDetail.AccountRef.value === '1');
 ok(arLine.JournalEntryLineDetail.Entity.EntityRef.value === '77' && world.customers[0].DisplayName === 'AutoShop Pro daily sales', 'A/R lines carry the daily-sales customer');
+ok(world.customers[0].Notes === 'Daily sales summaries posted by WPI Driveline Shop Management System' && world.je.get('SALES-20261001').PrivateNote === 'Daily sales summary from WPI Driveline Shop Management System', 'the customer’s notes and a memo-less journal name the software (the customer keeps its lookup name)');
 r = await qb('post', { journals: [day1], map });
 ok(r.body.results[0].status === 'unchanged', 'posting the same day again changes nothing');
 const day1b = { ...day1, lines: [{ account: 'Accounts Receivable', debit: 216.5, credit: 0 }, { account: 'Labor Income', debit: 0, credit: 120 }, { account: 'Parts Income', debit: 0, credit: 80 }, { account: 'Sales Tax Payable', debit: 0, credit: 16.5 }] };

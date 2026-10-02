@@ -3,7 +3,8 @@
 
 export const META = 'meta';
 export const SINGLETONS = ['shop', 'counters'];
-const SKIP = new Set(['version', 'seededAt']);
+// Device-local markers that never sync (sample: this device is showing the made-up sample shop).
+const SKIP = new Set(['version', 'seededAt', 'sample']);
 // Lists the app keeps newest-first (new records go at the top).
 const NEWEST_FIRST = new Set(['activity', 'bookingRequests', 'campaigns', 'customers', 'expenses', 'inventory', 'purchaseOrders', 'vehicles']);
 

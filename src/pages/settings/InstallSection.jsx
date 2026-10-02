@@ -2,14 +2,15 @@ import { Smartphone, Download, CircleCheck, Share, SquarePlus, EllipsisVertical 
 import { useInstallPrompt, isStandalone, isIos } from '../../lib/pwa';
 import { useUI } from '../../store/hooks';
 import Section from './Section';
+import { PRODUCT } from '../../brand/artwork';
 
-/** Install WPI Driveline on phones, tablets and computers (home screen / dock app). */
+/** Install WPI Driveline Shop Management System on phones, tablets and computers (home screen / dock app). */
 export default function InstallSection() {
   const { canInstall, install } = useInstallPrompt();
   const { toast } = useUI();
   const installed = isStandalone();
   return (
-    <Section id="install" icon={Smartphone} title="Mobile & desktop app" subtitle="Install on iPhone, iPad, Android, Mac or PC — opens full-screen and works offline">
+    <Section id="install" icon={Smartphone} title="Mobile & desktop app" subtitle={`Install ${PRODUCT} on iPhone, iPad, Android, Mac or PC — opens full-screen and works offline`}>
       {installed ? (
         <p className="flex items-center gap-2 text-sm text-ok">
           <CircleCheck size={16} /> You’re using the installed app.
@@ -21,10 +22,10 @@ export default function InstallSection() {
               className="btn-primary"
               onClick={async () => {
                 const outcome = await install();
-                if (outcome === 'accepted') toast('WPI Driveline installed', { tone: 'success' });
+                if (outcome === 'accepted') toast(`${PRODUCT} installed`, { tone: 'success' });
               }}
             >
-              <Download size={15} /> Install WPI Driveline
+              <Download size={15} /> Install the app
             </button>
           )}
           <div className="grid gap-3 sm:grid-cols-2">

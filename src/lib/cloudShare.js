@@ -3,6 +3,7 @@
 // Supabase project (Settings → Shop Cloud), where signed-in staff publish reports to unguessable
 // URLs in a public bucket and read the customer inbox.
 import { getFile } from './media';
+import { PRODUCT, SHORT } from '../brand/artwork';
 
 const SESSION_KEY = 'autoshop-pro:cloud-session';
 const trim = (u = '') => u.trim().replace(/\/+$/, '');
@@ -112,7 +113,7 @@ export async function enrollAuthenticator(cfg, issuer) {
   // Clear out any setup that was started and never finished.
   const user = await authCall(cfg, token, '/user');
   for (const f of user.factors || []) if (f.status !== 'verified') await authCall(cfg, token, `/factors/${f.id}`, { method: 'DELETE' }).catch(() => {});
-  const f = await authCall(cfg, token, '/factors', { method: 'POST', body: { factor_type: 'totp', friendly_name: `WPI Driveline ${new Date().toISOString().slice(0, 10)}`, issuer: issuer || 'WPI Driveline' } });
+  const f = await authCall(cfg, token, '/factors', { method: 'POST', body: { factor_type: 'totp', friendly_name: `${SHORT} ${new Date().toISOString().slice(0, 10)}`, issuer: issuer || PRODUCT } });
   return { id: f.id, qr: f.totp?.qr_code, secret: f.totp?.secret, uri: f.totp?.uri };
 }
 

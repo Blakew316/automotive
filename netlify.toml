@@ -1,5 +1,5 @@
-# Netlify serves the same site as GitHub Pages (scripts/pages.mjs, scripts/netlify.mjs): the shop's
-# website at /automotive/ and the WPI Driveline staff app at /automotive/app/.
+# Netlify serves the same site as GitHub Pages (scripts/pages.mjs, scripts/netlify.mjs): the marketing
+# website for WPI Driveline Shop Management System at /automotive/ and the staff app at /automotive/app/.
 [build]
   command = "npm run build:pages && node scripts/netlify.mjs"
   publish = "netlify-dist"
@@ -11,6 +11,114 @@
 [[redirects]]
   from = "/"
   to = "/automotive/"
+  status = 301
+
+# Pages of the old shop website, permanently moved (scripts/pages.mjs LEGACY does the same on GitHub
+# Pages). Both the .html and the extensionless form; the two specific services pages come before the
+# services/* catch-all.
+[[redirects]]
+  from = "/automotive/services/diagnostics"
+  to = "/automotive/features/diagnosis.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/services/diagnostics.html"
+  to = "/automotive/features/diagnosis.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/services/inspections"
+  to = "/automotive/features/inspections.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/services/inspections.html"
+  to = "/automotive/features/inspections.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/services/*"
+  to = "/automotive/features.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/services"
+  to = "/automotive/features.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/services.html"
+  to = "/automotive/features.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/appointment"
+  to = "/automotive/demo.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/appointment.html"
+  to = "/automotive/demo.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/contact"
+  to = "/automotive/demo.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/contact.html"
+  to = "/automotive/demo.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/fleet"
+  to = "/automotive/features/fleet.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/fleet.html"
+  to = "/automotive/features/fleet.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/brands"
+  to = "/automotive/features/diagnosis.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/brands.html"
+  to = "/automotive/features/diagnosis.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/resources"
+  to = "/automotive/features/diagnosis.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/resources.html"
+  to = "/automotive/features/diagnosis.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/specials"
+  to = "/automotive/index.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/specials.html"
+  to = "/automotive/index.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/careers"
+  to = "/automotive/about.html"
+  status = 301
+
+[[redirects]]
+  from = "/automotive/careers.html"
+  to = "/automotive/about.html"
   status = 301
 
 # Deep links into the staff app (e.g. /automotive/app/orders/123) open the app.

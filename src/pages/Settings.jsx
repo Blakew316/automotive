@@ -23,6 +23,7 @@ import TwoStepSettings from './settings/TwoStepSettings';
 import EmailSettings from './settings/EmailSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
+import { PRODUCT } from '../brand/artwork';
 
 const TABS = [
   { value: 'general', label: 'General', icon: Store },
@@ -315,7 +316,7 @@ function DataSection() {
             if (!f) return;
             try {
               const data = JSON.parse(await f.text());
-              if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not a WPI Driveline backup file');
+              if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error(`Not a ${PRODUCT} backup file`);
               setPendingImport(data);
               setConfirm('import');
             } catch (err) {
@@ -324,14 +325,14 @@ function DataSection() {
           }}
         />
         <span className="flex-1" />
-        {!shared && <button className="btn-secondary" onClick={() => setConfirm('demo')}><RotateCcw size={14} /> Reload demo data</button>}
+        {!shared && <button className="btn-secondary" onClick={() => setConfirm('demo')}><RotateCcw size={14} /> Reload the sample shop</button>}
         {(!shared || owner) && <button className="btn-danger" onClick={() => setConfirm('clear')}><Trash2 size={14} /> Start fresh</button>}
       </div>
       <Modal
         open={Boolean(confirm)}
         onClose={() => setConfirm(null)}
         size="sm"
-        title={confirm === 'clear' ? 'Start with an empty shop?' : confirm === 'import' ? 'Replace the shop’s data with this backup?' : 'Reload demo data?'}
+        title={confirm === 'clear' ? 'Start with an empty shop?' : confirm === 'import' ? 'Replace the shop’s data with this backup?' : 'Reload the sample shop?'}
         footer={
           <>
             <button className="btn-secondary" onClick={() => setConfirm(null)}>Cancel</button>
@@ -342,7 +343,7 @@ function DataSection() {
                   if (confirm === 'clear') await clearAll();
                   else if (confirm === 'import') importData(pendingImport);
                   else await resetDemo();
-                  toast(confirm === 'clear' ? 'All customers, vehicles and orders removed' : confirm === 'import' ? 'Backup restored' : 'Demo data reloaded', { tone: 'success' });
+                  toast(confirm === 'clear' ? 'All customers, vehicles and orders removed' : confirm === 'import' ? 'Backup restored' : 'Sample shop reloaded', { tone: 'success' });
                 } catch (err) {
                   toast(err.message || 'Could not restore that backup', { tone: 'error' });
                 }

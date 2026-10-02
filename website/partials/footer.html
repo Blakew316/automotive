@@ -5,46 +5,42 @@
         <img src="{{root}}assets/img/logo.svg" alt="" width="653" height="361" loading="lazy" decoding="async">
         <span class="footer-card-tagline">{{tagline}}</span>
       </a>
-      <p class="footer-blurb">Honest repair and maintenance for cars, trucks and the small engines that keep your home and business running.</p>
-      <p><span class="open-status" data-open-status>Shop hours</span></p>
+      <p class="footer-blurb">WPI Driveline Shop Management System runs the repair-shop day, from check-in to paid, on the counter PC, the bay tablet and your phone. Installs from the browser and works offline.</p>
+      <p class="footer-pill">Works offline &middot; installs from the browser</p>
     </div>
-    <nav class="footer-col" aria-labelledby="footer-services">
-      <h2 id="footer-services">Services</h2>
+    <nav class="footer-col" aria-labelledby="footer-product">
+      <h2 id="footer-product">Product</h2>
       <ul>
-{{servicesFooter}}
+{{featuresFooter}}
+        <li><a href="{{root}}mobile.html">iPhone &amp; iPad</a></li>
       </ul>
     </nav>
     <nav class="footer-col" aria-labelledby="footer-company">
       <h2 id="footer-company">Company</h2>
       <ul>
-        <li><a href="{{root}}about.html">About us</a></li>
-        <li><a href="{{root}}fleet.html">Fleet services</a></li>
-        <li><a href="{{root}}specials.html">Specials</a></li>
-        <li><a href="{{root}}brands.html">Makes we service</a></li>
-        <li><a href="{{root}}careers.html">Careers</a></li>
-      </ul>
-      <h2 class="footer-subhead">Help</h2>
-      <ul>
-        <li><a href="{{root}}appointment.html">Book a service</a></li>
-        <li><a href="{{root}}resources.html">Car care guides</a></li>
-        <li><a href="{{root}}faq.html">FAQ</a></li>
-        <li><a href="{{root}}contact.html">Contact</a></li>
+        <li><a href="{{root}}about.html">About</a></li>
+        <li><a href="{{root}}works-with.html">Integrations</a></li>
+        <li><a href="{{root}}security.html">Security</a></li>
+        <li><a href="{{root}}privacy.html">Privacy</a></li>
       </ul>
     </nav>
-    <div class="footer-col footer-visit">
-      <h2>Visit the shop</h2>
-      <address>
-        <a class="footer-contact" href="{{mapsUrl}}" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>{{street}}<br>{{cityLine}}</span></a>
-        <a class="footer-contact" href="tel:{{tel}}"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>{{phone}}</span></a>
-        <a class="footer-contact" href="mailto:{{email}}"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span>{{email}}</span></a>
-      </address>
-      <ul class="hours-list">
-{{hoursList}}
-      </ul>
+    <div class="footer-col">
+      <nav aria-labelledby="footer-help">
+        <h2 id="footer-help">Help</h2>
+        <ul>
+          <li><a href="{{root}}faq.html">FAQ</a></li>
+          <li><a href="{{root}}demo.html">Request a demo</a></li>
+          <li><a href="{{root}}app/" data-no-prerender>Try the sample shop</a></li>
+          <li>{{signInLink}}</li>
+        </ul>
+      </nav>
+      <h2 class="footer-subhead">Talk to us</h2>
+{{contactRow}}
     </div>
   </div>
   <div class="container footer-bottom">
-    <p>&copy; <span data-year>{{year}}</span> {{name}}. All rights reserved.</p>
-    <p class="footer-links"><a href="{{root}}privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="{{root}}faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a>{{staffLink}}</p>
+    <p>&copy; <span data-year>{{year}}</span> {{company}}</p>
+    <p class="footer-links"><a href="{{root}}privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="{{root}}faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a><span aria-hidden="true">&middot;</span>{{signInLink}}</p>
+    {{motionToggle}}
   </div>
 </footer>

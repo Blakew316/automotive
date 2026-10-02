@@ -1,12 +1,12 @@
 import { Suspense, useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
-import { Search, Sun, Moon, Monitor, MoreHorizontal, ChevronLeft, ChevronsUpDown, Lock, CloudDownload, MapPin } from 'lucide-react';
+import { Search, Sun, Moon, Monitor, MoreHorizontal, ChevronLeft, ChevronsUpDown, Lock, CloudDownload, MapPin, RotateCcw } from 'lucide-react';
 import { AppIcon, Logo } from '../brand/Logo';
 import { otherName } from '../brand/artwork';
 import { useShop, useUI, useAccess, useSync, useSite } from '../store/hooks';
 import { ROLES, homeFor } from '../lib/access';
 import SwitchUser from './SwitchUser';
-import { Avatar, Spinner } from './ui';
+import { Avatar, Modal, Spinner } from './ui';
 import { useCloudSync } from '../lib/useCloudSync';
 import { useTracking } from '../lib/useTracking';
 import { useNavBar, useIsCompact } from '../lib/viewport';
@@ -18,6 +18,7 @@ import { syncLabel } from '../lib/sync/labels';
 import CommandPalette from './CommandPalette';
 import Toasts from './Toasts';
 import { NAV, HUE, useNavCounts, tabsFor, matchesPath, navLabel } from './nav';
+import { productSite } from '../lib/booking';
 
 const THEMES = [
   { value: 'light', icon: Sun, label: 'Light' },
@@ -57,8 +58,13 @@ function Sidebar({ onNavigate }) {
     <div className="flex h-full flex-col border-r border-sidebar-line bg-sidebar text-sidebar-ink">
       <div className="flex h-[76px] items-center gap-3 px-5">
         <Logo className="h-12" />
-        {otherName(state.shop.name) && (
+        {/* The shop's name beside the logo; for the product's own shop, the rest of the product's name. */}
+        {otherName(state.shop.name) ? (
           <div className="min-w-0 border-l border-sidebar-line pl-3 text-xs font-medium leading-tight text-sidebar-ink-2">{otherName(state.shop.name)}</div>
+        ) : (
+          <div aria-hidden="true" className="min-w-0 border-l border-sidebar-line pl-3 text-[10px] font-semibold uppercase leading-tight tracking-wide text-sidebar-ink-2">
+            Shop Management System
+          </div>
         )}
       </div>
 
@@ -174,6 +180,68 @@ function AccountNotice() {
         {temp ? 'Choose your own' : 'Sign in'}
       </Link>
     </div>
+  );
+}
+
+/**
+ * The made-up sample shop that opens on a device with no saved shop: say so, and offer a way back to
+ * the product's site and a fresh start. Gone once someone signs in or the shop is replaced.
+ */
+function SampleBanner() {
+  const { state, resetDemo } = useShop();
+  const sync = useSync();
+  const { toast } = useUI();
+  const navigate = useNavigate();
+  const [confirm, setConfirm] = useState(false);
+  const [busy, setBusy] = useState(false);
+  if (!state.sample || sync?.signedIn) return null;
+  const site = productSite();
+  const startOver = async () => {
+    setBusy(true);
+    try {
+      await resetDemo();
+      navigate('/');
+      toast('Sample shop reloaded', { tone: 'success' });
+    } finally {
+      setBusy(false);
+      setConfirm(false);
+    }
+  };
+  return (
+    <section aria-label="Sample shop" className="no-print relative flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 border-b border-accent/20 bg-accent/[0.06] px-4 py-1.5 text-[13px] leading-5">
+      <span className="text-ink-2">You’re exploring the sample shop</span>
+      {/* The actions stay together: on a phone they take the second line. */}
+      <span className="inline-flex items-center gap-x-2 whitespace-nowrap">
+        {site && (
+          <>
+            <span aria-hidden="true" className="hidden text-ink-4 sm:inline">·</span>
+            <a href={`${site}demo.html`} className="font-semibold text-accent hover:underline">
+              Request a demo
+            </a>
+          </>
+        )}
+        <span aria-hidden="true" className={`text-ink-4 ${site ? '' : 'hidden sm:inline'}`}>·</span>
+        <button type="button" onClick={() => setConfirm(true)} className="font-semibold text-accent hover:underline">
+          Start over
+        </button>
+      </span>
+      <Modal
+        open={confirm}
+        onClose={() => setConfirm(false)}
+        size="sm"
+        title="Start the sample shop over?"
+        footer={
+          <>
+            <button className="btn-secondary" onClick={() => setConfirm(false)}>Cancel</button>
+            <button className="btn-primary" disabled={busy} onClick={startOver}>
+              {busy ? <Spinner size={14} /> : <RotateCcw size={14} />} Start over
+            </button>
+          </>
+        }
+      >
+        <p className="text-sm text-ink-2">The sample shop goes back to how it started. Anything you added or changed here is erased from this browser.</p>
+      </Modal>
+    </section>
   );
 }
 
@@ -382,6 +450,7 @@ export default function Layout() {
                 className="relative flex-1 overflow-y-auto overscroll-y-contain pb-[calc(var(--tabbar)+var(--safe-b))] pl-[var(--safe-l)] pr-[var(--safe-r)] pt-[calc(var(--navbar)+var(--safe-t))] [scroll-padding-top:calc(var(--navbar)+var(--safe-t)+12px)] lg:pl-0 lg:pr-0"
               >
                 <div aria-hidden="true" className="brand-haze no-print pointer-events-none absolute inset-x-0 top-0 h-[280px]" />
+                <SampleBanner />
                 <AccountNotice />
                 <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-2 sm:px-6 lg:px-10 lg:pt-9">
                   {can(location.pathname) ? (

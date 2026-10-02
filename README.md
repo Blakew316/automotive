@@ -1,15 +1,15 @@
-# WPI Driveline
+# WPI Driveline Shop Management System
 
-The WPI Driveline shop management system: shop management for independent auto repair — estimates with fast customer authorization, repair orders through to paid invoice, a drag-and-drop workflow board, digital inspections, two-way customer messaging, online booking, a tech time clock with team pay and productivity, purchase orders, payments, accounting synced to QuickBooks Online, connected cars, marketing, a built-in vehicle database (every make and model NHTSA has VIN data for, with system diagrams, parts lists and repair guides), on-device VIN decoding, parts lookup across suppliers, and a technical library with OEM service information, wiring references and trouble codes.
+WPI Driveline Shop Management System is shop management software for independent auto repair — estimates with fast customer authorization, repair orders through to paid invoice, a drag-and-drop workflow board, digital inspections, two-way customer messaging, online booking, a tech time clock with team pay and productivity, purchase orders, payments, accounting synced to QuickBooks Online, connected cars, marketing, a built-in vehicle database (every make and model NHTSA has VIN data for, with system diagrams, parts lists and repair guides), on-device VIN decoding, parts lookup across suppliers, and a technical library with OEM service information, wiring references and trouble codes.
 
 Built with React, Vite and Tailwind. It installs to phones, tablets and computers as an app and works offline: each device keeps the shop in IndexedDB, and with **shared shop data** turned on every device stays in sync through the shop's Supabase project — live updates, offline edits that sync later, merged concurrent edits, a change history on every record and nightly backups. Features that reach customers' phones (share links, online approvals, customer replies and the online booking inbox) use the same project — see [Shop Cloud](#shop-cloud).
 
-The repo also holds the shop's public website (`website/`), published alongside the app:
+The repo also holds the product's marketing website (`website/`), published alongside the app:
 
 | URL | What |
 | --- | --- |
-| https://blakew316.github.io/automotive/ | Public website — WPI Driveline |
-| https://blakew316.github.io/automotive/app/ | WPI Driveline staff app |
+| https://blakew316.github.io/automotive/ | Marketing website — WPI Driveline Shop Management System |
+| https://blakew316.github.io/automotive/app/ | WPI Driveline Shop Management System staff app |
 
 ## Features
 
@@ -80,7 +80,7 @@ The repo also holds the shop's public website (`website/`), published alongside 
 - **Connected cars** — text a customer a link to connect their car (Smartcar); with their OK the vehicle page shows its real odometer, oil life, tire pressures and fuel or charge. The vehicle's mileage stays current, low oil life and low tires are flagged, and oil-change reminders go out when the car says so.
 - **Marketing** — automations that line up today’s follow-ups (appointment confirmations, day-before reminders, review requests, service due, declined work, win-back) with sent and coming-up counts; vehicles due for an oil service (by time or projected mileage), declined work to follow up, lapsed customers to win back, review requests after closed visits, and custom campaigns by tag, make or last visit. Send personalized texts or emails all at once from the business number or the shop's email address, one tap at a time from the shop phone, as one BCC email, or export the list for a bulk texting/email service.
 - **AI assistant** — an *Assistant* button on repair orders, *Suggest reply* in Messages and *Summarize with AI* on customers. It drafts a plain-English explanation of the estimate grouped by urgency, a status text, a reply to the customer's latest message, the cause & correction for a service (from the tech's notes and the inspection), diagnostic ideas and a test plan for the tech, a customer summary for the advisor, or answers any question about the record on screen. Answers go into the message composer, onto the service, or into an internal note; staff review everything before it reaches a customer. It runs on Claude through the shop's own Anthropic API key (see [Integration keys & the AI assistant](#integration-keys--the-ai-assistant)).
-- **Shop website** — the shop's public site ([Public website](#public-website)). Its *Book a service* form drops requests into **Calendar → Requests** with the customer's preferred day and time of day, and its contact and fleet forms arrive in **Messages** (new people are added as customers).
+- **Your website & booking button** — link the shop's own website and add a *Book online* button to it (**Settings → Website**): the shop's booking link, a copy button and a ready-to-paste `<a href="…">Book online</a>` snippet. The button opens the shop's booking page, whose requests land in **Calendar → Requests** to confirm. Customer pages (booking, status, payment, check-in, fleet portal, lobby screen, reports and PDFs) lead with the shop's own name; a small *Powered by WPI Driveline Shop Management System* line sits at the bottom.
 - **Roles & access** — staff profiles for owner, shop manager, service advisor and technician with optional 4-digit PINs; each role sees only the pages it needs (switch people from the sidebar).
 - **Integrations** — Shop Cloud, the AI assistant (Claude), business texting & calls (Twilio), online card payments (Stripe), QuickBooks Online sync, connected cars (Smartcar), online booking, Google reviews, payment links, financing, PartsTech / Nexpart / WORLDPAC ordering with POs, NHTSA, calendar (.ics) export for Google/Apple/Outlook, CARFAX service history, and data import.
 - **Data migration** — import customers & vehicles or parts inventory from CSV (or paste from a spreadsheet) exported from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks or Excel: columns are matched automatically, previewed, and de-duplicated by phone, email, VIN and part number.
@@ -108,7 +108,7 @@ The repo also holds the shop's public website (`website/`), published alongside 
 
 Shop data and photos live on the device (localStorage and IndexedDB), so everything works offline and costs nothing. Anything that has to open on a customer’s phone needs to be online, so it uses a [Supabase](https://supabase.com) project dedicated to AutoShop Pro.
 
-**It comes preconfigured.** The app ships connected to the *AutoShop Pro* Supabase project (its name from before the WPI Driveline rebrand) (`src/lib/cloudDefaults.js`): a public-read `autoshop-media` Storage bucket (photos, video and report files, 50 MB per file) and a `shop_inbox` table. Customers can only *add* booking requests, approvals and messages to the inbox; reading or clearing it, and uploading, replacing or deleting files, require a signed-in account whose `app_metadata.autoshop_staff` flag is set (checked by `public.is_shop_staff()` in every policy). Staff just sign in under **Settings → Shop Cloud** on each device; the first staff sign-in publishes the booking page, and passwords can be changed from the same screen. A signed-in account without the staff flag is warned and gets no access.
+**It comes preconfigured.** The app ships connected to the *AutoShop Pro* Supabase project (its name from before the rebrand to WPI Driveline Shop Management System; the project keeps that name) (`src/lib/cloudDefaults.js`): a public-read `autoshop-media` Storage bucket (photos, video and report files, 50 MB per file) and a `shop_inbox` table. Customers can only *add* booking requests, approvals and messages to the inbox; reading or clearing it, and uploading, replacing or deleting files, require a signed-in account whose `app_metadata.autoshop_staff` flag is set (checked by `public.is_shop_staff()` in every policy). Staff just sign in under **Settings → Shop Cloud** on each device; the first staff sign-in publishes the booking page, and passwords can be changed from the same screen. A signed-in account without the staff flag is warned and gets no access.
 
 To add another staff login: create the user under Authentication → Users, then run
 
@@ -213,7 +213,7 @@ A new Intuit app's development keys connect to a free **sandbox** company right 
 How it fits together (`supabase/migrations/20261006120000_quickbooks_connected_cars.sql`):
 - **`shop-qbo`** (owner or manager) starts the connection, lists the chart of accounts and posts journals. Tokens live in Vault and are refreshed as needed (Intuit rotates refresh tokens; the new one is saved each time). Disconnecting revokes them.
 - **`oauth-callback`** (public) finishes the sign-in. A random one-time state value ties it to the request that started it and expires after 30 minutes.
-- **Journals** are built on the device from the RO and payment records (`salesJournals` in `src/lib/accounting.js`, the same entries as the CSV). Sales post on the invoice date (accrual); payments post on the day received to Undeposited Funds; Stripe's fee is booked to card processing fees so deposits match the bank. Receivable lines use a customer named "AutoShop Pro daily sales". Unbalanced or unmapped entries are refused, and each day is matched by its DocNumber, so a re-post updates instead of duplicating.
+- **Journals** are built on the device from the RO and payment records (`salesJournals` in `src/lib/accounting.js`, the same entries as the CSV). Sales post on the invoice date (accrual); payments post on the day received to Undeposited Funds; Stripe's fee is booked to card processing fees so deposits match the bank. Receivable lines use a customer named "AutoShop Pro daily sales" (the name from before the rebrand, kept because companies that already post look the customer up by that name). Unbalanced or unmapped entries are refused, and each day is matched by its DocNumber, so a re-post updates instead of duplicating.
 - **Daily posting** runs on the first owner or manager device open each day and records the outcome on the Accounting screen.
 
 ### Connected cars (Smartcar)
@@ -236,15 +236,16 @@ With it connected:
 
 Without Shop Cloud, shops can still show reports on a counter tablet, send the downloadable report file, and take booking requests by text or email from the booking page.
 
-## Public website
+## Marketing website
 
-`website/` is the shop's static, multi-page website (copied from the `automotiverepair` repo): home, services and 11 service pages, about, makes, fleet, specials, car care guides, FAQ, contact, careers and a multi-step *Book a service* form. Every page is a standalone HTML file with no build step; see `website/README.md` for editing.
+`website/` is the static marketing website for WPI Driveline Shop Management System: a home page that follows one car through a shop day, an all-features directory and 12 feature pages, iPhone & iPad, security, integrations (`works-with.html`, which also defines Shop Cloud), about, questions & answers, *Request a demo*, privacy and a not-found page. Every page is a standalone HTML file with no build step; `website/README.md` covers the page template, the honesty rules for mockups (example data only inside figures tagged *Example · sample shop*), the motion budget and animations, and how to edit.
 
-- **Shop details** (phone, email, address, hours, social links) live in `website/business.json`. Edit it, then run `node website/scripts/sync.mjs` to update every page, the structured data, `sitemap.xml` and `robots.txt`; `node website/scripts/check.mjs` validates the pages.
-- **Forms → WPI Driveline.** `shopInbox` in `business.json` points the booking, contact and fleet forms at the Shop Cloud inbox (the public anon key; customers can only add). Staff signed in to the app receive them automatically. If the inbox can't be reached, the visitor is offered a pre-filled email or the phone number instead.
-- **Staff sign-in** in the footer goes to `/app/signin`.
-- **Hosting.** `npm run build:pages` (`scripts/pages.mjs`) builds the app into `dist/app/` and copies the website to `dist/`. GitHub Pages serves one `404.html` for every missing path; it is the app shell, so deep links into the app load directly, and a small script forwards old links from before the app moved under `app/` (e.g. `/automotive/orders`) and sends unknown pages to the website's not-found page. A self-removing `sw.js` at the root retires the service worker from the old layout.
-- **Own domain.** Point the domain at the site, set `siteUrl`, `basePath` (`"/"` at a domain root) and `staffAppUrl` in `business.json`, run the sync script, build with that base (`node scripts/pages.mjs /`), and enter the address under **Settings → Website** in the app.
+- **Sync and check.** Shared regions (head, header and mega menu, tab bar, More sheet, CTA band, footer, structured data, feature lists) come from `website/business.json` and `website/partials/` (`features.json` is the site map). After editing either, run `node website/scripts/sync.mjs`; `node website/scripts/check.mjs` validates every page (links, ids, brand and honesty rules), and `--release` turns launch warnings into errors. `npm run build:pages` runs the check first and stops on errors.
+- **Animations** live in `assets/css/site.css` and `assets/js/site.js`: mock app screens that play while they're on screen (at most twice, with a Replay button), a car travelling the five stages of a shop day, rolling counters and scroll reveals. Each page has a motion budget, and every animation has a static end state that shows with Reduce Motion, without JavaScript, in print and with the site-wide *Pause animations* toggle.
+- **Request a demo** (`demo.html`) is the one form. It posts to the Shop Cloud inbox (`shopInbox` in `business.json`) as a website message; a signed-in app on that Shop Cloud turns it into a customer tagged *Website* with the request in **Messages**. If the inbox can't be reached it tries `formEndpoint`, then Netlify Forms, and otherwise offers a pre-filled email when `business.json` has an address. Nothing typed is lost.
+- **Sample shop and sign-in.** *Try the sample shop* opens `app/` (on a device with no saved shop that is Main Street Auto Service, a made-up sample shop, with a banner offering *Request a demo* and *Start over*), and *Sign in* goes to `app/signin`. Links into the app are relative and marked so they're never prefetched or prerendered (that would boot the app and seed the sample shop on a hover).
+- **Hosting.** `npm run build:pages` (`scripts/pages.mjs`) builds the app into `dist/app/` and copies the website to `dist/`. GitHub Pages serves one `404.html` for every missing path; it is the app shell, so deep links into the app load directly, and a small script forwards pages of the old shop website (`services/…`, `appointment`, `contact`, `fleet` and the rest, to the matching product page), links from before the app moved under `app/` (e.g. `/automotive/orders`) and `/site`, and sends unknown pages to the website's not-found page. Netlify gets the old-page forwards as real 301s (`netlify.toml`). Website pages and folders never use an app route's name (`integrations`, `book`, …), because hosts serve `<name>.html` for `/<name>` ahead of the forwarder. A self-removing `sw.js` at the root retires the service worker from the old layout.
+- **Own domain.** Point the domain at the site, set `siteUrl` and `basePath` (`"/"` at a domain root) in `business.json`, run the sync script, and build with that base (`node scripts/pages.mjs /`).
 
 ## Getting service records onto CARFAX
 
@@ -256,7 +257,7 @@ The WPI Driveline logo in light hues: navy "WPI" over a blue and a green bar, wi
 
 The logo lives in `src/brand/artwork.js` as outlined glyphs (the in-app `<Logo>` draws from it); `node scripts/brand-assets.mjs` regenerates the website's logo files, every app and website icon, the favicons, the link-preview image and the iOS launch screens from it.
 
-Every page loads on demand, so the first screen appears quickly on a shop tablet; the pages used all day are fetched in the background right after, and React lives in its own long-cached file so an update only downloads the app's own code. Demo data loads only on a device with no saved shop.
+Every page loads on demand, so the first screen appears quickly on a shop tablet; the pages used all day are fetched in the background right after, and React lives in its own long-cached file so an update only downloads the app's own code. The sample shop (Main Street Auto Service, made up) loads only on a device with no saved shop.
 
 ## Data sources
 
@@ -270,7 +271,7 @@ Every page loads on demand, so the first screen appears quickly on a shop tablet
 | Trouble codes | SAE J2012 generic definitions |
 | Electrical references | SAE J1962, DIN 72552, ISO 8820-3, SAE J2863, ASTM B258 |
 
-Links to suppliers and OEM sites open their own pages; nothing is scraped. Demo customers, phone numbers (555-01xx) and emails (`.example`) are fictitious. Always confirm part fitment by VIN.
+Links to suppliers and OEM sites open their own pages; nothing is scraped. The sample shop's customers, phone numbers (555-01xx) and emails (`.example`) are fictitious. Always confirm part fitment by VIN.
 
 Generated diagrams, parts lists and procedures are representative of the vehicle’s configuration: facts that come from the VIN data are shown as such, anything inferred from the model year or layout is labelled *typical*, and torque values, capacities, connector pin-outs and wire colors are always deferred to factory service information. No OEM wiring diagrams or part numbers are invented.
 

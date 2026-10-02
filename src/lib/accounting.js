@@ -5,6 +5,7 @@ import { teamSummary } from './time';
 import { toCsv } from './serviceHistory';
 import { addDays, fullName, isoDate, startOfDay, vehicleName, round2 } from './format';
 import { processingFees } from './payments';
+import { PRODUCT as APP_NAME } from '../brand/artwork';
 
 export const ACCOUNTING_PERIODS = [
   { value: 'month', label: 'This month' },
@@ -290,7 +291,7 @@ export function salesJournals(state, from, to) {
     return {
       date: day,
       no: `SALES-${day.replace(/-/g, '')}`,
-      memo: `Daily sales summary for ${new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} from WPI Driveline`,
+      memo: `Daily sales summary for ${new Date(`${day}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })} from ${APP_NAME}`,
       lines: lines.filter((l) => l.cents).map((l) => ({ account: l.account, debit: l.cents > 0 ? l.cents / 100 : 0, credit: l.cents < 0 ? -l.cents / 100 : 0 })),
     };
   });

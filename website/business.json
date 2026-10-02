@@ -1,60 +1,24 @@
 {
-  "_readme": "Single source of truth for shop details. Edit, then run `node scripts/sync.mjs` to update every page. Values marked PLACEHOLDER must be replaced before launch. basePath is the folder the site is served from (\"/\" on its own domain). shopInbox sends booking, contact and fleet forms to the AutoShop Pro inbox (the key is the public anon key). staffAppUrl adds a Staff sign-in link to the footer. shortName is the label under the icon when the site is added to a Home Screen (keep it to about 12 characters; site.webmanifest short_name should match).",
-  "name": "WPI Driveline",
+  "_readme": "Single source of truth for the marketing website. Edit, then run `node scripts/sync.mjs` to update every page. email is the vendor address shown in the footer and used as the demo form's mailto fallback; leave it blank until the owner supplies it (never an example.com address). phone/phoneE164 are optional and hide every tel link when blank. siteUrl is the canonical address (canonical, og:url, sitemap, JSON-LD). basePath is the folder the site is served from (scripts/pages.mjs requires it to match the build base). appPath and signInPath are the staff app, linked relatively from every page. formEndpoint is an optional fallback for the demo form. shopInbox: demo requests post here (the key is the public anon key). _placeholders lists values that must be supplied before launch; check.mjs warns while it is non-empty and fails with --release.",
+  "name": "WPI Driveline Shop Management System",
   "shortName": "WPI Driveline",
-  "tagline": "Auto & Small Engine Repair",
-  "phone": "(555) 555-0123",
-  "phoneE164": "+15555550123",
-  "email": "service@example.com",
-  "street": "123 Main Street",
-  "city": "Clinton",
-  "region": "ST",
-  "postalCode": "00000",
-  "country": "US",
-  "mapsUrl": "https://www.google.com/maps/search/?api=1&query=WPI+Driveline",
+  "company": "WPI Driveline",
+  "tagline": "Shop Management System",
+  "description": "Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.",
+  "email": "",
+  "phone": "",
+  "phoneE164": "",
   "siteUrl": "https://blakew316.github.io/automotive",
   "basePath": "/automotive/",
-  "timeZone": "",
-  "hours": [
-    {
-      "days": [
-        "Mo",
-        "Tu",
-        "We",
-        "Th",
-        "Fr"
-      ],
-      "opens": "08:00",
-      "closes": "17:30"
-    },
-    {
-      "days": [
-        "Sa"
-      ],
-      "opens": "08:00",
-      "closes": "13:00"
-    }
-  ],
-  "social": {
-    "facebook": "",
-    "instagram": "",
-    "google": ""
-  },
+  "appPath": "app/",
+  "signInPath": "app/signin",
   "formEndpoint": "",
   "shopInbox": {
     "url": "https://huwcrbkplpudpsfczbyg.supabase.co",
     "key": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I"
   },
-  "staffAppUrl": "https://blakew316.github.io/automotive/app/signin",
+  "social": {},
   "_placeholders": [
-    "phone",
-    "phoneE164",
-    "email",
-    "street",
-    "city",
-    "region",
-    "postalCode",
-    "mapsUrl",
-    "hours"
+    "email"
   ]
 }

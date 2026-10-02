@@ -6,7 +6,7 @@ import { INSPECTION_RATINGS } from './workflow';
 import { dueDate, hasTerms, termsLabel } from './accounts';
 import { shopAt } from './locations';
 import { money, fullName, vehicleName, date, phone, number } from './format';
-import { BARS, COLORS, DRIVELINE, VIEWBOX, WPI, otherName } from '../brand/artwork';
+import { BARS, COLORS, DRIVELINE, PRODUCT, VIEWBOX, WPI, otherName } from '../brand/artwork';
 
 const TITLES = { estimate: 'Estimate', workorder: 'Work Order', invoice: 'Invoice', receipt: 'Receipt' };
 /** The document's name, e.g. "Invoice". */
@@ -40,8 +40,9 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
 
   const doc = await PDFDocument.create();
   doc.setTitle(`${TITLES[kind]} ${order.number} — ${shop.name}`);
-  doc.setAuthor(shop.name || 'WPI Driveline');
-  doc.setCreator('WPI Driveline');
+  doc.setAuthor(shop.name || PRODUCT);
+  doc.setCreator(PRODUCT);
+  doc.setProducer(PRODUCT);
   const font = await doc.embedFont(StandardFonts.Helvetica);
   const bold = await doc.embedFont(StandardFonts.HelveticaBold);
   const mono = await doc.embedFont(StandardFonts.Courier);
@@ -114,11 +115,23 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
   const rule = (yy, color = LINE, thick = 0.75) => page.drawLine({ start: { x: M, y: yy }, end: { x: W - M, y: yy }, thickness: thick, color });
 
   newPage();
-  // ---- Header: the logo; beside it the shop's own name (when it goes by another one), address and contact.
-  const logoW = logo(M, y + 8, 48);
+  // ---- Header: the shop's own name, with its address and contact under it. Only the product's own
+  // shop (or one with no name) shows the logo instead, with the address beside it.
+  const shopName = otherName(shop.name);
   const addr = [shop.address, [shop.city, shop.state].filter(Boolean).join(', ') + (shop.zip ? ` ${shop.zip}` : ''), [shop.phone, shop.email].filter(Boolean).join(' · ')].filter((x) => x && x.trim());
-  const info = [otherName(shop.name) && [otherName(shop.name), { f: bold, size: 12 }], ...addr.map((l) => [l, { size: 9.5, color: INK2 }])].filter(Boolean);
-  info.forEach(([l, o], i) => text(l, M + logoW + 18, y - 4 - i * 13, { ...o, maxW: W - 2 * M - logoW - 18 - 170 }));
+  let headH;
+  if (shopName) {
+    const maxW = W - 2 * M - 180;
+    let size = 18;
+    while (size > 12 && width(shopName, bold, size) > maxW) size -= 0.5;
+    text(shopName, M, y - 5, { f: bold, size, maxW });
+    addr.forEach((l, i) => text(l, M, y - 22 - i * 13, { size: 9.5, color: INK2, maxW }));
+    headH = 26 + Math.max(0, addr.length - 1) * 13;
+  } else {
+    const logoW = logo(M, y + 8, 48);
+    addr.forEach((l, i) => text(l, M + logoW + 18, y - 4 - i * 13, { size: 9.5, color: INK2, maxW: W - 2 * M - logoW - 18 - 170 }));
+    headH = 6 + addr.length * 13;
+  }
   text(TITLES[kind], W - M, y - 8, { f: bold, size: 22, align: 'right' });
   const meta = [
     `No. ${order.number}`,
@@ -127,7 +140,7 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
     invoiceLike && hasTerms(c) ? `${termsLabel(c.account.terms)} · due ${date(dueDate(order, c))}` : null,
   ].filter(Boolean);
   meta.forEach((l, i) => text(l, W - M, y - 26 - i * 12, { size: 9.5, color: INK2, align: 'right' }));
-  y -= Math.max(42, 6 + info.length * 13, 26 + meta.length * 12) + 12;
+  y -= Math.max(42, headH, 26 + meta.length * 12) + 12;
   // The logo's bar across the page: blue, then green.
   page.drawLine({ start: { x: M, y }, end: { x: W / 2, y }, thickness: 1.5, color: BLUE });
   page.drawLine({ start: { x: W / 2, y }, end: { x: W - M, y }, thickness: 1.5, color: GREEN });
@@ -293,10 +306,12 @@ export async function orderPdf(state, order, kind = docKind(order, shopAt(state.
     text('Date', W - M - 140, y, { size: 8, color: INK2 });
   }
 
-  // ---- Page footers
+  // ---- Page footers, and under them a quiet line naming the software when the shop isn't its own.
+  const powered = shopName ? `Powered by ${PRODUCT}` : '';
   pages.forEach((p, i) => {
     const s = pdfSafe(`${shop.name} · ${TITLES[kind]} ${order.number} · Page ${i + 1} of ${pages.length}`);
     p.drawText(s, { x: (W - font.widthOfTextAtSize(s, 7.5)) / 2, y: 26, size: 7.5, font, color: INK3 });
+    if (powered) p.drawText(powered, { x: (W - font.widthOfTextAtSize(powered, 6.5)) / 2, y: 16, size: 6.5, font, color: INK3 });
   });
 
   const bytes = await doc.save();
