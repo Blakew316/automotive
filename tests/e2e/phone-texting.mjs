@@ -151,8 +151,10 @@ ok(await dlg.getByRole('radio', { name: /Front counter/ }).isChecked(), 'ring ph
 await dlg.getByRole('button', { name: 'Call', exact: true }).click();
 await until(async () => cloud.db.dials.length === 1, 'call placed');
 ok(cloud.db.dials[0].ring === '+15125550111' && ten(cloud.db.dials[0].to) === ten(cust.phone), 'rings the counter phone, then the customer');
+// The call is logged once the app has the server's answer, a moment after the request lands.
+await until(async () => (await state()).messages.some((m) => m.channel === 'call' && m.dir === 'out' && m.customerId === cust.id), 'outgoing call logged');
+ok(true, 'outgoing call logged');
 s = await state();
-ok(s.messages.some((m) => m.channel === 'call' && m.dir === 'out' && m.customerId === cust.id), 'outgoing call logged');
 await page.goto(APP + '/');
 await poll();
 await page.waitForTimeout(300);
