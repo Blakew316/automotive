@@ -21,6 +21,40 @@ export function initPwa() {
       navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`, { scope: import.meta.env.BASE_URL }).catch(() => {});
     });
   }
+  if (import.meta.env.PROD) keepCurrent();
+}
+
+/** Whether a newer version of the app has been published than the one running in this tab. */
+async function outdated() {
+  const res = await fetch(`${import.meta.env.BASE_URL}index.html`, { cache: 'no-cache' });
+  if (!res.ok) return false;
+  const main = (await res.text()).match(/<script type="module"[^>]*\ssrc="([^"]+)"/)?.[1];
+  return Boolean(main) && !document.querySelector(`script[type="module"][src="${main}"]`);
+}
+
+/**
+ * Staff leave the app open all day, and a Home Screen app on iPhone resumes where it was instead of
+ * reloading, so a deploy would otherwise wait for someone to close it. Each time the app comes back
+ * on screen (and every half hour while it stays open) it checks for a newer version. Coming back on
+ * screen it reloads straight into it — nothing has been typed yet; found while someone is working,
+ * the reload waits for the next time they come back to it.
+ */
+function keepCurrent() {
+  let pending = false;
+  const check = async (resumed) => {
+    if (!navigator.onLine) return;
+    const stale = pending || (await outdated().catch(() => false));
+    if (!stale) return;
+    if (resumed) {
+      navigator.serviceWorker?.getRegistration().then((r) => r?.update()).catch(() => {});
+      window.location.reload();
+    } else pending = true;
+  };
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') check(true);
+  });
+  window.addEventListener('pageshow', (e) => e.persisted && check(true));
+  setInterval(() => document.visibilityState === 'visible' && check(false), 30 * 60_000);
 }
 
 export const isStandalone = () => typeof window !== 'undefined' && (window.matchMedia?.('(display-mode: standalone)').matches || window.navigator.standalone === true);
