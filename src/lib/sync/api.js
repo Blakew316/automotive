@@ -175,3 +175,10 @@ export const clearPayEvents = (cfg, ids) => (ids.length ? call(cfg, `/rest/v1/sh
 // ---------------------------------------------------------------- QuickBooks Online (shop-qbo) and connected cars (shop-cars)
 export const shopQbo = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-qbo', { body: { action, ...args } });
 export const shopCars = (cfg, action, args = {}) => call(cfg, '/functions/v1/shop-cars', { body: { action, ...args } });
+
+// ---------------------------------------------------------------- Two-step sign-in policy
+/** Roles that must use two-step sign-in. */
+export const mfaPolicy = (cfg) => rpc(cfg, 'shop_mfa_policy', {}).then((r) => r || []);
+export const setMfaPolicy = (cfg, roles) => rpc(cfg, 'shop_mfa_policy_set', { roles });
+/** Whether this session meets the shop's two-step rules (false: enter a code, or set one up). */
+export const mfaOk = (cfg) => rpc(cfg, 'shop_mfa_ok', {});

@@ -27,6 +27,18 @@ const world = {
 const key = (k, s) => `${k}:${s}`;
 const res = (body, status = 200, type = 'application/json') => new Response(status === 204 ? null : typeof body === 'string' ? body : JSON.stringify(body), { status, headers: { 'Content-Type': type } });
 
+// The database's two-step check (shop_mfa_ok): a token marked as having an authenticator app
+// (test_mfa) passes only once its session used the code (aal2).
+const mfaOk = (init) => {
+  try {
+    const t = String(init.headers?.Authorization || '').replace(/^Bearer /, '');
+    const c = JSON.parse(Buffer.from(t.split('.')[1], 'base64url').toString());
+    return c.aal === 'aal2' || !c.app_metadata?.test_mfa;
+  } catch {
+    return false;
+  }
+};
+
 globalThis.fetch = async (input, init = {}) => {
   const url = new URL(typeof input === 'string' ? input : input.url);
   const method = (init.method || 'GET').toUpperCase();
@@ -34,6 +46,7 @@ globalThis.fetch = async (input, init = {}) => {
   const jbody = () => (typeof body === 'string' ? JSON.parse(body) : {});
   if (url.origin === URL_BASE) {
     const p = url.pathname;
+    if (p === '/rest/v1/rpc/shop_mfa_ok') return res(JSON.stringify(mfaOk(init)));
     if (p.startsWith('/rest/v1/rpc/')) {
       const fn = p.slice('/rest/v1/rpc/'.length);
       const a = jbody();
@@ -273,7 +286,7 @@ ok(world.outbox.get('appt-reminder:a2:2026-10-02').status === 'skipped', 'hours-
 
 // ---------------------------------------------------------------- shop-phone
 const phoneFn = await load('shop-phone');
-const jwt = (meta) => `x.${Buffer.from(JSON.stringify({ app_metadata: meta })).toString('base64url')}.y`;
+const jwt = (meta, aal) => `x.${Buffer.from(JSON.stringify({ app_metadata: meta, ...(aal ? { aal } : {}) })).toString('base64url')}.y`;
 const call2 = async (action, args = {}, meta = { autoshop_staff: true, autoshop_role: 'owner' }) => {
   const r = await phoneFn(new Request(`${URL_BASE}/functions/v1/shop-phone`, { method: 'POST', headers: { Authorization: `Bearer ${jwt(meta)}` }, body: JSON.stringify({ action, ...args }) }));
   return { status: r.status, body: await r.json() };

@@ -224,6 +224,16 @@ function AccountNotice() {
   if (!sync) return null;
   const temp = sync.signedIn && sync.session?.mustChange;
   const out = sync.enabled && sync.status.phase === 'signed-out';
+  const code = sync.signedIn && sync.session?.mfa && !sync.staff;
+  if (code || sync.twoStepNeeded)
+    return (
+      <div className="no-print flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-warn/30 bg-warn/[0.08] px-4 py-2 text-sm">
+        <span className="text-ink">{code ? 'Enter the code from your authenticator app to keep working with the shop’s data.' : 'The shop now requires two-step sign-in for your role — set it up to keep working with the shop’s data.'}</span>
+        <Link to="/signin" className="font-semibold text-accent hover:underline">
+          {code ? 'Enter code' : 'Set it up'}
+        </Link>
+      </div>
+    );
   if (!temp && !out) return null;
   return (
     <div className="no-print flex flex-wrap items-center justify-center gap-x-3 gap-y-1 border-b border-warn/30 bg-warn/[0.08] px-4 py-2 text-sm">
@@ -252,7 +262,7 @@ function SyncBadge({ onNavigate }) {
   const busy = s.phase === 'syncing' || s.pending > 0;
   return (
     <Link
-      to={s.phase === 'signed-out' ? '/signin' : '/settings?tab=cloud#sync'}
+      to={s.phase === 'signed-out' || (s.phase === 'not-staff' && sync.session?.mfa) ? '/signin' : '/settings?tab=cloud#sync'}
       onClick={onNavigate}
       className="mb-2 flex items-center gap-2 rounded-[8px] px-2 py-1.5 text-xs font-medium text-sidebar-ink-2 transition-colors hover:bg-fill/[0.08] hover:text-sidebar-ink"
       title={s.error || 'Shared shop data'}

@@ -19,12 +19,25 @@ const world = {
 const res = (body, status = 200) => new Response(status === 204 ? null : typeof body === 'string' ? body : JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json' } });
 const parseForm = (b) => Object.fromEntries(new URLSearchParams(String(b || '')));
 
+// The database's two-step check (shop_mfa_ok): a token marked as having an authenticator app
+// (test_mfa) passes only once its session used the code (aal2).
+const mfaOk = (init) => {
+  try {
+    const t = String(init.headers?.Authorization || '').replace(/^Bearer /, '');
+    const c = JSON.parse(Buffer.from(t.split('.')[1], 'base64url').toString());
+    return c.aal === 'aal2' || !c.app_metadata?.test_mfa;
+  } catch {
+    return false;
+  }
+};
+
 globalThis.fetch = async (input, init = {}) => {
   const url = new URL(typeof input === 'string' ? input : input.url);
   const method = (init.method || 'GET').toUpperCase();
   const jbody = () => (typeof init.body === 'string' ? JSON.parse(init.body) : {});
   if (url.origin === URL_BASE) {
     const p = url.pathname;
+    if (p === '/rest/v1/rpc/shop_mfa_ok') return res(JSON.stringify(mfaOk(init)));
     if (p === '/rest/v1/rpc/shop_secret_get') return res(JSON.stringify(world.secrets.get(jbody().p_name) || null));
     if (p === '/rest/v1/rpc/shop_secret_set') { const a = jbody(); world.secrets.set(a.p_name, a.p_value); return res('null'); }
     if (p === '/rest/v1/shop_pay_links') {
@@ -74,7 +87,7 @@ async function load(name) {
   await import(file);
   return handler;
 }
-const jwt = (meta) => `x.${Buffer.from(JSON.stringify({ app_metadata: meta })).toString('base64url')}.y`;
+const jwt = (meta, aal) => `x.${Buffer.from(JSON.stringify({ app_metadata: meta, ...(aal ? { aal } : {}) })).toString('base64url')}.y`;
 const owner = { autoshop_staff: true, autoshop_role: 'owner' };
 const advisor = { autoshop_staff: true, autoshop_role: 'advisor' };
 

@@ -88,7 +88,14 @@ export default function Logins() {
               <li key={p.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                 <Avatar name={p.name} size={32} />
                 <div className="min-w-[160px] flex-1">
-                  <div className="font-medium">{p.name}</div>
+                  <div className="flex items-center gap-1.5 font-medium">
+                    {p.name}
+                    {u?.active && u.twoStep && (
+                      <span className="pill bg-ok/[0.1] text-ok" title="Signs in with a code from an authenticator app">
+                        <ShieldCheck size={11} /> Two-step
+                      </span>
+                    )}
+                  </div>
                   <div className="text-xs text-ink-3">
                     {u ? (
                       <>
@@ -126,6 +133,18 @@ export default function Logins() {
                         >
                           <KeyRound size={13} /> Reset password
                         </button>
+                        {u.twoStep && u.id !== sync.session?.userId && (
+                          <button
+                            className="btn-plain btn-sm"
+                            disabled={Boolean(busy)}
+                            onClick={() =>
+                              window.confirm(`Reset two-step sign-in for ${p.name}? Use this if they lost their phone — they’ll sign in with their password and set up their authenticator app again.`) &&
+                              act('twostep', async () => (await shopAdmin(cfg, 'resetTwoStep', { userId: u.id }), await load(), toast(`Two-step sign-in reset for ${p.name}`, { tone: 'success' })))
+                            }
+                          >
+                            <ShieldCheck size={13} /> Reset two-step
+                          </button>
+                        )}
                         {u.id !== sync.session?.userId && (
                           <button className="btn-plain btn-sm text-bad" disabled={Boolean(busy)} onClick={() => act('remove', async () => (await shopAdmin(cfg, 'remove', { userId: u.id }), await load(), toast(`${p.name} can no longer sign in`)))}>
                             <UserX size={13} /> Remove

@@ -17,7 +17,7 @@ const CORS = {
 const ROLES = ["owner", "manager", "advisor", "tech"];
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), { status, headers: { ...CORS, "Content-Type": "application/json" } });
-const fail = (message: string, status = 400) => json({ error: message, message }, status);
+const fail = (message: string, status = 400, code?: string) => json({ error: message, message, code }, status);
 
 // The platform has already verified the token's signature (verify_jwt); read its claims.
 function claims(req: Request): Record<string, any> | null {
@@ -57,7 +57,21 @@ const view = (u: any) => ({
   active: Boolean(u.app_metadata?.autoshop_staff) && !(u.banned_until && new Date(u.banned_until) > new Date()),
   lastSignIn: u.last_sign_in_at || null,
   mustChange: Boolean(u.user_metadata?.must_change_password),
+  twoStep: (u.factors || []).some((f: any) => f.status === "verified"),
 });
+
+/**
+ * Two-step sign-in: someone who uses an authenticator app (or whose role must) has to have entered
+ * its code this session. The database decides, from the caller's own token.
+ */
+async function twoStepOk(req: Request) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/shop_mfa_ok`, {
+    method: "POST",
+    headers: { apikey: SERVICE, Authorization: req.headers.get("Authorization") || "", "Content-Type": "application/json" },
+    body: "{}",
+  }).catch(() => null);
+  return Boolean(res?.ok && (await res.json().catch(() => false)) === true);
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
@@ -65,6 +79,7 @@ Deno.serve(async (req) => {
   const c = claims(req);
   const meta = c?.app_metadata || {};
   if (!meta.autoshop_staff) return fail("Shop staff only", 403);
+  if (!(await twoStepOk(req))) return fail("Enter the code from your authenticator app to continue", 401, "mfa_required");
   const role = meta.autoshop_role || "advisor";
   const owner = role === "owner";
   const body = await req.json().catch(() => ({}));
@@ -111,6 +126,13 @@ Deno.serve(async (req) => {
         const password = tempPassword();
         const u = await admin(`/users/${cur.id}`, { method: "PUT", body: JSON.stringify({ password, user_metadata: { ...cur.user_metadata, must_change_password: true } }) });
         return json({ user: view(u), password });
+      }
+      case "resetTwoStep": {
+        // Lost phone: remove their authenticator app so they can sign in with their password and set it up again.
+        if (!owner) return fail("Only the owner can reset two-step sign-in", 403);
+        const cur = await admin(`/users/${encodeURIComponent(body.userId)}`);
+        for (const f of cur.factors || []) await admin(`/users/${cur.id}/factors/${f.id}`, { method: "DELETE" });
+        return json({ user: view(await admin(`/users/${cur.id}`)) });
       }
       case "remove": {
         if (!owner) return fail("Only the owner can remove logins", 403);

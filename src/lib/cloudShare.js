@@ -34,7 +34,21 @@ function writeSession(s) {
 export const cloudSession = () => readSession();
 export const signOut = () => writeSession(null);
 
-async function authRequest(cfg, grant, body) {
+const toSession = (cfg, data) => ({
+  url: cfg.url,
+  email: data.user?.email,
+  userId: data.user?.id,
+  name: data.user?.user_metadata?.name || '',
+  mustChange: Boolean(data.user?.user_metadata?.must_change_password),
+  // Has an authenticator app set up (two-step sign-in), so the session needs its code to count.
+  mfa: verifiedFactors(data.user).length > 0,
+  access: data.access_token,
+  refresh: data.refresh_token,
+  expires: Date.now() + (data.expires_in || 3600) * 1000,
+});
+const verifiedFactors = (user) => (user?.factors || []).filter((f) => f.status === 'verified' && f.factor_type === 'totp');
+
+async function authRequest(cfg, grant, body, { save = true } = {}) {
   const res = await fetch(`${cfg.url}/auth/v1/token?grant_type=${grant}`, {
     method: 'POST',
     headers: { apikey: cfg.key, 'Content-Type': 'application/json' },
@@ -42,21 +56,74 @@ async function authRequest(cfg, grant, body) {
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error_description || data.msg || data.message || `Sign-in failed (${res.status})`);
-  const session = {
-    url: cfg.url,
-    email: data.user?.email,
-    userId: data.user?.id,
-    name: data.user?.user_metadata?.name || '',
-    mustChange: Boolean(data.user?.user_metadata?.must_change_password),
-    access: data.access_token,
-    refresh: data.refresh_token,
-    expires: Date.now() + (data.expires_in || 3600) * 1000,
-  };
+  const session = toSession(cfg, data);
+  if (save) writeSession(session);
+  return session;
+}
+
+/**
+ * Sign in with email and password. Someone with two-step sign-in gets back a pending session that
+ * isn't saved (or used for the shop's data) until they enter the code from their authenticator app.
+ */
+export async function signIn(cfg, email, password) {
+  const session = await authRequest(cfg, 'password', { email, password }, { save: false });
+  if (session.mfa) return { ...session, pending: true };
   writeSession(session);
   return session;
 }
 
-export const signIn = (cfg, email, password) => authRequest(cfg, 'password', { email, password });
+// ---------------------------------------------------------------- Two-step sign-in (authenticator app)
+
+async function authCall(cfg, token, path, { method = 'GET', body } = {}) {
+  const res = await fetch(`${cfg.url}/auth/v1${path}`, {
+    method,
+    headers: { apikey: cfg.key, Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(data.msg || data.error_description || data.message || `Request failed (${res.status})`), { status: res.status, code: data.error_code || data.code });
+  return data;
+}
+
+/** Whether this session still needs the code from the authenticator app. */
+export const needsCode = (session) => Boolean(session?.mfa && sessionClaims(session).aal !== 'aal2');
+
+/** The signed-in person's authenticator apps (verified ones only). */
+export async function twoStepFactors(cfg, session = readSession()) {
+  const user = await authCall(cfg, session.access, '/user');
+  return verifiedFactors(user);
+}
+
+/**
+ * Confirm a code: for sign-in (pending session) or to finish setting up a new authenticator app.
+ * Returns the upgraded session, saved for this device.
+ */
+export async function verifyCode(cfg, session, factorId, code) {
+  const challenge = await authCall(cfg, session.access, `/factors/${factorId}/challenge`, { method: 'POST', body: {} });
+  const data = await authCall(cfg, session.access, `/factors/${factorId}/verify`, { method: 'POST', body: { challenge_id: challenge.id, code: String(code).replace(/\s+/g, '') } });
+  const next = { ...toSession(cfg, data), mfa: true, name: session.name || data.user?.user_metadata?.name || '' };
+  writeSession(next);
+  return next;
+}
+
+/** Start setting up an authenticator app: a QR code to scan and the key to type in instead. */
+export async function enrollAuthenticator(cfg, issuer) {
+  const token = await accessToken(cfg);
+  // Clear out any setup that was started and never finished.
+  const user = await authCall(cfg, token, '/user');
+  for (const f of user.factors || []) if (f.status !== 'verified') await authCall(cfg, token, `/factors/${f.id}`, { method: 'DELETE' }).catch(() => {});
+  const f = await authCall(cfg, token, '/factors', { method: 'POST', body: { factor_type: 'totp', friendly_name: `AutoShop Pro ${new Date().toISOString().slice(0, 10)}`, issuer: issuer || 'AutoShop Pro' } });
+  return { id: f.id, qr: f.totp?.qr_code, secret: f.totp?.secret, uri: f.totp?.uri };
+}
+
+/** Turn two-step sign-in off for the signed-in person (needs a session that used a code). */
+export async function removeAuthenticator(cfg, factorId) {
+  const token = await accessToken(cfg);
+  await authCall(cfg, token, `/factors/${factorId}`, { method: 'DELETE' });
+  // The current session is still at the higher level; mark it as no longer needing a code.
+  const s = readSession();
+  if (s) writeSession({ ...s, mfa: false });
+}
 
 /** Claims inside a session's access token (app_metadata carries the staff flag). */
 export function sessionClaims(session) {
@@ -67,7 +134,8 @@ export function sessionClaims(session) {
     return {};
   }
 }
-export const isStaffSession = (session) => Boolean(sessionClaims(session)?.app_metadata?.autoshop_staff);
+/** Staff, with the code entered if they use two-step sign-in (until then the shop's data stays closed). */
+export const isStaffSession = (session) => Boolean(sessionClaims(session)?.app_metadata?.autoshop_staff) && !needsCode(session);
 
 /** Change the signed-in staff member's password (and clear a "change your temporary password" flag). */
 export async function changePassword(cfg, password) {
@@ -90,7 +158,7 @@ export async function accessToken(cfg) {
   if (!s || s.url !== cfg.url) throw Object.assign(new Error('Sign in under Settings → Shop Cloud first.'), { status: 401 });
   if (s.expires - Date.now() > 60_000) return s.access;
   // One refresh at a time: refresh tokens are single-use.
-  refreshing ||= authRequest(cfg, 'refresh_token', { refresh_token: s.refresh })
+  refreshing ||= authRequest(cfg, 'refresh_token', { refresh_token: s.refresh }, { save: false })
     .then((n) => ({ ...n, name: n.name || s.name }))
     .then((n) => (writeSession(n), n.access))
     .catch((e) => {

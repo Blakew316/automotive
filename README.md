@@ -131,6 +131,15 @@ Settings → Shop Cloud → **Shared shop data** puts the whole shop in the clou
 - **Change history.** Every version of every record is kept in `shop_record_history` (six months): *Change history* on a repair order, customer or vehicle shows who changed what, when and from which device, with one-click restore.
 - **Backups.** `snapshot_shop()` runs nightly at 3:15 AM Central (pg_cron) and keeps the last 14; Settings → Data → **Cloud backups** downloads any of them as a regular backup file, and the owner can restore the whole shop to one (the current state is backed up first).
 
+### Two-step sign-in
+
+Anyone can protect their login with an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password, Authy or the phone's built-in password app) under **Settings → Shop Cloud → Two-step sign-in**: scan the QR code, enter the 6-digit code, done. From then on, signing in on a new device asks for the code after the password.
+
+- **It's enforced on the server, not just the screen.** Someone who uses two-step sign-in can reach the shop's data, files and every server function only with a session that used the code (Supabase Auth's "aal2"). A stolen password alone gets nothing (`shop_mfa_ok()` inside `is_shop_staff()`, plus a check in each Edge Function).
+- **The owner can require it** for any role (e.g. owner and manager, who can see the books, take refunds and change keys). People in a required role set it up at their next sign-in; anyone already signed in is shown a banner and can't reach the shop's data until they do.
+- **Lost phone:** the owner resets it under **Team → Staff & access**, which also shows who uses two-step sign-in.
+- Supabase's leaked-password check (rejecting passwords found in known breaches) is a project setting in the Supabase dashboard (Authentication → Policies), available on paid plans.
+
 ### Integration keys & the AI assistant
 
 **Settings → Keys & AI** (owner; managers can view) stores the shop's integration keys on the Shop Cloud server, encrypted in [Supabase Vault](https://supabase.com/docs/guides/database/vault). After saving, a key is never sent back to any device — the screen shows only that it's set, its last four characters and when it changed. The same screen holds the Twilio keys for business texting & calls, the Stripe key for online payments, the Intuit app keys for QuickBooks Online and the Smartcar keys for connected cars.
