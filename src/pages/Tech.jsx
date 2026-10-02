@@ -1,7 +1,7 @@
 // Tech view: what a technician needs on the shop floor, sized for a phone or tablet.
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, Pause, Check, LogIn, LogOut, Camera, ClipboardCheck, Cable, StickyNote, Timer, Hand, Wrench, Clock } from 'lucide-react';
+import { Play, Pause, Check, LogIn, LogOut, Camera, ClipboardCheck, Cable, StickyNote, Timer, Hand, Wrench, Clock, Stethoscope } from 'lucide-react';
 import { useUI, useLookup, useScopedShop } from '../store/hooks';
 import { Card, Avatar, EmptyState, Spinner, Modal } from '../components/ui';
 import { PickButton } from './order/MediaPanel';
@@ -224,6 +224,9 @@ function JobCard({ order, services, running, now, onStart, onStop }) {
           <PickButton capture onFiles={(f) => ingest(f)} className="btn-secondary btn-icon h-9 w-9" title="Photo or video">
             {busy ? <Spinner size={14} /> : <Camera size={16} />}
           </PickButton>
+          <Link to={`/diagnose?order=${order.id}`} className="btn-secondary btn-icon h-9 w-9" title="Auto diagnosis" aria-label="Auto diagnosis">
+            <Stethoscope size={16} />
+          </Link>
           <Link to={`/orders/${order.id}?tab=inspection`} className="btn-secondary btn-icon h-9 w-9" title="Inspection">
             <ClipboardCheck size={16} />
           </Link>

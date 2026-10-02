@@ -3,8 +3,7 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import {
   Printer, Send, MoreHorizontal, Plus, Trash2, MessageSquare, Mail, Check, ClipboardCheck, Wrench, StickyNote,
   CircleCheck, Play, PackageCheck, Receipt, CreditCard, RotateCcw, FileText, Search, Camera, MonitorSmartphone, Share2, PenLine, HandCoins,
-  History, Activity, Building2, Undo2, Sparkles,
-} from 'lucide-react';
+  History, Activity, Building2, Undo2, Sparkles, Stethoscope } from 'lucide-react';
 import { useShop, useUI, useLookup, useTotals, useSync } from '../store/hooks';
 import RecordHistory from '../components/RecordHistory';
 import DictateButton from '../components/Dictate';
@@ -231,7 +230,14 @@ export default function OrderDetail() {
           {tab === 'services' && (
             <div className="space-y-4">
               <Card className="px-4 py-3">
-                <div className="section-label mb-1.5">Customer concern</div>
+                <div className="mb-1.5 flex items-center justify-between gap-3">
+                  <div className="section-label">Customer concern</div>
+                  {vehicle && (
+                    <Link to={`/diagnose?order=${order.id}`} className="btn-plain btn-sm -my-1 -mr-2">
+                      <Stethoscope size={14} /> Auto diagnosis
+                    </Link>
+                  )}
+                </div>
                 <InlineText
                   multiline
                   rows={2}

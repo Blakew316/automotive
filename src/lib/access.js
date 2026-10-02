@@ -9,12 +9,12 @@ export const ROLES = {
   tech: { label: 'Technician', desc: 'Tech clock, workflow, repair orders and technical info' },
 };
 
-const SHOP_FLOOR = ['/', '/workflow', '/orders', '/calendar', '/frontdesk', '/lobby', '/messages', '/customers', '/accounts', '/vehicles', '/marketing', '/tech', '/catalog', '/vin', '/parts', '/library'];
+const SHOP_FLOOR = ['/', '/workflow', '/orders', '/calendar', '/frontdesk', '/lobby', '/messages', '/customers', '/accounts', '/vehicles', '/marketing', '/tech', '/diagnose', '/catalog', '/vin', '/parts', '/library'];
 const ALLOW = {
   owner: null, // everything
   manager: [...SHOP_FLOOR, '/team', '/reports', '/integrations', '/import', '/settings'],
   advisor: SHOP_FLOOR,
-  tech: ['/tech', '/workflow', '/orders', '/catalog', '/vin', '/parts', '/library'],
+  tech: ['/tech', '/workflow', '/orders', '/diagnose', '/catalog', '/vin', '/parts', '/library'],
 };
 
 export function canAccess(role, path) {
