@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -34,7 +36,7 @@
 <style>
   /* ---------- Hero: vehicles gliding along the road ---------- */
   .page-hero .hero-trust a.chip { text-decoration: none; min-height: 44px; transition: border-color var(--dur-2) var(--ease), transform var(--dur-1) var(--ease); }
-  .page-hero .hero-trust a.chip:hover { border-color: var(--ink-4); transform: translateY(-1px); }
+  @media (hover: hover) { .page-hero .hero-trust a.chip:hover { border-color: var(--ink-4); transform: translateY(-1px); } }
   .page-hero-art svg.fleet-art { width: min(100%, 500px); overflow: hidden; }
   /* Below 960px the art crops from the top (slice); bring the sun down so it isn't cut off */
   .fleet-art .sun { transform-box: fill-box; transform-origin: center; }
@@ -74,14 +76,14 @@
     transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease);
     -webkit-tap-highlight-color: transparent;
   }
-  .make-filter:hover { color: var(--ink); }
+  @media (hover: hover) { .make-filter:hover { color: var(--ink); } }
   .make-filter .n { min-width: 24px; padding: 1px 7px; border-radius: var(--pill); background: rgba(43, 37, 34, .06); font-size: .76rem; font-weight: 650; text-align: center; color: var(--ink-3); transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
   .make-filter[aria-pressed="true"] { background: var(--paper); color: var(--ink); box-shadow: var(--shadow-1), inset 0 0 0 1px var(--line); }
   .make-filter[aria-pressed="true"] .n { background: var(--accent-soft); color: var(--accent); }
   @media (max-width: 639.98px) {
     .makes-search { flex-basis: 100%; max-width: none; }
     .makes-filters {
-      margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); border-radius: 0; background: none; border: 0; gap: 6px;
+      margin-inline: calc(var(--edge-left) * -1) calc(var(--edge-right) * -1); padding-inline: var(--edge-left) var(--edge-right); border-radius: 0; background: none; border: 0; gap: 6px;
       -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
       mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
     }
@@ -106,7 +108,7 @@
     transition: transform var(--dur-2) var(--spring), background-position 1s var(--ease);
   }
   .make-mono.is-long { font-size: .84rem; letter-spacing: -0.01em; }
-  .make-tile:hover .make-mono { transform: rotate(-6deg) scale(1.05); background-position: 100% 100%; }
+  @media (hover: hover) { .make-tile:hover .make-mono { transform: rotate(-6deg) scale(1.05); background-position: 100% 100%; } }
   .make-text { min-width: 0; display: grid; gap: 2px; }
   .make-name { font-weight: 620; font-size: .98rem; line-height: 1.22; letter-spacing: -0.012em; color: var(--ink); overflow-wrap: anywhere; }
   .make-cat { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: var(--ink-3); }
@@ -151,7 +153,7 @@
   .makes-more { display: flex; gap: 10px; align-items: flex-start; color: var(--ink-2); font-size: .98rem; }
   .makes-more .icon { color: var(--accent); margin-top: 2px; }
   .makes-more a { font-weight: 600; color: var(--accent); text-decoration: none; white-space: nowrap; }
-  .makes-more a:hover { text-decoration: underline; }
+  @media (hover: hover) { .makes-more a:hover { text-decoration: underline; } }
   .tm-note { font-size: .82rem; color: var(--ink-4); padding-left: 32px; }
 
   /* ---------- What we work on ---------- */
@@ -165,7 +167,7 @@
   .veh-stage::after { content: ""; position: absolute; left: 10%; right: 10%; bottom: 14px; height: 2px; border-radius: 2px; background: repeating-linear-gradient(90deg, var(--stone-300) 0 12px, transparent 12px 22px); }
   .veh-mini { --wheels: paused; --s: .9; position: relative; z-index: 1; width: calc(var(--vw, 150) * var(--s) * 1px); max-width: 92%; height: auto; margin-bottom: 15px; transition: transform .6s var(--ease); }
   @media (min-width: 900px) and (max-width: 1199.98px) { .veh-mini { --s: .78; } }
-  .veh-card:hover .veh-mini { --wheels: running; transform: translateX(8px); }
+  @media (hover: hover) { .veh-card:hover .veh-mini { --wheels: running; transform: translateX(8px); } }
   .veh-card h3 { font-size: 1.12rem; }
   .veh-card p { color: var(--ink-3); font-size: .94rem; }
   @media (max-width: 639.98px) {
@@ -184,7 +186,7 @@
   .small-link { display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: var(--r-lg); }
   .small-link .veh-mini-wrap { flex: none; width: 88px; height: 64px; display: grid; place-items: end center; border-radius: 14px; background: var(--foil); overflow: hidden; }
   .small-link .veh-mini { width: 70px; margin-bottom: 8px; }
-  .small-link:hover .veh-mini { --wheels: running; transform: translateX(4px); }
+  @media (hover: hover) { .small-link:hover .veh-mini { --wheels: running; transform: translateX(4px); } }
   .small-link strong { display: block; font-size: 1.05rem; letter-spacing: -0.015em; }
   .small-link span.muted { display: block; font-size: .92rem; margin-top: 2px; }
   .small-link .link-arrow { margin-left: auto; flex: none; }

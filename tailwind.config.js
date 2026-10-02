@@ -3,8 +3,14 @@ const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
 
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  // Hover styles only where there's a real pointer: on iPhone and iPad a tap never leaves a "stuck" hover.
+  future: { hoverOnlyWhenSupported: true },
   theme: {
     extend: {
+      screens: {
+        // Touch screens (phones, tablets): bigger targets, iOS-size controls.
+        coarse: { raw: '(pointer: coarse)' },
+      },
       colors: {
         canvas: token('canvas'),
         surface: token('surface'),
@@ -54,9 +60,10 @@ export default {
       fontSize: {
         '2xs': ['11px', { lineHeight: '14px', letterSpacing: '0.005em' }],
         xs: ['12px', { lineHeight: '16px', letterSpacing: '0' }],
-        sm: ['13px', { lineHeight: '18px', letterSpacing: '-0.003em' }],
-        base: ['14px', { lineHeight: '20px', letterSpacing: '-0.006em' }],
-        md: ['15px', { lineHeight: '22px', letterSpacing: '-0.009em' }],
+        // sm, base and md step up a point on phones (see --text-* in index.css).
+        sm: ['var(--text-sm)', { lineHeight: 'var(--leading-sm)', letterSpacing: '-0.003em' }],
+        base: ['var(--text-base)', { lineHeight: 'var(--leading-base)', letterSpacing: '-0.006em' }],
+        md: ['var(--text-md)', { lineHeight: 'var(--leading-md)', letterSpacing: '-0.009em' }],
         lg: ['17px', { lineHeight: '24px', letterSpacing: '-0.016em' }],
         xl: ['20px', { lineHeight: '26px', letterSpacing: '-0.019em' }],
         '2xl': ['24px', { lineHeight: '30px', letterSpacing: '-0.021em' }],
@@ -83,12 +90,15 @@ export default {
         'sheet-in': { from: { opacity: 0, transform: 'translateY(8px) scale(0.985)' }, to: { opacity: 1, transform: 'none' } },
         'toast-in': { from: { opacity: 0, transform: 'translateY(12px)' }, to: { opacity: 1, transform: 'none' } },
         'slide-in': { from: { transform: 'translateX(-100%)' }, to: { transform: 'none' } },
+        'sheet-up': { from: { transform: 'translateY(100%)' }, to: { transform: 'none' } },
       },
       animation: {
         'fade-in': 'fade-in 160ms ease-out',
         'sheet-in': 'sheet-in 220ms cubic-bezier(0.25, 0.1, 0.25, 1)',
         'toast-in': 'toast-in 240ms cubic-bezier(0.25, 0.1, 0.25, 1)',
         'slide-in': 'slide-in 220ms cubic-bezier(0.25, 0.1, 0.25, 1)',
+        // iOS sheet presentation curve.
+        'sheet-up': 'sheet-up 420ms cubic-bezier(0.32, 0.72, 0, 1)',
       },
     },
   },

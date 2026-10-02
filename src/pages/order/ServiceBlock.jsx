@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Trash2, MoreHorizontal, Wrench, Package, Receipt, Truck, Boxes, ArrowUpRight, Check, MessageSquareText, Camera, Disc3, ShieldCheck } from 'lucide-react';
 import { useShop, useUI } from '../../store/hooks';
 import { Menu, NumInput, InlineText, Segmented, Spinner } from '../../components/ui';
+import { useIsPhone } from '../../lib/viewport';
 import { itemTotal, serviceTotal, serviceValue, serviceHours } from '../../lib/pricing';
 import { NO_CHARGE_REASONS, CORE_STATUS } from '../../lib/operations';
 import { money } from '../../lib/format';
@@ -32,6 +33,11 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
   const declined = service.status === 'declined';
   const up = (patch) => updateService(order.id, service.id, patch);
   const upItem = (itemId, patch) => updateItem(order.id, service.id, itemId, patch);
+  const removeLine = (item) => {
+    if (item.inventoryId) adjustInventory(item.inventoryId, Number(item.qty) || 0);
+    removeItem(order.id, service.id, item.id);
+  };
+  const phone = useIsPhone();
 
   const add = (type) =>
     addItem(order.id, service.id, {
@@ -58,7 +64,11 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
           value={service.title}
           onCommit={(title) => up({ title })}
           disabled={!editable}
-          className={`min-w-[160px] flex-1 rounded-[6px] border border-transparent bg-transparent px-1.5 py-0.5 text-md font-semibold outline-none hover:border-line focus:border-accent/60 focus:ring-[3px] focus:ring-accent/15 ${declined ? 'line-through' : ''}`}
+          multiline={phone}
+          submitOnEnter
+          rows={1}
+          enterKeyHint="done"
+          className={`min-w-[160px] flex-1 resize-none rounded-[6px] border border-transparent bg-transparent px-1.5 py-0.5 text-md font-semibold outline-none [field-sizing:content] hover:border-line focus:border-accent/60 focus:ring-[3px] focus:ring-accent/15 ${declined ? 'line-through' : ''}`}
         />
         <div className="flex flex-wrap items-center gap-2">
           {editable && (
@@ -119,7 +129,14 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
         </div>
       )}
 
-      {service.items.length > 0 && (
+      {service.items.length > 0 && phone && (
+        <ul className="border-t border-line/60">
+          {service.items.map((item) => (
+            <PhoneLine key={item.id} item={item} editable={editable} upItem={upItem} vehicle={vehicle} vehicleQuery={vehicleQuery} onRemove={() => removeLine(item)} />
+          ))}
+        </ul>
+      )}
+      {service.items.length > 0 && !phone && (
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
@@ -145,50 +162,7 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
                     </td>
                     <td className="py-1.5 pr-2">
                       <InlineText value={item.description} placeholder={isLabor ? 'Labor operation' : isPart ? 'Part description' : item.type === 'sublet' ? 'Sublet work' : 'Fee'} onCommit={(description) => upItem(item.id, { description })} disabled={!editable} className={cell} />
-                      {isPart && (
-                        <div className="mt-0.5 flex flex-wrap items-center gap-1.5 pl-1.5">
-                          <InlineText value={item.partNumber} placeholder="Part #" onCommit={(partNumber) => upItem(item.id, { partNumber })} disabled={!editable} className="h-6 w-32 rounded-[5px] border border-transparent bg-transparent px-1 font-mono text-xs text-ink-2 outline-none hover:border-line focus:border-accent/60" />
-                          <select value={item.partStatus || 'needed'} onChange={(e) => upItem(item.id, { partStatus: e.target.value })} disabled={!editable} className="h-6 rounded-[5px] border border-transparent bg-transparent px-1 text-xs text-ink-2 outline-none hover:border-line">
-                            {Object.entries(PART_STATUS).map(([k, v]) => (
-                              <option key={k} value={k}>{v}</option>
-                            ))}
-                          </select>
-                          <span className="flex items-center gap-0.5 text-xs text-ink-3" title="Core charge the vendor refunds when the old part goes back">
-                            Core
-                            <NumInput
-                              value={item.core?.amount || ''}
-                              format={(v) => Number(v).toFixed(2)}
-                              placeholder="—"
-                              onCommit={(amount) => upItem(item.id, { core: amount > 0 ? { status: 'owed', ...(item.core || {}), amount } : null })}
-                              className="h-6 w-14 rounded-[5px] border border-transparent bg-transparent px-1 text-xs text-ink-2 outline-none hover:border-line focus:border-accent/60"
-                              aria-label="Core charge"
-                            />
-                          </span>
-                          {item.core?.amount > 0 && (
-                            <select value={item.core.status || 'owed'} onChange={(e) => upItem(item.id, { core: { ...item.core, status: e.target.value, ...(e.target.value === 'returned' && !item.core.returnedAt ? { returnedAt: new Date().toISOString() } : {}) } })} className="h-6 rounded-[5px] border border-transparent bg-transparent px-1 text-xs text-ink-2 outline-none hover:border-line" aria-label="Core status">
-                              {Object.entries(CORE_STATUS).map(([k, v]) => (
-                                <option key={k} value={k}>{v}</option>
-                              ))}
-                            </select>
-                          )}
-                          <Menu
-                            align="left"
-                            trigger={({ toggle }) => (
-                              <button onClick={toggle} className="flex h-6 items-center gap-0.5 rounded-[5px] px-1 text-xs text-accent hover:bg-fill/[0.08]">
-                                Find part <ArrowUpRight size={11} />
-                              </button>
-                            )}
-                            items={SUPPLIERS.map((s) => ({
-                              label: s.name,
-                              hint: item.partNumber ? item.partNumber : 'vehicle',
-                              onClick: () => {
-                                const url = item.partNumber ? s.search(item.partNumber) : s.vehicle && vehicle ? s.vehicle(vehicle) : s.search(`${vehicleQuery} ${item.description}`.trim());
-                                window.open(url, '_blank', 'noopener');
-                              },
-                            }))}
-                          />
-                        </div>
-                      )}
+                      {isPart && <PartMeta item={item} editable={editable} upItem={upItem} vehicle={vehicle} vehicleQuery={vehicleQuery} />}
                       {item.type === 'sublet' && (
                         <InlineText value={item.vendor} placeholder="Vendor" onCommit={(vendor) => upItem(item.id, { vendor })} disabled={!editable} className="ml-1.5 mt-0.5 h-6 w-48 rounded-[5px] border border-transparent bg-transparent px-1 text-xs text-ink-2 outline-none hover:border-line focus:border-accent/60" />
                       )}
@@ -218,11 +192,8 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
                     <td className="py-1.5 pr-3 pt-2 text-right">
                       {editable && (
                         <button
-                          onClick={() => {
-                            if (item.inventoryId) adjustInventory(item.inventoryId, Number(item.qty) || 0);
-                            removeItem(order.id, service.id, item.id);
-                          }}
-                          className="btn-ghost btn-icon h-6 w-6 opacity-0 transition-opacity focus:opacity-100 group-hover:opacity-100"
+                          onClick={() => removeLine(item)}
+                          className="hover-reveal btn-ghost btn-icon h-6 w-6"
                           aria-label="Remove line"
                         >
                           <Trash2 size={13} />
@@ -310,5 +281,127 @@ export default function ServiceBlock({ order, service, vehicle, index, editable,
         />
       )}
     </section>
+  );
+}
+
+/** Part number, stock status, core charge and supplier lookup under a part line. */
+function PartMeta({ item, editable, upItem, vehicle, vehicleQuery, phone = false }) {
+  const small = phone
+    ? 'h-8 rounded-[8px] border border-transparent bg-fill/[0.08] px-2 text-xs text-ink-2 outline-none focus:border-accent/60 focus:bg-surface'
+    : 'h-6 rounded-[5px] border border-transparent bg-transparent px-1 text-xs text-ink-2 outline-none hover:border-line focus:border-accent/60';
+  return (
+    <div className={phone ? 'flex flex-wrap items-center gap-2' : 'mt-0.5 flex flex-wrap items-center gap-1.5 pl-1.5'}>
+      <InlineText value={item.partNumber} placeholder="Part #" onCommit={(partNumber) => upItem(item.id, { partNumber })} disabled={!editable} autoCapitalize="characters" autoCorrect="off" spellCheck={false} enterKeyHint="done" className={`${small} w-32 font-mono`} />
+      <select value={item.partStatus || 'needed'} onChange={(e) => upItem(item.id, { partStatus: e.target.value })} disabled={!editable} className={small} aria-label="Part status">
+        {Object.entries(PART_STATUS).map(([k, v]) => (
+          <option key={k} value={k}>{v}</option>
+        ))}
+      </select>
+      <span className="flex items-center gap-0.5 text-xs text-ink-3" title="Core charge the vendor refunds when the old part goes back">
+        Core
+        <NumInput
+          value={item.core?.amount || ''}
+          format={(v) => Number(v).toFixed(2)}
+          placeholder="—"
+          onCommit={(amount) => upItem(item.id, { core: amount > 0 ? { status: 'owed', ...(item.core || {}), amount } : null })}
+          className={`${small} w-16`}
+          aria-label="Core charge"
+        />
+      </span>
+      {item.core?.amount > 0 && (
+        <select value={item.core.status || 'owed'} onChange={(e) => upItem(item.id, { core: { ...item.core, status: e.target.value, ...(e.target.value === 'returned' && !item.core.returnedAt ? { returnedAt: new Date().toISOString() } : {}) } })} className={small} aria-label="Core status">
+          {Object.entries(CORE_STATUS).map(([k, v]) => (
+            <option key={k} value={k}>{v}</option>
+          ))}
+        </select>
+      )}
+      <Menu
+        align="left"
+        trigger={({ toggle }) => (
+          <button onClick={toggle} className={`flex items-center gap-0.5 rounded-[5px] px-1 text-xs text-accent hover:bg-fill/[0.08] ${phone ? 'h-8 px-2' : 'h-6'}`}>
+            Find part <ArrowUpRight size={11} />
+          </button>
+        )}
+        items={SUPPLIERS.map((s) => ({
+          label: s.name,
+          hint: item.partNumber ? item.partNumber : 'vehicle',
+          onClick: () => {
+            const url = item.partNumber ? s.search(item.partNumber) : s.vehicle && vehicle ? s.vehicle(vehicle) : s.search(`${vehicleQuery} ${item.description}`.trim());
+            window.open(url, '_blank', 'noopener');
+          },
+        }))}
+      />
+    </div>
+  );
+}
+
+const phoneCell = 'h-9 w-full rounded-[8px] border border-transparent bg-fill/[0.08] px-2 text-[16px] outline-none transition focus:border-accent/60 focus:bg-surface disabled:bg-transparent';
+
+/** One line on a phone: what it is on top (wrapping, never cut off), then quantity, cost, price and total. */
+function PhoneLine({ item, editable, upItem, vehicle, vehicleQuery, onRemove }) {
+  const Icon = TYPE_ICON[item.type] || Package;
+  const isLabor = item.type === 'labor';
+  const isPart = item.type === 'part';
+  const costly = isPart || item.type === 'sublet';
+  const label = 'mb-1 block text-2xs font-medium text-ink-3';
+  return (
+    <li className="border-b border-line/60 px-4 pb-3.5 pt-2.5 last:border-b-0">
+      <div className="flex items-start gap-2">
+        <Icon size={16} strokeWidth={1.8} className="mt-[11px] shrink-0 text-ink-3" />
+        <InlineText
+          multiline
+          submitOnEnter
+          rows={1}
+          enterKeyHint="done"
+          value={item.description}
+          placeholder={isLabor ? 'Labor operation' : isPart ? 'Part description' : item.type === 'sublet' ? 'Sublet work' : 'Fee'}
+          onCommit={(description) => upItem(item.id, { description })}
+          disabled={!editable}
+          className="min-h-[38px] min-w-0 flex-1 resize-none rounded-[8px] border border-transparent bg-transparent px-1.5 py-[7px] text-[16px] font-medium leading-6 outline-none [field-sizing:content] focus:border-accent/60 focus:bg-surface"
+        />
+        {editable && (
+          <button onClick={onRemove} className="btn-ghost btn-icon -mr-2 h-9 w-9 shrink-0 text-ink-4" aria-label="Remove line">
+            <Trash2 size={16} />
+          </button>
+        )}
+      </div>
+      <div className="mt-1.5 grid grid-cols-[1fr_1fr_1fr_1.15fr] items-end gap-2">
+        <label className="block min-w-0">
+          <span className={label}>{isLabor ? 'Hours' : 'Qty'}</span>
+          <NumInput value={isLabor ? item.hours : item.qty} onCommit={(n) => upItem(item.id, isLabor ? { hours: n } : { qty: n })} disabled={!editable} className={phoneCell} aria-label={isLabor ? 'Hours' : 'Quantity'} />
+        </label>
+        <label className="block min-w-0">
+          <span className={label}>Cost</span>
+          {costly ? (
+            <NumInput value={item.cost} format={(v) => Number(v).toFixed(2)} onCommit={(cost) => upItem(item.id, { cost })} disabled={!editable} className={`${phoneCell} text-ink-2`} aria-label="Unit cost" />
+          ) : (
+            <span className="block h-9 px-2 text-right leading-9 text-ink-4">—</span>
+          )}
+        </label>
+        <label className="block min-w-0">
+          <span className={label}>{isLabor ? 'Rate' : 'Price'}</span>
+          <NumInput
+            value={isLabor ? item.rate : item.price}
+            format={(v) => Number(v).toFixed(2)}
+            onCommit={(n) => upItem(item.id, isLabor ? { rate: n } : { price: n, autoPrice: false })}
+            disabled={!editable}
+            className={phoneCell}
+            aria-label={isLabor ? 'Labor rate' : 'Unit price'}
+          />
+        </label>
+        <div className="min-w-0 text-right">
+          <span className={label}>Total</span>
+          <span className="tabular block h-9 truncate text-[16px] font-semibold leading-9 text-ink">{money(itemTotal(item))}</span>
+        </div>
+      </div>
+      {isPart && (
+        <div className="mt-2.5">
+          <PartMeta item={item} editable={editable} upItem={upItem} vehicle={vehicle} vehicleQuery={vehicleQuery} phone />
+        </div>
+      )}
+      {item.type === 'sublet' && (
+        <InlineText value={item.vendor} placeholder="Vendor" onCommit={(vendor) => upItem(item.id, { vendor })} disabled={!editable} className={`${phoneCell} mt-2.5 text-left text-ink-2`} />
+      )}
+    </li>
   );
 }

@@ -2,7 +2,8 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Plus, Car, ScanLine } from 'lucide-react';
 import { useShop, useLookup } from '../store/hooks';
-import { PageHeader, Card, SearchInput, EmptyState, Mono } from '../components/ui';
+import { PageHeader, Card, SearchInput, EmptyState, Mono, Disclosure } from '../components/ui';
+import { useIsPhone } from '../lib/viewport';
 import { VehicleForm } from '../components/forms';
 import { fullName, number, dateShort } from '../lib/format';
 
@@ -13,6 +14,7 @@ export default function Vehicles() {
   const [q, setQ] = useState('');
   const [adding, setAdding] = useState(false);
   const [make, setMake] = useState('all');
+  const phone = useIsPhone();
 
   const makes = useMemo(() => [...new Set(state.vehicles.map((v) => v.make))].sort(), [state.vehicles]);
   const lastService = useMemo(() => {
@@ -54,6 +56,26 @@ export default function Vehicles() {
       <Card>
         {rows.length === 0 ? (
           <EmptyState icon={Car} title="No vehicles found" />
+        ) : phone ? (
+          <ul className="divide-y divide-line/70">
+            {rows.map((v) => (
+              <li key={v.id}>
+                <Link to={`/vehicles/${v.id}`} className="press flex items-center gap-3 py-3 pl-4 pr-3.5">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="truncate text-base font-semibold text-ink">{v.year} {v.make} {v.model}</span>
+                      {v.plate && <span className="shrink-0 font-mono text-xs text-ink-2">{v.plate}</span>}
+                    </div>
+                    <div className="flex items-baseline justify-between gap-3 text-sm text-ink-3">
+                      <span className="truncate">{[fullName(lookup.customer.get(v.customerId)), v.trim].filter(Boolean).join(' · ')}</span>
+                      {v.mileage ? <span className="tabular shrink-0 text-xs">{number(v.mileage)} mi</span> : null}
+                    </div>
+                  </div>
+                  <Disclosure />
+                </Link>
+              </li>
+            ))}
+          </ul>
         ) : (
           <div className="overflow-x-auto">
             <table className="table">

@@ -1,14 +1,16 @@
 import { useMemo, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { UserPlus, Users } from 'lucide-react';
 import { useShop, useTotals } from '../store/hooks';
-import { PageHeader, Card, SearchInput, Avatar, EmptyState, Segmented } from '../components/ui';
+import { PageHeader, Card, SearchInput, Avatar, EmptyState, Segmented, Disclosure } from '../components/ui';
+import { useIsPhone } from '../lib/viewport';
 import { CustomerForm } from '../components/forms';
 import { money0, fullName, phone, dateShort } from '../lib/format';
 
 export default function Customers() {
   const { state } = useShop();
   const totals = useTotals();
+  const onPhone = useIsPhone();
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const [q, setQ] = useState('');
@@ -53,6 +55,27 @@ export default function Customers() {
       <Card>
         {rows.length === 0 ? (
           <EmptyState icon={Users} title="No customers found" />
+        ) : onPhone ? (
+          <ul className="divide-y divide-line/70">
+            {rows.map(({ c, vehicles, spend, last }) => (
+              <li key={c.id}>
+                <Link to={`/customers/${c.id}`} className="press flex items-center gap-3 py-2.5 pl-4 pr-3.5">
+                  <Avatar person={c} size={40} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <span className="truncate text-base font-semibold text-ink">{fullName(c)}</span>
+                      <span className="tabular shrink-0 text-sm text-ink-2">{money0(spend)}</span>
+                    </div>
+                    <div className="flex items-baseline justify-between gap-3 text-sm text-ink-3">
+                      <span className="truncate">{c.company || vehicles.map((v) => `${v.year} ${v.model}`).join(', ') || phone(c.phone) || '—'}</span>
+                      {last && <span className="shrink-0 text-xs">{dateShort(last)}</span>}
+                    </div>
+                  </div>
+                  <Disclosure />
+                </Link>
+              </li>
+            ))}
+          </ul>
         ) : (
           <div className="overflow-x-auto">
             <table className="table">

@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { MessageSquare, Mail, Globe, NotebookPen, ChevronLeft, PenSquare, Inbox, Phone, ArrowDownLeft, Sparkles, PhoneMissed, PhoneIncoming, PhoneOutgoing, Voicemail, Bot, CalendarCheck, Check, CheckCheck, CircleAlert, Ban, Paperclip, MailOpen, Clock } from 'lucide-react';
+import { MessageSquare, Mail, Globe, NotebookPen, ChevronLeft, PenSquare, Inbox, Phone, ArrowDownLeft, ArrowUp, Sparkles, PhoneMissed, PhoneIncoming, PhoneOutgoing, Voicemail, Bot, CalendarCheck, Check, CheckCheck, CircleAlert, Ban, Paperclip, MailOpen, Clock } from 'lucide-react';
 import { useShop, useUI, usePhone } from '../store/hooks';
 import { PageHeader, Card, SearchInput, Avatar, Segmented, EmptyState, Modal, Spinner } from '../components/ui';
+import { useIsPhone, useNavBarTitle } from '../lib/viewport';
 import { CustomerPicker } from '../components/forms';
 import ComposeModal from '../components/Compose';
 import AiAssistant from '../components/AiAssistant';
@@ -70,9 +71,15 @@ export default function Messages() {
     if (active && state.messages.some((m) => m.customerId === active.id && !m.read)) markThreadRead(active.id);
   }, [active, state.messages, markThreadRead]);
 
+  // iPhone: an open conversation fills the screen (no page title, no tab bar) with the name up top.
+  const phone = useIsPhone();
+  const full = phone && Boolean(active);
+  const owner = useId();
+  useNavBarTitle(owner, active ? fullName(active) : null, '/messages', 'Messages', full);
+
   return (
     <>
-      <PageHeader
+      {!full && <PageHeader
         title="Messages"
         subtitle={unreadTotal ? `${unreadTotal} unread` : 'Texts, emails and replies from customers in one place'}
         actions={
@@ -80,8 +87,14 @@ export default function Messages() {
             <PenSquare size={15} /> New message
           </button>
         }
-      />
-      <Card className="grid h-[calc(100vh-190px)] min-h-[480px] overflow-hidden md:grid-cols-[320px_minmax(0,1fr)]">
+      />}
+      <Card
+        className={
+          full
+            ? 'hide-tabbar -mx-4 -mb-16 -mt-2 grid h-[calc(var(--app-h,100dvh)-var(--navbar)-var(--safe-t)-var(--safe-b))] grid-cols-[minmax(0,1fr)] overflow-hidden rounded-none shadow-none'
+            : 'grid h-[calc(100vh-190px)] min-h-[480px] overflow-hidden md:grid-cols-[320px_minmax(0,1fr)]'
+        }
+      >
         <aside className={`min-h-0 flex-col border-line md:flex md:border-r ${active ? 'hidden' : 'flex'}`}>
           <div className="space-y-2 border-b border-line/70 p-3">
             <SearchInput value={q} onChange={setQ} placeholder="Search conversations" />
@@ -116,7 +129,7 @@ export default function Messages() {
           </ul>
         </aside>
         <section className={`min-h-0 flex-col ${active ? 'flex' : 'hidden md:flex'}`}>
-          {active ? <Thread customer={active} onBack={() => navigate('/messages')} /> : <EmptyState className="m-auto" icon={MessageSquare} title="Select a conversation" body="Or start a new message to any customer." />}
+          {active ? <Thread customer={active} phone={phone} onBack={() => navigate('/messages')} /> : <EmptyState className="m-auto" icon={MessageSquare} title="Select a conversation" body="Or start a new message to any customer." />}
         </section>
       </Card>
       {picking && (
@@ -133,7 +146,7 @@ export default function Messages() {
   );
 }
 
-function Thread({ customer, onBack }) {
+function Thread({ customer, phone, onBack }) {
   const { state, addMessage } = useShop();
   const { toast } = useUI();
   const line = usePhone();
@@ -173,9 +186,11 @@ function Thread({ customer, onBack }) {
   return (
     <>
       <header className="flex items-center gap-3 border-b border-line/70 px-4 py-2.5">
-        <button className="btn-ghost btn-icon -ml-2 md:hidden" onClick={onBack} aria-label="Back to conversations">
-          <ChevronLeft size={18} />
-        </button>
+        {!phone && (
+          <button className="btn-ghost btn-icon -ml-2 md:hidden" onClick={onBack} aria-label="Back to conversations">
+            <ChevronLeft size={18} />
+          </button>
+        )}
         <Avatar person={customer} size={34} />
         <div className="min-w-0 flex-1">
           <Link to={`/customers/${customer.id}`} className="block truncate text-sm font-semibold hover:text-accent">
@@ -218,7 +233,7 @@ function Thread({ customer, onBack }) {
                     )}
                     {(m.body || !m.meta?.media?.length) && (
                       <div
-                        className={`whitespace-pre-wrap rounded-[18px] px-3.5 py-2 text-sm leading-5 ${
+                        className={`whitespace-pre-wrap rounded-[18px] px-3.5 py-2 text-sm leading-5 coarse:text-[16px] coarse:leading-[21px] ${
                           m.channel === 'note' ? 'border border-dashed border-line bg-surface text-ink-2' : out ? 'bg-accent text-on-accent' : 'bg-fill/[0.12] text-ink'
                         } ${out ? 'rounded-br-[6px]' : 'rounded-bl-[6px]'}`}
                       >
@@ -264,26 +279,61 @@ function Thread({ customer, onBack }) {
         <div ref={end} />
       </div>
 
-      <footer className="border-t border-line/70 p-3">
+      <footer className={`border-t border-line/70 p-3 ${phone ? 'bar-material px-2.5 pb-2 pt-2' : ''}`}>
         {stopped && (
           <p className="mb-2 flex items-center gap-1.5 rounded-[8px] bg-bad/[0.07] px-2.5 py-1.5 text-xs text-bad">
             <Ban size={12} /> {customer.firstName || 'This customer'} replied STOP — texts are blocked until they reply START. Call or email instead.
           </p>
         )}
-        <div className="mb-2 flex flex-wrap gap-1.5">
-          <button className="chip h-6 text-xs hover:border-accent/50" onClick={() => setAssist(true)}>
+        <div className={`mb-2 flex gap-1.5 ${phone ? 'no-scrollbar -mx-2.5 overflow-x-auto px-2.5' : 'flex-wrap'}`}>
+          <button className="chip h-6 shrink-0 text-xs hover:border-accent/50" onClick={() => setAssist(true)}>
             <Sparkles size={11} /> Suggest reply
           </button>
           {['update', 'estimate', 'ready', 'pay', 'appt', 'service'].map((id) => {
             const t = state.shop.templates.find((x) => x.id === id);
             if (!t) return null;
             return (
-              <button key={id} className="chip h-6 text-xs hover:border-accent/50" onClick={() => setComposing(id)}>
+              <button key={id} className="chip h-6 shrink-0 text-xs hover:border-accent/50" onClick={() => setComposing(id)}>
                 {t.label}
               </button>
             );
           })}
         </div>
+        {phone ? (
+          <div className="flex items-end gap-1.5">
+            <button
+              className="btn-ghost btn-icon h-9 w-9 shrink-0 rounded-full text-ink-3"
+              disabled={!reply.trim()}
+              aria-label="Log reply"
+              title="Record a text or call from the customer"
+              onClick={() => {
+                addMessage({ customerId: customer.id, orderId: open?.id || null, dir: 'in', channel: 'sms', body: reply.trim() });
+                setReply('');
+                toast('Reply logged');
+              }}
+            >
+              <ArrowDownLeft size={18} />
+            </button>
+            <textarea
+              rows={1}
+              value={reply}
+              onChange={(e) => setReply(e.target.value)}
+              placeholder={direct ? 'Text message' : 'Message'}
+              enterKeyHint="enter"
+              autoCapitalize="sentences"
+              className="max-h-36 min-h-9 min-w-0 flex-1 resize-none rounded-[19px] border border-line bg-surface px-3.5 py-[6px] leading-[22px] text-ink outline-none [field-sizing:content] placeholder:text-ink-4 focus:border-accent/50"
+              aria-label="Message"
+            />
+            <button
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent text-on-accent transition-opacity disabled:opacity-30"
+              disabled={!reply.trim() || sending || stopped}
+              onClick={send}
+              aria-label="Send"
+            >
+              {sending ? <Spinner size={14} /> : <ArrowUp size={20} strokeWidth={2.4} />}
+            </button>
+          </div>
+        ) : (
         <div className="flex items-end gap-2">
           <textarea
             rows={2}
@@ -314,6 +364,7 @@ function Thread({ customer, onBack }) {
             </button>
           </div>
         </div>
+        )}
         {direct && <p className="mt-1.5 text-2xs text-ink-3">Sends from your business number · {reply.length > 160 ? `${Math.ceil(reply.length / 153)} texts` : `${reply.length}/160`}</p>}
       </footer>
       {assist && (

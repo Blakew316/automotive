@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -68,7 +70,7 @@
     transition: transform .4s var(--ease), box-shadow .4s var(--ease), border-color .4s var(--ease);
     -webkit-print-color-adjust: exact; print-color-adjust: exact;
   }
-  .coupon-wrap:hover .coupon { transform: translateY(-5px); box-shadow: var(--shadow-2); border-color: var(--line-strong); }
+  @media (hover: hover) { .coupon-wrap:hover .coupon { transform: translateY(-5px); box-shadow: var(--shadow-2); border-color: var(--line-strong); } }
   .coupon::before { /* perforated outer edge */
     content: ""; position: absolute; z-index: 3; left: -5px; top: 12px; bottom: 12px; width: 10px; pointer-events: none;
     background: radial-gradient(circle at 5px 50%, var(--coupon-bg) 3.6px, var(--line-strong) 4px, transparent 4.6px) 0 0 / 10px 15px repeat-y;

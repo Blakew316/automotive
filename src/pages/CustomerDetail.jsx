@@ -13,6 +13,8 @@ import { accountSummary, isAccount, termsLabel } from '../lib/accounts';
 import { CustomerForm, VehicleForm, AppointmentForm } from '../components/forms';
 import { money, money0, fullName, vehicleName, phone, mailHref, dateShort, date, number, time, relTime } from '../lib/format';
 import CallButton from '../components/CallButton';
+import OrderRows from '../components/OrderRows';
+import { useIsPhone } from '../lib/viewport';
 
 export default function CustomerDetail() {
   const { id } = useParams();
@@ -20,6 +22,7 @@ export default function CustomerDetail() {
   const { toast } = useUI();
   const totals = useTotals();
   const navigate = useNavigate();
+  const onPhone = useIsPhone();
   const [editing, setEditing] = useState(false);
   const [addingVehicle, setAddingVehicle] = useState(false);
   const [booking, setBooking] = useState(false);
@@ -168,6 +171,8 @@ export default function CustomerDetail() {
               <CardHeader title="Service history" subtitle={`${data.orders.length} repair orders`} />
               {data.orders.length === 0 ? (
                 <EmptyState title="No repair orders yet" />
+              ) : onPhone ? (
+                <OrderRows orders={data.orders} detail="work" />
               ) : (
                 <div className="overflow-x-auto">
                   <table className="table">

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Link2, Copy, MessageSquare, Mail, RefreshCw, Link2Off, Download, MonitorSmartphone, Cloud, Check, Settings2 } from 'lucide-react';
+import { Link2, Copy, MessageSquare, Mail, RefreshCw, Link2Off, Download, MonitorSmartphone, Cloud, Check, Settings2, Share as ShareIcon } from 'lucide-react';
 import { useShop, useUI, usePhone } from '../../store/hooks';
 import { Modal, Spinner, Toggle } from '../../components/ui';
 import { buildReport } from '../../lib/report';
@@ -8,6 +8,7 @@ import { cloudConfig, cloudSession, publishReport, revokeReport } from '../../li
 import { buildReportHtml, downloadHtml, exportSize } from '../../lib/reportHtml';
 import { formatBytes } from '../../lib/media';
 import { smsHref, mailHref, vehicleName, relTime } from '../../lib/format';
+import { canShare, shareSheet } from '../../lib/share';
 
 export default function ShareModal({ order, customer, vehicle, showPrices: initialPrices = true, onClose }) {
   const { state, setShare, addMessage } = useShop();
@@ -121,6 +122,11 @@ export default function ShareModal({ order, customer, vehicle, showPrices: initi
                   <button className="btn-secondary" onClick={copy}>
                     {copied ? <Check size={14} className="text-ok" /> : <Copy size={14} />} {copied ? 'Copied' : 'Copy'}
                   </button>
+                  {canShare() && (
+                    <button className="btn-secondary btn-icon" onClick={() => shareSheet({ title: `${vName} — ${shop.name}`, url: share.url })} aria-label="Share link" title="Share">
+                      <ShareIcon size={15} />
+                    </button>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {line.ready && customer?.phone ? (

@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="../favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
 <link rel="manifest" href="../site.webmanifest">
 <link rel="stylesheet" href="../assets/css/site.css">
 <script src="../assets/js/site.js" defer></script>
@@ -86,7 +88,7 @@
   .equip p { margin-top: 4px; font-size: .86rem; line-height: 1.38; color: var(--ink-3); }
   .equip .icon-tile .icon { width: 28px; height: 28px; }
   .equip-ask { background: var(--foil); border-color: rgba(77, 86, 191, .14); text-decoration: none; transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
-  .equip-ask:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); }
+  @media (hover: hover) { .equip-ask:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); } }
   .equip-ask .icon-tile { background: var(--paper); }
   .equip-ask .link-arrow { margin-top: auto; font-size: .9rem; }
   @media (max-width: 639.98px) {

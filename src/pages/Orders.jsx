@@ -4,6 +4,8 @@ import { Plus, ClipboardList } from 'lucide-react';
 import { useLookup, useTotals, useScopedShop, useSite } from '../store/hooks';
 import { siteFor } from '../lib/locations';
 import { PageHeader, Card, SearchInput, Segmented, StatusLabel, EmptyState } from '../components/ui';
+import OrderRows from '../components/OrderRows';
+import { useIsPhone } from '../lib/viewport';
 import { money, fullName, vehicleName, dateShort } from '../lib/format';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
 
@@ -45,6 +47,7 @@ export default function Orders() {
   }, [state.orders, filter, q, lookup]);
 
   const sum = rows.reduce((s, o) => s + totals(o).total, 0);
+  const phone = useIsPhone();
 
   return (
     <>
@@ -69,6 +72,9 @@ export default function Orders() {
       <Card>
         {rows.length === 0 ? (
           <EmptyState icon={ClipboardList} title="No repair orders" body={q ? 'Try a different search.' : 'Create one to get started.'} action={<Link to="/orders/new" className="btn-secondary btn-sm">New repair order</Link>} />
+        ) : phone ? (
+          // iPhone: list rows like Mail — the vehicle and total, then who, RO number, status and when.
+          <OrderRows orders={rows.slice(0, limit)} siteName={showSite ? (o) => siteFor(state.shop, o.locationId).name : null} />
         ) : (
           <div className="overflow-x-auto">
             <table className="table">

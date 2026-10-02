@@ -13,6 +13,7 @@ import { PAYMENT_METHODS } from '../../lib/workflow';
 import { nhtsaVinRecallUrl } from '../../lib/nhtsa';
 import CallButton from '../../components/CallButton';
 import { openPayLink } from '../../lib/payments';
+import { copyText } from '../../lib/share';
 
 const toLocalInput = (iso) => {
   if (!iso) return '';
@@ -278,7 +279,7 @@ export default function OrderSidebar({ order, customer, vehicle, editable, onTak
                 {p.stripe?.pi && !p.stripe.refund ? (
                   <RefundButton order={order} payment={p} />
                 ) : (
-                  <button onClick={() => removePayment(order.id, p.id)} className="btn-ghost btn-icon h-6 w-6 opacity-0 group-hover:opacity-100" aria-label="Remove payment">
+                  <button onClick={() => removePayment(order.id, p.id)} className="hover-reveal btn-ghost btn-icon h-6 w-6" aria-label="Remove payment">
                     <Trash2 size={13} />
                   </button>
                 )}
@@ -677,14 +678,16 @@ function OnlinePay({ order, customer, balance, onCompose }) {
   const paidOnline = order.payLink?.status === 'paid';
   if (balance < 0.5 && !paidOnline) return null;
   if (order.status === 'estimate') return null;
+  // The link may still need making: copy it as a promise so Safari allows the copy.
   const copy = async () => {
     setBusy(true);
+    const url = link ? Promise.resolve(link.url) : pay.ensureLink(order).then((l) => l.url);
     try {
-      const l = link || (await pay.ensureLink(order));
-      await navigator.clipboard.writeText(l.url).catch(() => {});
+      await copyText(url);
       toast('Pay link copied', { tone: 'success' });
     } catch (e) {
-      toast(e.message || 'Couldn’t make a pay link', { tone: 'error' });
+      const made = await url.catch(() => null);
+      toast(made ? 'The pay link is ready, but this browser blocked copying it — use Send link' : e.message || 'Couldn’t make a pay link', { tone: 'error' });
     } finally {
       setBusy(false);
     }
@@ -740,7 +743,7 @@ function RefundButton({ order, payment }) {
   };
   return (
     <>
-      <button onClick={() => setOpen(true)} className="btn-ghost btn-icon h-6 w-6 opacity-0 group-hover:opacity-100 focus:opacity-100" aria-label="Refund payment" title="Refund">
+      <button onClick={() => setOpen(true)} className="hover-reveal btn-ghost btn-icon h-6 w-6" aria-label="Refund payment" title="Refund">
         <Undo2 size={13} />
       </button>
       {open && (

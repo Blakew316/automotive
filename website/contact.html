@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -105,10 +107,10 @@
   .reach-text { margin-top: 4px; color: var(--ink-3); font-size: .97rem; }
   .reach-card .link-arrow { margin-top: auto; padding-top: 14px; font-size: .96rem; }
   .reach-card .chev { display: none; }
-  .reach-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); }
-  .reach-card:hover .icon-tile:not(.icon-tile-ink) { background: var(--foil); }
+  @media (hover: hover) { .reach-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); } }
+  @media (hover: hover) { .reach-card:hover .icon-tile:not(.icon-tile-ink) { background: var(--foil); } }
   .reach-card .icon-tile .icon use { transform-box: fill-box; transform-origin: 50% 50%; }
-  .reach-card:hover .icon-tile .icon use { animation: icon-wiggle .6s var(--ease); }
+  @media (hover: hover) { .reach-card:hover .icon-tile .icon use { animation: icon-wiggle .6s var(--ease); } }
   @media (min-width: 640px) and (max-width: 899.98px) {
     .reach-card { padding: 18px; }
     .reach-card .icon-tile { width: 44px; height: 44px; border-radius: 13px; margin-bottom: 10px; }
@@ -128,7 +130,7 @@
   /* ---------- Message + hours ---------- */
   .contact-layout { display: grid; gap: clamp(28px, 1.5rem + 2vw, 56px); align-items: start; }
   @media (min-width: 1000px) { .contact-layout { grid-template-columns: minmax(0, 1fr) 370px; } }
-  @media (min-width: 1000px) and (min-height: 760px) { .contact-aside { position: sticky; top: calc(var(--header-h) + 24px); } }
+  @media (min-width: 1000px) and (min-height: 760px) { .contact-aside { position: sticky; top: calc(var(--header-offset) + 24px); } }
   .form-card { padding: clamp(20px, 1rem + 1.8vw, 40px); border-radius: var(--r-xl); box-shadow: var(--shadow-2); }
   .form-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; padding-bottom: 16px; border-bottom: 1px solid var(--line); }
   .form-head h3 { font-size: 1.35rem; }
@@ -151,7 +153,7 @@
   .book-card strong { display: block; font-size: 1.05rem; letter-spacing: -0.015em; }
   .book-card small { display: block; margin-top: 2px; color: var(--ink-3); font-size: .9rem; }
   .book-card .go { margin-left: auto; color: var(--accent); transition: transform var(--dur-2) var(--ease); }
-  .book-card:hover .go { transform: translateX(4px); }
+  @media (hover: hover) { .book-card:hover .go { transform: translateX(4px); } }
   /* Tablets: the hours card splits into two columns instead of stretching one table across the page */
   @media (min-width: 680px) and (max-width: 999.98px) {
     .hours-card { display: grid; grid-template-columns: minmax(0, .75fr) minmax(0, 1.25fr); grid-template-rows: auto auto 1fr; column-gap: 36px; align-items: start; }
@@ -171,12 +173,12 @@
     border-radius: var(--r); background: var(--paper); border: 1px solid var(--line);
     transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
   }
-  .tip:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); border-color: var(--line-strong); }
-  .tip:hover .icon-tile { transform: rotate(-8deg); background: var(--foil); }
-  .tip:hover .icon-tile-ink { background: var(--ink); }
+  @media (hover: hover) { .tip:hover { transform: translateY(-2px); box-shadow: var(--shadow-1); border-color: var(--line-strong); } }
+  @media (hover: hover) { .tip:hover .icon-tile { transform: rotate(-8deg); background: var(--foil); } }
+  @media (hover: hover) { .tip:hover .icon-tile-ink { background: var(--ink); } }
   .tip h3 { font-size: 1.04rem; letter-spacing: -0.015em; }
   .tip p { margin-top: 3px; color: var(--ink-3); font-size: .95rem; }
-  @media (min-width: 960px) and (min-height: 720px) { .faq-col { position: sticky; top: calc(var(--header-h) + 32px); } }
+  @media (min-width: 960px) and (min-height: 720px) { .faq-col { position: sticky; top: calc(var(--header-offset) + 32px); } }
   .faq-col .faq-list { margin-top: 4px; }
   .faq-col .callout { margin-top: 18px; }
   .faq-col .callout .link-arrow { min-height: 44px; margin: -2px 0 -10px; }
@@ -459,12 +461,12 @@
             <div class="form-grid form-grid-2">
               <div class="field">
                 <label class="field-label" for="m-name">Your name <span class="req">*</span></label>
-                <input class="input" id="m-name" name="name" type="text" autocomplete="name" autocapitalize="words" required data-label="Name" data-error="Please enter your name.">
+                <input class="input" id="m-name" name="name" type="text" autocomplete="name" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="next" required data-label="Name" data-error="Please enter your name.">
                 <p class="field-error" id="m-name-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your name.</span></p>
               </div>
               <div class="field">
                 <label class="field-label" for="m-email">Email <span class="req">*</span></label>
-                <input class="input" id="m-email" name="email" type="email" autocomplete="email" inputmode="email" required data-label="Email" data-error="Please enter a valid email address.">
+                <input class="input" id="m-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next" required data-label="Email" data-error="Please enter a valid email address.">
                 <p class="field-error" id="m-email-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter a valid email address.</span></p>
               </div>
             </div>
@@ -472,7 +474,7 @@
             <div class="form-grid form-grid-2">
               <div class="field">
                 <label class="field-label" for="m-phone">Phone <span class="opt">(optional)</span></label>
-                <input class="input" id="m-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" data-label="Phone" aria-describedby="m-phone-hint">
+                <input class="input" id="m-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" enterkeyhint="next" data-label="Phone" aria-describedby="m-phone-hint">
                 <p class="field-hint" id="m-phone-hint">If you&rsquo;d rather we call you back.</p>
                 <p class="field-error" id="m-phone-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter a 10-digit phone number.</span></p>
               </div>

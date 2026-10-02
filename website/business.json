@@ -1,6 +1,7 @@
 {
-  "_readme": "Single source of truth for shop details. Edit, then run `node scripts/sync.mjs` to update every page. Values marked PLACEHOLDER must be replaced before launch. basePath is the folder the site is served from (\"/\" on its own domain). shopInbox sends booking, contact and fleet forms to the AutoShop Pro inbox (the key is the public anon key). staffAppUrl adds a Staff sign-in link to the footer.",
+  "_readme": "Single source of truth for shop details. Edit, then run `node scripts/sync.mjs` to update every page. Values marked PLACEHOLDER must be replaced before launch. basePath is the folder the site is served from (\"/\" on its own domain). shopInbox sends booking, contact and fleet forms to the AutoShop Pro inbox (the key is the public anon key). staffAppUrl adds a Staff sign-in link to the footer. shortName is the label under the icon when the site is added to a Home Screen (keep it to about 12 characters; site.webmanifest short_name should match).",
   "name": "Clinton Complete Auto Care",
+  "shortName": "Clinton Auto",
   "tagline": "And Small Engine Repair",
   "phone": "(555) 555-0123",
   "phoneE164": "+15555550123",

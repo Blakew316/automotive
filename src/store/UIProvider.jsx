@@ -37,7 +37,6 @@ export default function UIProvider({ children }) {
   const [toasts, setToasts] = useState([]);
   const [theme, setTheme] = useState(readTheme);
   const [paletteOpen, setPaletteOpen] = useState(false);
-  const [navOpen, setNavOpen] = useState(false);
   const [userId, setUserIdState] = useState(readUser);
   const setUserId = useCallback((id) => {
     setUserIdState(id);
@@ -64,8 +63,11 @@ export default function UIProvider({ children }) {
     const root = document.documentElement;
     if (theme === 'system') root.removeAttribute('data-theme');
     else root.setAttribute('data-theme', theme);
-    const dark = theme === 'dark' || (theme === 'system' && window.matchMedia?.('(prefers-color-scheme: dark)').matches);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0b1019' : '#eff1f4');
+    // Browser and status bar tint: one color per scheme, or the chosen appearance for both.
+    document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
+      const dark = theme === 'dark' || (theme === 'system' && /dark/.test(m.media || ''));
+      m.setAttribute('content', dark ? '#0b1019' : '#eff1f4');
+    });
     try {
       localStorage.setItem(THEME_KEY, theme);
     } catch {
@@ -96,8 +98,8 @@ export default function UIProvider({ children }) {
   );
 
   const value = useMemo(
-    () => ({ toasts, toast, dismiss, theme, setTheme, paletteOpen, setPaletteOpen, navOpen, setNavOpen, userId, setUserId, siteId, setSiteId }),
-    [toasts, toast, dismiss, theme, paletteOpen, navOpen, userId, setUserId, siteId, setSiteId],
+    () => ({ toasts, toast, dismiss, theme, setTheme, paletteOpen, setPaletteOpen, userId, setUserId, siteId, setSiteId }),
+    [toasts, toast, dismiss, theme, paletteOpen, userId, setUserId, siteId, setSiteId],
   );
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
 }

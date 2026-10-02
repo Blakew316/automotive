@@ -107,6 +107,9 @@ export default function VinDecoder() {
               maxLength={24}
               spellCheck={false}
               autoComplete="off"
+              autoCapitalize="characters"
+              autoCorrect="off"
+              enterKeyHint="search"
               placeholder="1HGCV1F30LA000000"
               className="input h-12 flex-1 font-mono text-xl uppercase tracking-[0.18em] placeholder:tracking-[0.18em]"
             />

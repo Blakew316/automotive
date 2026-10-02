@@ -18,7 +18,7 @@ const ALLOW = {
 };
 
 export function canAccess(role, path) {
-  if (role === 'owner') return true;
+  if (role === 'owner' || path === '/more') return true;
   const allow = ALLOW[role] || ALLOW.advisor;
   return allow.some((p) => (p === '/' ? path === '/' : path === p || path.startsWith(`${p}/`)));
 }

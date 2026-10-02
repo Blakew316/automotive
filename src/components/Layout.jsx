@@ -1,17 +1,13 @@
 import { Suspense, useEffect, useState } from 'react';
-import { NavLink, Outlet, useLocation, Link } from 'react-router-dom';
-import {
-  LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package,
-  BookOpen, ChartColumn, Settings, Search, Menu as MenuIcon, Sun, Moon, Monitor, Wrench, X, Database,
-  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, ChevronsUpDown, Lock, CloudDownload, Building2, ConciergeBell, MapPin,
-} from 'lucide-react';
-import { useShop, useUI, useAccess, useSync, useSite, useScopedShop } from '../store/hooks';
+import { NavLink, Outlet, useLocation, useNavigate, Link } from 'react-router-dom';
+import { Search, Sun, Moon, Monitor, Wrench, MoreHorizontal, ChevronLeft, ChevronsUpDown, Lock, CloudDownload, MapPin } from 'lucide-react';
+import { useShop, useUI, useAccess, useSync, useSite } from '../store/hooks';
 import { ROLES, homeFor } from '../lib/access';
 import SwitchUser from './SwitchUser';
 import { Avatar, Spinner } from './ui';
-import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
 import { useCloudSync } from '../lib/useCloudSync';
 import { useTracking } from '../lib/useTracking';
+import { useNavBar, useIsCompact } from '../lib/viewport';
 import PhoneLine from './PhoneLine';
 import PayLine from './PayLine';
 import EmailLine from './EmailLine';
@@ -19,73 +15,7 @@ import QboAutoSync from './QboAutoSync';
 import { syncLabel } from '../lib/sync/labels';
 import CommandPalette from './CommandPalette';
 import Toasts from './Toasts';
-
-function useNavCounts() {
-  const { state } = useScopedShop();
-  const open = state.orders.filter((o) => OPEN_STATUSES.includes(o.status));
-  return {
-    workflow: open.filter((o) => WIP_STATUSES.includes(o.status)).length,
-    orders: open.length,
-    lowStock: state.inventory.filter((p) => Number(p.qty) <= Number(p.min)).length,
-    unread: state.messages.filter((m) => m.dir === 'in' && !m.read).length,
-    requests: state.bookingRequests.filter((b) => b.status === 'new').length,
-    checkins: state.orders.filter((o) => o.checkin && o.status === 'estimate' && new Date(o.checkin.at).toDateString() === new Date().toDateString()).length,
-  };
-}
-
-// Each section of the sidebar wears one of the website's foil hues on its icons.
-const HUE = {
-  navy: { icon: 'text-accent/75 group-hover:text-accent', active: 'bg-accent/[0.09] text-ink', on: 'text-accent' },
-  lilac: { icon: 'text-hue-lilac/75 group-hover:text-hue-lilac', active: 'bg-hue-lilac/[0.1] text-ink', on: 'text-hue-lilac' },
-  azure: { icon: 'text-hue-azure/75 group-hover:text-hue-azure', active: 'bg-hue-azure/[0.1] text-ink', on: 'text-hue-azure' },
-  teal: { icon: 'text-hue-teal/75 group-hover:text-hue-teal', active: 'bg-hue-teal/[0.1] text-ink', on: 'text-hue-teal' },
-};
-
-const NAV = [
-  {
-    hue: 'navy',
-    items: [
-      { to: '/', label: 'Today', icon: LayoutGrid, end: true },
-      { to: '/workflow', label: 'Workflow', icon: SquareKanban, count: 'workflow' },
-      { to: '/orders', label: 'Repair Orders', icon: ClipboardList, count: 'orders' },
-      { to: '/calendar', label: 'Calendar', icon: CalendarDays, count: 'requests', badge: true },
-      { to: '/frontdesk', label: 'Front Desk', icon: ConciergeBell, count: 'checkins', badge: true },
-      { to: '/messages', label: 'Messages', icon: MessageSquare, count: 'unread', badge: true },
-    ],
-  },
-  {
-    title: 'Customers',
-    hue: 'lilac',
-    items: [
-      { to: '/customers', label: 'Customers', icon: Users },
-      { to: '/accounts', label: 'Fleet & Accounts', icon: Building2 },
-      { to: '/vehicles', label: 'Vehicles', icon: Car },
-      { to: '/marketing', label: 'Marketing', icon: Megaphone },
-    ],
-  },
-  {
-    title: 'Technical',
-    hue: 'azure',
-    items: [
-      { to: '/tech', label: 'Tech Time Clock', icon: Timer },
-      { to: '/catalog', label: 'Vehicle Database', icon: Database },
-      { to: '/vin', label: 'VIN Decoder', icon: ScanLine },
-      { to: '/parts', label: 'Parts & Inventory', icon: Package, count: 'lowStock' },
-      { to: '/library', label: 'Service Library', icon: BookOpen },
-    ],
-  },
-  {
-    title: 'Business',
-    hue: 'teal',
-    items: [
-      { to: '/team', label: 'Team', icon: UsersRound },
-      { to: '/reports', label: 'Reports', icon: ChartColumn },
-      { to: '/accounting', label: 'Accounting', icon: Landmark },
-      { to: '/integrations', label: 'Integrations', icon: Blocks },
-      { to: '/settings', label: 'Settings', icon: Settings },
-    ],
-  },
-];
+import { NAV, HUE, useNavCounts, tabsFor, matchesPath, navLabel } from './nav';
 
 const THEMES = [
   { value: 'light', icon: Sun, label: 'Light' },
@@ -153,7 +83,7 @@ function Sidebar({ onNavigate }) {
       <nav className="flex-1 overflow-y-auto px-3 pb-4">
         {nav.map((group, gi) => (
           <div key={gi} className={gi ? 'mt-5' : 'mt-2'}>
-            {group.title && <div className="mb-1.5 px-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-sidebar-ink-2">{group.title}</div>}
+            {gi > 0 && <div className="mb-1.5 px-2.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-sidebar-ink-2">{group.title}</div>}
             <div className="space-y-px">
               {group.items.map((item) => (
                 <NavLink
@@ -309,10 +239,137 @@ export function Logo({ size = 28 }) {
   );
 }
 
+/**
+ * iPhone and iPad-portrait navigation bar: transparent over the page until it scrolls, then frosted
+ * with a hairline. The page's large title moves up into it once it scrolls out of view.
+ */
+function NavBar() {
+  const nav = useNavBar();
+  const { setPaletteOpen } = useUI();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const [scroll, setScroll] = useState({ edge: false, far: false });
+  useEffect(() => {
+    const main = document.getElementById('main-scroll');
+    if (!main) return undefined;
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const edge = main.scrollTop > 2;
+      const far = main.scrollTop > 56;
+      setScroll((s) => (s.edge === edge && s.far === far ? s : { edge, far }));
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(read);
+    };
+    main.addEventListener('scroll', onScroll, { passive: true });
+    read();
+    return () => {
+      main.removeEventListener('scroll', onScroll);
+      cancelAnimationFrame(raf);
+    };
+  }, [pathname]);
+  const title = nav.owner ? nav.title : navLabel(pathname);
+  const showTitle = nav.owner ? nav.collapsed : scroll.far;
+  return (
+    <header
+      className={`app-navbar no-print absolute inset-x-0 top-0 z-30 select-none pl-[var(--safe-l)] pr-[var(--safe-r)] pt-[var(--safe-t)] transition-[background-color,box-shadow,backdrop-filter] duration-200 lg:hidden ${
+        scroll.edge ? 'bar-material shadow-[inset_0_-0.5px_0_rgb(var(--shadow-ring)/0.18)]' : ''
+      }`}
+    >
+      {/* Back · title · search. The title takes the middle once it's showing; a long back label gives way to it. */}
+      <div className="grid h-11 grid-cols-[minmax(44px,1fr)_auto_minmax(44px,1fr)] items-center px-1">
+        <div className="flex min-w-0 items-center">
+          {nav.back ? (
+            <button
+              onClick={() => (typeof nav.back === 'string' ? navigate(nav.back) : navigate(-1))}
+              className="flex h-11 min-w-0 items-center pr-1 text-[17px] text-accent transition-opacity active:opacity-40"
+              aria-label={`Back to ${nav.backText}`}
+            >
+              <ChevronLeft size={28} strokeWidth={2.1} className="-mr-0.5 shrink-0" />
+              <span className="truncate">{nav.backText}</span>
+            </button>
+          ) : (
+            <span className="pl-3">
+              <Logo size={28} />
+            </span>
+          )}
+        </div>
+        <div
+          aria-hidden={!showTitle}
+          className={`min-w-0 truncate text-center text-[17px] font-semibold tracking-[-0.02em] text-ink transition-opacity duration-200 ${
+            title && showTitle ? 'max-w-[min(56vw,460px)] px-1 opacity-100' : 'max-w-0 opacity-0'
+          }`}
+        >
+          {title}
+        </div>
+        <div className="flex items-center justify-end">
+          <button onClick={() => setPaletteOpen(true)} className="flex h-11 w-11 items-center justify-center text-accent transition-opacity active:opacity-40" aria-label="Search">
+            <Search size={21} strokeWidth={2.1} />
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+/**
+ * iPhone and iPad-portrait tab bar: the four places this person goes most, plus More for the rest.
+ * Tapping the current tab goes back to its first screen, or scrolls to the top if already there.
+ */
+function TabBar() {
+  const { can, role } = useAccess();
+  const counts = useNavCounts();
+  const { pathname } = useLocation();
+  const tabs = tabsFor(role, can);
+  const current = tabs.find((t) => matchesPath(t, pathname));
+  // More carries the badges of the places it holds (booking requests, today's check-ins).
+  const inTabs = new Set(tabs.map((t) => t.to));
+  const moreCount = NAV.flatMap((g) => g.items)
+    .filter((i) => i.badge && !inTabs.has(i.to) && can(i.to))
+    .reduce((n, i) => n + (counts[i.count] || 0), 0);
+  const items = [...tabs, { to: '/more', label: 'More', icon: MoreHorizontal, more: true }];
+  return (
+    <nav
+      aria-label="Tabs"
+      className="app-tabbar no-print bar-material absolute inset-x-0 bottom-0 z-30 flex select-none pb-[var(--safe-b)] pl-[var(--safe-l)] pr-[var(--safe-r)] shadow-[inset_0_0.5px_0_rgb(var(--shadow-ring)/0.18)] lg:hidden [.kb-open_&]:hidden"
+    >
+      {items.map((t) => {
+        const active = t.more ? !current : current === t;
+        const badge = t.more ? moreCount : t.count ? counts[t.count] : 0;
+        return (
+          <Link
+            key={t.to}
+            to={t.to}
+            aria-current={active ? 'page' : undefined}
+            onClick={(e) => {
+              if (pathname === t.to) {
+                e.preventDefault();
+                document.getElementById('main-scroll')?.scrollTo({ top: 0, behavior: 'smooth' });
+              }
+            }}
+            className={`flex h-[49px] min-w-0 flex-1 flex-col items-center justify-center gap-[3px] pt-0.5 [-webkit-touch-callout:none] ${active ? 'text-accent' : 'text-ink-3'}`}
+          >
+            <span className="relative">
+              <t.icon size={25} strokeWidth={active ? 2.1 : 1.75} />
+              {badge > 0 && (
+                <span className="tabular absolute -right-3 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-bad px-1 text-[11px] font-semibold leading-none text-white ring-2 ring-canvas">
+                  {badge > 99 ? '99+' : badge}
+                </span>
+              )}
+            </span>
+            <span className="max-w-full truncate px-1 text-[10px] font-medium leading-3 tracking-[0.01em]">{t.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
 export default function Layout() {
-  const { navOpen, setNavOpen, setPaletteOpen } = useUI();
   const location = useLocation();
   const { can } = useAccess();
+  const compact = useIsCompact();
   useCloudSync();
   useTracking();
 
@@ -324,40 +381,20 @@ export default function Layout() {
     <PhoneLine>
       <PayLine>
         <EmailLine>
-          <div className="flex h-[100dvh] overflow-hidden bg-canvas">
+          <div className="app-shell flex h-[var(--app-h,100dvh)] overflow-hidden bg-canvas">
             <aside className="no-print hidden w-[240px] shrink-0 lg:block">
               <Sidebar />
             </aside>
 
-            {navOpen && (
-              <div className="no-print fixed inset-0 z-50 lg:hidden">
-                <div className="absolute inset-0 animate-fade-in bg-black/25" onClick={() => setNavOpen(false)} />
-                <aside className="relative h-full w-[272px] animate-slide-in bg-sidebar shadow-sheet">
-                  <button onClick={() => setNavOpen(false)} className="btn-icon btn absolute right-2 top-4 rounded-full text-sidebar-ink-2 hover:bg-fill/10 hover:text-sidebar-ink" aria-label="Close menu">
-                    <X size={17} />
-                  </button>
-                  <Sidebar onNavigate={() => setNavOpen(false)} />
-                </aside>
-              </div>
-            )}
-
-            <div className="flex min-w-0 flex-1 flex-col">
-              <header className="no-print glass sticky top-0 z-30 flex h-12 shrink-0 items-center gap-2 border-b border-line/80 bg-canvas/80 px-3 lg:hidden">
-                <button onClick={() => setNavOpen(true)} className="btn-ghost btn-icon" aria-label="Open menu">
-                  <MenuIcon size={19} />
-                </button>
-                <div className="flex flex-1 items-center gap-2">
-                  <Logo size={24} />
-                  <span className="text-md font-semibold">AutoShop Pro</span>
-                </div>
-                <button onClick={() => setPaletteOpen(true)} className="btn-ghost btn-icon" aria-label="Search">
-                  <Search size={18} />
-                </button>
-              </header>
-              <main id="main-scroll" className="relative flex-1 overflow-y-auto">
+            <div className="relative flex min-w-0 flex-1 flex-col">
+              {compact && <NavBar />}
+              <main
+                id="main-scroll"
+                className="relative flex-1 overflow-y-auto overscroll-y-contain pb-[calc(var(--tabbar)+var(--safe-b))] pl-[var(--safe-l)] pr-[var(--safe-r)] pt-[calc(var(--navbar)+var(--safe-t))] [scroll-padding-top:calc(var(--navbar)+var(--safe-t)+12px)] lg:pl-0 lg:pr-0"
+              >
                 <div aria-hidden="true" className="foil-haze no-print pointer-events-none absolute inset-x-0 top-0 h-[280px]" />
                 <AccountNotice />
-                <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-6 sm:px-6 lg:px-10 lg:pt-9">
+                <div className="relative mx-auto w-full max-w-[1320px] px-4 pb-16 pt-2 sm:px-6 lg:px-10 lg:pt-9">
                   {can(location.pathname) ? (
                     // Pages load on demand: only this area waits, the sidebar stays put.
                     <Suspense
@@ -374,6 +411,7 @@ export default function Layout() {
                   )}
                 </div>
               </main>
+              {compact && <TabBar />}
             </div>
 
             <CommandPalette />

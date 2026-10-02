@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft, Printer, Download } from 'lucide-react';
+import { ChevronLeft, Printer, Download, Share as ShareIcon } from 'lucide-react';
 import { useShop, useLookup, useTotals, useUI } from '../store/hooks';
 import { Segmented, Toggle, EmptyState, Spinner } from '../components/ui';
 import { money, fullName, vehicleName, date, phone, number } from '../lib/format';
@@ -9,6 +9,7 @@ import { INSPECTION_RATINGS } from '../lib/workflow';
 import { dueDate, hasTerms, termsLabel } from '../lib/accounts';
 import { shopAt } from '../lib/locations';
 import { docKind, orderPdf, downloadPdf } from '../lib/pdf';
+import { canShareFiles, shareSheet } from '../lib/share';
 
 export default function PrintOrder() {
   const { id } = useParams();
@@ -21,7 +22,11 @@ export default function PrintOrder() {
   const [showParts, setShowParts] = useState(true);
   const [showDeclined, setShowDeclined] = useState(true);
   const [making, setMaking] = useState(false);
+  const [ready, setReady] = useState(null);
+  // Phones and tablets share the PDF; computers download it.
+  const [sharing] = useState(() => canShareFiles() && matchMedia('(pointer: coarse)').matches);
   const { toast } = useUI();
+  const pdfKey = `${kind}|${showParts}|${showDeclined}`;
 
   if (!order) return <EmptyState title="Repair order not found" action={<Link to="/orders" className="btn-secondary">Back</Link>} />;
 
@@ -35,7 +40,7 @@ export default function PrintOrder() {
 
   return (
     <div className="min-h-screen bg-canvas pb-16">
-      <div className="no-print glass sticky top-0 z-10 border-b border-line bg-canvas/80">
+      <div className="no-print glass sticky top-0 z-10 border-b border-line bg-canvas/80 pl-[var(--safe-l)] pr-[var(--safe-r)] pt-[var(--safe-t)]">
         <div className="mx-auto flex max-w-[860px] flex-wrap items-center gap-3 px-4 py-2.5">
           <Link to={`/orders/${order.id}`} className="btn-plain -ml-2 px-1.5">
             <ChevronLeft size={17} strokeWidth={2} /> RO #{order.number}
@@ -60,11 +65,22 @@ export default function PrintOrder() {
             className="btn-secondary ml-auto"
             disabled={making}
             onClick={async () => {
+              // iPhone and iPad: the PDF goes to the share sheet (Save to Files, Print, Mail, Messages,
+              // AirDrop). If it took too long to make for Safari to open the sheet, the next tap shares it.
+              if (sharing && ready?.key === pdfKey) {
+                if ((await shareSheet({ files: [ready.file], title: ready.file.name })) !== 'blocked') setReady(null);
+                return;
+              }
               setMaking(true);
               try {
                 // A paid invoice downloads as a receipt.
                 const pdfKind = kind === 'invoice' && docKind(order, shop) === 'receipt' ? 'receipt' : kind;
-                downloadPdf(await orderPdf(state, order, pdfKind, { showParts, showDeclined }));
+                const pdf = await orderPdf(state, order, pdfKind, { showParts, showDeclined });
+                if (!sharing) return downloadPdf(pdf);
+                const file = new File([pdf.bytes], pdf.filename, { type: 'application/pdf' });
+                const r = await shareSheet({ files: [file], title: pdf.filename });
+                setReady(r === 'blocked' ? { key: pdfKey, file } : null);
+                if (r === 'failed') downloadPdf(pdf);
               } catch (e) {
                 toast(e.message || 'Couldn’t make the PDF', { tone: 'error' });
               } finally {
@@ -72,7 +88,8 @@ export default function PrintOrder() {
               }
             }}
           >
-            {making ? <Spinner size={14} /> : <Download size={15} />} Download PDF
+            {making ? <Spinner size={14} /> : sharing ? <ShareIcon size={15} /> : <Download size={15} />}
+            {sharing ? (ready?.key === pdfKey ? 'Share PDF (ready)' : 'Share PDF') : 'Download PDF'}
           </button>
           <button className="btn-primary" onClick={() => window.print()}>
             <Printer size={15} /> Print
@@ -80,7 +97,7 @@ export default function PrintOrder() {
         </div>
       </div>
 
-      <article className="force-light print-sheet mx-auto mt-8 max-w-[860px] rounded-lg bg-surface px-12 py-12 text-ink shadow-card">
+      <article className="force-light print-sheet mx-3 mt-4 max-w-[860px] rounded-lg bg-surface px-5 py-6 text-ink shadow-card sm:mx-auto sm:mt-8 sm:px-12 sm:py-12">
         <header className="flex items-start justify-between gap-8 border-b border-line pb-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">{shop.name}</h1>

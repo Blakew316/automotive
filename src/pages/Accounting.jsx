@@ -229,7 +229,7 @@ function Expenses({ from, to, onEdit }) {
                   <td className="hidden text-ink-2 md:table-cell">{e.method}</td>
                   <td className="tabular text-right font-medium">{money(Number(e.amount) || 0)}</td>
                   <td className="text-right">
-                    <span className="inline-flex opacity-60 group-hover:opacity-100">
+                    <span className="hover-dim inline-flex">
                       <button className="btn-ghost btn-icon h-7 w-7" onClick={() => onEdit(e)} aria-label="Edit expense">
                         <Pencil size={13} />
                       </button>

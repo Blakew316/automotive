@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { ScanLine, CircleAlert, CircleCheck } from 'lucide-react';
 import { Modal, Field, Spinner, SearchInput, Avatar } from './ui';
+import { keyboard } from '../lib/keyboard';
 import { useShop, useUI } from '../store/hooks';
 import { decodeOffline, cleanVin } from '../lib/vin';
 import { decodeVinLocal } from '../lib/vindb';
@@ -38,16 +39,16 @@ export function CustomerForm({ open, onClose, initial, onSaved }) {
       }
     >
       <form onSubmit={submit} className="grid grid-cols-2 gap-3">
-        <Field label="First name">{(id) => <input id={id} autoFocus className="input" value={form.firstName} onChange={set('firstName')} />}</Field>
-        <Field label="Last name">{(id) => <input id={id} className="input" value={form.lastName} onChange={set('lastName')} />}</Field>
-        <Field label="Mobile phone">{(id) => <input id={id} type="tel" className="input" placeholder="(555) 555-0100" value={form.phone} onChange={set('phone')} />}</Field>
-        <Field label="Email">{(id) => <input id={id} type="email" className="input" value={form.email} onChange={set('email')} />}</Field>
-        <Field label="Company" className="col-span-2" hint="For fleet and commercial accounts">{(id) => <input id={id} className="input" value={form.company} onChange={set('company')} />}</Field>
-        <Field label="Street address" className="col-span-2">{(id) => <input id={id} className="input" value={form.address} onChange={set('address')} />}</Field>
+        <Field label="First name">{(id) => <input id={id} autoFocus {...keyboard.name} className="input" value={form.firstName} onChange={set('firstName')} />}</Field>
+        <Field label="Last name">{(id) => <input id={id} {...keyboard.name} className="input" value={form.lastName} onChange={set('lastName')} />}</Field>
+        <Field label="Mobile phone">{(id) => <input id={id} {...keyboard.phone} className="input" placeholder="(555) 555-0100" value={form.phone} onChange={set('phone')} />}</Field>
+        <Field label="Email">{(id) => <input id={id} {...keyboard.email} className="input" value={form.email} onChange={set('email')} />}</Field>
+        <Field label="Company" className="col-span-2" hint="For fleet and commercial accounts">{(id) => <input id={id} {...keyboard.words} className="input" value={form.company} onChange={set('company')} />}</Field>
+        <Field label="Street address" className="col-span-2">{(id) => <input id={id} {...keyboard.words} className="input" value={form.address} onChange={set('address')} />}</Field>
         <div className="col-span-2 grid grid-cols-[1fr_80px_100px] gap-3">
-          <Field label="City">{(id) => <input id={id} className="input" value={form.city} onChange={set('city')} />}</Field>
-          <Field label="State">{(id) => <input id={id} className="input" maxLength={2} value={form.state} onChange={(e) => setForm((f) => ({ ...f, state: e.target.value.toUpperCase() }))} />}</Field>
-          <Field label="ZIP">{(id) => <input id={id} className="input" value={form.zip} onChange={set('zip')} />}</Field>
+          <Field label="City">{(id) => <input id={id} {...keyboard.words} className="input" value={form.city} onChange={set('city')} />}</Field>
+          <Field label="State">{(id) => <input id={id} {...keyboard.code} className="input" maxLength={2} value={form.state} onChange={(e) => setForm((f) => ({ ...f, state: e.target.value.toUpperCase() }))} />}</Field>
+          <Field label="ZIP">{(id) => <input id={id} {...keyboard.number} className="input" value={form.zip} onChange={set('zip')} />}</Field>
         </div>
         <Field label="Tags" className="col-span-2" hint="Comma separated, e.g. Fleet, VIP">
           {(id) => <input id={id} className="input" value={Array.isArray(form.tags) ? form.tags.join(', ') : form.tags} onChange={set('tags')} />}
@@ -119,6 +120,8 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
               <input
                 id={id}
                 autoFocus={!initial?.vin}
+                {...keyboard.code}
+                enterKeyHint="search"
                 className="input font-mono uppercase tracking-wider"
                 maxLength={17}
                 placeholder="17 characters"
@@ -139,14 +142,14 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
             {decode.message}
           </p>
         )}
-        <Field label="Year" className="col-span-2">{(id) => <input id={id} inputMode="numeric" className="input" value={form.year} onChange={set('year')} />}</Field>
-        <Field label="Make" className="col-span-2">{(id) => <input id={id} className="input" value={form.make} onChange={set('make')} />}</Field>
-        <Field label="Model" className="col-span-2">{(id) => <input id={id} className="input" value={form.model} onChange={set('model')} />}</Field>
+        <Field label="Year" className="col-span-2">{(id) => <input id={id} {...keyboard.number} maxLength={4} className="input" value={form.year} onChange={set('year')} />}</Field>
+        <Field label="Make" className="col-span-2">{(id) => <input id={id} {...keyboard.name} className="input" value={form.make} onChange={set('make')} />}</Field>
+        <Field label="Model" className="col-span-2">{(id) => <input id={id} {...keyboard.name} className="input" value={form.model} onChange={set('model')} />}</Field>
         <Field label="Trim" className="col-span-3">{(id) => <input id={id} className="input" value={form.trim} onChange={set('trim')} />}</Field>
         <Field label="Engine" className="col-span-3">{(id) => <input id={id} className="input" value={form.engine} onChange={set('engine')} />}</Field>
-        <Field label="Plate" className="col-span-2">{(id) => <input id={id} className="input uppercase" value={form.plate} onChange={set('plate')} />}</Field>
-        <Field label="State" className="col-span-1">{(id) => <input id={id} maxLength={2} className="input uppercase" value={form.plateState} onChange={set('plateState')} />}</Field>
-        <Field label="Mileage" className="col-span-3">{(id) => <input id={id} inputMode="numeric" className="input tabular" value={form.mileage} onChange={set('mileage')} />}</Field>
+        <Field label="Plate" className="col-span-2">{(id) => <input id={id} {...keyboard.code} className="input uppercase" value={form.plate} onChange={set('plate')} />}</Field>
+        <Field label="State" className="col-span-1">{(id) => <input id={id} {...keyboard.code} maxLength={2} className="input uppercase" value={form.plateState} onChange={set('plateState')} />}</Field>
+        <Field label="Mileage" className="col-span-3">{(id) => <input id={id} {...keyboard.number} className="input tabular" value={form.mileage} onChange={set('mileage')} />}</Field>
         <Field label="Color" className="col-span-3">{(id) => <input id={id} className="input" value={form.color} onChange={set('color')} />}</Field>
         <Field label="Owner" className="col-span-3">
           {(id) => (
@@ -160,7 +163,7 @@ export function VehicleForm({ open, onClose, initial, onSaved }) {
         </Field>
         {state.customers.find((c) => c.id === form.customerId)?.account && (
           <>
-            <Field label="Unit #" className="col-span-2" hint="The fleet’s own number">{(id) => <input id={id} className="input" value={form.unit || ''} onChange={set('unit')} />}</Field>
+            <Field label="Unit #" className="col-span-2" hint="The fleet’s own number">{(id) => <input id={id} {...keyboard.code} className="input" value={form.unit || ''} onChange={set('unit')} />}</Field>
             <Field label="Driver / department" className="col-span-4">{(id) => <input id={id} className="input" value={form.driver || ''} onChange={set('driver')} />}</Field>
           </>
         )}

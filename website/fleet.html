@@ -11,12 +11,14 @@
 <script>document.documentElement.classList.add("js")</script>
 <meta name="theme-color" content="#FAF8F5">
 <meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-title" content="Clinton Auto">
 <meta name="form-endpoint" content="">
 <meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
 <meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png">
-<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
 <link rel="manifest" href="site.webmanifest">
 <link rel="stylesheet" href="assets/css/site.css">
 <script src="assets/js/site.js" defer></script>
@@ -71,7 +73,7 @@
   .who-card h3 { font-size: 1.2rem; }
   .who-card p { color: var(--ink-3); font-size: .98rem; }
   .who-card .icon-tile { transition: transform var(--dur-2) var(--spring), background var(--dur-2) var(--ease); }
-  .who-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); background: var(--foil); }
+  @media (hover: hover) { .who-card:hover .icon-tile { transform: rotate(-8deg) scale(1.06); background: var(--foil); } }
   .who-card .link-arrow { margin-top: auto; font-size: .95rem; }
   @media (max-width: 639.98px) {
     .who-card { display: grid; grid-template-columns: auto 1fr; column-gap: 14px; row-gap: 4px; align-items: start; padding: 16px; border-radius: var(--r); }
@@ -602,19 +604,19 @@
 
             <div class="field">
               <label class="field-label" for="f-company">Company or organization <span class="req">*</span></label>
-              <input class="input" id="f-company" name="company" type="text" autocomplete="organization" required data-label="Company" data-error="Please enter your company or organization name.">
+              <input class="input" id="f-company" name="company" type="text" autocomplete="organization" autocapitalize="words" enterkeyhint="next" required data-label="Company" data-error="Please enter your company or organization name.">
               <p class="field-error" id="f-company-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your company or organization name.</span></p>
             </div>
 
             <div class="form-grid form-grid-2">
               <div class="field">
                 <label class="field-label" for="f-name">Contact name <span class="req">*</span></label>
-                <input class="input" id="f-name" name="name" type="text" autocomplete="name" required data-label="Contact name" data-error="Please enter your name.">
+                <input class="input" id="f-name" name="name" type="text" autocomplete="name" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="next" required data-label="Contact name" data-error="Please enter your name.">
                 <p class="field-error" id="f-name-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your name.</span></p>
               </div>
               <div class="field">
                 <label class="field-label" for="f-phone">Phone <span class="req">*</span></label>
-                <input class="input" id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required data-label="Phone" data-error="Please enter your phone number.">
+                <input class="input" id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" enterkeyhint="next" required data-label="Phone" data-error="Please enter your phone number.">
                 <p class="field-error" id="f-phone-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your phone number.</span></p>
               </div>
             </div>
@@ -622,7 +624,7 @@
             <div class="form-grid form-grid-2">
               <div class="field">
                 <label class="field-label" for="f-email">Email <span class="req">*</span></label>
-                <input class="input" id="f-email" name="email" type="email" autocomplete="email" required data-label="Email" data-error="Please enter a valid email address.">
+                <input class="input" id="f-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next" required data-label="Email" data-error="Please enter a valid email address.">
                 <p class="field-error" id="f-email-error"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter a valid email address.</span></p>
               </div>
               <div class="field">
