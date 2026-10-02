@@ -123,7 +123,7 @@
   .topic:active { transform: scale(.97); }
   .topic-count { min-width: 28px; padding: 3px 8px; border-radius: var(--pill); background: var(--mist-100); color: var(--ink-3); font-size: .78rem; font-weight: 650; text-align: center; font-variant-numeric: tabular-nums; transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
   .topic[aria-pressed="true"] { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 34%, transparent); color: var(--accent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 22%, transparent); }
-  .topic[aria-pressed="true"] .topic-count { background: var(--paper); color: var(--accent); }
+  .topic[aria-pressed="true"] .topic-count { background: var(--paper); color: var(--accent-ink); }
   .topic.is-empty:not([aria-pressed="true"]) { color: var(--ink-4); }
   .topic.is-empty:not([aria-pressed="true"]) > .icon { color: var(--ink-4); }
   @media (min-width: 960px) {
@@ -133,7 +133,7 @@
     .topic .topic-count { margin-left: auto; }
     .topic[aria-pressed="true"] { background: var(--paper); border-color: var(--line); color: var(--ink); box-shadow: var(--shadow-1); }
     .topic[aria-pressed="true"] > .icon { color: var(--accent); }
-    .topic[aria-pressed="true"] .topic-count { background: var(--accent-soft); color: var(--accent); }
+    .topic[aria-pressed="true"] .topic-count { background: var(--accent-soft); color: var(--accent-ink); }
   }
   .faq-side-help { display: none; }
   @media (min-width: 960px) {
@@ -169,7 +169,7 @@
   @keyframes lens-search { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 30% { transform: translate(8px, -4px) rotate(8deg); } 65% { transform: translate(-6px, 3px) rotate(-6deg); } }
 
   /* Still have a question */
-  .faq-help-card { display: grid; gap: 18px; margin-top: clamp(40px, 2rem + 2vw, 64px); padding: clamp(22px, 1rem + 1.6vw, 36px); border-radius: var(--r-xl); background: var(--wash); border: 1px solid rgba(31, 122, 224, .12); position: relative; overflow: hidden; }
+  .faq-help-card { display: grid; gap: 18px; margin-top: clamp(40px, 2rem + 2vw, 64px); padding: clamp(22px, 1rem + 1.6vw, 36px); border-radius: var(--r-xl); background: var(--wash); --link: var(--accent-ink); border: 1px solid rgba(31, 122, 224, .12); position: relative; overflow: hidden; }
   .faq-help-card::after { content: ""; position: absolute; right: -60px; bottom: -90px; width: 260px; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, .75), transparent); pointer-events: none; }
   .faq-help-card h2 { font-size: clamp(1.45rem, 1.15rem + 1vw, 2rem); }
   .faq-help-card p { color: var(--ink-2); max-width: 34em; }

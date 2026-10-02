@@ -163,7 +163,7 @@
   @media (hover: hover) { .dir-nav a:hover { color: var(--ink); } }
   .dir-nav a[aria-current] { color: var(--ink); }
   .dir-nav .count { margin-left: auto; min-width: 24px; padding: 1px 7px; border-radius: var(--pill); background: var(--mist-100); font-size: .76rem; font-weight: 650; text-align: center; color: var(--ink-3); }
-  .dir-nav a[aria-current] .count { background: var(--accent-soft); color: var(--accent); }
+  .dir-nav a[aria-current] .count { background: var(--accent-soft); color: var(--accent-ink); }
   .dir-nav-pill { position: absolute; left: 0; right: 0; top: 0; height: 46px; border-radius: 14px; background: var(--paper); box-shadow: var(--shadow-1), inset 0 0 0 1px var(--line); opacity: 0; transition: transform .45s var(--spring), height .3s var(--ease), opacity .3s var(--ease); pointer-events: none; }
   .dir-nav-pill.is-on { opacity: 1; }
   .dir-nav-help { margin-top: 22px; padding: 16px; border-radius: var(--r); background: var(--paper); border: 1px solid var(--line); font-size: .9rem; color: var(--ink-3); }
@@ -223,7 +223,7 @@
   .dir-card-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
   .dir-card-foot .link-arrow { font-size: .96rem; min-height: 38px; }
   @media (pointer: coarse) { .dir-card-foot .link-arrow { min-height: 44px; } }
-  .dir-card.is-feature { background: var(--wash); border-color: rgba(31, 122, 224, .14); overflow: hidden; }
+  .dir-card.is-feature { background: var(--wash); --link: var(--accent-ink); border-color: rgba(31, 122, 224, .14); overflow: hidden; }
   .dir-card.is-feature .dir-card-foot { border-top-color: rgba(31, 122, 224, .14); }
   .dir-card.is-feature .dir-points li::before { background-color: var(--paper); }
   .dir-card.is-feature .chip { background: rgba(255, 255, 255, .72); }

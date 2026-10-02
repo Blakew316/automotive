@@ -97,7 +97,7 @@
   }
 
   /* ---------- Under one roof ---------- */
-  .roof-panel { position: relative; padding: clamp(24px, 1.2rem + 2.4vw, 56px); border-radius: var(--r-xl); background: var(--wash); border: 1px solid rgba(31, 122, 224, .1); overflow: hidden; isolation: isolate; }
+  .roof-panel { position: relative; padding: clamp(24px, 1.2rem + 2.4vw, 56px); border-radius: var(--r-xl); background: var(--wash); --link: var(--accent-ink); border: 1px solid rgba(31, 122, 224, .1); overflow: hidden; isolation: isolate; }
   .roof-panel::after { content: ""; position: absolute; z-index: -1; inset: auto auto -45% -10%; width: 55%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, .75), transparent); }
   .roof-panel .checklist { margin-top: 26px; color: var(--ink-2); }
   .roof-panel .checklist li::before { background-color: var(--paper); }
@@ -118,7 +118,7 @@
   .log-status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
   .log-status.is-due { background: var(--warn-soft); color: var(--warn); }
   .log-status.is-due::before { animation: status-blink 1.8s var(--ease-in-out) infinite; }
-  .log-status.is-sched { background: var(--accent-soft); color: var(--accent); }
+  .log-status.is-sched { background: var(--accent-soft); color: var(--accent-ink); }
   @keyframes status-blink { 50% { opacity: .3; } }
   .fleet-log figcaption { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--line-strong); font-size: .84rem; color: var(--ink-3); }
   .fleet-log figcaption .icon { color: var(--accent); }

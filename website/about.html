@@ -87,7 +87,7 @@
   .engine-panels { display: grid; gap: clamp(14px, .8rem + .6vw, 24px); }
   @media (min-width: 900px) { .engine-panels { grid-template-columns: 1fr 1fr; } }
   .engine-panel { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 16px; padding: clamp(24px, 1.2rem + 2vw, 44px); border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); }
-  .engine-panel.is-wash { background: var(--wash); border-color: rgba(31, 122, 224, .1); }
+  .engine-panel.is-wash { background: var(--wash); --link: var(--accent-ink); border-color: rgba(31, 122, 224, .1); }
   .engine-panel.is-wash::after { content: ""; position: absolute; inset: auto -12% -46% auto; width: 62%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255, 255, 255, .7), transparent); pointer-events: none; }
   .engine-panel > * { position: relative; z-index: 1; }
   .engine-panel .eyebrow { margin-top: 6px; }

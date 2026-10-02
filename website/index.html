@@ -63,7 +63,7 @@
   @keyframes mower-idle { 50% { transform: translateY(.6px); } }
   @keyframes puff { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 25% { opacity: .9; } 100% { opacity: 0; transform: translate(34px, -26px) scale(1.6); } }
   @keyframes sway { to { transform: rotate(6deg); } }
-  .small-engine-panel { position: relative; padding: clamp(24px, 2rem + 2vw, 48px); border-radius: var(--r-xl); background: var(--wash); border: 1px solid rgba(31, 122, 224, .12); overflow: hidden; }
+  .small-engine-panel { position: relative; padding: clamp(24px, 2rem + 2vw, 48px); border-radius: var(--r-xl); background: var(--wash); --link: var(--accent-ink); border: 1px solid rgba(31, 122, 224, .12); overflow: hidden; }
   .small-engine-panel::after { content: ""; position: absolute; inset: auto -10% -40% auto; width: 60%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(closest-side, rgba(255,255,255,.7), transparent); }
 
   .distance { display: grid; gap: 22px; justify-items: start; }

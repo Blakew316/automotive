@@ -44,6 +44,7 @@ Also review:
 
 The copy describes *how the shop works* rather than claiming credentials. Please confirm each of these matches reality, or edit the page:
 
+- **About, "What's in a name"**: rewritten for the WPI Driveline name. It explains "Driveline" (power from the engine to the wheels) and doesn't say what "WPI" stands for. Confirm the wording, or add the meaning of WPI.
 - **Everywhere**: written estimates before work, a call before anything extra, old parts shown on request, detailed invoices, road tests when it matters.
 - **Services offered**: refrigerant service for both R-134a and R-1234yf (`heating-ac`); tire sales, alignment equipment, TPMS programming (`tires-alignment`); clutches, CV axles, differential and transfer case work (`transmission`); compression and leak-down testing (`engine-repair`); battery sales (`electrical-battery`); what an oil service includes (`oil-change`).
 - **Small engines**: the equipment list (including commercial zero-turns, chainsaws, snow blowers, tillers), carburetor rebuilds and blade sharpening, and the 14 small-engine brands listed (`small-engine-repair`, `brands`).

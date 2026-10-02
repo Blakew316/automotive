@@ -87,7 +87,7 @@
   .equip h3 { font-size: 1.02rem; line-height: 1.25; letter-spacing: -0.015em; }
   .equip p { margin-top: 4px; font-size: .86rem; line-height: 1.38; color: var(--ink-3); }
   .equip .icon-tile .icon { width: 28px; height: 28px; }
-  .equip-ask { background: var(--wash); border-color: rgba(31, 122, 224, .14); text-decoration: none; transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
+  .equip-ask { background: var(--wash); --link: var(--accent-ink); border-color: rgba(31, 122, 224, .14); text-decoration: none; transition: transform var(--dur-2) var(--ease), box-shadow var(--dur-2) var(--ease); }
   @media (hover: hover) { .equip-ask:hover { transform: translateY(-3px); box-shadow: var(--shadow-2); } }
   .equip-ask .icon-tile { background: var(--paper); }
   .equip-ask .link-arrow { margin-top: auto; font-size: .9rem; }
@@ -142,7 +142,7 @@
   .season-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
   .season-head h4 { font-size: 1.02rem; }
   .season p { margin-top: 3px; font-size: .92rem; line-height: 1.45; color: var(--ink-3); }
-  .season.is-featured { background: var(--wash); box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .12); }
+  .season.is-featured { background: var(--wash); --link: var(--accent-ink); box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .12); }
   .season.is-featured .icon-tile { background: var(--paper); }
   .season-now { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: var(--pill); font-size: .74rem; font-weight: 650; background: var(--green-100); color: var(--green-ink); box-shadow: inset 0 0 0 1px rgba(45, 179, 106, .25); animation: pop .4s var(--spring) .3s both; }
   .season-now::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: status-pulse 2.4s var(--ease) infinite; }
