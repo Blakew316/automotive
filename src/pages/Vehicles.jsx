@@ -1,11 +1,15 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Car, ScanLine } from 'lucide-react';
+import { Plus, Car, ScanLine, Tractor } from 'lucide-react';
 import { useShop, useLookup } from '../store/hooks';
 import { PageHeader, Card, SearchInput, EmptyState, Mono, Disclosure } from '../components/ui';
 import { useIsPhone } from '../lib/viewport';
 import { VehicleForm } from '../components/forms';
-import { fullName, number, dateShort } from '../lib/format';
+import { fullName, number, dateShort, vehicleName, vehicleTrim } from '../lib/format';
+import { SMALL_ENGINE, TERMS } from '../lib/edition';
+import { equipmentTypeLabel } from '../data/smallEngine';
+
+const VehicleIcon = SMALL_ENGINE ? Tractor : Car;
 
 export default function Vehicles() {
   const { state } = useShop();
@@ -30,32 +34,32 @@ export default function Vehicles() {
     const query = q.toLowerCase();
     return state.vehicles
       .filter((v) => make === 'all' || v.make === make)
-      .filter((v) => !query || `${v.year} ${v.make} ${v.model} ${v.trim} ${v.vin} ${v.plate} ${fullName(lookup.customer.get(v.customerId))}`.toLowerCase().includes(query))
+      .filter((v) => !query || `${v.year} ${v.make} ${v.model} ${v.trim}${SMALL_ENGINE ? ` ${equipmentTypeLabel(v.type)} ${v.engine || ''}` : ''} ${v.vin} ${v.plate} ${fullName(lookup.customer.get(v.customerId))}`.toLowerCase().includes(query))
       .sort((a, b) => String(lastService.get(b.id) || '').localeCompare(String(lastService.get(a.id) || '')));
   }, [state.vehicles, q, make, lookup, lastService]);
 
   return (
     <>
       <PageHeader
-        title="Vehicles"
-        subtitle={`${state.vehicles.length} vehicles · ${makes.length} makes`}
+        title={TERMS.vehicles}
+        subtitle={SMALL_ENGINE ? `${number(state.vehicles.length)} units · ${makes.length} brands` : `${state.vehicles.length} vehicles · ${makes.length} makes`}
         actions={
           <>
-            <Link to="/vin" className="btn-secondary"><ScanLine size={15} /> Decode VIN</Link>
-            <button className="btn-primary" onClick={() => setAdding(true)}><Plus size={16} strokeWidth={2.2} /> Add vehicle</button>
+            {!SMALL_ENGINE && <Link to="/vin" className="btn-secondary"><ScanLine size={15} /> Decode VIN</Link>}
+            <button className="btn-primary" onClick={() => setAdding(true)}><Plus size={16} strokeWidth={2.2} /> {`Add ${TERMS.vehicleLower}`}</button>
           </>
         }
       />
       <div className="mb-4 flex flex-wrap items-center gap-3">
-        <SearchInput value={q} onChange={setQ} placeholder="Year, make, model, VIN, plate, owner" className="w-full sm:w-80" />
-        <select className="input w-auto" value={make} onChange={(e) => setMake(e.target.value)} aria-label="Make">
-          <option value="all">All makes</option>
+        <SearchInput value={q} onChange={setQ} placeholder={SMALL_ENGINE ? 'Brand, model #, serial #, type, tag, owner' : 'Year, make, model, VIN, plate, owner'} className="w-full sm:w-80" />
+        <select className="input w-auto" value={make} onChange={(e) => setMake(e.target.value)} aria-label={TERMS.make}>
+          <option value="all">{SMALL_ENGINE ? 'All brands' : 'All makes'}</option>
           {makes.map((m) => <option key={m}>{m}</option>)}
         </select>
       </div>
       <Card>
         {rows.length === 0 ? (
-          <EmptyState icon={Car} title="No vehicles found" />
+          <EmptyState icon={VehicleIcon} title={`No ${TERMS.vehicles.toLowerCase()} found`} />
         ) : phone ? (
           <ul className="divide-y divide-line/70">
             {rows.map((v) => (
@@ -63,12 +67,12 @@ export default function Vehicles() {
                 <Link to={`/vehicles/${v.id}`} className="press flex items-center gap-3 py-3 pl-4 pr-3.5">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-baseline justify-between gap-3">
-                      <span className="truncate text-base font-semibold text-ink">{v.year} {v.make} {v.model}</span>
+                      <span className="truncate text-base font-semibold text-ink">{SMALL_ENGINE ? vehicleName(v) : <>{v.year} {v.make} {v.model}</>}</span>
                       {v.plate && <span className="shrink-0 font-mono text-xs text-ink-2">{v.plate}</span>}
                     </div>
                     <div className="flex items-baseline justify-between gap-3 text-sm text-ink-3">
-                      <span className="truncate">{[fullName(lookup.customer.get(v.customerId)), v.trim].filter(Boolean).join(' · ')}</span>
-                      {v.mileage ? <span className="tabular shrink-0 text-xs">{number(v.mileage)} mi</span> : null}
+                      <span className="truncate">{[fullName(lookup.customer.get(v.customerId)), vehicleTrim(v)].filter(Boolean).join(' · ')}</span>
+                      {v.mileage ? <span className="tabular shrink-0 text-xs">{number(v.mileage)} {TERMS.mi}</span> : null}
                     </div>
                   </div>
                   <Disclosure />
@@ -81,11 +85,11 @@ export default function Vehicles() {
             <table className="table">
               <thead>
                 <tr>
-                  <th>Vehicle</th>
-                  <th className="hidden md:table-cell">VIN</th>
+                  <th>{TERMS.vehicle}</th>
+                  <th className="hidden md:table-cell">{TERMS.vin}</th>
                   <th>Owner</th>
-                  <th className="hidden sm:table-cell">Plate</th>
-                  <th className="text-right">Mileage</th>
+                  <th className="hidden sm:table-cell">{TERMS.plate}</th>
+                  <th className="text-right">{TERMS.mileage}</th>
                   <th className="hidden text-right lg:table-cell">Last service</th>
                 </tr>
               </thead>
@@ -93,8 +97,8 @@ export default function Vehicles() {
                 {rows.map((v) => (
                   <tr key={v.id} className="row-link" onClick={() => navigate(`/vehicles/${v.id}`)}>
                     <td>
-                      <div className="font-medium">{v.year} {v.make} {v.model}</div>
-                      <div className="text-xs text-ink-3">{[v.trim, v.engine].filter(Boolean).join(' · ')}</div>
+                      <div className="font-medium">{SMALL_ENGINE ? vehicleName(v) : <>{v.year} {v.make} {v.model}</>}</div>
+                      <div className="text-xs text-ink-3">{[vehicleTrim(v), v.engine].filter(Boolean).join(' · ')}</div>
                     </td>
                     <td className="hidden md:table-cell"><Mono className="text-ink-2">{v.vin}</Mono></td>
                     <td className="whitespace-nowrap">{fullName(lookup.customer.get(v.customerId))}</td>

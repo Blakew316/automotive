@@ -86,6 +86,8 @@ export const vehicleName = (v, { trim = false } = {}) =>
   SMALL_ENGINE
     ? v ? equipmentName(v, trim) : 'No equipment'
     : v ? [v.year, v.make, v.model, trim ? v.trim : null].filter(Boolean).join(' ') : 'No vehicle';
+/** The line under a unit's name: its trim, or in the Small Engine Edition its equipment type. */
+export const vehicleTrim = (v) => (SMALL_ENGINE && equipmentTypeLabel(v?.type)) || v?.trim || '';
 
 export const titleCase = (s = '') => s.toLowerCase().replace(/\b([a-z])/g, (m) => m.toUpperCase());
 
