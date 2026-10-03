@@ -89,16 +89,39 @@
   .workflow-hero-fig { padding-bottom: 0; }
   .workflow-hero-fig .float-note { display: none; }
   .workflow-hero-fig .mock-done-dot { right: 4px; } /* the paged board clips anything past the card edge */
+  /* Room under the cards, so the Undo toast never covers the last card in a column */
+  .workflow-hero-fig .mock-board { padding-bottom: 34px; }
+  /* The pager follows the story: Waiting on Parts while the Silverado's part arrives, then back to In Progress.
+     The badge flips once the page has slid in, so "Parts on order" is seen first. */
+  .workflow-hero-fig[data-step="2"] .mock-board { --page: 3 !important; }
+  .workflow-hero-fig .workflow-parts-in { --fx-delay: .6s; }
+  .workflow-hero-fig[data-step="2"] .workflow-parts-out { transition: opacity 0s .6s, visibility 0s .6s; }
 }
 /* Each chip shows up with the step it describes (the shipped final frame shows both) */
 .workflow-hero-fig .float-note { transition: filter .45s var(--ease); }
 .workflow-hero-fig:not([data-reached~="3"]) .float-note.note-2,
 .workflow-hero-fig:not([data-reached~="4"]) .float-note.note-1 { filter: opacity(0); }
+/* The green chip waits for the Undo toast to leave, so the same message isn't on screen twice */
+.workflow-hero-fig[data-reached~="4"] .float-note.note-1 { transition-delay: 1.3s; }
 /* The Undo toast pops in an empty part of the board instead of over a card */
 @media (min-width: 1180px) { .workflow-hero-fig .mock-toast { left: 68.5%; bottom: 96px; } }
-@media (min-width: 700px) and (max-width: 1179.98px) { .workflow-hero-fig .mock-toast { left: 17%; bottom: 96px; } }
-/* Five columns are too tight on small tablets: show Approved, In Progress and Ready, as from 900px */
-@media (min-width: 700px) and (max-width: 899.98px) { .workflow-hero-fig .mock-col.is-optional { display: none; } }
+@media (min-width: 700px) and (max-width: 799.98px) { .workflow-hero-fig .mock-toast { left: 17%; bottom: 96px; } }
+/* Four columns (800-1179px): the toast sits in the clear band under the columns, between the two chips */
+@media (min-width: 800px) and (max-width: 1179.98px) { .workflow-hero-fig .mock-toast { left: 55%; bottom: 18px; } }
+/* Five columns need 1180px. From 800px only Estimate drops off, so Waiting on Parts stays and the Silverado's
+   part can be seen arriving. Small tablets (700-799px) keep Approved, In Progress and Ready. */
+@media (min-width: 700px) and (max-width: 799.98px) { .workflow-hero-fig .mock-col.is-optional { display: none; } }
+@media (min-width: 800px) and (max-width: 1179.98px) {
+  .workflow-hero-fig .mock-col[data-col="estimate"] { display: none; }
+  .workflow-hero-fig .mock-col[data-col="parts"] { display: grid; }
+}
+/* Three or four columns (700-1179px): a taller board leaves the Ready column clear space at the bottom, so the
+   chips can sit at the outer edges without covering a card or each other */
+@media (min-width: 700px) and (max-width: 1179.98px) {
+  .workflow-hero-fig .mock-board { min-height: 372px; }
+  .workflow-hero-fig .float-note.note-2 { left: 3%; }
+  .workflow-hero-fig .float-note.note-1 { right: 3%; }
+}
 
 /* ---------- Pains ---------- */
 .workflow-pains { align-items: center; }
@@ -119,17 +142,24 @@
 
 /* ---------- Today ---------- */
 .workflow-today-fig { width: 100%; }
-.workflow-today-fig .mock-window { width: min(100%, 600px); }
+.workflow-today-fig .mock-window { width: min(100%, 600px); container: workflow-today / inline-size; }
 .workflow-today .mock-appbar { padding-bottom: 8px; border-bottom: 1px solid var(--m-line); }
 .workflow-today .mock-section-title .mock-chip { padding: 0 7px; line-height: 1.5; }
 .workflow-today .mock-section-title small { font-size: 12px; font-weight: 550; color: var(--ink-3); }
 .workflow-today .mock-row { min-height: 32px; padding-block: 6px; }
 .workflow-today .mock-bars { height: 50px; }
 .workflow-today .mock-row > .workflow-ava { position: relative; flex: none; display: inline-grid; overflow: visible; }
-.workflow-ava .live-dot { position: absolute; right: -6px; bottom: -3px; width: 9px; height: 9px; outline: 2px solid var(--paper); }
+.workflow-today .workflow-ava > .mock-avatar { width: 24px; height: 24px; }
+.workflow-ava .live-dot { position: absolute; right: -4px; bottom: -4px; width: 8px; height: 8px; outline: 2px solid var(--paper); }
+.workflow-ava .live-dot.is-warn { background: var(--dot-warn); box-shadow: 0 0 0 3px rgba(227, 161, 59, .22); animation: none; }
+.workflow-today .mock-row > .workflow-ava { margin-right: 4px; }
+/* Narrow phones: a row's text gets a third line instead of losing the vehicle or the end of the sentence */
+.workflow-today .mock-row > span:nth-child(2) { -webkit-line-clamp: 3; }
+.workflow-today .workflow-since { font-size: 12px; font-weight: 550; color: var(--ink-3); white-space: nowrap; }
 .workflow-today .mock-row b { font-weight: 650; color: var(--ink); }
 .workflow-timer-chip .icon { width: 12px; height: 12px; }
-@media (max-width: 559.98px) {
+/* Five tiles in a row need about 540px: narrower windows (phones, and the split column from 900 to ~1200px) get 3 + 2 */
+@container workflow-today (max-width: 540px) {
   .workflow-tiles.mock-tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .workflow-tiles > :nth-child(-n+3) { grid-column: span 2; }
   .workflow-tiles > :nth-child(n+4) { grid-column: span 3; }
@@ -144,7 +174,8 @@
 
 /* ---------- Tech time clock ---------- */
 .workflow-tech-fig { width: 100%; }
-.workflow-phone { width: min(100%, 278px); aspect-ratio: 9 / 19.5; }
+/* Height comes from the content (.is-auto), so nothing is clipped on narrow screens; at 300px wide it is a 9:19.5 phone */
+.workflow-phone { width: min(100%, 300px); }
 .workflow-phone > .mock-screen { gap: 9px; padding: 36px 11px 10px; }
 .workflow-phone > .mock-screen > * { flex: none; }
 .workflow-tech-head { display: flex; align-items: center; gap: 9px; }
@@ -191,9 +222,11 @@
 .workflow-metrics dl > div { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); gap: 10px; align-items: baseline; }
 .workflow-metrics dt { font-weight: 650; color: var(--ink); }
 .workflow-metrics dd { margin: 0; color: var(--ink-3); font-family: var(--font-mono); font-size: .9rem; letter-spacing: 0; }
-.workflow-metrics .link-arrow { justify-self: start; }
+.workflow-metrics .link-arrow { justify-self: start; color: var(--accent-ink); }
 @media (max-width: 419.98px) { .workflow-metrics dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
 .workflow-tech-copy .checklist li { color: var(--ink-2); }
+
+/* ---------- Related ---------- */
 </style>
 </head>
 <body data-page="features" data-tab="features" id="top">
@@ -322,7 +355,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -374,12 +407,12 @@
         </div>
         <div class="hero-trust">
           <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Drag, swipe, undo</span>
-          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Promised times on every card</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Late promise times turn red</span>
           <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>One-tap job timers</span>
         </div>
       </div>
 
-      <figure class="mock-figure workflow-hero-fig" data-play data-seq="5" data-loops="2" data-step="4" data-reached="0 1 2 3 4" aria-label="Example: the sample shop's workflow board in five stages. A 2021 Camry SE has moved from Approved through In Progress to Ready for Pickup, a Silverado's part has been received, and a 2018 F-150 is past its promise time.">
+      <figure class="mock-figure workflow-hero-fig" data-play data-seq="5" data-loops="2" data-step="4" data-reached="0 1 2 3 4" aria-label="Example: a workflow board in the sample shop, with five stages. A 2021 Camry SE has moved from Approved through In Progress to Ready for Pickup, a Silverado's part has been received, and a 2018 F-150 is past its 10:00 AM promise time.">
         <span class="mock-tag">Example · sample shop</span>
         <div class="mock-stage" aria-hidden="true">
           <div class="mock-window board-frame"><div class="mock-screen">
@@ -390,15 +423,15 @@
             </div>
             <div class="mock-board">
               <div class="mock-col is-optional" data-col="estimate"><div class="mock-col-head"><span>Estimate</span><span class="mock-count">3</span></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2019 Tesla Model 3</strong></div><div class="mock-card-meta"><span>Harper N.</span></div><div class="mock-card-foot"><span>Sent 2h ago</span></div></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2021 Jeep Wrangler</strong></div><div class="mock-card-meta"><span>Wesley G.</span></div><div class="mock-card-foot"><span>Sent 3h ago</span></div></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2019 BMW 330i</strong></div><div class="mock-card-meta"><span>Lena K.</span></div><div class="mock-card-foot"><span>Sent 5h ago</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 Tesla Model 3</strong></div><div class="mock-card-meta"><span>Harper N.</span></div><div class="mock-card-foot"><span>2h ago</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2021 Jeep Wrangler</strong></div><div class="mock-card-meta"><span>Wesley G.</span></div><div class="mock-card-foot"><span>Yesterday</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 BMW 330i</strong></div><div class="mock-card-meta"><span>Lena K.</span></div><div class="mock-card-foot"><span>5h ago</span></div></div>
               </div>
               <div class="mock-col" data-col="approved"><div class="mock-col-head"><span>Approved</span><span class="mock-count">1</span></div>
                 <div class="mock-card"><div class="mock-card-top"><strong>2016 Nissan Altima</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Carlos M.</span><span class="mock-chip">1:00 PM</span></div><div class="workflow-prog"><i></i></div><div class="mock-card-foot"><span>Services 0/2</span></div></div>
               </div>
               <div class="mock-col" data-col="progress"><div class="mock-col-head"><span>In Progress</span><span class="mock-count">2</span></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2018 Ford F-150</strong><span class="mock-avatar">LO</span></div><div class="mock-card-meta"><span>Jordan M.</span><span class="mock-chip is-stop workflow-late" data-at="3" data-fx="pulse">11:30 AM</span></div><div class="workflow-prog" style="--p:.34"><i></i></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2018 Ford F-150</strong><span class="mock-avatar">LO</span></div><div class="mock-card-meta"><span>Jordan M.</span><span class="mock-chip is-stop workflow-late" data-at="3" data-fx="pulse">10:00 AM</span></div><div class="workflow-prog" style="--p:.34"><i></i></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
                 <div class="mock-card"><div class="mock-card-top"><strong>2020 Ram 1500</strong><span class="mock-avatar">MR</span></div><div class="mock-card-meta"><span>Carlos M.</span><span class="mock-chip">12:00 PM</span></div><div class="workflow-prog" style="--p:.34"><i></i></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
               </div>
               <div class="mock-col is-optional" data-col="parts"><div class="mock-col-head"><span>Waiting on Parts</span><span class="mock-count">1</span></div>
@@ -406,7 +439,7 @@
                   <div class="mock-card-top"><strong>2020 Silverado 1500</strong><span class="mock-avatar">MR</span></div>
                   <div class="mock-card-meta"><span>Jordan M.</span><span class="mock-chip">2:00 PM</span></div>
                   <div class="workflow-prog"><i></i></div>
-                  <div class="mock-card-foot"><span>Services 0/2</span><span class="workflow-swap is-end"><span class="mock-chip is-warn" data-until="2">Parts on order 1</span><span class="mock-chip is-ok" data-at="2" data-fx="pop">Received</span></span></div>
+                  <div class="mock-card-foot"><span>Services 0/2</span><span class="workflow-swap is-end"><span class="mock-chip is-warn workflow-parts-out" data-until="2">Parts on order 1</span><span class="mock-chip is-ok workflow-parts-in" data-at="2" data-fx="pop">Received</span></span></div>
                 </div>
               </div>
               <div class="mock-col" data-col="ready"><div class="mock-col-head"><span>Ready for Pickup</span><span class="mock-count">3</span></div>
@@ -418,8 +451,8 @@
                   <div class="workflow-prog"><i></i></div>
                   <div class="mock-card-foot"><span>Services <span class="workflow-swap"><span data-until="2">0/4</span><span data-at="2" data-until="4" data-fx="fade">2/4</span><span data-at="4" data-fx="fade">4/4</span></span></span></div>
                 </div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2020 Honda Accord</strong><span class="mock-avatar">KP</span></div><div class="mock-card-meta"><span>Avery T.</span><span class="mock-chip is-ok">Ready</span></div><div class="workflow-prog is-done" style="--p:1"><i></i></div><div class="mock-card-foot"><span>Services 3/3</span></div></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2019 Honda CR-V</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Elijah B.</span><span class="mock-chip is-ok">Ready</span></div><div class="workflow-prog is-done" style="--p:1"><i></i></div><div class="mock-card-foot"><span>Services 2/2</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2020 Honda Accord</strong><span class="mock-avatar">KP</span></div><div class="mock-card-meta"><span>Avery T.</span><span class="mock-chip">11:00 AM</span></div><div class="workflow-prog is-done" style="--p:1"><i></i></div><div class="mock-card-foot"><span>Services 2/2</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 Honda CR-V</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Elijah B.</span><span class="mock-chip">4:00 PM</span></div><div class="workflow-prog is-done" style="--p:1"><i></i></div><div class="mock-card-foot"><span>Services 2/2</span></div></div>
               </div>
             </div>
           </div></div>
@@ -432,11 +465,26 @@
         </div>
         <div class="float-note note-2" aria-hidden="true">
           <span class="dot is-stop"></span>
-          <span><strong>Past its promise time</strong><small>2018 F-150 · promised 11:30 AM</small></span>
+          <span><strong>Past its promise time</strong><small>2018 F-150 · promised 10:00 AM</small></span>
         </div>
       </figure>
     </div>
   </section>
+<script>
+/* Hero board: the Camry's last move lands in the right-most column, where the shared spring would overshoot
+   the window edge and clip the card and its green dot. Soften the spring for that one move. */
+(() => {
+  const fig = document.querySelector(".workflow-hero-fig");
+  const card = fig && fig.querySelector(".workflow-camry");
+  if (!card || !card.getAnimations) return;
+  fig.addEventListener("seqstep", (e) => {
+    if (!e.detail || !e.detail.final) return;
+    card.getAnimations()
+      .filter((a) => !("animationName" in a) && !("transitionProperty" in a) && a.effect && a.effect.updateTiming)
+      .forEach((a) => a.effect.updateTiming({ easing: "cubic-bezier(.3, 1.2, .6, 1)" }));
+  });
+})();
+</script>
 
   <!-- ===== Pains ===== -->
   <section class="section section-paper" id="pains" aria-labelledby="pains-title">
@@ -454,7 +502,7 @@
       <div class="workflow-pains-side">
         <figure class="page-hero-art workflow-art" data-reveal="right" data-reveal-seq data-play aria-label="Illustration: a marker whiteboard gets crossed out, and a five-column board on a screen takes its place while a card moves to the last column and gets a green dot">
           <svg viewBox="0 0 480 290" aria-hidden="true">
-            <ellipse class="art-tint" cx="326" cy="146" rx="164" ry="128" opacity=".55"/>
+            <ellipse class="art-tint" cx="318" cy="146" rx="158" ry="128" opacity=".55"/>
             <!-- the whiteboard -->
             <g data-seq-i="0">
               <g transform="rotate(-4 106 140)">
@@ -541,7 +589,7 @@
         <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-device-tablet"/></svg></span><h3 class="mt-2">Drag, or swipe</h3><p>Drag cards on a desktop or iPad. On a phone, swipe between stages and move a card from its &bull;&bull;&bull; menu.</p></div>
         <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg></span><h3 class="mt-2">Undo on every move</h3><p>Each move shows a toast with an Undo button. A wrong drop is one tap to fix.</p></div>
         <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span><h3 class="mt-2">Filter and search</h3><p>Show everyone or one technician. Search by RO, customer, vehicle or plate.</p></div>
-        <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><h3 class="mt-2">Cards that say enough</h3><p>The tech, the promised time, services done out of total, and parts still on order. A promised time turns red once it has passed.</p></div>
+        <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><h3 class="mt-2">Cards that say enough</h3><p>The tech, the promised time, services done out of total, and parts still on order. A promised time turns red once it passes and the car isn&rsquo;t ready.</p></div>
         <div class="card value-card" data-reveal-seq><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 12l3.1 2"/><path data-seq-i="0" data-fx="sweep" d="M12 12V6.6" style="--from:-80deg; --to:0deg; --fx-delay:.5s; transform-origin: 12px 12px"/></svg></span><h3 class="mt-2">Time-stamped</h3><p>Every stage change is time-stamped. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, those times drive the customer&rsquo;s live status page.</p></div>
       </div>
     </div>
@@ -553,11 +601,11 @@
       <div class="section-copy" data-reveal="right">
         <p class="eyebrow">Today dashboard</p>
         <h2 id="today-title">Today: <span class="accent-text">the shop&rsquo;s morning screen</span></h2>
-        <p>Today is the app&rsquo;s home screen. Five totals sit across the top: in the shop, billed today, awaiting approval, ready for pickup and receivables. Under them, <strong>Needs attention</strong> builds itself from what&rsquo;s already in the system. It watches for:</p>
+        <p>Today is the home screen of WPI Driveline Shop Management System. Five totals sit across the top: in the shop, billed today, awaiting approval, ready for pickup and receivables. Under them, <strong>Needs attention</strong> builds itself from what&rsquo;s already in the system. It watches for:</p>
         <ul class="workflow-watch">
           <li><span class="status-dot is-stop"></span><span>Cars past their promise time</span></li>
           <li><span class="status-dot"></span><span>ROs waiting on parts</span></li>
-          <li><span class="status-dot is-info"></span><span>Estimates with no follow-up after 3 hours</span></li>
+          <li><span class="status-dot is-info"></span><span>Estimates still waiting 3 hours after they were written</span></li>
           <li><span class="status-dot is-ok"></span><span>Ready cars with a balance due</span></li>
           <li><span class="status-dot"></span><span>Past-due fleet invoices</span></li>
           <li><span class="status-dot"></span><span>POs due today or overdue</span></li>
@@ -568,7 +616,7 @@
         </ul>
         <p>Also on the screen: today&rsquo;s appointments with a one-tap Book appointment button, an activity feed, and shortcut tiles with live counts. The tiles are filtered to what the signed-in role may open.</p>
       </div>
-      <figure class="mock-figure workflow-today-fig" data-reveal="left" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" aria-label="Example: the sample shop's Today screen, with five totals, four items that need attention, two techs on the clock and a chart of what was invoiced over the last 14 days">
+      <figure class="mock-figure workflow-today-fig" data-reveal="left" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" aria-label="Example: the sample shop's Today screen, with five totals, four items that need attention, four techs on the clock and a chart of what was invoiced over the last 14 days">
         <span class="mock-tag">Example · sample shop</span>
         <div class="mock-stage" aria-hidden="true">
           <div class="mock-window"><div class="mock-screen workflow-today">
@@ -588,10 +636,12 @@
                 <div class="mock-row"><span class="mock-dot"></span><span>2019 BMW 330i estimate needs a follow-up</span><span class="mock-chip">Follow up</span></div>
                 <div class="mock-row"><span class="mock-dot is-ok"></span><span>Ready · $254.52 due · Avery T.</span><span class="mock-chip is-ok">Ready</span></div>
               </div>
-              <div class="mock-section-title">On the clock <small>2 of 4 technicians in</small></div>
+              <div class="mock-section-title">On the clock <small>4 of 4 technicians in</small></div>
               <div class="mock-rows">
-                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">MR</span><span class="live-dot"></span></span><span><b>Marcus R.</b> · Water pump · <span class="nowrap">2020 Ram 1500</span></span><span class="mock-chip is-ok workflow-timer-chip"><svg class="icon"><use href="#i-timer"/></svg>0:48</span></div>
-                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">LO</span><span class="live-dot"></span></span><span><b>Luis O.</b> · Check engine · <span class="nowrap">2018 F-150</span></span><span class="mock-chip is-ok workflow-timer-chip"><svg class="icon"><use href="#i-timer"/></svg>1:05</span></div>
+                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">MR</span><span class="live-dot"></span></span><span><b>Marcus R.</b> · Water pump · <span class="nowrap">2020 Ram 1500</span></span><span class="mock-chip is-ok workflow-timer-chip"><svg class="icon"><use href="#i-timer"/></svg>48m</span></div>
+                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">LO</span><span class="live-dot"></span></span><span><b>Luis O.</b> · Spark plugs &amp; coil boots · <span class="nowrap">2018 F-150</span></span><span class="mock-chip is-ok workflow-timer-chip"><svg class="icon"><use href="#i-timer"/></svg>1h 05m</span></div>
+                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">KP</span><span class="live-dot"></span></span><span><b>Kim P.</b> · Full synthetic oil &amp; filter · <span class="nowrap">2021 Camry SE</span></span><span class="mock-chip is-ok workflow-timer-chip"><svg class="icon"><use href="#i-timer"/></svg>12m</span></div>
+                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">DW</span><span class="live-dot is-warn"></span></span><span><b>Dana W.</b> · Clocked in, no job running</span><span class="mock-value workflow-since">since 7:26 AM</span></div>
               </div>
               <div class="mock-section-title">Invoiced, last 14 days</div>
               <div class="mock-bars" data-at="2" data-fx="stagger" style="--fx: bar-grow; --fx-stagger: 40ms">
@@ -611,7 +661,7 @@
       <div class="section-copy workflow-tech-copy" data-reveal="left">
         <p class="eyebrow">Tech time clock</p>
         <h2 id="tech-clock-title">A time clock <span class="accent-text">made for the bay</span></h2>
-        <p>Each tech gets a phone-sized screen with their own work on it. Big buttons, short labels, and nothing they have to hunt for.</p>
+        <p>Each tech picks their name once on the bay device. Their shift clock, their jobs and a Start button for each service are on one screen.</p>
         <ul class="checklist pop-list">
           <li>Clock in and out for the shift, with time on the clock today.</li>
           <li>Assigned jobs, plus open jobs a tech can claim and start.</li>
@@ -633,7 +683,7 @@
       <figure class="mock-figure workflow-tech-fig" data-reveal="right" data-play data-seq="4" data-loops="1" data-step="3" data-reached="0 1 2 3" aria-label="Example: a tech's time clock on a phone in the sample shop. The oil service on a 2021 Camry SE has been started, its timer is running, the repair order is In Progress, and a photo was added to it.">
         <span class="mock-tag">Example · sample shop</span>
         <div class="mock-stage" aria-hidden="true">
-          <div class="mock-phone workflow-phone"><div class="mock-screen">
+          <div class="mock-phone is-auto workflow-phone"><div class="mock-screen">
             <div class="workflow-tech-head"><span class="mock-avatar is-green">KP</span><span><b>Kim P.</b><small>Lube &amp; Maintenance</small></span></div>
             <div class="workflow-shift">
               <span class="workflow-shift-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
@@ -656,7 +706,7 @@
               </div>
               <div class="workflow-svc">
                 <span class="workflow-tick"></span>
-                <span><b>Full synthetic oil &amp; filter</b><small>0.5 hr flagged</small></span>
+                <span><b>Full synthetic oil&nbsp;&amp;&nbsp;filter</b><small>0.5 hr flagged</small></span>
                 <span class="workflow-swap is-end">
                   <span class="mock-btn" data-at="0" data-fx="press" data-until="1"><svg class="icon"><use href="#i-play"/></svg>Start</span>
                   <span class="mock-btn is-soft" data-at="1" data-fx="pop"><svg class="icon"><use href="#i-pause"/></svg><span class="odometer is-plain" data-odometer="0:00:12" data-from="0:00:00" data-duration=".4">0:00:12</span></span>
@@ -672,7 +722,7 @@
             <span class="mock-label">Open jobs</span>
             <div class="workflow-job workflow-open">
               <div class="workflow-svc">
-                <span><b>CVT fluid exchange</b><small>2016 Nissan Altima · 0.8 hr</small></span>
+                <span><b>Brake fluid exchange</b><small>2019 Honda Civic</small><small>0.8 hr</small></span>
                 <span class="mock-btn is-ghost">Claim &amp; start</span>
               </div>
             </div>
@@ -717,13 +767,13 @@
           <li class="roadmap-step">
             <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-tag"/></svg></span>
             <h3>Waiting on Parts</h3>
-            <p>A part has to come in. The PO is open, and Today lists it on the day it&rsquo;s due.</p>
+            <p>If a part has to come in, the card moves here. The PO is open, and Today lists it on the day it&rsquo;s due.</p>
             <span class="roadmap-chip">PO due today</span>
           </li>
           <li class="roadmap-step">
             <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-car"/></svg></span>
             <h3>Ready for Pickup</h3>
-            <p>Send the vehicle-ready text. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, it carries the live status link.</p>
+            <p>Send the vehicle-ready text with the balance due, plus a pay link once <a href="payments.html">payments</a> are set up. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, you can also send the live status link so they can follow along.</p>
             <span class="roadmap-chip">Ready · text sent</span>
           </li>
         </ol>
@@ -742,8 +792,9 @@
           <ul class="callout-list">
             <li><strong>Needs:</strong> nothing extra. The board, Today and the time clock work on a single device.</li>
             <li><strong>One live board for the shop:</strong> keeping the counter, bay tablets and phones on the same board uses <a href="../works-with.html#shop-cloud">Shop Cloud</a>. Without it, each device keeps its own records.</li>
+            <li>Online booking requests, website messages, check-ins from a customer&rsquo;s phone, and incoming texts and missed calls reach <strong>Needs attention</strong> on the shop&rsquo;s signed-in devices once they&rsquo;re set up. They use <a href="../works-with.html#shop-cloud">Shop Cloud</a>, and texts and calls also need your own Twilio account.</li>
             <li>Moving a card doesn&rsquo;t text the customer. You choose when to send an update.</li>
-            <li>The time clock counts hours and exports them. Payroll itself runs in your payroll service.</li>
+            <li>The payroll export uses clock hours for hourly techs and flagged hours for flat-rate techs. The app doesn&rsquo;t run payroll or pay anyone. That stays with your payroll service.</li>
           </ul>
         </div>
       </aside>
@@ -760,14 +811,14 @@
       <div class="faq-list" data-reveal>
         <details class="faq" name="feat-faq"><summary>Can techs move cards from a phone?</summary><div class="faq-body"><p>Yes. Swipe between stages, then use the &bull;&bull;&bull; menu on a card to move it. On a desktop or iPad, drag it.</p></div></details>
         <details class="faq" name="feat-faq"><summary>What if someone moves the wrong card?</summary><div class="faq-body"><p>Undo. Every move shows a toast with an Undo button, and one tap puts the card back.</p></div></details>
-        <details class="faq" name="feat-faq"><summary>Does moving a card text the customer?</summary><div class="faq-body"><p>No. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, the move updates the live status page if you&rsquo;ve shared it. Sending the status-update text template is one tap.</p></div></details>
-        <details class="faq" name="feat-faq"><summary>Does it handle flat-rate techs?</summary><div class="faq-body"><p>Yes. Clock time feeds the payroll export for hourly and flat-rate techs: hourly techs on clock hours, flat-rate techs on flagged hours. See <a href="reports.html">Reports, payroll &amp; QuickBooks</a>.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Does moving a card text the customer?</summary><div class="faq-body"><p>No. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, the move updates the live status page if you&rsquo;ve shared it. To tell the customer, send the Live status link or a Status update text from the RO.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Does it handle flat-rate techs?</summary><div class="faq-body"><p>Yes. The payroll export counts clock hours, with overtime, for hourly techs and flagged hours from invoiced work for flat-rate techs. Commission is included. See <a href="reports.html">Reports, payroll &amp; QuickBooks</a>.</p></div></details>
       </div>
     </div>
   </section>
 
   <!-- ===== Related ===== -->
-  <section class="section section-sm" id="related" aria-labelledby="related-title">
+  <section class="section section-sm workflow-related" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>
       <!-- @partial related -->
@@ -802,7 +853,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -817,7 +868,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
@@ -884,6 +935,7 @@
   <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

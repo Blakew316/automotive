@@ -35,6 +35,195 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* about.html: page-local styles (slug-prefixed) */
+
+/* ---------- Hero: the brand card in its orbit ---------- */
+.about-hero h1 { text-wrap: balance; }
+.about-hero-art { min-height: 0; }
+@media (min-width: 960px) and (max-width: 1199.98px) { .about-hero .page-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+/* the live-text tagline stays on one line where the card is narrowest */
+@media (min-width: 960px) and (max-width: 1099.98px) { .about-card .biz-card-tagline { font-size: .78rem; } .about-card .biz-card-tagline::before, .about-card .biz-card-tagline::after { width: 1.6em; } }
+@media (max-width: 379.98px) { .about-card .biz-card-tagline::before, .about-card .biz-card-tagline::after { display: none; } }
+.about-card { position: relative; width: 100%; max-width: 540px; margin-inline: auto; padding-block: 26px 6px; }
+.about-card .note-a { top: -4px; left: -22px; }
+.about-card .note-b { top: auto; bottom: 6px; right: -18px; }
+@media (min-width: 960px) and (max-width: 1159.98px) { .about-card .note-a { left: -6px; } .about-card .note-b { right: -4px; } }
+@media (max-width: 959.98px) { .about-card { padding-block: 64px 14px; } .about-card .card-orbit { width: min(108%, 470px); } }
+
+/* ---------- What's in a name ---------- */
+.about-name { align-items: start; }
+
+/* ---------- The driveline ---------- */
+figure.about-drive.page-hero-art {
+  display: block; place-items: normal; width: 100%; max-width: none; min-height: 0; margin: 0;
+  padding: 58px clamp(14px, .4rem + 2vw, 40px) clamp(22px, 1rem + 1.4vw, 36px);
+  border-radius: var(--r-xl); border: 1px solid var(--line);
+  background:
+    radial-gradient(rgba(31, 122, 224, .07) 1px, transparent 1.3px) 0 0 / 18px 18px,
+    linear-gradient(180deg, var(--paper), var(--canvas));
+  box-shadow: var(--shadow-2);
+}
+.about-drive > .mock-replay { top: 14px; right: 14px; }
+@media (pointer: coarse) { .about-drive > .mock-replay { top: 8px; right: 10px; } }
+.about-drive-kicker {
+  position: absolute; top: 20px; left: clamp(14px, .4rem + 2vw, 40px);
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: .76rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-3);
+}
+.about-drive-kicker::before { content: ""; width: 16px; height: 3px; border-radius: 1px; background: var(--bar); }
+@media (max-width: 359.98px) { .about-drive-kicker { font-size: .68rem; letter-spacing: .02em; } .about-drive-kicker::before { display: none; } }
+.about-drive-art svg { display: block; width: 100%; height: auto; overflow: visible; }
+.about-teeth { fill: none; stroke: var(--ink); stroke-width: 6; }
+.about-tire { fill: var(--mist-200); stroke: var(--ink); stroke-width: 2; }
+.about-tread { fill: none; stroke: var(--ink); stroke-opacity: .28; stroke-width: 7; stroke-dasharray: 3 5.5; }
+
+/* Each part glows, and starts turning, when the car reaches its stop (the shipped markup is the final frame) */
+.about-halo { opacity: 0; transition: opacity .9s var(--ease); }
+.about-drive[data-reached~="0"] .about-halo[data-k="0"],
+.about-drive[data-reached~="1"] .about-halo[data-k="1"],
+.about-drive[data-reached~="2"] .about-halo[data-k="2"],
+.about-drive[data-reached~="3"] .about-halo[data-k="3"],
+.about-drive[data-reached~="4"] .about-halo[data-k="4"] { opacity: 1; }
+.about-pulley { animation-duration: 1.2s; }
+.about-gear { animation-duration: 2.2s; }
+.about-ring { animation-duration: 3.2s; }
+.about-wheel { animation-duration: 4s; }
+.about-shaft-stripes { animation: about-shaft-spin .55s linear infinite; }
+.about-ujoint { transform-box: fill-box; transform-origin: center; animation: about-ujoint-wobble .55s var(--ease-in-out) infinite alternate; }
+@keyframes about-shaft-spin { to { transform: translateX(16px); } }
+@keyframes about-ujoint-wobble { from { transform: rotate(-16deg); } to { transform: rotate(16deg); } }
+.about-part :is(.about-spin, .about-shaft-stripes, .about-ujoint) { animation-play-state: paused; }
+.about-drive[data-reached~="0"] .about-part[data-k="0"] :is(.about-spin, .about-shaft-stripes, .about-ujoint),
+.about-drive[data-reached~="1"] .about-part[data-k="1"] :is(.about-spin, .about-shaft-stripes, .about-ujoint),
+.about-drive[data-reached~="2"] .about-part[data-k="2"] :is(.about-spin, .about-shaft-stripes, .about-ujoint),
+.about-drive[data-reached~="3"] .about-part[data-k="3"] :is(.about-spin, .about-shaft-stripes, .about-ujoint),
+.about-drive[data-reached~="4"] .about-part[data-k="4"] :is(.about-spin, .about-shaft-stripes, .about-ujoint) { animation-play-state: running; }
+
+/* The five stops: a row under the parts (a column on phones), lit in order */
+.about-stages { list-style: none; padding: 0; margin: clamp(12px, .4rem + 1.2vw, 26px) 0 0; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.about-stage {
+  --tone: var(--blue); --tone-soft: var(--blue-100);
+  position: relative; display: grid; justify-items: center; align-content: start; gap: 3px; padding-inline: 6px; text-align: center;
+}
+.about-stage:nth-child(n+4) { --tone: var(--green); --tone-soft: var(--green-100); }
+.about-stage-dot {
+  position: relative; z-index: 1; display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 10px; border-radius: 50%;
+  background: var(--paper); border: 1.5px solid var(--line-strong); color: var(--ink-4); transform: scale(.84);
+  transition: background-color .45s var(--ease), border-color .45s var(--ease), color .45s var(--ease), box-shadow .45s var(--ease), transform .6s var(--spring);
+}
+.about-stage-dot .icon { width: 20px; height: 20px; stroke-width: 1.8; }
+.about-stage-part { font-family: var(--font-mono); font-size: .74rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+.about-stage-name {
+  font-size: 1.06rem; font-weight: 680; letter-spacing: -0.015em; line-height: 1.25; color: var(--ink-3); text-wrap: balance;
+  text-decoration: underline; text-decoration-color: var(--line-strong); text-decoration-thickness: 1px; text-underline-offset: 3px;
+  transition: color .45s var(--ease), text-decoration-color .45s var(--ease);
+}
+@media (hover: hover) { .about-stage-name:hover { color: var(--accent); text-decoration-color: currentColor; } }
+.about-stage-cap { font-size: .9rem; line-height: 1.35; color: var(--ink-3); text-wrap: balance; }
+/* the phone-only part drawings (one per stop) stay hidden while the wide drawing shows */
+.about-stage-art { display: none; }
+/* five columns on a tablet: names and captions stay on one line */
+@media (min-width: 760px) and (max-width: 899.98px) {
+  .about-stage { padding-inline: 2px; }
+  .about-stage-name { font-size: .92rem; }
+  .about-stage-cap { font-size: .8rem; }
+}
+/* the link to the next stop: grey track, then a fill (blue, the two-tone bar into Payment, then green) */
+.about-stage:not(:last-child)::before, .about-stage:not(:last-child)::after {
+  content: ""; position: absolute; top: 19.5px; left: calc(50% + 30px); width: calc(100% - 60px); height: 3px; border-radius: 2px;
+}
+.about-stage::before { background: var(--mist-200); }
+.about-stage::after { background: var(--blue); transform: scaleX(0); transform-origin: left; transition: transform .8s var(--ease) .1s; }
+.about-stage:nth-child(3)::after { background: var(--bar); }
+.about-stage:nth-child(4)::after { background: var(--green); }
+.about-drive[data-reached~="0"] .about-stage[data-k="0"] .about-stage-dot,
+.about-drive[data-reached~="1"] .about-stage[data-k="1"] .about-stage-dot,
+.about-drive[data-reached~="2"] .about-stage[data-k="2"] .about-stage-dot,
+.about-drive[data-reached~="3"] .about-stage[data-k="3"] .about-stage-dot,
+.about-drive[data-reached~="4"] .about-stage[data-k="4"] .about-stage-dot {
+  background: var(--tone); border-color: var(--tone); color: #fff; transform: none; box-shadow: 0 0 0 6px var(--tone-soft), 0 6px 14px -6px rgba(15, 43, 76, .35);
+}
+.about-drive[data-reached~="0"] .about-stage[data-k="0"] .about-stage-name,
+.about-drive[data-reached~="1"] .about-stage[data-k="1"] .about-stage-name,
+.about-drive[data-reached~="2"] .about-stage[data-k="2"] .about-stage-name,
+.about-drive[data-reached~="3"] .about-stage[data-k="3"] .about-stage-name,
+.about-drive[data-reached~="4"] .about-stage[data-k="4"] .about-stage-name { color: var(--ink); }
+.about-drive[data-reached~="1"] .about-stage[data-k="0"]::after,
+.about-drive[data-reached~="2"] .about-stage[data-k="1"]::after,
+.about-drive[data-reached~="3"] .about-stage[data-k="2"]::after,
+.about-drive[data-reached~="4"] .about-stage[data-k="3"]::after { transform: none; }
+
+.about-drive-books {
+  display: flex; align-items: center; gap: 12px; width: fit-content; margin: 22px 0 0 auto; padding: 8px 18px 8px 8px;
+  border-radius: var(--pill); background: var(--green-50); border: 1px solid rgba(45, 179, 106, .22);
+  font-weight: 600; color: var(--ink-2); --link: var(--green-ink);
+}
+.about-drive-books a { color: var(--green-ink); text-decoration: underline; text-decoration-color: rgba(24, 128, 72, .35); text-underline-offset: 3px; }
+@media (hover: hover) { .about-drive-books a:hover { text-decoration-color: currentColor; } }
+
+/* Phones: the driveline stands upright, engine at the top and wheel at the bottom, one part beside each stop */
+@media (max-width: 759.98px) {
+  figure.about-drive.page-hero-art { --part-w: clamp(78px, 4px + 22.5vw, 112px); max-width: 560px; margin-inline: auto; padding-top: 54px; }
+  .about-drive-art { display: none; }
+  .about-stages { grid-template-columns: minmax(0, 1fr); grid-auto-rows: 1fr; margin-top: 18px; }
+  .about-stage {
+    grid-template-columns: var(--part-w) minmax(0, 1fr); grid-template-rows: 1fr auto auto auto 1fr;
+    column-gap: 14px; row-gap: 1px; justify-items: start; padding: 0; text-align: left;
+  }
+  .about-stage-dot { display: none; }
+  .about-stage-art { position: relative; z-index: 1; display: block; grid-column: 1; grid-row: 1 / -1; align-self: center; width: var(--part-w); }
+  .about-stage-art svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .about-stage-art .art-ink, .about-stage-art .about-tire { stroke-width: 2.8; }
+  .about-stage-art .art-thin { stroke-width: 1.9; }
+  .about-stage-part { grid-column: 2; grid-row: 2; display: inline-flex; align-items: center; gap: 8px; }
+  .about-stage-name { grid-column: 2; grid-row: 3; }
+  .about-stage-cap { grid-column: 2; grid-row: 4; }
+  /* a small bar beside each part name fills blue, then green, when the car reaches that stop */
+  .about-stage-part::before { content: ""; width: 14px; height: 3px; border-radius: 1px; background: var(--mist-200); transition: background-color .45s var(--ease); }
+  .about-drive[data-reached~="0"] .about-stage[data-k="0"] .about-stage-part::before,
+  .about-drive[data-reached~="1"] .about-stage[data-k="1"] .about-stage-part::before,
+  .about-drive[data-reached~="2"] .about-stage[data-k="2"] .about-stage-part::before,
+  .about-drive[data-reached~="3"] .about-stage[data-k="3"] .about-stage-part::before,
+  .about-drive[data-reached~="4"] .about-stage[data-k="4"] .about-stage-part::before { background: var(--tone); }
+  /* the shaft line between parts, behind the drawings: only shows if a long label opens a gap */
+  .about-stage:not(:last-child)::before, .about-stage:not(:last-child)::after { top: 50%; left: calc(var(--part-w) / 2 - 1.5px); width: 3px; height: 100%; }
+  .about-stage::after { transform: scaleY(0); transform-origin: top; }
+  .about-stage:nth-child(3)::after { background: var(--bar-v); }
+  .about-drive-books { margin: 18px 0 0; border-radius: var(--r); align-items: flex-start; }
+  .about-drive-books > span:last-child { padding-top: 8px; }
+}
+
+/* ---------- Principles: 2 x 2 until four columns fit ---------- */
+@media (min-width: 960px) and (max-width: 1099.98px) { .about-values { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.about-values .value-card h3 { font-size: 1.14rem; }
+@media (max-width: 559.98px) {
+  .about-values .value-card { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 16px; align-items: start; }
+  .about-values .value-card .icon-tile { grid-row: span 2; width: 46px; height: 46px; border-radius: 13px; }
+  .about-values .value-card h3.mt-2 { margin-top: 2px; }
+  .about-values .value-card p { margin-top: 4px; }
+}
+
+/* ---------- Under the hood ---------- */
+.about-built-links { display: grid; justify-items: start; gap: 10px; margin-top: 6px; }
+.about-built .ro-foot a { white-space: nowrap; }
+
+/* ---------- Good to know: sits right under #built, so the section above sets the gap ---------- */
+#needs.section-sm { padding-top: 0; }
+
+/* ---------- Two ways in ---------- */
+.about-ways { display: grid; gap: clamp(14px, .8rem + .6vw, 24px); }
+@media (min-width: 900px) { .about-ways { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.about-way { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: clamp(24px, 1.2rem + 2vw, 44px); border-radius: var(--r-xl); }
+.about-way h3 { margin-top: 6px; font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem); letter-spacing: -0.03em; }
+.about-way > p { color: var(--ink-3); max-width: 34em; }
+.about-way > h3 + p { margin-top: 0; }
+.about-way-actions { --cluster: 14px 22px; align-items: center; margin-top: auto; padding-top: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .about-drive :is(.about-spin, .about-shaft-stripes, .about-ujoint) { animation: none !important; }
+}
+</style>
 </head>
 <body data-page="about" id="top">
 <!-- @partial icons -->
@@ -162,7 +351,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -190,11 +379,472 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
-    <div class="container">
-      <h1>Built around <span class="accent-text">the way a shop day runs.</span></h1>
+
+  <!-- ===== Hero: the brand card in its orbit ===== -->
+  <section class="page-hero about-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <p class="eyebrow">About the product</p>
+        <h1 id="hero-title">Built around <span class="accent-text">the way a&nbsp;shop day runs.</span></h1>
+        <p class="lead">WPI Driveline Shop Management System follows the car, from the key drop to the bay to the counter to the follow-up, on whatever device is closest.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="demo.html">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="app/" data-no-prerender>Try the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Counter, bays &amp; back office</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Installs from the browser</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Works offline</span>
+        </div>
+      </div>
+
+      <figure class="page-hero-art about-hero-art" data-play data-tilt-scope aria-label="The WPI Driveline Shop Management System logo card">
+        <div class="about-card">
+          <svg class="card-orbit" viewBox="0 0 400 400" aria-hidden="true">
+            <defs><linearGradient id="about-orbit-tint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b9d5f6"/><stop offset=".5" stop-color="#d3e5f8"/><stop offset="1" stop-color="#bfe6cf"/></linearGradient></defs>
+            <circle class="ticks" cx="200" cy="200" r="186" fill="none" stroke="url(#about-orbit-tint)" stroke-width="10" stroke-dasharray="1.6 10.6"/>
+            <circle cx="200" cy="200" r="166" fill="none" stroke="rgba(15, 43, 76, .07)" stroke-width="1"/>
+            <path class="sweep" d="M200 14a186 186 0 0 1 86 21" fill="none" stroke="#2db36a" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div class="biz-card-stage">
+            <div class="card-deal">
+              <div class="biz-card" data-tilt="12">
+                <img class="biz-card-logo" src="assets/img/logo.svg" alt="WPI Driveline Shop Management System" width="653" height="361" fetchpriority="high" decoding="async">
+                <span class="biz-card-tagline">Shop Management System</span>
+                <span class="biz-card-sheen" aria-hidden="true"></span>
+              </div>
+            </div>
+            <div class="biz-card-shadow" aria-hidden="true"></div>
+          </div>
+          <div class="float-note note-a" aria-hidden="true">
+            <span class="dot is-ok"></span>
+            <span><strong>Offline-first</strong><small>Keeps working when the internet drops</small></span>
+          </div>
+          <div class="float-note note-b" aria-hidden="true">
+            <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-tag"/></svg></span>
+            <span><strong>Your shop&rsquo;s name first</strong><small>On customer pages and PDFs</small></span>
+          </div>
+        </div>
+      </figure>
     </div>
   </section>
+
+  <!-- ===== What's in a name ===== -->
+  <section class="section" id="name" aria-labelledby="name-title">
+    <div class="container">
+      <div class="split split-wide-right about-name">
+        <div class="section-head" data-reveal="left">
+          <p class="eyebrow">The name</p>
+          <h2 id="name-title">What&rsquo;s in a <span class="accent-text">name</span></h2>
+          <p class="lead">Two words in the name, and the bar under the logo, say what the product does for a shop.</p>
+        </div>
+        <div class="name-rows" data-reveal-stagger>
+          <div class="name-row" style="--i:0">
+            <span class="name-num" aria-hidden="true">01</span>
+            <h3>Driveline</h3>
+            <p>The parts that carry an engine&rsquo;s power to the wheels. This system carries each job from check-in to paid.</p>
+          </div>
+          <div class="name-row" style="--i:1">
+            <span class="name-num" aria-hidden="true">02</span>
+            <h3>Shop Management System</h3>
+            <p>One system for the counter, the bays and the books, not a stack of separate apps.</p>
+          </div>
+          <div class="name-row" style="--i:2">
+            <span class="name-num" aria-hidden="true">03</span>
+            <h3>The two-tone bar</h3>
+            <p>Blue while the work is moving, green when it&rsquo;s done and paid.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== The driveline: five stops, engine to wheels ===== -->
+  <section class="section section-paper" id="driveline" aria-labelledby="driveline-title">
+    <div class="container">
+      <div class="section-head center" data-reveal>
+        <p class="eyebrow">The driveline</p>
+        <h2 id="driveline-title">From the counter <span class="accent-text">to the books</span></h2>
+        <p class="lead">A driveline carries an engine&rsquo;s power through the gearbox and the driveshaft to the wheels. In your shop, every car rides one from check-in to paid, and each stop is part of the same system.</p>
+      </div>
+
+      <figure class="page-hero-art about-drive" data-reveal data-play data-seq="5" data-loops="1" data-step="4" data-reached="0 1 2 3 4" data-seq-ms="1300" aria-label="Illustration: a driveline from engine to wheels. Its five stops light up in order: check-in, inspect and approve, in the bay, payment and follow-up. After the wheels, the work goes on into reports and QuickBooks.">
+        <span class="about-drive-kicker" aria-hidden="true">One car, five stops</span>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+
+        <div class="about-drive-art" aria-hidden="true">
+          <svg viewBox="0 30 1000 196" focusable="false">
+            <defs>
+              <radialGradient id="about-halo-blue"><stop offset="0" stop-color="#d9e8fb"/><stop offset=".55" stop-color="#e6f0fc" stop-opacity=".7"/><stop offset="1" stop-color="#eef5fe" stop-opacity="0"/></radialGradient>
+              <radialGradient id="about-halo-green"><stop offset="0" stop-color="#d6f0e1"/><stop offset=".55" stop-color="#e4f5eb" stop-opacity=".7"/><stop offset="1" stop-color="#eef9f3" stop-opacity="0"/></radialGradient>
+              <clipPath id="about-shaft-clip"><rect x="436" y="116" width="128" height="24" rx="12"/></clipPath>
+            </defs>
+
+            <!-- Each stop glows when the car reaches it -->
+            <ellipse class="about-halo" data-k="0" cx="104" cy="124" rx="112" ry="94" fill="url(#about-halo-blue)"/>
+            <ellipse class="about-halo" data-k="1" cx="296" cy="128" rx="112" ry="88" fill="url(#about-halo-blue)"/>
+            <ellipse class="about-halo" data-k="2" cx="500" cy="128" rx="104" ry="64" fill="url(#about-halo-blue)"/>
+            <ellipse class="about-halo" data-k="3" cx="694" cy="128" rx="112" ry="84" fill="url(#about-halo-green)"/>
+            <ellipse class="about-halo" data-k="4" cx="904" cy="128" rx="104" ry="100" fill="url(#about-halo-green)"/>
+
+            <!-- Ground shadows -->
+            <ellipse cx="470" cy="210" rx="440" ry="5" fill="rgba(15, 43, 76, .05)"/>
+            <ellipse cx="904" cy="214" rx="72" ry="6" fill="rgba(15, 43, 76, .08)"/>
+
+            <!-- 1. Engine (check-in) -->
+            <g class="about-part" data-k="0">
+              <rect class="art-ink art-soft" x="182" y="108" width="12" height="40" rx="3"/>
+              <path class="art-ink art-tint" d="M52 172h112l-9 17a6 6 0 0 1-5.3 3.2H66.3a6 6 0 0 1-5.3-3.2z"/>
+              <rect class="art-ink art-paper" x="30" y="76" width="152" height="96" rx="12"/>
+              <rect class="art-ink art-soft" x="44" y="52" width="124" height="26" rx="9"/>
+              <path class="art-ink art-thin" d="M68 59v12M90 59v12M112 59v12M134 59v12M156 59v12" stroke-opacity=".45"/>
+              <circle class="art-ink art-thin art-soft" cx="88" cy="102" r="7"/>
+              <circle class="art-ink art-thin art-soft" cx="120" cy="102" r="7"/>
+              <circle class="art-ink art-thin art-soft" cx="152" cy="102" r="7"/>
+              <path class="art-ink art-thin" d="M72 130h96M72 148h96" stroke-opacity=".22"/>
+              <path class="art-ink art-thin" d="M23 98l-10 48M45 98l2 48"/>
+              <circle class="art-ink art-paper" cx="34" cy="98" r="11"/>
+              <circle class="art-ink art-thin art-soft" cx="34" cy="98" r="4"/>
+              <g class="art-spin about-spin about-pulley">
+                <circle class="art-ink art-paper" cx="30" cy="146" r="17"/>
+                <path class="art-ink art-thin" d="M30 131v30M15 146h30"/>
+                <circle class="art-ink art-soft" cx="30" cy="146" r="5"/>
+              </g>
+            </g>
+
+            <!-- 2. Gearbox (inspect & approve) -->
+            <g class="about-part" data-k="1">
+              <path class="art-ink art-tint" d="M196 66L300 96l86 14q12 2 12 14v8q0 12-12 14l-86 14-104 30q-6 1.5-6-5V71q0-6.5 6-5z"/>
+              <path class="art-ink art-thin" d="M232 77v102M338 103v50" stroke-opacity=".3"/>
+              <circle class="art-ink art-thin art-paper" cx="272" cy="128" r="31" stroke-dasharray="3 4"/>
+              <g class="art-spin about-spin about-gear">
+                <circle class="about-teeth" cx="272" cy="128" r="24" stroke-dasharray="3.2 3.08"/>
+                <circle class="art-ink art-paper" cx="272" cy="128" r="19"/>
+                <circle class="art-ink art-thin art-soft" cx="283" cy="128" r="3.2"/>
+                <circle class="art-ink art-thin art-soft" cx="266.5" cy="137.5" r="3.2"/>
+                <circle class="art-ink art-thin art-soft" cx="266.5" cy="118.5" r="3.2"/>
+                <circle class="art-ink art-tint" cx="272" cy="128" r="5.5"/>
+              </g>
+              <rect class="art-ink art-paper" x="398" y="118" width="14" height="20" rx="4"/>
+            </g>
+
+            <!-- 3. Driveshaft (in the bay) -->
+            <g class="about-part" data-k="2">
+              <rect class="art-soft" x="436" y="116" width="128" height="24" rx="12"/>
+              <g clip-path="url(#about-shaft-clip)">
+                <path class="about-shaft-stripes" d="M404 140l14-24h7l-14 24zM420 140l14-24h7l-14 24zM436 140l14-24h7l-14 24zM452 140l14-24h7l-14 24zM468 140l14-24h7l-14 24zM484 140l14-24h7l-14 24zM500 140l14-24h7l-14 24zM516 140l14-24h7l-14 24zM532 140l14-24h7l-14 24zM548 140l14-24h7l-14 24zM564 140l14-24h7l-14 24zM580 140l14-24h7l-14 24zM596 140l14-24h7l-14 24z" fill="#fff" fill-opacity=".9"/>
+              </g>
+              <rect class="art-ink" x="436" y="116" width="128" height="24" rx="12"/>
+              <path d="M450 121.5h100" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-opacity=".9"/>
+              <g class="about-ujoint">
+                <circle class="art-ink art-paper" cx="424" cy="128" r="11"/>
+                <path class="art-ink art-thin" d="M416.5 120.5l15 15M431.5 120.5l-15 15"/>
+                <circle class="art-ink art-soft" cx="424" cy="128" r="3"/>
+              </g>
+              <g class="about-ujoint">
+                <circle class="art-ink art-paper" cx="576" cy="128" r="11"/>
+                <path class="art-ink art-thin" d="M568.5 120.5l15 15M583.5 120.5l-15 15"/>
+                <circle class="art-ink art-soft" cx="576" cy="128" r="3"/>
+              </g>
+            </g>
+
+            <!-- 4. Axle (payment) -->
+            <g class="about-part" data-k="3">
+              <rect class="art-ink art-paper" x="706" y="119" width="122" height="18" rx="6"/>
+              <rect class="art-ink art-soft" x="768" y="112" width="14" height="32" rx="3"/>
+              <rect class="art-ink art-paper" x="588" y="116" width="12" height="24" rx="3"/>
+              <rect class="art-ink art-paper" x="598" y="118" width="22" height="20" rx="3"/>
+              <circle class="art-ink art-tint" cx="664" cy="128" r="50"/>
+              <circle cx="664" cy="128" r="42" fill="none" stroke="#52637B" stroke-opacity=".55" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="0 11"/>
+              <circle class="art-ink art-thin art-paper" cx="664" cy="128" r="32" stroke-dasharray="3 4"/>
+              <g class="art-spin-rev about-spin about-ring">
+                <circle class="about-teeth" cx="664" cy="128" r="25" stroke-dasharray="3 3.04"/>
+                <circle class="art-ink art-paper" cx="664" cy="128" r="20"/>
+                <circle class="art-ink art-thin art-lilac" cx="676" cy="128" r="3.2"/>
+                <circle class="art-ink art-thin art-lilac" cx="658" cy="138.4" r="3.2"/>
+                <circle class="art-ink art-thin art-lilac" cx="658" cy="117.6" r="3.2"/>
+                <circle class="art-ink art-tint" cx="664" cy="128" r="6.5"/>
+              </g>
+            </g>
+
+            <!-- 5. Wheels (follow-up) -->
+            <g class="about-part" data-k="4">
+              <circle class="about-tire" cx="904" cy="128" r="78"/>
+              <circle class="art-ink art-paper" cx="904" cy="128" r="60"/>
+              <circle class="art-ink art-soft" cx="904" cy="128" r="50"/>
+              <g class="art-spin about-spin about-wheel">
+                <circle class="about-tread" cx="904" cy="128" r="70"/>
+                <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z"/>
+                <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z" transform="rotate(72 904 128)"/>
+                <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z" transform="rotate(144 904 128)"/>
+                <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z" transform="rotate(216 904 128)"/>
+                <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z" transform="rotate(288 904 128)"/>
+                <circle class="art-ink art-lilac" cx="904" cy="128" r="13"/>
+                <g fill="#0F2B4C"><circle cx="904" cy="120.5" r="2"/><circle cx="911.1" cy="125.7" r="2"/><circle cx="908.4" cy="134.1" r="2"/><circle cx="899.6" cy="134.1" r="2"/><circle cx="896.9" cy="125.7" r="2"/></g>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <ol class="about-stages">
+          <li class="about-stage" data-k="0">
+            <span class="about-stage-dot" aria-hidden="true"><svg class="icon"><use href="#i-calendar-check"/></svg></span>
+            <span class="about-stage-art" aria-hidden="true"><svg viewBox="-60 -60 120 120" focusable="false">
+              <defs>
+                <radialGradient id="about-v-halo-blue"><stop offset="0" stop-color="#d9e8fb"/><stop offset=".55" stop-color="#e6f0fc" stop-opacity=".7"/><stop offset="1" stop-color="#eef5fe" stop-opacity="0"/></radialGradient>
+                <radialGradient id="about-v-halo-green"><stop offset="0" stop-color="#d6f0e1"/><stop offset=".55" stop-color="#e4f5eb" stop-opacity=".7"/><stop offset="1" stop-color="#eef9f3" stop-opacity="0"/></radialGradient>
+              </defs>
+              <circle class="about-halo" data-k="0" r="58" fill="url(#about-v-halo-blue)"/>
+              <g class="about-part" data-k="0" transform="scale(.6) rotate(90) translate(-104 -128)">
+                <rect class="art-ink art-soft" x="182" y="108" width="12" height="40" rx="3"/>
+                <path class="art-ink art-tint" d="M52 172h112l-9 17a6 6 0 0 1-5.3 3.2H66.3a6 6 0 0 1-5.3-3.2z"/>
+                <rect class="art-ink art-paper" x="30" y="76" width="152" height="96" rx="12"/>
+                <rect class="art-ink art-soft" x="44" y="52" width="124" height="26" rx="9"/>
+                <path class="art-ink art-thin" d="M68 59v12M90 59v12M112 59v12M134 59v12M156 59v12" stroke-opacity=".45"/>
+                <circle class="art-ink art-thin art-soft" cx="88" cy="102" r="7"/>
+                <circle class="art-ink art-thin art-soft" cx="120" cy="102" r="7"/>
+                <circle class="art-ink art-thin art-soft" cx="152" cy="102" r="7"/>
+                <path class="art-ink art-thin" d="M72 130h96M72 148h96" stroke-opacity=".22"/>
+                <path class="art-ink art-thin" d="M23 98l-10 48M45 98l2 48"/>
+                <circle class="art-ink art-paper" cx="34" cy="98" r="11"/>
+                <circle class="art-ink art-thin art-soft" cx="34" cy="98" r="4"/>
+                <g class="art-spin about-spin about-pulley">
+                  <circle class="art-ink art-paper" cx="30" cy="146" r="17"/>
+                  <path class="art-ink art-thin" d="M30 131v30M15 146h30"/>
+                  <circle class="art-ink art-soft" cx="30" cy="146" r="5"/>
+                </g>
+              </g>
+            </svg></span>
+            <span class="about-stage-part">Engine</span>
+            <a class="about-stage-name" href="features/booking.html">Check-in</a>
+            <span class="about-stage-cap">Check-in &amp; estimate</span>
+          </li>
+          <li class="about-stage" data-k="1">
+            <span class="about-stage-dot" aria-hidden="true"><svg class="icon"><use href="#i-inspection"/></svg></span>
+            <span class="about-stage-art" aria-hidden="true"><svg viewBox="-60 -60 120 120" focusable="false">
+              <circle class="about-halo" data-k="1" r="58" fill="url(#about-v-halo-blue)"/>
+              <g class="about-part" data-k="1" transform="scale(.6) rotate(90) translate(-300 -128)">
+                <path class="art-ink art-tint" d="M196 66L300 96l86 14q12 2 12 14v8q0 12-12 14l-86 14-104 30q-6 1.5-6-5V71q0-6.5 6-5z"/>
+                <path class="art-ink art-thin" d="M232 77v102M338 103v50" stroke-opacity=".3"/>
+                <circle class="art-ink art-thin art-paper" cx="272" cy="128" r="31" stroke-dasharray="3 4"/>
+                <g class="art-spin about-spin about-gear">
+                  <circle class="about-teeth" cx="272" cy="128" r="24" stroke-dasharray="3.2 3.08"/>
+                  <circle class="art-ink art-paper" cx="272" cy="128" r="19"/>
+                  <circle class="art-ink art-thin art-soft" cx="283" cy="128" r="3.2"/>
+                  <circle class="art-ink art-thin art-soft" cx="266.5" cy="137.5" r="3.2"/>
+                  <circle class="art-ink art-thin art-soft" cx="266.5" cy="118.5" r="3.2"/>
+                  <circle class="art-ink art-tint" cx="272" cy="128" r="5.5"/>
+                </g>
+                <rect class="art-ink art-paper" x="398" y="118" width="14" height="20" rx="4"/>
+              </g>
+            </svg></span>
+            <span class="about-stage-part">Gearbox</span>
+            <a class="about-stage-name" href="features/inspections.html">Inspect &amp; approve</a>
+            <span class="about-stage-cap">Inspection &amp; approval</span>
+          </li>
+          <li class="about-stage" data-k="2">
+            <span class="about-stage-dot" aria-hidden="true"><svg class="icon"><use href="#i-board"/></svg></span>
+            <span class="about-stage-art" aria-hidden="true"><svg viewBox="-60 -60 120 120" focusable="false">
+              <defs>
+                <clipPath id="about-v-shaft-clip"><rect x="436" y="116" width="128" height="24" rx="12"/></clipPath>
+              </defs>
+              <circle class="about-halo" data-k="2" r="58" fill="url(#about-v-halo-blue)"/>
+              <g class="about-part" data-k="2" transform="scale(.6) rotate(90) translate(-500 -128)">
+                <rect class="art-soft" x="436" y="116" width="128" height="24" rx="12"/>
+                <g clip-path="url(#about-v-shaft-clip)">
+                  <path class="about-shaft-stripes" d="M404 140l14-24h7l-14 24zM420 140l14-24h7l-14 24zM436 140l14-24h7l-14 24zM452 140l14-24h7l-14 24zM468 140l14-24h7l-14 24zM484 140l14-24h7l-14 24zM500 140l14-24h7l-14 24zM516 140l14-24h7l-14 24zM532 140l14-24h7l-14 24zM548 140l14-24h7l-14 24zM564 140l14-24h7l-14 24zM580 140l14-24h7l-14 24zM596 140l14-24h7l-14 24z" fill="#fff" fill-opacity=".9"/>
+                </g>
+                <rect class="art-ink" x="436" y="116" width="128" height="24" rx="12"/>
+                <path d="M450 121.5h100" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-opacity=".9"/>
+                <g class="about-ujoint">
+                  <circle class="art-ink art-paper" cx="424" cy="128" r="11"/>
+                  <path class="art-ink art-thin" d="M416.5 120.5l15 15M431.5 120.5l-15 15"/>
+                  <circle class="art-ink art-soft" cx="424" cy="128" r="3"/>
+                </g>
+                <g class="about-ujoint">
+                  <circle class="art-ink art-paper" cx="576" cy="128" r="11"/>
+                  <path class="art-ink art-thin" d="M568.5 120.5l15 15M583.5 120.5l-15 15"/>
+                  <circle class="art-ink art-soft" cx="576" cy="128" r="3"/>
+                </g>
+              </g>
+            </svg></span>
+            <span class="about-stage-part">Driveshaft</span>
+            <a class="about-stage-name" href="features/workflow.html">In the bay</a>
+            <span class="about-stage-cap">Work on the board</span>
+          </li>
+          <li class="about-stage" data-k="3">
+            <span class="about-stage-dot" aria-hidden="true"><svg class="icon"><use href="#i-card-reader"/></svg></span>
+            <span class="about-stage-art" aria-hidden="true"><svg viewBox="-60 -60 120 120" focusable="false">
+              <circle class="about-halo" data-k="3" r="58" fill="url(#about-v-halo-green)"/>
+              <g class="about-part" data-k="3" transform="scale(.6) rotate(90) translate(-664 -128)">
+                <rect class="art-ink art-paper" x="706" y="119" width="122" height="18" rx="6"/>
+                <rect class="art-ink art-soft" x="768" y="112" width="14" height="32" rx="3"/>
+                <rect class="art-ink art-paper" x="550" y="120" width="42" height="16" rx="5"/>
+                <rect class="art-ink art-paper" x="588" y="116" width="12" height="24" rx="3"/>
+                <rect class="art-ink art-paper" x="598" y="118" width="22" height="20" rx="3"/>
+                <circle class="art-ink art-tint" cx="664" cy="128" r="50"/>
+                <circle cx="664" cy="128" r="42" fill="none" stroke="#52637B" stroke-opacity=".55" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="0 11"/>
+                <circle class="art-ink art-thin art-paper" cx="664" cy="128" r="32" stroke-dasharray="3 4"/>
+                <g class="art-spin-rev about-spin about-ring">
+                  <circle class="about-teeth" cx="664" cy="128" r="25" stroke-dasharray="3 3.04"/>
+                  <circle class="art-ink art-paper" cx="664" cy="128" r="20"/>
+                  <circle class="art-ink art-thin art-lilac" cx="676" cy="128" r="3.2"/>
+                  <circle class="art-ink art-thin art-lilac" cx="658" cy="138.4" r="3.2"/>
+                  <circle class="art-ink art-thin art-lilac" cx="658" cy="117.6" r="3.2"/>
+                  <circle class="art-ink art-tint" cx="664" cy="128" r="6.5"/>
+                </g>
+              </g>
+            </svg></span>
+            <span class="about-stage-part">Axle</span>
+            <a class="about-stage-name" href="features/payments.html">Payment</a>
+            <span class="about-stage-cap">Pay link or reader</span>
+          </li>
+          <li class="about-stage" data-k="4">
+            <span class="about-stage-dot" aria-hidden="true"><svg class="icon"><use href="#i-users"/></svg></span>
+            <span class="about-stage-art" aria-hidden="true"><svg viewBox="-60 -60 120 120" focusable="false">
+              <circle class="about-halo" data-k="4" r="58" fill="url(#about-v-halo-green)"/>
+              <g class="about-part" data-k="4" transform="scale(.6) rotate(90) translate(-904 -128)">
+                <circle class="about-tire" cx="904" cy="128" r="78"/>
+                <circle class="art-ink art-paper" cx="904" cy="128" r="60"/>
+                <circle class="art-ink art-soft" cx="904" cy="128" r="50"/>
+                <g class="art-spin about-spin about-wheel">
+                  <circle class="about-tread" cx="904" cy="128" r="70"/>
+                  <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z"/>
+                  <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z" transform="rotate(72 904 128)"/>
+                  <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z" transform="rotate(144 904 128)"/>
+                  <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z" transform="rotate(216 904 128)"/>
+                  <path class="art-ink art-paper" d="M899 116l-3-30q8-4 16 0l-3 30z" transform="rotate(288 904 128)"/>
+                  <circle class="art-ink art-lilac" cx="904" cy="128" r="13"/>
+                  <g fill="#0F2B4C"><circle cx="904" cy="120.5" r="2"/><circle cx="911.1" cy="125.7" r="2"/><circle cx="908.4" cy="134.1" r="2"/><circle cx="899.6" cy="134.1" r="2"/><circle cx="896.9" cy="125.7" r="2"/></g>
+                </g>
+              </g>
+            </svg></span>
+            <span class="about-stage-part">Wheels</span>
+            <a class="about-stage-name" href="features/customers.html">Follow-up</a>
+            <span class="about-stage-cap">Reminders</span>
+          </li>
+        </ol>
+
+        <p class="about-drive-books" data-at="4" data-fx="fade"><span class="icon-tile icon-tile-sm icon-tile-green" aria-hidden="true"><svg class="icon"><use href="#i-ledger"/></svg></span><span>Then into your <a href="features/reports.html">reports and QuickBooks</a>.</span></p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Principles ===== -->
+  <section class="section section-tint" id="principles" aria-labelledby="principles-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Principles</p>
+        <h2 id="principles-title">How it&rsquo;s <span class="accent-text">made</span></h2>
+        <p class="lead">Four rules the product is built to. Each one shows up somewhere you can see it.</p>
+      </div>
+      <div class="grid grid-4 about-values" data-reveal-stagger>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
+          <h3 class="mt-2">Your shop&rsquo;s name first</h3>
+          <p>Customer pages and PDFs lead with your shop&rsquo;s name. The product signs off in one small &ldquo;Powered by&rdquo; line at the bottom.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+          <h3 class="mt-2">One record per job</h3>
+          <p>One repair order carries a job from estimate to paid receipt, and every feature works from the same customer list.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+          <h3 class="mt-2">Nothing invented</h3>
+          <p><a class="text-link" href="features/diagnosis.html">Auto Diagnosis</a> takes vehicle-specific facts only from NHTSA data and your own repair orders, and its AI test plan is a draft for your tech to check. Every mockup on this site is labelled as an example.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg></span>
+          <h3 class="mt-2">Plain about limits</h3>
+          <p>Every <a class="text-link" href="features.html">feature page</a> says what it needs and what it doesn&rsquo;t do, in a &ldquo;Good to know&rdquo; box like the one further down.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Under the hood ===== -->
+  <section class="section" id="built" aria-labelledby="built-title">
+    <div class="container split split-wide-right about-built">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Technology</p>
+        <h2 id="built-title">Under <span class="accent-text">the hood</span></h2>
+        <p class="lead">A web app on every device, with Shop Cloud behind it. Each device keeps the whole shop, and Shop Cloud joins them up when you want them to share.</p>
+        <p>The app is the same on the counter PC, the bay iPad and the owner&rsquo;s phone. There&rsquo;s nothing to install from a store and no server in the back office to look after.</p>
+        <div class="about-built-links">
+          <a class="link-arrow" href="works-with.html#shop-cloud">How Shop Cloud works <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          <a class="link-arrow" href="security.html">Security &amp; your data <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          <a class="link-arrow" href="mobile.html">iPhone, iPad &amp; desktop <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+      </div>
+      <div class="ro-card" data-reveal="right">
+        <div class="ro-head">
+          <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+          <div><strong>What it runs on</strong><small>The parts behind the app</small></div>
+          <span class="badge">Spec sheet</span>
+        </div>
+        <ul class="checklist ro-list" role="list">
+          <li><div><h3>Installs from the browser</h3><p>A web app that installs from the browser and works offline, on iPhone, iPad, Android, Mac and PC.</p></div></li>
+          <li><div><h3>The whole shop on each device</h3><p>Each device keeps the shop&rsquo;s records in its own storage, so the counter keeps going when the internet drops.</p></div></li>
+          <li><div><h3>Shop Cloud, for one shop</h3><p><a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> runs on a private Supabase project for one shop: database, live sync, file storage, server functions and an encrypted key vault.</p></div></li>
+          <li><div><h3>Tested on every pull request</h3><p>Unit tests, server-function tests with the outside providers mocked, and browser tests that include an iPhone-sized layout. CI runs them on every pull request.</p></div></li>
+        </ul>
+        <p class="ro-foot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Sign-in, roles, keys and backups are on <a class="text-link" href="security.html">Security &amp; your data</a>.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Not a store app:</strong> it installs from the browser. It isn&rsquo;t in the App Store or Google Play.</li>
+            <li><strong>Without Shop Cloud:</strong> records live only in that one browser, and clearing browser data erases them, so export backups from Settings. Photos and video stay on that device and aren&rsquo;t in the backup file.</li>
+            <li><strong>Needs:</strong> <a href="works-with.html#shop-cloud">Shop Cloud</a> to share records between devices and for customer links.</li>
+            <li><strong>Your own accounts:</strong> texting, card payments, email, QuickBooks, connected cars and AI run through <a href="works-with.html#shop-cloud">Shop Cloud</a> on your shop&rsquo;s own Twilio, Stripe, Resend, Intuit, Smartcar and Anthropic accounts, which bill you directly.</li>
+            <li><strong>Prices:</strong> we don&rsquo;t publish prices. Tell us about your shop in a <a href="demo.html">demo request</a>, and ask how Shop Cloud is set up and billed for you.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== Two ways in ===== -->
+  <section class="section section-tint" id="two-ways" aria-labelledby="two-ways-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Get started</p>
+        <h2 id="two-ways-title">Two ways <span class="accent-text">in</span></h2>
+      </div>
+      <div class="about-ways" data-reveal-stagger>
+        <div class="card about-way">
+          <span class="icon-tile icon-tile-lg"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"/></svg></span>
+          <h3>Running a shop?</h3>
+          <p>Request a demo with a few lines about your shop, or open the sample shop and click around first. No sign-up.</p>
+          <div class="cluster about-way-actions">
+            <a class="btn btn-primary" href="demo.html">Request a demo</a>
+            <a class="link-arrow" href="app/" data-no-prerender>Try the sample shop <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+        <div class="panel-wash about-way">
+          <span class="icon-tile icon-tile-lg icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg></span>
+          <h3>Already using it?</h3>
+          <p>Sign in with the Shop Cloud login your shop gave you. A shop on a single device just opens the app. On a phone or tablet, add it to the Home Screen and it opens full screen.</p>
+          <div class="cluster about-way-actions">
+            <a class="btn btn-secondary" href="app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg>Sign in</a>
+            <a class="link-arrow" href="mobile.html">Install on iPhone &amp; iPad <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
 </main>
 
 <!-- @partial cta -->
@@ -203,7 +853,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -218,7 +868,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="index.html" aria-label="WPI Driveline Shop Management System home">
@@ -285,6 +935,7 @@
   <a class="tab tab-book" href="demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

@@ -13,7 +13,7 @@ Contents
 6. [Mock player](#6-mock-player-data-play--data-seq) (`data-play`, `data-seq`, `data-at`, `data-until`, `data-path`)
 7. [Reveal sequence](#7-reveal-sequence-data-reveal-seq) and [Reveal accents](#reveal-accents)
 8. [Sequence effects (`data-fx`)](#8-sequence-effects-data-fx)
-9. [App card stage](#9-app-card-stage) (tilt, sheen, deal, pair, trio)
+9. [App card stage](#9-app-card-stage) (tilt, sheen, deal, pair, trio) and the [Brand card orbit](#brand-card-orbit-about-hero-only) (about)
 10. [Device frames and mock parts](#10-device-frames-and-mock-parts)
 11. [Scenes](#11-scenes) (today, board slide, phone thread, checklist and gauge, invoice and reader, timeline, ledger, scan)
 12. [Small motion parts](#12-small-motion-parts) (Rolling counters, Slot roll, Stamp, Live dot, Data flow line)
@@ -130,6 +130,8 @@ An eyebrow that starts with an `.icon` or an `.icon-tile` drops the bar. The fea
 - Grids: `.grid.grid-2`, `.grid.grid-3` (an odd last card spans at 640–959px) and `.grid.grid-4`.
 - Utilities: `.stack` (`--stack` gap), `.cluster` (`--cluster` gap), `.mt-0…mt-5`, `.divider`, `.center`, `.muted`, `.nowrap`, `.visually-hidden`.
 - Sections with a road need no extra work: `.section-tint`, `.section-paper` and `.section-wash` set `--roadmap-bg` for you. Set it inline only on a custom background.
+- `<main>` clips horizontal overflow (`overflow-x: clip`), so a tilted mock, a dealing card or a float-note that pokes past the screen edge never widens the page on a phone. Sticky elements inside still stick. Don't add `overflow-x: hidden` to sections yourself, and never use `100vw` widths inside `main`.
+- Clipping hides overflow, it doesn't fix it: a grid whose columns are `1fr`/`auto` grows to its widest child (a board mock, a long button), and the copy then runs off a phone screen. Use `.page-hero-grid` / `.split` (their children get `min-width: 0`) or write `minmax(0, 1fr)` columns. A page-local grid directly inside `.page-hero > .container` or `.hero > .container` gets `min-width: 0` on its children as a safety net.
 
 ### Buttons and links
 
@@ -142,6 +144,7 @@ An eyebrow that starts with an `.icon` or an `.icon-tile` drops the bar. The fea
 ```
 
 - Groups: `<div class="hero-actions">` (full width below 480px), then an optional `<p class="hero-note">…</p>`.
+- Below 480px a long label ("Open repair orders in the sample shop") wraps to two balanced lines instead of being cut off, so keep labels as they are in features.json.
 - Busy state: JS adds `.is-loading` to a `.btn` and shows a spinner.
 - **Every link into `app/` carries `data-no-prerender`.**
 
@@ -196,8 +199,10 @@ An unknown marker name stops sync. Tokens work in page content as well as partia
 
 **Header lane car on home (automatic).** Give each chapter section `data-stage="Check-in"` (and so on, from features.json stages[], in order). site.js then adds:
 
-- one `.lane-tick` per stage;
+- one `.lane-tick` per stage (once the car passes them, the first two turn blue and the last three green; fills only);
 - a `.road-progress-label` pill showing the current stage's name.
+
+Ticks and the stage switch are measured from each chapter's position, and re-measured when the page height changes (fonts, tabs, opened FAQs).
 
 You add nothing else. Ticks and label hide below 600px, under Reduce Motion and in print.
 
@@ -235,6 +240,7 @@ Behaviour (site.js):
   - `ul.sheet-list`;
   - `.sheet-foot` holding the Pause toggle.
 - The sheet closes on Escape, a backdrop click or any `[data-close-sheet]`. It closes instantly under Reduce Motion or Pause.
+- **Without JS** the sheet can't open, so the More button is hidden and `a.tab.tab-more-link` (same icon and label) links to `#site-footer`, the footer's full link list, instead.
 
 ### Footer (partials/footer.html)
 
@@ -256,10 +262,14 @@ sync renders it as `{{motionToggle}}`. Never hand-write a second copy in a page.
 - While paused:
   - loops freeze in place: ticker, CTA road, glow, sheen, live dots, chip float, orbit, gauge idle;
   - one-shot entrances jump to their end frame;
-  - Mock player and `data-cycle` timers stop;
-  - SMIL arts in `[data-play]` figures pause;
+  - CSS transitions land at once (road markers and chips, counters revealed while paused, pills, hovers), and anchor links jump instead of smooth-scrolling;
+  - anything already in flight when you press Pause lands on its end frame: a counter mid-roll, a board card mid-hop, any CSS transition or `element.animate()` run. An endless `element.animate()` loop of your own is held and resumes on Play;
+  - every `[data-seq]` sequence **parks on its final frame** (step N-1, counters at their final values, board cards in their final columns), exactly as under Reduce Motion, on a paused load and in print. A paused figure never rests on an in-between or not-yet-played step;
+  - `data-cycle` boxes rest on their first item (and fire `cycle` with index 0);
+  - SMIL arts in `[data-play]` figures pause; one with `data-smil-rest` jumps to that time (its end frame);
   - tilt is off.
-- If the page loads already paused (`motion-parked`), sequences rest on their final frame and the CTA car parks mid-road on "Paid".
+- **Play** (pressing it again) resumes loops from where they froze and restarts the timers. One-shot entrances that were switched off while paused (Hero entrance, reveals, reached Mock player steps, the open sheet, a toast) stay on their end frame; they do not replay. A sequence that Pause parked stays on its final frame if it's on screen (Replay runs it again); one that's off screen re-arms and plays the next time it's scrolled into view.
+- If the page loads already paused (`motion-parked`), sequences rest on their final frame and the CTA car parks mid-road on "Paid". On Play, the CTA car starts a new drive.
 - Without JS the toggle is hidden (it needs site.js).
 
 ### CTA road band (partials/cta.html; omitted on demo, privacy and 404)
@@ -337,7 +347,7 @@ sync renders it as `{{motionToggle}}`. Never hand-write a second copy in a page.
 - **Hero entrance:** `.hero-in > *` rise in with a 60ms stagger. `.accent-text` draws its bar, and `.hero-bg` / `.page-hero-bg` glow-float.
 - `.hero-in` and the first hero's `.card-deal` are exempt from the Mock player gate, so they paint at once.
 - The `ft-<slug>` name on the eyebrow icon tile is the **only** static `view-transition-name` on a page. It goes on feature pages only (see §25).
-- The breadcrumbs partial emits `nav.breadcrumb > ol > li` (links, then `span[aria-current=page]`). It is styled already.
+- The breadcrumbs partial emits `nav.breadcrumb > ol > li` (links, then `span[aria-current=page]`). It is styled already. Below 600px it stays on one row and a long current title ends in an ellipsis (the eyebrow right below repeats the title in full).
 
 ---
 
@@ -389,7 +399,7 @@ sync renders it as `{{motionToggle}}`. Never hand-write a second copy in a page.
 - One IntersectionObserver (threshold 0.15) adds `.is-playing` while the figure is on screen.
 - Until then, **every CSS animation inside the figure is paused**. That includes loops, chip floats, `card-deal` (except in the first hero) and SMIL.
 - SMIL (`<animate>`, `<animateMotion>`…) inside the figure is paused and unpaused automatically.
-- Give the `<svg>` a `data-smil-rest="4.6"` to choose the frozen frame used under Reduce Motion.
+- Give the `<svg>` a `data-smil-rest="4.6"` to mark a one-shot SMIL art and choose its rest frame (its end). It rests there under Reduce Motion, on a paused load and when the visitor presses Pause. Its first real run starts from 0 (after a paused load and Play, too). site.js only seeks back to 0 after it parked the SVG at its rest time, because seeking back also drops a page script's `beginElement()`.
 
 ### `[data-seq=N]` (a sequence of N steps)
 
@@ -408,7 +418,10 @@ How a run goes:
 - After the last step, the player holds. If loops remain, the stage fades out for 300ms, resets to step 0 and plays again.
 - After the last loop it **rests on the final step**. It does not replay on scroll.
 - The Replay button runs one more pass.
-- Timers stop when the tab is hidden, when the figure is off screen, while paused and while prerendering. Print shows the final step.
+- Timers stop when the tab is hidden, when the figure is off screen and while prerendering. Stopping during the 300ms loop fade cancels the reset, so the stage keeps showing its final step instead of staying faded out.
+- The Pause toggle parks every sequence on its final step (§3 Motion pause toggle).
+- A Replay button without its own `aria-label` is named by site.js after the nearest heading above its figure: "Replay the example: <heading>" ("Replay the second example: …" when two figures share a heading). Write your own `aria-label` (starting with "Replay") when that heading doesn't describe the figure.
+- Print shows the final step: `beforeprint` applies step N-1 in full (counters at their final values, `data-path` cards in their final columns), and `afterprint` puts the figure back where it was.
 
 ### Inside the figure
 
@@ -564,9 +577,39 @@ Used on the index hero, index `#customer-pages` and the mobile hero.
   - `.card-stage.is-pair`: a tablet (first `.card-deal`) and a phone (second) that overlaps the bottom-right corner. Use `.mock-tablet.is-auto` so the tablet's height fits its content.
 - A data-free stage (mobile hero) uses `figure.page-hero-art[data-play][data-tilt-scope]` with the same inside and no tag.
 
-**Reduce Motion:** the card is flat-ish at rest, with no deal, no sheen movement and no tilt.
+**Phones (below 600px) and Reduce Motion:** the card and device frames rest flat (`transform: none`; a rest tilt softens small mock text). Under Reduce Motion there is also no deal, no sheen movement and no pointer tilt.
 
-The about page keeps `.biz-card` (logo plus `.biz-card-tagline`, `.biz-card-sheen`, `.biz-card-shadow`, inside `.biz-card-stage`). It works exactly as before. The orbit SVG stays inline on about.
+### Brand card orbit (about hero only)
+
+The about page keeps `.biz-card` (logo plus live-text `.biz-card-tagline`, `.biz-card-sheen`, `.biz-card-shadow`, inside `.biz-card-stage`) with `card-deal` and the tilt. The orbit behind it is styled in site.css (`.card-orbit`, `.ticks` on `art-spin` 90s, `.sweep` on `orbit-sweep` 7s); you only write the markup and a wrapper position. The figure is data-free, so it takes no tag.
+
+```html
+<figure class="page-hero-art" data-play data-tilt-scope aria-label="The WPI Driveline Shop Management System logo card">
+  <div class="about-card">                                  <!-- page-local wrapper: position:relative (inline CSS, about-*) -->
+    <svg class="card-orbit" viewBox="0 0 400 400" aria-hidden="true">
+      <defs><linearGradient id="about-orbit-tint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b9d5f6"/><stop offset=".5" stop-color="#d3e5f8"/><stop offset="1" stop-color="#bfe6cf"/></linearGradient></defs>
+      <circle class="ticks" cx="200" cy="200" r="186" fill="none" stroke="url(#about-orbit-tint)" stroke-width="10" stroke-dasharray="1.6 10.6"/>
+      <circle cx="200" cy="200" r="166" fill="none" stroke="rgba(15, 43, 76, .07)" stroke-width="1"/>
+      <path class="sweep" d="M200 14a186 186 0 0 1 86 21" fill="none" stroke="#2db36a" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+    <div class="biz-card-stage">
+      <div class="card-deal">
+        <div class="biz-card" data-tilt="12">
+          <img class="biz-card-logo" src="assets/img/logo.svg" alt="WPI Driveline Shop Management System" width="653" height="361" fetchpriority="high" decoding="async">
+          <span class="biz-card-tagline">Shop Management System</span>
+          <span class="biz-card-sheen" aria-hidden="true"></span>
+        </div>
+      </div>
+      <div class="biz-card-shadow" aria-hidden="true"></div>
+    </div>
+    <!-- optional: up to two data-free .float-note chips -->
+  </div>
+</figure>
+```
+
+- The orbit loops only while its `[data-play]` figure is on screen, and freezes on Pause.
+- **Reduce Motion:** a still ring of ticks, no sweep. **No-JS:** it turns (CSS only).
+- If you already copied the old inline `.card-orbit` rules and `@keyframes orbit-sweep` onto about, they are identical; you may delete them.
 
 ---
 
@@ -790,6 +833,7 @@ Below 600px, stack the two parts with an inline `@media` or a `.split`. The Stam
 | `data-label` | the accessible text for standalone counters |
 
 - A non-numeric value such as `01:12` rolls character by character.
+- Counting up from zero (no `data-from`), the drums before the last whole-number digit, and any comma among them, are folded away while the counter rests at zero (`.is-zero` on the counter, `.odo-lead` on those cells). `$1,742` waits as `$0` and opens out as it rolls, never `$0,000`.
 - **When it rolls:**
   - once on first view (standalone);
   - at its step (in a `[data-seq]`, via its own or an ancestor's `data-at`);
@@ -923,10 +967,10 @@ It stops on Pause and is static under Reduce Motion. Use it in mocks, on On-the-
 ```
 
 - Scroll drives it: `--p` fills the road and the car drives.
-- Steps get `.is-reached`. Steps in the second half get `.is-late`, so they reach green: with 5 steps, steps 3–5; with 4 steps, steps 3–4.
+- Steps get `.is-reached`. Steps with index ≥ ceil(n/2) (counting from 0) get `.is-late`, so they reach green, matching the road's blue | green split under their markers: with 5 steps, steps 4–5; with 4 steps, steps 3–4; with 3 steps, step 3. The header lane ticks follow the same rule by position: a tick past the middle of the lane, where the lane's bar turns green, is green.
 - Chips spring in when their step is reached.
-- **Layout:** vertical below 900px (4 steps or fewer) or below 1180px (5 or more); horizontal above.
-- **Reduce Motion and no-JS:** fully filled, all chips shown.
+- **Layout:** vertical below 900px (4 steps or fewer) or below 1180px (5 or more); horizontal above. In the horizontal layout each step is a flex column and its chip sits at the bottom (`margin-top: auto`), so the chips line up across the row however long each step's text runs.
+- **Reduce Motion and no-JS:** fully filled (`--p: 1`), every marker reached (the second half green) and all chips shown. While Pause is on, it still follows the scroll, but markers and chips change at once.
 
 ---
 
@@ -965,6 +1009,8 @@ Use one only: the home feature ticker. Other places use a static `.pill-cloud` w
 
 - Icon tiles: `.icon-tile`, `-sm`, `-lg`, `-green`.
 - Use `.card-soft` for a quieter card, and `.panel-wash` for the one wash feature panel per page.
+- Feature-card blurbs are never line-clamped (on phones too): write them short instead. The related grid (`.related`) has its own 20px top margin under the "Works alongside" heading; pages don't add one.
+- Phones (below 640px): a plain icon card in a `.grid-3` becomes a compact row (icon + title, then the rest full width). The rest gets its spacing (`margin-top: 10px; font-size: .95rem; grid-column: 1 / -1`) at **zero specificity**, so any class of your own (a badge, a pill, a rule tile) keeps its own size and margins; spans and links keep their own width (`justify-self: start`). An absolutely positioned badge in such a card should set `margin: 0`.
 
 **Good to know (every page's needs and limits; the one repeated heading)**
 
@@ -989,6 +1035,7 @@ Other callouts:
 
 - answer callout: `<div class="callout"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg><div><p class="callout-title">…</p><p>…</p></div></div>`;
 - `.callout-warn` for a caution.
+- On phones the icon moves above the text so the text gets the full width: Good to know below 480px, every callout below 400px.
 
 **Lists**
 
@@ -1105,6 +1152,9 @@ Put the role chips above it. sync fills `roleChips` from features.json `roles[]`
 ```
 
 - Each generated card: `.dir-card-head` (icon tile, `h4` title, `.dir-card-kicker` line), the blurb, `p.dir-card-needs` ("Needs:" or "Optional:", with a linked Shop Cloud), an optional `p.dir-card-note`, and `.dir-card-foot` with "Learn more" and the sample-shop link (`data-no-prerender`). The Auto Diagnosis card is `.is-feature` (the wash card, full width from 640px).
+- In the `h4` titles, kickers and blurbs (and the home/related feature-card `h3`s and blurbs) sync wraps each hyphenated word in `<span class="nowrap">`, so "check-in" or "one-tap" never splits at its hyphen. (Not `&#8209;`: the Inter subset has no glyph for it, so it would render in a fallback font.) JSON-LD, meta, finder data and the visually hidden "about …" text stay plain.
+- The foot's links stack (every card's foot is the same height). Each link's text and arrow sit in one `<span>`, joined by `&nbsp;`, so a long label wraps with the arrow on its last word.
+- A card left alone at the end of a two-column row (last in its group, or just before the featured card) gets `.is-span` and takes the whole row from 640px. sync writes it for the full list; site.js redoes it after the role filter hides cards.
 - The pressed chip is a light blue fill with an accent ring.
 - Cards whose `data-roles` lack the role get `hidden`.
 - Groups with no visible cards collapse (`.is-empty`), together with their nav chip. The nav counts update, and the scroll-spy pill re-measures.
@@ -1164,7 +1214,7 @@ Put the role chips above it. sync fills `roleChips` from features.json `roles[]`
 ```
 
 - Clicking a lamp sets `aria-pressed` (one at a time), flickers its glow (`lamp-flicker` with a coloured drop-shadow) and shows its panel, which rises in.
-- Arrow keys, Home and End move between lamps like a grid.
+- Arrow keys, Home and End move between lamps like a grid. The grid is one Tab stop (roving tabindex): the pressed lamp, or the one last moved to with the arrows, has `tabindex="0"`; the rest `-1`.
 - On first reveal, one bulb-check wave lights every lamp in 40ms steps. Skipped under Reduce Motion and Pause.
 - An optional `<button data-bulb-check>` inside the details container replays the wave.
 - A `lampselect` event fires on the grid.
@@ -1326,7 +1376,7 @@ gear.paint(next, { reached, skip: topic === "Demo request" ? [] : [2] });
 - `paint` sets `.is-current` / `.is-done` / `.is-skipped` on gears and pills, disables unreached or skipped pills, and sets `aria-current="step"`.
 - Skipping gear 2 drives 1 → 3 → 4. Update `[data-shift-total]` to 3.
 - Panel swap: the old panel slides out 26px and fades (170ms). The `.steps` height animates (420ms, add `.is-animating` while it runs). The new panel slides in from 30px (460ms), and focus moves to `.step-title`.
-- Copy the panel-swap and validation logic from the old appointment page script (`git show HEAD:website/appointment.html`, the last `<script>`). It already calls `CCA.validateFields`, `nextField`, `summarize`, `submitForm`, `showSuccess` and `showError`.
+- Copy the panel-swap and validation logic from the old appointment page script (`git show d146da6:website/appointment.html`, the last `<script>`; the page was deleted in the next commit). It already calls `CCA.validateFields`, `nextField`, `summarize`, `submitForm`, `showSuccess` and `showError`.
 - Without JS, `html:not(.js)` hides the shifter, Back/Next and the review, and every panel shows.
 
 ---
@@ -1434,16 +1484,18 @@ The `.tag-text` can read SERVICE, DEMO and so on.
 | | Reduce Motion | Pause toggle | Print | No JS |
 |---|---|---|---|---|
 | Scroll reveal | everything shown | entrances end at once | shown | shown |
-| Mock player | step N-1, no timers, no Replay | timers stop where they are; loaded paused → step N-1 | final step (beforeprint) with tags | shipped final markup |
+| Mock player | step N-1, no timers, no Replay | parks on step N-1, timers stop (also when loaded paused) | final step (beforeprint) with tags | shipped final markup |
 | Reveal sequence | final state | final state | final state | final state |
-| Counters / slots | final value, no roll | finish their roll | final | text in markup |
-| Floats, sheen, glow, live dot, ticker, orbit, SMIL | static / paused | frozen in place | hidden or static | not paused (no gate) |
+| Counters / slots | final value, no roll | land at once (no roll) | final (sequences: final step) | text in markup |
+| Floats, sheen, glow, live dot, ticker, orbit, SMIL | static / paused (`data-smil-rest` SMIL at its rest time) | frozen in place (`data-smil-rest` SMIL jumps to its rest time) | hidden or static | not paused (no gate) |
+| `data-cycle` | first item | rests on the first item | first item | first item |
+| CSS transitions (hovers, pills, markers) | near-instant | instant | — | normal |
 | CTA road | car parked mid-road, "Paid" | frozen; loaded paused → parked "Paid" | hidden | animates (CSS only) |
 | Ticker | static wrapped pills | frozen | one static row | animates |
-| Roadmap | full, all chips | scroll-driven (no animation) | as scrolled | full, all chips |
+| Roadmap | full, all chips | scroll-driven; markers and chips change at once | as scrolled | full, every marker reached, all chips |
 | Header ticks / label | hidden | static | hidden | not created |
 | Pause toggle | shown | pressed, "Play animations" | hidden | hidden |
-| Tilt | off | off | — | off |
+| Tilt | off, card flat | off | — | off |
 | Page transitions | off | on | — | on |
 
 **Print hides:**
@@ -1468,9 +1520,10 @@ The `.tag-text` can read SERVICE, DEMO and so on.
 - `window.WPI`:
   - `motionOK()`: no Reduce Motion and not paused;
   - `isPaused()`;
-  - `onMotion(fn(paused))`;
+  - `onMotion(fn(paused))`: called each time the toggle changes (not on load; read `isPaused()` when your script starts);
   - `shifter(scope)`;
-  - `replay(figure)`.
+  - `replay(figure)`;
+  - `refreshSpies()`: re-runs every scroll-spy nav after your script shows or hides its targets (faq search).
 - Events:
   - `seqstep` on a `[data-seq]` figure: `{ step, final }`;
   - `cycle` on a `[data-cycle]` element: `{ index }`;
@@ -1491,7 +1544,8 @@ The `.tag-text` can read SERVICE, DEMO and so on.
 | `.symptom` (appointment quick-add chip) | `.quick-chip` |
 | `.finder-card` (copied blurbs) | `.finder-result` (compact link; generated) |
 | `#mega-services`, `.mega-grid` 3 cols | `#mega-features`, 4 columns of `.mega-col` + `.mega-label` |
-| `.roadmap-step:nth-child(n+3)` green | `.is-late` (computed) |
+| `.roadmap-step:nth-child(n+3)` green | `.is-late` (computed: index ≥ ceil(n/2); a 5-step road now turns green from step 4) |
+| inline `.card-orbit` + `orbit-sweep` (about) | in site.css (§9) |
 | `.make-tile`, `.make-chip`, coupon / small-engine styles, `mk-in/out`, `stub-off` | removed; `fx-in/out` (finder) and `rt-in/out` (roles) |
 | inline `.keytag-art`, finder, shifter, lamp, sub-nav, ro-card, name-row, promise-grid CSS | now in site.css |
 | `INBOX_FORMS` appointment/contact/fleet | `{ demo: "message" }` |

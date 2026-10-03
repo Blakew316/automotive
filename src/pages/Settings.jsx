@@ -23,6 +23,7 @@ import TwoStepSettings from './settings/TwoStepSettings';
 import EmailSettings from './settings/EmailSettings';
 import { SyncSection, CloudBackups } from './settings/CloudData';
 import { downloadJson } from '../lib/sync/labels';
+import { withoutLocal } from '../lib/sync/records';
 import { PRODUCT } from '../brand/artwork';
 
 const TABS = [
@@ -286,7 +287,7 @@ function DataSection() {
   const owner = role === 'owner';
 
   const exportData = () => {
-    downloadJson(state, `autoshop-backup-${new Date().toISOString().slice(0, 10)}.json`);
+    downloadJson(withoutLocal(state), `autoshop-backup-${new Date().toISOString().slice(0, 10)}.json`);
     toast('Backup downloaded', { tone: 'success' });
   };
 

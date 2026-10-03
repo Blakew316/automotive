@@ -35,6 +35,189 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* ===== features/ai.html (page-local; classes prefixed ai-) ===== */
+
+/* Hero: the RO's Assistant drafts a text, the draft waits at a dashed Review gate, staff press Send.
+   Stacked on narrow stages; RO | gate | phone side by side once the figure is 460px wide. */
+.ai-hero { width: 100%; container: ai-hero / inline-size; }
+.ai-stage {
+  display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "ro" "gate" "shield" "phone";
+  justify-items: center; align-items: center; width: 100%; max-width: 540px; padding-bottom: 6px;
+}
+.ai-ro { grid-area: ro; width: 100%; }
+.ai-ro > .mock-screen { gap: 9px; }
+.ai-ro-head { display: flex; align-items: center; gap: 10px; }
+.ai-ro-car { flex: 1 1 auto; min-width: 0; }
+.ai-ro-car strong { display: block; font-size: 14px; font-weight: 680; letter-spacing: -0.01em; }
+.ai-ro-car small { display: block; font-size: 12px; line-height: 1.3; color: var(--ink-3); }
+.ai-assist { flex: none; box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .22); }
+.ai-assist .icon, .ai-draft-head .icon { width: 14px; height: 14px; stroke-width: 1.9; }
+.ai-rows { gap: 5px; }
+.ai-rows .mock-row { min-height: 32px; padding: 6px 9px; }
+.ai-draft-slot { display: grid; }
+.ai-draft-slot > * { grid-area: 1 / 1; min-width: 0; }
+.ai-ghost { display: grid; align-content: center; justify-items: start; gap: 9px; padding: 12px; border-radius: 12px; border: 1.5px dashed var(--mist-300); background: var(--mist-50); }
+.ai-ghost-label { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; color: var(--ink-3); }
+.ai-ghost-label .icon { width: 14px; height: 14px; color: var(--accent); }
+.ai-ghost-tasks { display: flex; flex-wrap: wrap; gap: 5px; }
+.ai-ghost-tasks .mock-chip:first-child { box-shadow: inset 0 0 0 1.5px var(--accent); }
+.ai-draft { display: grid; gap: 7px; padding: 9px 10px 10px; border-radius: 12px; background: var(--blue-50); border: 1.5px dashed color-mix(in srgb, var(--blue) 48%, transparent); }
+.ai-draft-head { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; color: var(--accent-ink); white-space: nowrap; }
+.ai-draft-state { display: grid; justify-items: end; margin-left: auto; }
+.ai-draft-state > * { grid-area: 1 / 1; }
+.ai-draft-body { display: grid; gap: 1px; padding: 7px 9px; border-radius: 9px; background: var(--paper); border: 1px solid var(--m-line); font-size: 12.5px; line-height: 1.45; }
+.ai-line { display: block; width: fit-content; max-width: 100%; white-space: nowrap; overflow: hidden; }
+.ai-draft-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ai-draft-to { min-width: 0; font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ai-send-wrap { position: relative; flex: none; }
+.ai-send .icon { width: 13px; height: 13px; }
+.ai-cursor { position: absolute; right: -12px; bottom: -17px; z-index: 3; width: 22px; height: 22px; overflow: visible; pointer-events: none; filter: drop-shadow(0 1px 1.5px rgba(15, 43, 76, .3)); }
+@keyframes ai-cursor-in { from { opacity: 0; translate: 34px 26px; } 55% { opacity: 1; } }
+
+/* The gate: a dashed line with a Review pill; the draft token docks against it at step 3 */
+.ai-gate { grid-area: gate; position: relative; width: 100%; height: 92px; }
+.ai-gate-line { position: absolute; left: 3%; right: 3%; top: 50%; border-top: 2px dashed color-mix(in srgb, var(--blue) 50%, transparent); translate: 0 -1px; }
+.ai-gate-pill { position: absolute; left: 50%; top: 50%; z-index: 2; translate: -50% -50%; display: grid; justify-items: center; }
+.ai-gate-pill > span { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 4px; padding: 4px 9px; border-radius: var(--pill); font-size: 12px; font-weight: 650; line-height: 1.45; white-space: nowrap; box-shadow: var(--shadow-1); }
+.ai-gate-pill .icon { width: 13px; height: 13px; stroke-width: 2.1; }
+.ai-gate-wait { background: var(--warn-soft); color: var(--warn); border: 1px solid rgba(154, 93, 18, .22); }
+.ai-gate-ok { background: var(--green-100); color: var(--green-ink); border: 1px solid rgba(24, 128, 72, .22); }
+.ai-token {
+  position: absolute; right: calc(50% + 58px); bottom: calc(50% + 5px); z-index: 1; display: grid; align-content: center; gap: 5px;
+  width: 50px; height: 34px; padding: 0 9px; border-radius: 13px 13px 4px 13px;
+  background: var(--paper); border: 1.5px dashed var(--accent); box-shadow: var(--shadow-2);
+}
+.ai-token i { display: block; height: 3px; border-radius: 2px; background: var(--blue-100); }
+.ai-token i + i { width: 62%; }
+.ai-token svg { position: absolute; top: -7px; right: -7px; width: 16px; height: 16px; padding: 2px; border-radius: 50%; background: var(--paper); color: var(--accent); box-sizing: content-box; box-shadow: 0 0 0 1px var(--blue-100); }
+@keyframes ai-to-gate { 0% { opacity: 0; translate: var(--ai-from, 0 -34px); } 35% { opacity: 1; } 72% { translate: var(--ai-bump, 0 3px); } 86% { translate: 0 -1px; } }
+.ai-token { --ai-from: 0 -38px; --ai-bump: 0 3px; }
+
+/* The customer's phone */
+.ai-phone { grid-area: phone; width: min(100%, 240px); aspect-ratio: auto; }
+.ai-phone > .mock-screen { padding: 30px 9px 12px; gap: 8px; }
+.ai-phone-head { display: flex; align-items: center; gap: 7px; padding: 0 1px 8px; border-bottom: 1px solid var(--m-line); }
+.ai-phone-head .mock-avatar { width: 26px; height: 26px; }
+.ai-phone-head strong { min-width: 0; font-size: 12px; font-weight: 680; line-height: 1.2; }
+.ai-phone .mock-thread { gap: 7px; }
+.ai-phone .mock-bubble { max-width: 94%; padding: 7px 10px; font-size: 12px; line-height: 1.35; }
+
+/* What never leaves: the customer's phone, email and payment records get struck through.
+   Stacked, it sits right under the Review gate so the step-3 payoff stays near the draft. */
+.ai-shield { grid-area: shield; position: relative; z-index: 2; display: inline-flex; align-items: center; gap: 9px; margin: 4px 0 16px; padding: 6px 14px 6px 6px; border-radius: var(--pill); background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); text-align: left; }
+.ai-shield-icon { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--green-100); color: var(--green-ink); }
+.ai-shield-icon .icon { width: 17px; height: 17px; stroke-width: 1.9; }
+.ai-shield small { display: block; font-size: 12px; line-height: 1.25; color: var(--ink-3); }
+.ai-struck { position: relative; display: inline-block; font-size: 12.5px; font-weight: 650; line-height: 1.3; color: var(--ink-2); white-space: nowrap; }
+.ai-strike { position: absolute; left: -3px; top: 50%; width: calc(100% + 6px); height: 4px; translate: 0 -40%; overflow: visible; }
+.ai-strike path { fill: none; stroke: var(--dot-stop); stroke-width: 2; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+
+/* Stacked (narrow figure): the notification chips would cover the RO, so they stay out */
+@container ai-hero (max-width: 459.98px) { .ai-hero .float-note { display: none; } }
+@container ai-hero (min-width: 460px) {
+  /* The phone sits low beside the RO, leaving room above and below it for the two notification chips */
+  .ai-stage { grid-template-columns: minmax(0, 1fr) 80px 156px; grid-template-areas: "ro gate phone" "shield shield shield"; align-items: start; }
+  .ai-gate { height: 100%; min-height: 260px; align-self: stretch; }
+  .ai-gate-line { left: 50%; right: auto; top: 4%; bottom: 4%; border-top: 0; border-left: 2px dashed color-mix(in srgb, var(--blue) 50%, transparent); translate: -1px 0; }
+  .ai-token { right: calc(50% + 5px); bottom: auto; top: calc(50% + 26px); --ai-from: -64px 0; --ai-bump: 3px 0; }
+  .ai-phone { width: 100%; align-self: end; margin-top: 70px; }
+  .ai-shield { justify-self: start; margin: 14px 0 0 14px; }
+}
+
+/* Seven tasks: cards with the task icon, a sparkle that wiggles on hover, and where the answer goes */
+.ai-tasks { display: grid; gap: clamp(14px, .8rem + .6vw, 22px); grid-template-columns: minmax(0, 1fr); margin-top: clamp(28px, 1.4rem + 1.6vw, 44px); }
+@media (min-width: 600px) { .ai-tasks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1040px) { .ai-tasks { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.ai-task { display: flex; flex-direction: column; gap: 10px; padding: clamp(20px, 1rem + .8vw, 26px); }
+.ai-task .icon-tile { width: 46px; height: 46px; border-radius: 14px; margin-bottom: 4px; }
+.ai-task .icon-tile .icon { width: 23px; height: 23px; }
+.ai-task h3 { font-size: 1.12rem; letter-spacing: -0.015em; }
+.ai-task h3 + p { margin-top: 0; font-size: .96rem; line-height: 1.5; }
+.ai-task-spark { position: absolute; top: 20px; right: 20px; width: 20px; height: 20px; color: var(--accent); stroke-width: 1.7; }
+.ai-task-spark use { transform-box: fill-box; transform-origin: 50% 50%; }
+@media (hover: hover) { .ai-task:hover .ai-task-spark use { animation: icon-wiggle .6s var(--ease); } }
+.ai-task-to { display: flex; align-items: center; gap: 7px; margin-top: auto; padding-top: 12px; border-top: 1px dashed var(--line-strong); font-size: .86rem; font-weight: 600; color: var(--ink-2); }
+.ai-task-to .icon { flex: none; width: 16px; height: 16px; color: var(--accent); }
+.ai-task.is-land { background: var(--wash); border-color: rgba(31, 122, 224, .14); box-shadow: none; }
+.ai-task.is-land .icon-tile { background: var(--paper); }
+.ai-land-list { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 0; padding: 4px 0 0; list-style: none; }
+.ai-land-list li { display: inline-flex; align-items: center; gap: 6px; padding: 5px 11px; border-radius: var(--pill); background: rgba(255, 255, 255, .8); border: 1px solid var(--line); font-size: .84rem; font-weight: 600; color: var(--ink-2); }
+.ai-land-list .icon { width: 14px; height: 14px; color: var(--accent); }
+@media (max-width: 599.98px) {
+  .ai-task { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; row-gap: 8px; align-items: center; padding: 18px 18px 16px; border-radius: var(--r); }
+  .ai-task .icon-tile { width: 44px; height: 44px; margin: 0; }
+  .ai-task h3 { padding-right: 26px; font-size: 1.06rem; }
+  .ai-task > :not(.icon-tile, h3, .ai-task-spark) { grid-column: 1 / -1; }
+  .ai-task-spark { top: 18px; right: 16px; width: 18px; height: 18px; }
+  .ai-task-to { padding-top: 10px; }
+}
+
+/* Guardrails: the RO card beside an illustration of what is (and isn't) sent */
+.ai-guard { margin-top: clamp(28px, 1.4rem + 1.6vw, 44px); align-items: center; }
+.ai-guard-main { display: grid; gap: 18px; }
+.ai-guard-note { display: flex; gap: 12px; align-items: flex-start; padding: 16px 18px; border-radius: var(--r-lg); background: var(--paper); border: 1px dashed var(--line-strong); color: var(--ink-2); font-size: .97rem; text-wrap: pretty; }
+.ai-guard-note > .icon { flex: none; width: 22px; height: 22px; margin-top: 1px; color: var(--accent); }
+.ai-guard-note a { white-space: nowrap; }
+.ai-guard-art { padding: clamp(14px, .6rem + 2vw, 36px); border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2); }
+.ai-guard-art > svg { width: 100%; max-width: 520px; }
+.ai-art-label { font-size: 18px; font-weight: 600; fill: var(--ink-3); letter-spacing: -0.01em; }
+@media (max-width: 599.98px) { .ai-art-label { font-size: 25px; } }
+.ai-art-pop { transform-box: fill-box; transform-origin: center; }
+
+/* Where it shows up: the in-app button label as a chip */
+.ai-where { margin-top: clamp(28px, 1.4rem + 1.6vw, 44px); }
+.ai-where .card { display: flex; flex-direction: column; gap: 10px; }
+.ai-where .card h3 { margin-top: 6px; }
+.ai-where .card h3 + p { margin-top: 0; }
+.ai-btn-chip { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; margin-top: auto; padding: 4px 11px; border-radius: var(--pill); background: var(--accent-soft); color: var(--accent-ink); font-size: .84rem; font-weight: 650; box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .16); }
+.ai-btn-chip .icon { width: 14px; height: 14px; stroke-width: 1.9; }
+.ai-where .link-arrow { font-size: .95rem; }
+@media (min-width: 960px) { .ai-where-wide { grid-column: span 2; } .ai-where-wide p { max-width: 34em; } }
+.ai-modes { display: flex; flex-wrap: wrap; gap: 6px; margin: auto 0 0; padding: 0; list-style: none; }
+.ai-modes li { padding: 4px 11px; border-radius: var(--pill); background: var(--paper); border: 1px solid var(--line); font-size: .84rem; font-weight: 600; color: var(--ink-2); }
+@media (max-width: 639.98px) { .ai-where .card { display: grid; } .ai-where .card h3 { margin-top: 0; } .ai-btn-chip { justify-self: start; } }
+
+/* Models and cost: a settings card, thumb slides once onto Opus 5.5, the meter fills toward a dashed limit */
+.ai-models-art { min-height: 0; }
+.ai-set-stage { isolation: isolate; width: min(100%, 470px); }
+.ai-set-stage::before { content: ""; position: absolute; z-index: -1; inset: -10% -8% -12%; border-radius: 50%; background: radial-gradient(closest-side, rgba(31, 122, 224, .1), rgba(45, 179, 106, .06) 62%, transparent); pointer-events: none; }
+.ai-set { display: grid; gap: 12px; width: 100%; padding: 16px; border-radius: 20px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3); text-align: left; }
+.ai-set-head { display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--m-line); }
+.ai-set-head > span:nth-child(2) { flex: 1; min-width: 0; }
+.ai-set-head strong { display: block; font-size: 14px; font-weight: 680; }
+.ai-set-head small { display: block; font-size: 12px; color: var(--ink-3); }
+.ai-set-badge { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 11px; background: var(--wash); color: var(--accent); box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .14); }
+.ai-set-badge .icon { width: 19px; height: 19px; }
+.ai-set-field { display: grid; gap: 6px; }
+.ai-seg::before { display: none; }
+.ai-seg { font-size: 12.5px; }
+.ai-seg > .ai-seg-thumb { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 3); padding: 0; border-radius: var(--pill); background: var(--paper); box-shadow: var(--shadow-1); }
+.ai-seg > span:not(.ai-seg-thumb) { padding: 6px 4px; overflow: hidden; text-overflow: ellipsis; }
+.ai-seg > .is-on { color: var(--ink); }
+@keyframes ai-seg-slide { from { translate: 200% 0; } }
+.ai-set-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px; border-radius: 11px; background: var(--mist-50); font-size: 12.5px; color: var(--ink-2); }
+.ai-set-row > span:first-child { display: inline-flex; align-items: center; gap: 7px; min-width: 0; }
+.ai-set-row .icon { flex: none; width: 15px; height: 15px; color: var(--accent); }
+.ai-meter-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.ai-meter { position: relative; height: 12px; border-radius: var(--pill); background: var(--mist-100); }
+.ai-meter-fill { position: absolute; inset: 0 auto 0 0; width: 61%; border-radius: inherit; background: var(--bar); transform-origin: 0 50%; }
+.ai-meter-limit { position: absolute; top: -5px; bottom: -5px; left: 84%; border-left: 2px dashed var(--ink-4); }
+.ai-limit-label { font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.ai-set-key { display: flex; align-items: center; gap: 10px; padding: 10px; border-radius: 12px; border: 1px solid var(--m-line); }
+.ai-set-key > span:nth-child(2) { flex: 1; min-width: 0; }
+.ai-set-key strong { display: block; font-size: 12.5px; font-weight: 650; }
+.ai-set-key small { display: block; font-size: 12px; color: var(--ink-3); }
+.ai-set-lock { position: relative; display: grid; place-items: center; flex: none; width: 34px; height: 34px; border-radius: 10px; background: var(--green-100); color: var(--green-ink); }
+.ai-set-lock .icon { width: 18px; height: 18px; }
+.ai-set-lock .ring { position: absolute; inset: -3px; border-radius: 12px; border: 2px solid var(--green); }
+.ai-set-key .mock-chip .icon { width: 12px; height: 12px; stroke-width: 2.4; }
+.ai-models-list { list-style: none; padding: 0; display: grid; gap: 8px; }
+.ai-models-list li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 10px 14px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--line); color: var(--ink-2); }
+.ai-models-list strong { color: var(--ink); font-weight: 650; }
+
+/* Related: room between the heading and the cards */
+</style>
 </head>
 <body data-page="features" data-tab="features" id="top">
 <!-- @partial icons -->
@@ -162,7 +345,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="../features/ai.html" aria-current="page"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="../features/ai.html" aria-current="page"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -190,9 +373,12 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
-    <div class="container">
-      <!-- @partial breadcrumbs -->
+  <!-- ===== Hero ===== -->
+  <section class="page-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <ol>
     <li><a href="../index.html">Home</a></li>
@@ -202,10 +388,422 @@
 </nav>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"AI assistant","item":"https://blakew316.github.io/automotive/features/ai.html"}]}</script>
 <!-- @end breadcrumbs -->
-      <h1>Claude drafts it. <span class="accent-text">Your team sends it.</span></h1>
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-ai"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>AI assistant</p>
+        <h1 id="hero-title">Claude drafts&nbsp;it. <span class="accent-text">Your team sends&nbsp;it.</span></h1>
+        <p class="lead">Claude drafts the writing an advisor or tech would otherwise type (estimate explanations, status texts, replies, cause &amp; correction, diagnostic plans, customer summaries) for your staff to review first.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=ai">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/orders" data-no-prerender>Open repair orders in the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up. The assistant itself runs once you connect <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your Anthropic key.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Staff review assistant drafts</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>No customer phone, email or payments</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Your own Anthropic account</span>
+        </div>
+      </div>
+      <figure class="page-hero-art mock-figure ai-hero" data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="2500" data-seq-hold="4200" aria-label="Example: in the sample shop, Assistant on an estimate drafted a text to the customer: due now, brake fluid exchange; can wait, cabin air filter. The draft waited at the Review step until a staff member pressed Send, then it reached the customer's phone. The customer's phone number, email and payment records were not sent to Claude.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage ai-stage" aria-hidden="true">
+          <div class="mock-window ai-ro">
+            <div class="mock-screen">
+              <div class="ai-ro-head">
+                <span class="ai-ro-car"><strong>Estimate</strong><small>Waiting on approval</small></span>
+                <span class="mock-btn is-soft ai-assist" data-at="0" data-fx="pulse" style="--fx-delay: .35s"><svg class="icon"><use href="#i-sparkle"/></svg>Assistant</span>
+              </div>
+              <div class="mock-rows ai-rows">
+                <div class="mock-row"><span class="mock-dot is-stop"></span><span>Brake fluid exchange</span><span class="mock-chip is-stop">Due now</span></div>
+                <div class="mock-row"><span class="mock-dot is-idle"></span><span>Cabin air filter</span><span class="mock-chip is-idle">Can wait</span></div>
+              </div>
+              <div class="ai-draft-slot">
+              <div class="ai-ghost" data-until="1">
+                <span class="ai-ghost-label"><svg class="icon"><use href="#i-sparkle"/></svg>Assistant · pick a task</span>
+                <span class="ai-ghost-tasks"><span class="mock-chip">Explain to customer</span><span class="mock-chip is-idle">Status text</span><span class="mock-chip is-idle">Cause &amp; correction</span></span>
+              </div>
+              <div class="ai-draft" data-at="1" data-fx="rise">
+                <div class="ai-draft-head"><svg class="icon"><use href="#i-sparkle"/></svg>Explain the estimate<span class="ai-draft-state"><span class="mock-chip is-warn" data-until="3">Draft</span><span class="mock-chip is-ok" data-at="3" data-fx="swap" style="--fx-delay: .05s">Sent</span></span></div>
+                <div class="ai-draft-body">
+                  <span class="ai-line" data-at="1" data-fx="type" style="--chars: 30; --fx-dur: 1s; --fx-delay: .45s">Due now: brake fluid exchange.</span>
+                  <span class="ai-line" data-at="1" data-fx="type" style="--chars: 27; --fx-dur: .9s; --fx-delay: 1.5s">Can wait: cabin air filter.</span>
+                </div>
+                <div class="ai-draft-foot">
+                  <span class="ai-draft-to">Text to the customer</span>
+                  <span class="ai-send-wrap">
+                    <span class="mock-btn ai-send" data-at="3" data-fx="press" style="--fx-delay: .05s">Send<svg class="icon"><use href="#i-arrow-right"/></svg></span>
+                    <svg class="ai-cursor" viewBox="0 0 20 20" data-at="2" style="--fx: ai-cursor-in; --fx-dur: .6s; --fx-delay: 1.6s"><path d="M4 2.5 16.2 9.3l-5.4 1.5-2.5 5.4z" fill="#0F2B4C" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/></svg>
+                  </span>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+          <div class="ai-gate">
+            <span class="ai-gate-line"></span>
+            <span class="ai-token" data-at="2" data-until="3" style="--fx: ai-to-gate; --fx-dur: 1s"><i></i><i></i><svg class="icon"><use href="#i-sparkle"/></svg></span>
+            <span class="ai-gate-pill">
+              <span class="ai-gate-wait" data-until="3"><svg class="icon"><use href="#i-eye"/></svg>Review</span>
+              <span class="ai-gate-ok" data-at="3" data-fx="swap" style="--fx-delay: .05s"><svg class="icon"><use href="#i-check"/></svg>Reviewed</span>
+            </span>
+          </div>
+          <div class="mock-phone ai-phone">
+            <div class="mock-screen">
+              <div class="ai-phone-head"><span class="mock-avatar">MS</span><strong>Main Street Auto Service</strong></div>
+              <div class="mock-thread">
+                <div class="mock-thread-meta">Today 7:31 AM</div>
+                <div class="mock-bubble out">Does it need all of it today?</div>
+                <div class="mock-bubble in" data-at="3" data-fx="bubble" style="--fx-delay: .35s">Due now: brake fluid exchange. Can wait: cabin air filter.</div>
+              </div>
+            </div>
+          </div>
+          <div class="ai-shield" data-at="3" data-fx="pop" style="--fx-delay: .8s">
+            <span class="ai-shield-icon"><svg class="icon"><use href="#i-shield"/></svg></span>
+            <span><small>Never sent to Claude</small><span class="ai-struck">phone · email · payments<svg class="ai-strike" viewBox="0 0 100 4" preserveAspectRatio="none"><path data-at="3" data-fx="draw" pathLength="1" style="--fx-delay: 1.2s; --fx-dur: .55s" d="M1 2H99"/></svg></span></span>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true" style="top: 52px; left: auto; right: -10px">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+          <span><strong>Draft ready</strong><small>Review before sending</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true" style="bottom: 0; right: -18px">
+          <span class="dot is-ok"></span>
+          <span><strong>Cause &amp; correction drafted</strong><small>Added to the service</small></span>
+        </div>
+      </figure>
     </div>
   </section>
-  <section class="section section-sm" id="related" aria-labelledby="related-title">
+
+  <!-- ===== Seven things it drafts ===== -->
+  <section class="section section-paper" id="tasks" aria-labelledby="tasks-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">What it writes</p>
+        <h2 id="tasks-title">Seven things <span class="accent-text">it drafts</span></h2>
+        <p class="lead">Each one starts from the record on screen and stops with your staff. Answers go into the message composer, onto the service, or into an internal note.</p>
+      </div>
+      <div class="ai-tasks" data-reveal-stagger>
+        <div class="card value-card ai-task">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+          <svg class="icon ai-task-spark" aria-hidden="true"><use href="#i-sparkle"/></svg>
+          <h3>Explain the estimate</h3>
+          <p>A short, plain note for the customer, asked to group the work by urgency: needs attention now, soon, or can wait. It&rsquo;s told to mention only prices that are on the RO.</p>
+          <p class="ai-task-to"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Message composer</p>
+        </div>
+        <div class="card value-card ai-task">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span>
+          <svg class="icon ai-task-spark" aria-hidden="true"><use href="#i-sparkle"/></svg>
+          <h3>Draft a status text</h3>
+          <p>Where the car is right now, from the RO&rsquo;s status, services and notes. It&rsquo;s asked to stay under 320 characters and sign off with your shop&rsquo;s name.</p>
+          <p class="ai-task-to"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Message composer</p>
+        </div>
+        <div class="card value-card ai-task">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span>
+          <svg class="icon ai-task-spark" aria-hidden="true"><use href="#i-sparkle"/></svg>
+          <h3>Diagnostic ideas and a test plan</h3>
+          <p>It&rsquo;s set up to rank likely causes, then lay out a test plan from the quickest checks to deeper tests, written as possibilities for the tech to verify.</p>
+          <p class="ai-task-to"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Internal note on the RO</p>
+        </div>
+        <div class="card value-card ai-task">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+          <svg class="icon ai-task-spark" aria-hidden="true"><use href="#i-sparkle"/></svg>
+          <h3>Write cause &amp; correction</h3>
+          <p>Two lines, Cause and Correction, from the tech&rsquo;s notes, the inspection and the service lines. It&rsquo;s told to leave out what isn&rsquo;t known instead of guessing.</p>
+          <p class="ai-task-to"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg>Onto the service</p>
+        </div>
+        <div class="card value-card ai-task">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
+          <svg class="icon ai-task-spark" aria-hidden="true"><use href="#i-sparkle"/></svg>
+          <h3>Summarize a customer</h3>
+          <p>It&rsquo;s asked for five to eight points for the advisor: vehicles, recent visits, open or declined work worth a follow-up, and stated preferences.</p>
+          <p class="ai-task-to"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg>On screen, ready to copy</p>
+        </div>
+        <div class="card value-card ai-task">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+          <svg class="icon ai-task-spark" aria-hidden="true"><use href="#i-sparkle"/></svg>
+          <h3>Suggest a reply</h3>
+          <p>An answer to the customer&rsquo;s latest message, from what&rsquo;s on file. When the answer isn&rsquo;t there, it&rsquo;s set up to say you&rsquo;ll check and get right back to them.</p>
+          <p class="ai-task-to"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>The reply box in Messages</p>
+        </div>
+        <div class="card value-card ai-task">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg></span>
+          <svg class="icon ai-task-spark" aria-hidden="true"><use href="#i-sparkle"/></svg>
+          <h3>Ask anything</h3>
+          <p>A question about the RO or customer on screen. If the record doesn&rsquo;t hold the answer, it&rsquo;s told to say so and suggest where to look.</p>
+          <p class="ai-task-to"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Internal note, or copy it</p>
+        </div>
+        <div class="card ai-task is-land">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg></span>
+          <h3>You choose where it lands</h3>
+          <p>Every answer stops at a set of buttons. Nothing moves until someone taps one.</p>
+          <ul class="ai-land-list" role="list" aria-label="Buttons under each answer">
+            <li><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Use in a message</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg>Add to the service</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Save as note</li>
+            <li><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>Copy</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Guardrails ===== -->
+  <section class="section section-tint" id="guardrails" aria-labelledby="guardrails-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">What it won&rsquo;t do</p>
+        <h2 id="guardrails-title">Guardrails, <span class="accent-text">built in</span></h2>
+        <p class="lead">The rules are built into WPI Driveline Shop Management System and your Shop Cloud server. Every assistant request goes through them.</p>
+      </div>
+      <div class="split ai-guard">
+        <div class="ai-guard-main">
+          <div class="ro-card">
+            <div class="ro-head"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span><div><strong>Assistant rules</strong><small>On every request</small></div><span class="badge">Built in</span></div>
+            <ul class="checklist ro-list" role="list">
+              <li><div><h3>Staff send it, or it stays a draft</h3><p>Assistant drafts never reach a customer until staff send them.</p></div></li>
+              <li><div><h3>Only what the task needs</h3><p>Only what the task needs is sent: never the customer&rsquo;s phone number, email address or payment records.</p></div></li>
+              <li><div><h3>Shop data is information, not orders</h3><p>Shop data is marked as information only, and the assistant is told not to follow instructions inside it, such as a line hidden in a customer&rsquo;s text.</p></div></li>
+              <li><div><h3>A monthly request limit</h3><p>The owner can set a monthly request limit in Settings, and see how many requests were used this month.</p></div></li>
+            </ul>
+            <p class="ro-foot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>AI output can be wrong. Read it before it goes anywhere.</p>
+          </div>
+          <p class="ai-guard-note" data-reveal><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>The AI receptionist (needs your Twilio number) is the exception: it talks to callers itself, greets them as the shop&rsquo;s virtual assistant unless you write your own greeting, and can text them your booking link or directions. <a href="messaging.html#receptionist">How the receptionist works</a></span></p>
+        </div>
+        <figure class="page-hero-art ai-guard-art" data-reveal="right" data-reveal-seq data-play aria-label="Illustration: a repair order's details pass through a shield to Claude, while the customer's phone, email and payment records are stopped and crossed out. Claude sends back a dashed draft, which gets a green check only after staff review.">
+          <svg viewBox="0 0 480 330" aria-hidden="true">
+            <ellipse class="art-tint" cx="360" cy="150" rx="112" ry="112" opacity=".75"/>
+            <!-- the gate -->
+            <path d="M236 22V308" fill="none" stroke="#1F7AE0" stroke-opacity=".42" stroke-width="2" stroke-dasharray="6 7" stroke-linecap="round"/>
+            <!-- beat 0: the repair order -->
+            <g data-seq-i="0" data-fx="pop" class="ai-art-pop">
+              <rect class="art-ink art-paper" x="34" y="34" width="132" height="160" rx="15"/>
+              <path class="art-ink" d="M54 58h56" stroke-width="3.5" stroke-linecap="round"/>
+              <path class="art-ink art-thin" d="M54 72h34" stroke-opacity=".4" stroke-linecap="round"/>
+              <path d="M34 88h132" fill="none" stroke="#D3DFEC" stroke-width="1.5"/>
+              <circle cx="58" cy="108" r="4.5" fill="#D9534A"/><path d="M72 108h72" fill="none" stroke="#C3D2E3" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="58" cy="130" r="4.5" fill="#E3A13B"/><path d="M72 130h58" fill="none" stroke="#C3D2E3" stroke-width="5" stroke-linecap="round"/>
+              <circle cx="58" cy="152" r="4.5" fill="#2DB36A"/><path d="M72 152h66" fill="none" stroke="#C3D2E3" stroke-width="5" stroke-linecap="round"/>
+              <path d="M54 174h70" fill="none" stroke="#E1E9F2" stroke-width="5" stroke-linecap="round"/>
+            </g>
+            <text class="ai-art-label" x="100" y="218" text-anchor="middle" data-seq-i="0" data-fx="fade">Repair order</text>
+            <!-- beat 1: what stays behind -->
+            <g data-seq-i="1" data-fx="stagger" style="--fx: fx-pop; --fx-stagger: 110ms">
+              <g class="ai-art-pop"><circle class="art-ink art-paper" cx="56" cy="262" r="21"/><use href="#i-phone" x="45" y="251" width="22" height="22" fill="none" stroke="#52637B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+              <g class="ai-art-pop"><circle class="art-ink art-paper" cx="104" cy="262" r="21"/><use href="#i-mail" x="93" y="251" width="22" height="22" fill="none" stroke="#52637B" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></g>
+              <g class="ai-art-pop"><circle class="art-ink art-paper" cx="152" cy="262" r="21"/><rect x="141" y="254.5" width="22" height="15" rx="3" fill="none" stroke="#52637B" stroke-width="1.8"/><path d="M141 259.5h22M145 265h6" fill="none" stroke="#52637B" stroke-width="1.8" stroke-linecap="round"/></g>
+            </g>
+            <path class="flow-line is-broken" d="M180 262H222" data-seq-i="1" data-fx="wipe"/>
+            <!-- beat 3: struck through, stopped at the gate -->
+            <g fill="none" stroke="#D9534A" stroke-width="3" stroke-linecap="round">
+              <path d="M41 247 71 277" pathLength="1" data-seq-i="3" data-fx="draw" style="--fx-dur: .4s"/>
+              <path d="M89 247 119 277" pathLength="1" data-seq-i="3" data-fx="draw" style="--fx-dur: .4s; --fx-delay: .12s"/>
+              <path d="M137 247 167 277" pathLength="1" data-seq-i="3" data-fx="draw" style="--fx-dur: .4s; --fx-delay: .24s"/>
+              <path d="M228 248v28" data-seq-i="3" data-fx="pop" class="ai-art-pop" stroke-width="4"/>
+            </g>
+            <text class="ai-art-label" x="104" y="312" text-anchor="middle" data-seq-i="3" data-fx="fade">Never sent</text>
+            <!-- beat 2: the RO details travel through the gate -->
+            <path class="flow-line is-blue" d="M168 112C214 112 262 150 312 150" data-seq-i="2" data-fx="wipe"/>
+            <path class="flow-dot" pathLength="100" d="M168 112C214 112 262 150 312 150" data-seq-i="2" data-fx="flow" style="--fx-delay: .3s"/>
+            <g data-seq-i="2" data-fx="pulse" style="--fx-delay: .55s" class="ai-art-pop">
+              <circle cx="236" cy="132" r="25" fill="#fff" stroke="#1A6FD6" stroke-width="2"/>
+              <use href="#i-shield" x="223" y="119" width="26" height="26" fill="none" stroke="#1A6FD6" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <!-- beat 4: Claude -->
+            <g data-seq-i="4" data-fx="pop" class="ai-art-pop">
+              <circle cx="360" cy="150" r="44" fill="#fff" stroke="#0F2B4C" stroke-width="2"/>
+              <circle cx="360" cy="150" r="34" fill="none" stroke="#B9D5F6" stroke-width="1.5" stroke-dasharray="2 5"/>
+              <path d="M360 124c1.6 12.3 7.7 18.4 20 20-12.3 1.6-18.4 7.7-20 20-1.6-12.3-7.7-18.4-20-20 12.3-1.6 18.4-7.7 20-20z" fill="#E1EDFB" stroke="#1A6FD6" stroke-width="2" stroke-linejoin="round"/>
+            </g>
+            <text class="ai-art-label" x="360" y="84" text-anchor="middle" data-seq-i="4" data-fx="fade">Claude</text>
+            <!-- beat 5-7: a draft comes back and waits for staff -->
+            <path d="M360 196V224" fill="none" stroke="#1A6FD6" stroke-width="2" stroke-linecap="round" pathLength="1" data-seq-i="5" data-fx="draw" style="--fx-dur: .45s"/>
+            <path d="M353.5 218.5 360 225l6.5-6.5" fill="none" stroke="#1A6FD6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-seq-i="5" data-fx="fade" style="--fx-delay: .35s; --fx-dur: .2s"/>
+            <g data-seq-i="6" data-fx="rise">
+              <rect x="296" y="232" width="128" height="58" rx="14" fill="#fff" stroke="#1A6FD6" stroke-width="1.8" stroke-dasharray="6 5"/>
+              <path d="M314 254h80M314 270h52" fill="none" stroke="#C3D2E3" stroke-width="5" stroke-linecap="round"/>
+            </g>
+            <g data-seq-i="7" data-fx="pop" class="ai-art-pop">
+              <circle cx="420" cy="234" r="15" fill="#2DB36A" stroke="#fff" stroke-width="3"/>
+              <path d="M413.5 234.5l4.4 4.4 8.4-8.6" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+            <text class="ai-art-label" x="360" y="314" text-anchor="middle" data-seq-i="7" data-fx="fade">Staff review</text>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Where it shows up ===== -->
+  <section class="section" id="where" aria-labelledby="where-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">In the app</p>
+        <h2 id="where-title">Where it <span class="accent-text">shows up</span></h2>
+        <p class="lead">Look for the sparkle. It sits beside the writing your team already does.</p>
+      </div>
+      <div class="grid grid-3 ai-where" data-reveal-stagger>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+          <h3>On every repair order</h3>
+          <p>Tap Assistant on any RO to explain the estimate, draft a status text, get diagnostic ideas, write cause &amp; correction, or ask about the job.</p>
+          <span class="ai-btn-chip"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>Assistant</span>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+          <h3>In Messages</h3>
+          <p>Tap Suggest reply in a customer&rsquo;s conversation, then Use in a message to drop the draft into the reply box for you to edit and send.</p>
+          <span class="ai-btn-chip"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>Suggest reply</span>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
+          <h3>On customers</h3>
+          <p>In the &#8943; More menu on a customer, Summarize with AI opens the assistant to draft a short history for the advisor: vehicles, recent visits, and declined work worth a follow-up.</p>
+          <span class="ai-btn-chip"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>Summarize with AI</span>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span>
+          <h3>In Auto Diagnosis</h3>
+          <p>After the known answers (recalls, owner reports and your own past fixes), open a test plan built from the same data and, when you came from an RO, save it to that RO&rsquo;s notes.</p>
+          <span class="ai-btn-chip"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>AI test plan</span>
+          <a class="link-arrow" href="diagnosis.html">See Auto Diagnosis <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+        <div class="card card-soft value-card ai-where-wide">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg></span>
+          <h3>On calls, with your Twilio number</h3>
+          <p>The AI receptionist answers after hours, when no one picks up, or on every call. It starts on When no one answers once your Twilio number and Anthropic key are connected; pick another mode or switch it off.</p>
+          <ul class="ai-modes" role="list" aria-label="Receptionist modes">
+            <li>Off, voicemail only</li>
+            <li>After hours</li>
+            <li>When no one answers</li>
+            <li>Answers every call</li>
+          </ul>
+          <a class="link-arrow" href="messaging.html#receptionist">See the receptionist <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Models and cost ===== -->
+  <section class="section section-paper" id="models" aria-labelledby="models-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Claude models</p>
+        <h2 id="models-title">Models <span class="accent-text">and cost</span></h2>
+        <p>The assistant offers Claude Opus 5.5 (the default), Sonnet 5.5 or Haiku 4.5. The receptionist has its own setting under Messaging and defaults to Haiku 4.5 for quick replies.</p>
+        <p>Usage is billed to your own Anthropic account. Your key is stored encrypted on your <a href="../works-with.html#shop-cloud">Shop Cloud</a> server. Only its last four characters ever come back to a device.</p>
+        <ul class="ai-models-list" role="list">
+          <li><strong>Opus 5.5</strong>The assistant&rsquo;s default</li>
+          <li><strong>Sonnet 5.5</strong>Faster, at a lower cost</li>
+          <li><strong>Haiku 4.5</strong>Fastest, at the lowest cost</li>
+        </ul>
+        <p class="fine-print">The owner picks the model and the monthly limit in Settings &rarr; Keys &amp; AI. Anthropic bills usage at its own rates.</p>
+      </div>
+      <figure class="page-hero-art ai-models-art" data-reveal="right" data-reveal-seq aria-label="Illustration of the assistant settings: the model control set to Claude Opus 5.5, the receptionist (set under Messaging) on Haiku 4.5, a usage meter below a dashed monthly limit, and the Anthropic key marked as set and encrypted.">
+        <div class="mock-stage ai-set-stage" aria-hidden="true">
+          <div class="ai-set">
+            <div class="ai-set-head">
+              <span class="ai-set-badge"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+              <span><strong>AI assistant</strong><small>Settings · Keys &amp; AI</small></span>
+              <span class="mock-chip is-ok">On</span>
+            </div>
+            <div class="ai-set-field">
+              <span class="mock-label">Model</span>
+              <div class="mock-seg ai-seg" style="--segs: 3; --seg: 0"><span class="ai-seg-thumb" data-seq-i="1" style="--fx: ai-seg-slide; --fx-dur: .9s; --fx-ease: var(--spring); --fx-pre: 1"></span><span class="is-on">Opus 5.5</span><span>Sonnet 5.5</span><span>Haiku 4.5</span></div>
+            </div>
+            <div class="ai-set-row"><span><svg class="icon"><use href="#i-phone"/></svg>Receptionist · set in Messaging</span><span class="mock-chip">Haiku 4.5</span></div>
+            <div class="ai-set-field">
+              <div class="ai-meter-top"><span class="mock-label">Requests this month</span><span class="ai-limit-label">Monthly limit</span></div>
+              <div class="ai-meter"><span class="ai-meter-fill" data-seq-i="2" data-fx="grow-x" style="--fx-dur: 1.3s"></span><span class="ai-meter-limit"></span></div>
+            </div>
+            <div class="ai-set-key">
+              <span class="ai-set-lock"><svg class="icon"><use href="#i-lock"/></svg><span class="ring" data-seq-i="4" data-fx="ring"></span></span>
+              <span><strong>Anthropic API key</strong><small>Encrypted on your Shop Cloud server</small></span>
+              <span class="mock-chip is-ok" data-seq-i="4" data-fx="pop"><svg class="icon"><use href="#i-check"/></svg>Set</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== From a tap to the RO ===== -->
+  <section class="section section-wash" id="how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title">From a tap <span class="accent-text">to the RO</span></h2>
+        <p class="lead">Four steps, and a person makes the call at the third one.</p>
+      </div>
+      <div class="roadmap" style="--steps:4" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="Example assistant use in the sample shop">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+            <h3>Tap Assistant</h3>
+            <p>On the RO, pick a task: explain the estimate, a status text, diagnostic ideas, cause &amp; correction or a question.</p>
+            <span class="roadmap-chip">Assistant tapped</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-document"/></svg></span>
+            <h3>A draft appears</h3>
+            <p>Claude writes from the RO&rsquo;s services, inspection findings and notes. Nothing has gone to the customer.</p>
+            <span class="roadmap-chip">Draft ready</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-eye"/></svg></span>
+            <h3>Staff edit and approve</h3>
+            <p>Read it, or tap Try again for a fresh draft. Texts open in the composer for you to edit before sending, and cause &amp; correction stays editable on the service.</p>
+            <span class="roadmap-chip">Edited by staff</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-check"/></svg></span>
+            <h3>Saved to the RO or sent</h3>
+            <p>Into the message composer, onto the service as cause &amp; correction, or into an internal note.</p>
+            <span class="roadmap-chip">Saved to the RO</span>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your own Anthropic API key, with usage billed to your Anthropic account.</li>
+            <li>Without them, everything else works as normal. The assistant runs on devices signed in to Shop Cloud.</li>
+            <li>Assistant drafts always need staff review (the AI receptionist on calls is the exception). Drafts can be wrong, and it&rsquo;s told not to make up specs, part numbers, labor times or prices.</li>
+            <li>The AI test plan in Auto Diagnosis and the AI receptionist use the same key. The receptionist also needs your own Twilio number, and its replies on calls count toward the same monthly request limit.</li>
+            <li>Only the owner picks the assistant&rsquo;s model and sets the monthly request limit.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">AI questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="feat-faq"><summary>Does the AI talk to customers on its own?</summary><div class="faq-body"><p>Assistant drafts always wait for staff. Only the AI receptionist talks to customers itself, on calls to your Twilio number. Its default greeting says it&rsquo;s the shop&rsquo;s virtual assistant, and it can text the booking link or directions.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>What data is sent?</summary><div class="faq-body"><p>Only what the task needs. For an RO, that means things like the vehicle, the concern, the services, inspection findings, notes and the customer&rsquo;s first name. Never the customer&rsquo;s phone number, email address or payment records. Notes and messages go as written, so anything typed into them is included.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Who pays?</summary><div class="faq-body"><p>Your Anthropic account. Anthropic bills usage at its own rates, and the owner can set a monthly request limit.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Can we pick the model?</summary><div class="faq-body"><p>Yes. The owner chooses Claude Opus 5.5 (the default), Sonnet 5.5 or Haiku 4.5 in Settings &rarr; Keys &amp; AI. The receptionist has its own setting in Settings &rarr; Messaging.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Will it make up torque specs or prices?</summary><div class="faq-body"><p>It&rsquo;s set up not to. It&rsquo;s told never to invent specs, fluid capacities, part numbers, labor times or prices, and to point you to your service information instead. Check anything technical before you use it.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Related ===== -->
+  <section class="section section-sm ai-related" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>
       <!-- @partial related -->
@@ -240,7 +838,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -255,7 +853,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
@@ -322,6 +920,7 @@
   <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

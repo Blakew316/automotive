@@ -35,6 +35,316 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* ===== features/fleet.html (page-local; classes and keyframes prefixed fleet-) ===== */
+
+/* ---------- Hero: the sample fleet on the road, PM pills, receivables aging ---------- */
+.fleet-hero { width: 100%; }
+.fleet-stage { width: min(100%, 500px); padding: 26px 0 64px; gap: 0; justify-items: stretch; text-align: left; }
+.fleet-scene { position: relative; width: 100%; aspect-ratio: 440 / 256; }
+.fleet-scene > svg {
+  position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 5%, #000 95%, transparent 100%);
+}
+/* Loops (copied from the old convoy art, slug-prefixed) */
+.fleet-scene .fleet-wheel { transform-box: fill-box; transform-origin: center; animation: art-spin 1.25s linear infinite; }
+.fleet-scene .fleet-wheel.w-2 { animation-duration: 1.1s; }
+.fleet-scene .fleet-wheel.w-3 { animation-duration: 1.4s; }
+.fleet-scene .fleet-bob { animation: fleet-convoy-bob .9s var(--ease-in-out) infinite; }
+.fleet-scene .fleet-bob.b2 { animation-delay: -.3s; animation-duration: 1.05s; }
+.fleet-scene .fleet-bob.b3 { animation-delay: -.55s; animation-duration: .8s; }
+@keyframes fleet-convoy-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-1.4px); } }
+.fleet-scene .fleet-lane { animation: fleet-lane-move .6s linear infinite; }
+.fleet-scene .fleet-lane.is-shoulder { animation-duration: .45s; }
+@keyframes fleet-lane-move { to { stroke-dashoffset: 40; } }
+.fleet-scene .fleet-scenery { animation: fleet-scenery-move 16s linear infinite; }
+.fleet-scene .fleet-clouds { animation: fleet-scenery-move 70s linear infinite; }
+@keyframes fleet-scenery-move { to { transform: translateX(-440px); } }
+.fleet-scene .fleet-speed { stroke-dasharray: 14 60; animation: fleet-speed-line 1.1s linear infinite; transition: opacity .5s var(--ease); }
+.fleet-scene .fleet-speed.s2 { animation-delay: -.4s; }
+.fleet-scene .fleet-speed.s3 { animation-delay: -.75s; }
+@keyframes fleet-speed-line { from { stroke-dashoffset: 0; opacity: 0; } 30% { opacity: .85; } to { stroke-dashoffset: 74; opacity: 0; } }
+.fleet-convoy { animation: fleet-convoy-in 1.4s var(--ease) .2s both; }
+@keyframes fleet-convoy-in { from { opacity: 0; transform: translateX(-60px); } }
+/* The convoy parks on the final step: loops freeze in place and the speed lines fade. No-JS, Reduce Motion
+   and the resting frame all show it parked. */
+.fleet-hero[data-reached~="5"] .fleet-move { animation-play-state: paused; }
+.fleet-hero[data-reached~="5"] .fleet-speed { opacity: 0; }
+
+/* Unit tags above each truck: plate + PM pill */
+.fleet-unit {
+  position: absolute; z-index: 2; left: var(--x); bottom: 43%; translate: -50% 0;
+  display: grid; justify-items: center; gap: 4px; padding: 5px 7px 6px; border-radius: 12px;
+  background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2);
+  transform-origin: 50% 100%; line-height: 1.2;
+}
+.fleet-unit::after {
+  content: ""; position: absolute; left: 50%; bottom: -6px; width: 10px; height: 10px; translate: -50% 0; rotate: 45deg;
+  background: var(--paper); border-right: 1px solid var(--line-strong); border-bottom: 1px solid var(--line-strong);
+}
+.fleet-plate {
+  padding: 1px 6px; border-radius: 4px; border: 1.5px solid var(--ink-3); background: linear-gradient(#fff, var(--mist-50));
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700; letter-spacing: .06em; line-height: 1.4; white-space: nowrap; color: var(--ink);
+}
+.fleet-pm {
+  display: inline-flex; align-items: center; gap: 5px; padding: 1px 8px 1px 6px; border-radius: var(--pill);
+  font-size: 12px; font-weight: 650; line-height: 1.5; white-space: nowrap; background: var(--ok-soft); color: var(--ok);
+}
+.fleet-pm i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--dot-ok); }
+.fleet-pm.is-due { background: var(--warn-soft); color: var(--warn); }
+/* Phones keep the status word; wider screens name the plan that's due */
+.fleet-pm-short { display: none; }
+@media (max-width: 479.98px) { .fleet-pm-long { display: none; } .fleet-pm-short { display: inline; } }
+.fleet-pm.is-due i { background: var(--dot-warn); }
+.fleet-pm.is-stop { background: var(--stop-soft); color: var(--stop); }
+.fleet-pm.is-stop i { background: var(--dot-stop); }
+/* status-blink (copied from the old fleet page): the due and overdue dots blink three times when the tags land */
+.is-armed[data-reached~="0"] :is(.fleet-pm.is-due, .fleet-pm.is-stop) i { animation: fleet-status-blink 1.1s var(--ease-in-out) .7s 3; }
+@keyframes fleet-status-blink { 50% { opacity: .25; } }
+
+/* Receivables aging below the road */
+.fleet-aging {
+  position: relative; z-index: 2; display: grid; gap: 10px; margin: -4px 3% 0; padding: 12px 14px 13px;
+  border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3);
+}
+.fleet-aging-head { display: flex; align-items: center; gap: 10px; }
+.fleet-aging-head .fleet-ico { width: 30px; height: 30px; border-radius: 9px; }
+.fleet-aging-title { display: grid; min-width: 0; line-height: 1.3; }
+.fleet-aging-title strong { font-size: 13.5px; font-weight: 700; letter-spacing: -0.01em; }
+.fleet-aging-title small { font-size: 12px; color: var(--ink-3); }
+.fleet-aging-total { display: grid; justify-items: end; margin-left: auto; line-height: 1.25; }
+.fleet-aging-total small { font-size: 12px; color: var(--ink-3); }
+.fleet-aging-total b { font-size: 16px; font-weight: 750; letter-spacing: -0.015em; font-variant-numeric: tabular-nums; }
+.fleet-bar { display: flex; gap: 2px; height: 10px; padding: 0; border-radius: var(--pill); background: var(--mist-100); overflow: hidden; }
+.fleet-bar > span { flex: none; width: calc(var(--w) - 1.6px); height: 100%; transform-origin: 0 50%; }
+.fleet-bar > span:first-child { border-radius: var(--pill) 0 0 var(--pill); }
+.fleet-bar > span:last-child { border-radius: 0 var(--pill) var(--pill) 0; }
+.fleet-c0 { background: var(--dot-ok); }
+.fleet-c1 { background: #efc57d; }
+.fleet-c2 { background: var(--dot-warn); }
+.fleet-c3 { background: #ea958c; }
+.fleet-c4 { background: var(--dot-stop); }
+.fleet-legend { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+.fleet-legend > span { display: grid; gap: 1px; min-width: 0; font-size: 12px; line-height: 1.3; color: var(--ink-3); }
+.fleet-legend > span > span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.fleet-legend i { flex: none; width: 8px; height: 8px; border-radius: 50%; }
+.fleet-legend b { font-size: 12.5px; font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fleet-legend .is-zero b { font-weight: 600; color: var(--ink-4); }
+.fleet-hero .float-note.note-1 { top: 40px; left: -14px; }
+.fleet-hero .float-note.note-2 { top: auto; bottom: 0; right: -14px; }
+@media (min-width: 960px) and (max-width: 1179.98px) {
+  .fleet-hero .float-note.note-1 { left: -6px; }
+  .fleet-hero .float-note.note-2 { right: -6px; }
+}
+@media (max-width: 599.98px) {
+  .fleet-stage { padding: 4px 0 6px; }
+  .fleet-aging { margin-inline: 0; padding: 11px 11px 12px; }
+  .fleet-legend { grid-template-columns: minmax(0, 1.3fr) repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .fleet-legend b { font-size: 12px; }
+  .fleet-unit { padding: 4px 6px 5px; gap: 3px; }
+  /* site.css hides float notes on phones; keep the statement chip, parked under the aging card */
+  .fleet-hero .float-note.note-2 { display: flex; position: static; justify-self: center; margin: 2px auto 0; animation: none; }
+}
+
+@media (max-width: 359.98px) {
+  .fleet-unit { padding: 3px 4px 4px; }
+  .fleet-plate { padding: 1px 4px; letter-spacing: .02em; }
+  .fleet-pm { padding: 1px 6px; }
+  .fleet-pm i { display: none; }
+  .fleet-legend { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 8px; }
+}
+
+/* Small icon square used in mock headers */
+.fleet-ico { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 10px; background: var(--blue-50); color: var(--accent); box-shadow: inset 0 0 0 1px var(--blue-100); }
+.fleet-ico .icon { width: 17px; height: 17px; }
+.fleet-ico.is-green { background: var(--green-50); color: var(--green-ink); box-shadow: inset 0 0 0 1px rgba(45, 179, 106, .3); }
+
+/* ---------- Where fleet billing stalls: illustration ---------- */
+.fleet-pains-art > svg { width: min(100%, 470px); }
+.fleet-pains-art .fleet-art-pop { transform-box: fill-box; transform-origin: center; }
+.fleet-art-label { font-family: var(--font-mono); font-size: 17px; font-weight: 700; fill: var(--stop); }
+
+/* ---------- Accounts set up the way fleets buy ---------- */
+.fleet-accounts-grid { margin-top: 4px; }
+.fleet-charge {
+  display: grid; gap: clamp(20px, 1rem + 2vw, 48px); align-items: center; margin-top: clamp(14px, .8rem + .6vw, 24px);
+  padding: clamp(20px, 1rem + 1.4vw, 36px); border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2);
+  position: relative; overflow: hidden;
+}
+.fleet-charge::before { content: ""; position: absolute; inset: 0 0 auto; height: 5px; background: var(--bar); }
+@media (min-width: 860px) { .fleet-charge { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); } }
+.fleet-charge-copy { display: grid; gap: 12px; align-content: start; }
+.fleet-charge-copy h3 { font-size: clamp(1.3rem, 1.1rem + .7vw, 1.6rem); letter-spacing: -0.02em; }
+.fleet-charge-copy > p { color: var(--ink-2); }
+.fleet-charge-copy .checklist { margin-top: 4px; color: var(--ink-2); }
+
+.mock-figure.is-inline.fleet-charge-fig { padding: 16px; border-radius: var(--r); background: var(--mist-50); border: 1px solid var(--line); }
+.fleet-charge-fig > .mock-stage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; justify-items: stretch; text-align: left; }
+.fleet-sheet { display: grid; gap: 10px; padding: 14px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); }
+.fleet-sheet-head { display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--m-line); }
+.fleet-sheet-head > span:nth-child(2) { display: grid; min-width: 0; line-height: 1.3; }
+.fleet-sheet-head strong { font-size: 14px; font-weight: 700; }
+.fleet-sheet-head small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fleet-dl { display: grid; gap: 4px; padding: 8px 10px; border-radius: 10px; background: var(--mist-50); font-size: 12.5px; }
+.fleet-dl > span { display: flex; justify-content: space-between; gap: 10px; }
+.fleet-dl > span > span:first-child { color: var(--ink-2); }
+.fleet-dl b { font-weight: 650; font-variant-numeric: tabular-nums; }
+.fleet-po-label { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.fleet-po { position: relative; display: grid; min-height: 34px; padding: 0; overflow: visible; }
+/* Only the in-flow text shares the grid cell; the error ring and the check are absolutely placed
+   (a centered abspos ring collapses to its 2px border). */
+.fleet-po > :not(.fleet-po-err, .fleet-po-ok) { grid-area: 1 / 1; align-self: center; padding: 0 10px; }
+.fleet-po-ph { color: var(--ink-4); }
+.fleet-po-val { font-family: var(--font-mono); font-weight: 650; letter-spacing: .02em; color: var(--ink); white-space: nowrap; }
+.fleet-po-err { position: absolute; inset: -1px; align-self: stretch; justify-self: stretch; padding: 0; border-radius: 9px; border: 1.5px solid var(--dot-stop); box-shadow: 0 0 0 3px rgba(217, 83, 74, .14); pointer-events: none; }
+.fleet-po-ok { position: absolute; right: 9px; top: 50%; translate: 0 -50%; width: 18px; height: 18px; padding: 0; color: var(--green-ink); }
+.fleet-po-hint { font-size: 12px; line-height: 1.4; color: var(--ink-3); }
+.fleet-po-flags { display: grid; justify-items: end; }
+.fleet-po-flags > * { grid-area: 1 / 1; }
+.fleet-sheet-go { display: grid; }
+.fleet-sheet-go > * { grid-area: 1 / 1; justify-content: center; min-height: 32px; }
+.fleet-sheet-go .is-off { background: var(--mist-200); color: var(--ink-3); }
+@media (max-width: 599.98px) { .fleet-sheet-head small { white-space: normal; } }
+
+/* ---------- PM plans that start the RO ---------- */
+.fleet-pm-fig, .fleet-recv-fig, .fleet-portal-fig { width: 100%; justify-items: start; }
+.fleet-pm-stage { position: relative; display: grid; justify-items: start; width: 100%; padding-bottom: 96px; text-align: left; }
+.fleet-units { width: min(100%, 420px); display: grid; gap: 0; border-radius: 18px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); overflow: hidden; }
+.fleet-units-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid var(--m-line); }
+.fleet-units-head > span:nth-child(2) { display: grid; min-width: 0; line-height: 1.3; }
+.fleet-units-head strong { font-size: 14px; font-weight: 700; }
+.fleet-units-head small { font-size: 12px; color: var(--ink-3); }
+.fleet-urow { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 6px 12px; padding: 11px 14px; border-bottom: 1px solid var(--m-line); }
+.fleet-urow:last-child { border-bottom: 0; }
+.fleet-urow-name { display: grid; gap: 1px; min-width: 0; line-height: 1.3; }
+.fleet-urow-name strong { font-size: 13.5px; font-weight: 700; }
+.fleet-urow-name small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fleet-urow-pm { grid-column: 1; display: grid; gap: 3px; margin-top: 3px; }
+.fleet-pmline { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: 12px; line-height: 1.35; color: var(--ink-2); }
+.fleet-pmline > span:nth-child(2) { white-space: nowrap; }
+.fleet-pmline > b { font-weight: 650; white-space: nowrap; perspective: 300px; }
+.fleet-pmline > b.is-stop { color: var(--stop); }
+.fleet-pmline > b.is-due { color: var(--warn); }
+.fleet-pmline > b.is-ok { color: var(--ok); }
+.fleet-urow > :is(.mock-btn, .mock-chip) { grid-column: 2; grid-row: 1 / span 2; align-self: center; }
+.fleet-urow > .mock-btn .icon { width: 13px; height: 13px; }
+.fleet-newro {
+  position: absolute; z-index: 2; right: 0; bottom: 0; width: min(64%, 268px); display: grid; gap: 9px;
+  padding: 13px 13px 14px; border-radius: 18px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3);
+}
+.fleet-newro[data-at] { --fx: fleet-slide-out; --fx-dur: .7s; --fx-ease: var(--spring); }
+@keyframes fleet-slide-out { from { opacity: 0; translate: -46px -30px; scale: .92; } }
+.fleet-newro-head { display: flex; align-items: center; gap: 9px; padding-bottom: 9px; border-bottom: 1px solid var(--m-line); }
+.fleet-newro-head > span:nth-child(2) { display: grid; min-width: 0; line-height: 1.3; }
+.fleet-newro-head strong { font-size: 13.5px; font-weight: 700; }
+.fleet-newro-head small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fleet-newro .mock-label { display: block; margin-bottom: 2px; }
+.fleet-concern { font-size: 12px; line-height: 1.4; color: var(--ink-2); }
+.fleet-jobs { display: grid; gap: 5px; }
+.fleet-job { display: flex; align-items: center; gap: 7px; padding: 5px 8px; border-radius: 9px; background: var(--green-50); border: 1px solid rgba(45, 179, 106, .26); font-size: 12px; font-weight: 600; }
+.fleet-job .icon { flex: none; width: 14px; height: 14px; color: var(--green-ink); stroke-width: 2.4; }
+.fleet-newro .mock-btn { justify-self: start; }
+@media (max-width: 599.98px) {
+  .fleet-pm-stage { padding-bottom: 0; justify-items: stretch; }
+  .fleet-units { width: 100%; }
+  .fleet-newro { position: relative; right: auto; bottom: auto; justify-self: end; width: min(86%, 280px); margin: -6px 0 0 0; }
+}
+@media (max-width: 359.98px) {
+  /* The countdown drops under its plan name rather than running into the row's button */
+  .fleet-urow .fleet-pmline { flex-wrap: wrap; row-gap: 0; }
+}
+
+/* ---------- Receivables: one check across invoices ---------- */
+.fleet-recv { width: min(100%, 500px); display: grid; gap: 11px; padding: 14px; border-radius: 18px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); text-align: left; }
+.fleet-recv-head { display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--m-line); }
+.fleet-recv-head > span:nth-child(2) { display: grid; min-width: 0; line-height: 1.3; }
+.fleet-recv-head strong { font-size: 14px; font-weight: 700; }
+.fleet-recv-head small { font-size: 12px; color: var(--ink-3); }
+.fleet-recv-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.fleet-recv-fields > span { display: grid; gap: 3px; min-width: 0; }
+.fleet-recv-fields .mock-field { font-variant-numeric: tabular-nums; font-weight: 600; }
+.fleet-recv-rows { display: grid; border: 1px solid var(--m-line); border-radius: 12px; overflow: hidden; }
+.fleet-recv-th, .fleet-irow { display: grid; grid-template-columns: minmax(0, 1fr) 78px 74px; align-items: center; gap: 8px; padding: 7px 10px; }
+.fleet-recv-th { background: var(--mist-50); font-size: 12px; font-weight: 650; color: var(--ink-3); }
+.fleet-recv-th > :not(:first-child), .fleet-irow > :not(:first-child) { text-align: right; justify-self: end; }
+.fleet-irow { border-top: 1px solid var(--m-line); font-size: 12.5px; }
+.fleet-irow-info { display: grid; min-width: 0; line-height: 1.3; }
+.fleet-irow-info strong { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fleet-irow-info small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fleet-apply { font-weight: 650; font-variant-numeric: tabular-nums; color: var(--accent-ink); white-space: nowrap; }
+.fleet-apply.is-none { color: var(--ink-4); font-weight: 500; }
+.fleet-bal { display: grid; justify-items: end; gap: 1px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; line-height: 1.25; }
+.fleet-bal small { font-size: 12px; font-weight: 650; color: var(--green-ink); }
+.fleet-recv-aging { display: grid; gap: 7px; padding: 10px 12px 11px; border-radius: 12px; background: var(--mist-50); }
+.fleet-recv-aging-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--ink-3); }
+.fleet-swap { display: inline-grid; justify-items: end; }
+.fleet-swap > * { grid-area: 1 / 1; }
+.fleet-recv-aging-top b { font-size: 14px; font-weight: 750; color: var(--ink); font-variant-numeric: tabular-nums; }
+.fleet-recv-aging .fleet-bar { background: var(--mist-200); }
+.fleet-recv-aging .fleet-bar > span { border-radius: 0; }
+.fleet-recv-aging .fleet-bar > span:first-child { border-radius: var(--pill) 0 0 var(--pill); }
+.fleet-drain { scale: var(--to, 0) 1; }
+@keyframes fleet-drain { from { scale: 1 1; } }
+.fleet-recv-key { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--ink-3); }
+.fleet-recv-key > span { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+.fleet-recv-key i { width: 8px; height: 8px; border-radius: 50%; }
+.fleet-recv-done { justify-self: start; }
+@media (max-width: 459.98px) {
+  .fleet-recv { padding: 12px 11px; }
+  .fleet-recv-fields { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); }
+  .fleet-recv-fields > span:nth-child(3) { display: none; }
+  .fleet-recv-th, .fleet-irow { grid-template-columns: minmax(0, 1fr) 66px 66px; gap: 6px; padding: 7px 8px; }
+}
+
+/* ---------- Fleet portal ---------- */
+.fleet-browser.mock-window { width: min(100%, 500px); }
+.fleet-browser .mock-screen { gap: 11px; padding: 14px 14px 16px; }
+.fleet-url {
+  position: absolute; top: 5px; left: 50%; translate: -50% 0; z-index: 2; display: inline-flex; align-items: center; gap: 5px;
+  max-width: calc(100% - 96px); padding: 1px 12px; border-radius: var(--pill); background: var(--mist-50); border: 1px solid var(--m-line); font-size: 12px; color: var(--ink-3); white-space: nowrap;
+}
+.fleet-url > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.fleet-url .icon { flex: none; width: 12px; height: 12px; color: var(--green-ink); }
+.fleet-portal-head { display: grid; gap: 2px; }
+.fleet-portal-shop { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 650; color: var(--ink-2); min-width: 0; }
+.fleet-portal-shop span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fleet-portal-head strong { margin-top: 6px; font-size: 18px; font-weight: 750; letter-spacing: -0.02em; }
+.fleet-portal-head small { font-size: 12px; color: var(--ink-3); }
+.fleet-portal-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.fleet-portal-tiles .mock-tile { padding: 8px 9px; }
+.fleet-portal-tiles .mock-tile strong { font-size: 16px; }
+.fleet-portal-acts { display: flex; flex-wrap: wrap; gap: 6px; }
+.fleet-portal-acts .icon { width: 13px; height: 13px; }
+.fleet-prow-list { display: grid; border: 1px solid var(--m-line); border-radius: 12px; overflow: hidden; }
+.fleet-prow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px 12px; align-items: start; padding: 9px 11px; border-top: 1px solid var(--m-line); }
+.fleet-prow:first-child { border-top: 0; }
+.fleet-prow-l { display: grid; gap: 1px; min-width: 0; line-height: 1.3; }
+.fleet-prow-l strong { font-size: 13px; font-weight: 700; }
+.fleet-prow-l small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fleet-prow-l .fleet-pmline { margin-top: 3px; }
+.fleet-prow-r { display: grid; justify-items: end; gap: 3px; font-size: 12px; text-align: right; }
+.fleet-prow-r .muted { color: var(--ink-3); }
+.fleet-shop-chip { display: inline-flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: var(--pill); background: var(--green-100); color: var(--green-ink); font-size: 12px; font-weight: 650; white-space: nowrap; }
+.fleet-shop-chip .live-dot { width: 7px; height: 7px; }
+.fleet-shop-chip.is-warn { background: var(--warn-soft); color: var(--warn); }
+.fleet-prow-links { display: flex; gap: 8px; color: var(--accent-ink); font-weight: 600; white-space: nowrap; }
+.fleet-portal-more { padding: 7px 11px; border-top: 1px solid var(--m-line); font-size: 12px; color: var(--ink-3); background: var(--mist-50); }
+@media (max-width: 479.98px) {
+  .fleet-portal-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .fleet-browser .mock-screen { padding: 12px 11px 14px; }
+  .fleet-prow-links > :last-child { display: none; }
+  .fleet-prow-l small { white-space: normal; }
+}
+@media (max-width: 359.98px) {
+  .fleet-prow { grid-template-columns: minmax(0, 1fr); gap: 6px; }
+  .fleet-prow-r { justify-items: start; text-align: left; }
+}
+
+/* ---------- Copy blocks ---------- */
+.fleet-points { margin-top: 2px; color: var(--ink-2); }
+.fleet-pm-presets { gap: 8px; }
+</style>
 </head>
 <body data-page="features" data-tab="features" id="top">
 <!-- @partial icons -->
@@ -162,7 +472,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -190,9 +500,11 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
-    <div class="container">
-      <!-- @partial breadcrumbs -->
+  <section class="page-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <ol>
     <li><a href="../index.html">Home</a></li>
@@ -202,9 +514,588 @@
 </nav>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Fleet & business accounts","item":"https://blakew316.github.io/automotive/features/fleet.html"}]}</script>
 <!-- @end breadcrumbs -->
-      <h1>Fleet accounts on terms, <span class="accent-text">without the spreadsheet.</span></h1>
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-fleet"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span>Fleet &amp; business accounts</p>
+        <h1 id="hero-title">Fleet accounts on terms, <span class="accent-text">without the spreadsheet.</span></h1>
+        <p class="lead">Turn commercial customers into accounts with terms, credit limits, unit numbers and PM schedules. Invoice on terms, track aging, send statements, and give the fleet manager a live portal.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=fleet">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/accounts" data-no-prerender>Open accounts in the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Net 7 to Net 60</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>PM plans for every unit</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Private fleet portal</span>
+        </div>
+      </div>
+      <figure class="page-hero-art mock-figure fleet-hero" data-play data-seq="6" data-loops="2" data-step="5" data-reached="0 1 2 3 4 5" data-seq-ms="950" data-seq-hold="3000" aria-label="Example: three trucks from the sample shop's fleet accounts on the road. OKF 551, a 2019 Tacoma, is up to date on PM; FLT 2201, a 2018 Ford F-150, has its tire rotation due soon; FLT 2214, another 2018 F-150, is overdue for its oil and filter service. Below them, receivables aging for Mitchell Plumbing Co.: $254.52 current and $513.45 at 1 to 30 days, $767.97 open, with nothing at 31 to 60, 61 to 90 or over 90 days.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage fleet-stage" aria-hidden="true">
+          <div class="fleet-scene">
+            <svg viewBox="0 0 440 256" focusable="false">
+              <defs>
+                <g id="fleet-tree"><path class="art-ink art-thin" d="M0 0v-12"/><circle class="art-ink art-thin art-soft" cx="0" cy="-22" r="12"/></g>
+                <g id="fleet-tree2"><path class="art-ink art-thin" d="M0 0v-9"/><path class="art-ink art-thin art-lilac" d="M0 -38l11 28h-22z"/></g>
+                <path id="fleet-cloud" d="M0 0h52a12 12 0 0 0-6-22 16 16 0 0 0-30-6A12 12 0 0 0 0 0z"/>
+              </defs>
+              <!-- sky -->
+              <path class="art-ink art-thin art-accent" d="M398 10v7M398 59v7M370 38h7M419 38h7M378.2 18.2l5 5M412.8 52.8l5 5M378.2 57.8l5-5M412.8 23.2l5-5" stroke-opacity=".6"/>
+              <circle class="art-ink art-thin art-tint" cx="398" cy="38" r="15" stroke-opacity=".55"/>
+              <g class="fleet-clouds fleet-move">
+                <use href="#fleet-cloud" class="art-ink art-thin art-paper" transform="translate(118 44)"/>
+                <use href="#fleet-cloud" class="art-ink art-thin art-paper" transform="translate(262 66) scale(.7)"/>
+                <use href="#fleet-cloud" class="art-ink art-thin art-paper" transform="translate(22 82) scale(.6)"/>
+                <use href="#fleet-cloud" class="art-ink art-thin art-paper" transform="translate(558 44)"/>
+                <use href="#fleet-cloud" class="art-ink art-thin art-paper" transform="translate(702 66) scale(.7)"/>
+                <use href="#fleet-cloud" class="art-ink art-thin art-paper" transform="translate(462 82) scale(.6)"/>
+              </g>
+              <path class="art-ink art-thin" d="M-10 156C40 138 90 144 140 152S240 134 300 146S400 152 450 142" stroke-opacity=".35"/>
+              <!-- roadside scenery (parallax) -->
+              <g class="fleet-scenery fleet-move">
+                <use href="#fleet-tree" x="30" y="166"/><use href="#fleet-tree2" x="92" y="166"/><use href="#fleet-tree" x="170" y="166"/>
+                <use href="#fleet-tree2" x="236" y="166"/><use href="#fleet-tree" x="318" y="166"/><use href="#fleet-tree2" x="384" y="166"/>
+                <use href="#fleet-tree" x="470" y="166"/><use href="#fleet-tree2" x="532" y="166"/><use href="#fleet-tree" x="610" y="166"/>
+                <use href="#fleet-tree2" x="676" y="166"/><use href="#fleet-tree" x="758" y="166"/><use href="#fleet-tree2" x="824" y="166"/>
+              </g>
+              <!-- road -->
+              <rect x="-10" y="166" width="460" height="78" fill="var(--mist-100)"/>
+              <path class="art-ink art-thin" d="M-10 166H450M-10 244H450" stroke-opacity=".7"/>
+              <path class="fleet-lane fleet-move" d="M-40 190H480" stroke="var(--paper)" stroke-width="4" stroke-dasharray="22 18" stroke-linecap="round"/>
+              <path class="fleet-lane is-shoulder fleet-move art-ink art-thin" d="M-40 252H480" stroke-dasharray="12 8" stroke-opacity=".3"/>
+              <!-- the convoy -->
+              <g class="fleet-convoy fx-once">
+                <path class="fleet-speed fleet-move art-ink art-thin art-accent" d="M108 196H146"/>
+                <path class="fleet-speed s2 fleet-move art-ink art-thin art-accent" d="M114 208H146"/>
+                <path class="fleet-speed s3 fleet-move art-ink art-thin art-accent" d="M250 194H288"/>
+                <path class="fleet-speed s2 fleet-move art-ink art-thin art-accent" d="M256 206H288"/>
+                <!-- OKF 551 (Okafor Landscaping T-1): 2019 Tacoma -->
+                <g transform="translate(20 230) scale(.74)">
+                  <g class="fleet-bob b3 fleet-move">
+                    <path class="art-ink art-paper" d="M0 -17L0 -51Q0 -53 2 -53L64 -53L64 -79Q64 -83 68 -83L98 -83Q101 -83 103 -80L116 -57L136 -54Q144 -53 144 -45L144 -23Q144 -17 138 -17L137 -17A21 21 0 0 0 95 -17L49 -17A21 21 0 0 0 7 -17Z"/>
+                    <path class="art-tint" d="M2 -47H142V-40H2Z"/>
+                    <path class="art-ink art-thin art-tint" d="M70 -78L96 -78L108 -58L70 -58Z"/>
+                    <path class="art-ink art-thin" d="M64 -53V-19M78 -36h9" stroke-opacity=".55"/>
+                    <path class="art-ink art-thin art-lilac" d="M8 -53c4-12 14-16 22-12 6-8 18-6 20 4l2 8z"/>
+                    <rect x="137" y="-50" width="7" height="6" rx="2" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.2"/>
+                    <rect x="0" y="-50" width="4" height="8" rx="1.5" fill="var(--green-100)" stroke="var(--ink)" stroke-width="1.2"/>
+                    <path class="art-ink" d="M0 -23H-8"/>
+                  </g>
+                  <g class="fleet-wheel w-3 fleet-move"><circle class="art-ink art-paper" cx="28" cy="-16" r="16"/><circle class="art-soft" cx="28" cy="-16" r="6"/><path class="art-ink art-thin" d="M28 -30v6M28 -8v6M14 -16h6M36 -16h6"/></g>
+                  <g class="fleet-wheel w-3 fleet-move"><circle class="art-ink art-paper" cx="116" cy="-16" r="16"/><circle class="art-soft" cx="116" cy="-16" r="6"/><path class="art-ink art-thin" d="M116 -30v6M116 -8v6M102 -16h6M124 -16h6"/></g>
+                </g>
+                <!-- FLT 2201 (Unit 12): 2018 Ford F-150 crew cab with a toolbox -->
+                <g transform="translate(150 230) scale(.84)">
+                  <g class="fleet-bob b2 fleet-move">
+                    <path class="art-ink art-paper" d="M0 -17L0 -51Q0 -53 2 -53L50 -53L50 -79Q50 -83 54 -83L98 -83Q101 -83 103 -80L116 -57L136 -54Q144 -53 144 -45L144 -23Q144 -17 138 -17L137 -17A21 21 0 0 0 95 -17L49 -17A21 21 0 0 0 7 -17Z"/>
+                    <path class="art-tint" d="M2 -47H142V-40H2Z"/>
+                    <path class="art-ink art-thin art-tint" d="M55 -78H75V-58H55Z"/>
+                    <path class="art-ink art-thin art-tint" d="M79 -78L96 -78L108 -58L79 -58Z"/>
+                    <path class="art-ink art-thin" d="M77 -80V-19M60 -36h8M86 -36h8" stroke-opacity=".55"/>
+                    <rect class="art-ink art-thin art-soft" x="34" y="-62" width="14" height="9" rx="2"/>
+                    <rect x="137" y="-50" width="7" height="6" rx="2" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.2"/>
+                    <rect x="0" y="-50" width="4" height="8" rx="1.5" fill="var(--green-100)" stroke="var(--ink)" stroke-width="1.2"/>
+                    <path class="art-ink" d="M0 -23H-8"/>
+                  </g>
+                  <g class="fleet-wheel w-2 fleet-move"><circle class="art-ink art-paper" cx="28" cy="-16" r="16"/><circle class="art-soft" cx="28" cy="-16" r="6"/><path class="art-ink art-thin" d="M28 -30v6M28 -8v6M14 -16h6M36 -16h6"/></g>
+                  <g class="fleet-wheel w-2 fleet-move"><circle class="art-ink art-paper" cx="116" cy="-16" r="16"/><circle class="art-soft" cx="116" cy="-16" r="6"/><path class="art-ink art-thin" d="M116 -30v6M116 -8v6M102 -16h6M124 -16h6"/></g>
+                </g>
+                <!-- FLT 2214 (Unit 14): 2018 Ford F-150 SuperCrew with a ladder rack -->
+                <g transform="translate(292 230) scale(.88)">
+                  <g class="fleet-bob fleet-move">
+                    <path class="art-ink art-thin" d="M6 -53V-68M44 -53V-68M2 -68H50M2 -74H50M10 -68V-74M20 -68V-74M30 -68V-74M40 -68V-74" stroke-opacity=".8"/>
+                    <path class="art-ink art-paper" d="M0 -17L0 -51Q0 -53 2 -53L50 -53L50 -79Q50 -83 54 -83L98 -83Q101 -83 103 -80L116 -57L136 -54Q144 -53 144 -45L144 -23Q144 -17 138 -17L137 -17A21 21 0 0 0 95 -17L49 -17A21 21 0 0 0 7 -17Z"/>
+                    <path class="art-tint" d="M2 -47H142V-40H2Z"/>
+                    <path class="art-ink art-thin art-tint" d="M55 -78H75V-58H55Z"/>
+                    <path class="art-ink art-thin art-tint" d="M79 -78L96 -78L108 -58L79 -58Z"/>
+                    <path class="art-ink art-thin" d="M77 -80V-19M60 -36h8M86 -36h8" stroke-opacity=".55"/>
+                    <rect x="137" y="-50" width="7" height="6" rx="2" fill="var(--accent-soft)" stroke="var(--ink)" stroke-width="1.2"/>
+                    <rect x="0" y="-50" width="4" height="8" rx="1.5" fill="var(--green-100)" stroke="var(--ink)" stroke-width="1.2"/>
+                    <path class="art-ink" d="M0 -23H-8"/>
+                  </g>
+                  <g class="fleet-wheel fleet-move"><circle class="art-ink art-paper" cx="28" cy="-16" r="16"/><circle class="art-soft" cx="28" cy="-16" r="6"/><path class="art-ink art-thin" d="M28 -30v6M28 -8v6M14 -16h6M36 -16h6"/></g>
+                  <g class="fleet-wheel fleet-move"><circle class="art-ink art-paper" cx="116" cy="-16" r="16"/><circle class="art-soft" cx="116" cy="-16" r="6"/><path class="art-ink art-thin" d="M116 -30v6M116 -8v6M102 -16h6M124 -16h6"/></g>
+                </g>
+              </g>
+            </svg>
+            <span class="fleet-unit" style="--x: 16.7%" data-at="0" data-fx="pop"><span class="fleet-plate">OKF 551</span><span class="fleet-pm"><i></i>Up to date</span></span>
+            <span class="fleet-unit" style="--x: 47.7%; --fx-delay: .15s" data-at="0" data-fx="pop"><span class="fleet-plate">FLT 2201</span><span class="fleet-pm is-due"><i></i><span class="fleet-pm-long">Rotation due soon</span><span class="fleet-pm-short">Due soon</span></span></span>
+            <span class="fleet-unit" style="--x: 80.6%; --fx-delay: .3s" data-at="0" data-fx="pop"><span class="fleet-plate">FLT 2214</span><span class="fleet-pm is-stop"><i></i>Overdue</span></span>
+          </div>
+          <div class="fleet-aging">
+            <div class="fleet-aging-head">
+              <span class="fleet-ico"><svg class="icon"><use href="#i-ledger"/></svg></span>
+              <span class="fleet-aging-title"><strong>Receivables aging</strong><small>Mitchell Plumbing Co.</small></span>
+              <span class="fleet-aging-total"><small>Open</small><b>$767.97</b></span>
+            </div>
+            <div class="fleet-bar">
+              <span class="fleet-c0" style="--w: 33.1%" data-at="1" data-fx="grow-x"></span>
+              <span class="fleet-c1" style="--w: 66.9%" data-at="2" data-fx="grow-x"></span>
+            </div>
+            <div class="fleet-legend">
+              <span data-at="1" data-fx="fade"><span><i class="fleet-c0"></i>Current</span><b>$254.52</b></span>
+              <span data-at="2" data-fx="fade"><span><i class="fleet-c1"></i>1&ndash;30</span><b>$513.45</b></span>
+              <span class="is-zero" data-at="3" data-fx="fade"><span><i class="fleet-c2"></i>31&ndash;60</span><b>$0.00</b></span>
+              <span class="is-zero" data-at="4" data-fx="fade"><span><i class="fleet-c3"></i>61&ndash;90</span><b>$0.00</b></span>
+              <span class="is-zero" data-at="5" data-fx="fade"><span><i class="fleet-c4"></i>90+</span><b>$0.00</b></span>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="dot"></span>
+          <span><strong>PM due soon &middot; FLT 2201</strong><small>Tire rotation &middot; the account&rsquo;s Units list</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-mail"/></svg></span>
+          <span><strong>Statement emailed &middot; Net 30</strong><small>Mitchell Plumbing Co.</small></span>
+        </div>
+      </figure>
     </div>
   </section>
+
+  <section class="section section-paper" id="pains" aria-labelledby="pains-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-title">Where fleet billing <span class="accent-text">stalls</span></h2>
+        <p>Fleet work is steady work. The billing is where it slows down: a missing number, a spreadsheet of who owes what, and a fleet manager who has to call to find out.</p>
+        <ul class="signal-list">
+          <li>Invoices sent back for a missing PO.</li>
+          <li class="is-critical">Aging kept in a spreadsheet.</li>
+          <li>The fleet manager calling for status.</li>
+        </ul>
+      </div>
+      <figure class="page-hero-art fleet-pains-art" data-reveal="right" data-reveal-seq data-play aria-label="Illustration: an invoice sent back with its PO box empty, a spreadsheet of aging columns and a ringing phone all flow into one fleet account record with its units and a status bar, which gets a green check">
+        <svg viewBox="0 0 480 300" aria-hidden="true" focusable="false">
+          <ellipse class="art-tint" cx="380" cy="152" rx="118" ry="122" opacity=".55"/>
+          <!-- an invoice sent back: the PO box is empty -->
+          <g data-seq-i="0" data-fx="pop" class="fleet-art-pop">
+            <g transform="rotate(-6 86 84)">
+              <path class="art-ink art-paper" d="M40 22h74l18 18v106H40z"/>
+              <path class="art-ink art-thin" d="M114 22v18h18"/>
+              <path class="art-ink art-thin" d="M52 50h38M52 62h54M52 84h66M52 96h66M52 108h46" stroke-opacity=".3"/>
+              <rect x="52" y="120" width="68" height="16" rx="4" fill="var(--stop-soft)" stroke="var(--dot-stop)" stroke-width="1.4" stroke-dasharray="4 3"/>
+            </g>
+            <g transform="rotate(9 132 30)">
+              <rect x="104" y="14" width="58" height="30" rx="8" fill="var(--paper)" stroke="var(--dot-stop)" stroke-width="1.8"/>
+              <text class="fleet-art-label" x="133" y="35" text-anchor="middle">PO?</text>
+            </g>
+          </g>
+          <!-- aging kept in a spreadsheet -->
+          <g data-seq-i="1" data-fx="pop" class="fleet-art-pop">
+            <g transform="rotate(4 208 154)">
+              <rect class="art-ink art-paper" x="150" y="110" width="116" height="88" rx="8"/>
+              <path d="M151.5 126h113" stroke="var(--ink)" stroke-width="1.4"/>
+              <path d="M179 111v86M208 111v86M237 111v86M151 144h114M151 162h114M151 180h114" stroke="var(--mist-300)" stroke-width="1.2"/>
+              <rect x="209" y="145" width="27" height="16" fill="var(--warn-soft)"/>
+              <rect x="238" y="163" width="27" height="16" fill="var(--stop-soft)"/>
+              <rect x="209" y="181" width="27" height="15" fill="var(--warn-soft)"/>
+              <path d="M157 118h14M186 118h14M215 118h14M244 118h14" stroke="var(--ink)" stroke-width="2.2" stroke-linecap="round" stroke-opacity=".55"/>
+              <path d="M157 153h14M157 171h12M157 189h14" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round" stroke-opacity=".5"/>
+            </g>
+          </g>
+          <!-- the fleet manager calling for status -->
+          <g data-seq-i="2" data-fx="pop" class="fleet-art-pop">
+            <g transform="rotate(-8 84 240)">
+              <rect class="art-ink art-paper" x="56" y="194" width="56" height="94" rx="12"/>
+              <rect x="74" y="200" width="20" height="4" rx="2" fill="var(--mist-300)"/>
+              <circle class="art-ink art-thin art-soft" cx="84" cy="232" r="13"/>
+              <path d="M78.5 227c0 6 4 10 10 10l1.6-2.8-2.8-1.7-1.5 1.3c-1.6-.8-3-2.2-3.8-3.8l1.3-1.5-1.7-2.8z" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/>
+              <rect x="66" y="256" width="36" height="12" rx="6" fill="var(--green)" opacity=".85"/>
+            </g>
+            <path class="art-ink art-thin art-accent" d="M122 212a16 16 0 0 1 2 24M130 204a28 28 0 0 1 3 40"/>
+            <circle cx="138" cy="190" r="11" fill="var(--dot-warn)" stroke="var(--paper)" stroke-width="2.5"/>
+            <path d="M134.2 187a3.8 3.8 0 0 1 7.6 0c0 2.6-3.8 2.8-3.8 5.4M138 196.2v.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+          </g>
+          <!-- everything flows into one account -->
+          <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" d="M138 86c66 0 104 16 162 22"/>
+          <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" style="--fx-delay: .12s" d="M270 152h30"/>
+          <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" style="--fx-delay: .24s" d="M140 246c70 0 108-30 160-42"/>
+          <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130" d="M138 86c66 0 104 16 162 22"/>
+          <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130; --fx-delay: .15s" d="M270 152h30"/>
+          <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130; --fx-delay: .3s" d="M140 246c70 0 108-30 160-42"/>
+          <g data-seq-i="4" data-fx="pop" class="fleet-art-pop">
+            <rect class="art-ink art-paper" x="300" y="46" width="164" height="210" rx="18"/>
+            <circle class="art-ink art-thin art-soft" cx="330" cy="78" r="16"/>
+            <use href="#i-truck" x="319" y="67" width="22" height="22" fill="none" stroke="var(--accent)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="356" y="69" width="78" height="8" rx="4" fill="var(--ink)" opacity=".8"/>
+            <rect x="356" y="83" width="50" height="6" rx="3" fill="var(--mist-300)"/>
+            <path d="M314 108h136" stroke="var(--mist-200)" stroke-width="2"/>
+          </g>
+          <g data-seq-i="5" data-fx="stagger" style="--fx: fx-left; --fx-stagger: 120ms">
+            <g>
+              <circle cx="322" cy="130" r="5" fill="var(--dot-ok)"/>
+              <rect x="334" y="126" width="66" height="7" rx="3.5" fill="var(--ink-4)" opacity=".55"/>
+              <rect x="410" y="123" width="38" height="13" rx="6.5" fill="var(--green-100)"/>
+            </g>
+            <g>
+              <circle cx="322" cy="158" r="5" fill="var(--dot-warn)"/>
+              <rect x="334" y="154" width="58" height="7" rx="3.5" fill="var(--ink-4)" opacity=".55"/>
+              <rect x="410" y="151" width="38" height="13" rx="6.5" fill="var(--warn-soft)"/>
+            </g>
+            <g>
+              <circle cx="322" cy="186" r="5" fill="var(--dot-stop)"/>
+              <rect x="334" y="182" width="72" height="7" rx="3.5" fill="var(--ink-4)" opacity=".55"/>
+              <rect x="410" y="179" width="38" height="13" rx="6.5" fill="var(--stop-soft)"/>
+            </g>
+          </g>
+          <g data-seq-i="6" data-fx="wipe">
+            <rect x="316" y="216" width="132" height="10" rx="5" fill="var(--mist-100)"/>
+            <rect x="316" y="216" width="70" height="10" rx="5" fill="var(--dot-ok)"/>
+            <rect x="388" y="216" width="30" height="10" fill="var(--dot-warn)"/>
+            <rect x="420" y="216" width="16" height="10" fill="var(--dot-stop)"/>
+            <rect x="356" y="234" width="56" height="6" rx="3" fill="var(--mist-300)"/>
+          </g>
+          <g data-seq-i="7" data-fx="pop" class="fleet-art-pop">
+            <circle cx="458" cy="52" r="17" fill="var(--green)" stroke="var(--paper)" stroke-width="3"/>
+            <path d="M450 52.5l5.5 5.5 10.5-11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </g>
+        </svg>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-tint" id="accounts" aria-labelledby="accounts-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Account setup</p>
+        <h2 id="accounts-title">Accounts set up <span class="accent-text">the way fleets buy</span></h2>
+        <p class="lead">Turn any business customer into an account. Set the rules once, and every visit, invoice and statement follows them.</p>
+      </div>
+      <div class="grid grid-3 fleet-accounts-grid" data-reveal-stagger>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg></span>
+          <h3 class="mt-2">Terms and limits</h3>
+          <p>Terms from due on receipt to Net 7, 15, 30, 45 or 60, a credit limit, and a not-to-exceed amount per visit.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+          <h3 class="mt-2">POs, tax and billing</h3>
+          <p>Required PO numbers, tax exemption with the certificate number, a billing email and a note on every invoice.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span>
+          <h3 class="mt-2">Units</h3>
+          <p>Units with a unit number and a driver or department, so each invoice says which truck it was.</p>
+        </div>
+      </div>
+      <div class="fleet-charge" data-reveal>
+        <div class="fleet-charge-copy">
+          <span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"/></svg></span>
+          <h3>Charge to account</h3>
+          <p>Charge to account asks for the PO when it&rsquo;s required and warns when the credit limit is exceeded. Invoices print the PO, unit, terms and due date.</p>
+          <ul class="checklist fleet-points">
+            <li>Charge it and the truck goes home. The invoice waits on the account, due on its terms.</li>
+            <li>Over the limit? You can still charge it, or take a payment instead.</li>
+          </ul>
+        </div>
+        <figure class="mock-figure is-inline fleet-charge-fig" data-reveal-seq aria-label="Example: charging Unit 15's repair order, an oil service and wiper blades on a 2020 Silverado 1500, to Mitchell Plumbing Co. in the sample shop. The PO number is required, so the empty field is flagged, then PO-4465 is entered and Charge $254.52 is ready. Net 30, due in 30 days, account balance after $2,146.94 against a $15,000.00 credit limit.">
+          <span class="mock-tag">Example · sample shop</span>
+          <div class="mock-stage" aria-hidden="true">
+            <div class="fleet-sheet">
+              <div class="fleet-sheet-head">
+                <span class="fleet-ico is-green"><svg class="icon"><use href="#i-briefcase"/></svg></span>
+                <span><strong>Charge to account</strong><small>Mitchell Plumbing Co. &middot; Unit 15 &middot; 2020 Silverado 1500</small></span>
+              </div>
+              <div class="fleet-dl">
+                <span><span>Terms</span><b>Net 30</b></span>
+                <span><span>Due</span><b>In 30 days</b></span>
+                <span><span>Account balance after</span><b>$2,146.94</b></span>
+                <span><span>Credit limit</span><b>$15,000.00</b></span>
+              </div>
+              <span class="mock-label">PO number (required)</span>
+              <span class="mock-field fleet-po" data-seq-i="1" data-fx="shake">
+                <span class="fleet-po-ph" data-seq-out="3">Required for this account</span>
+                <span class="fleet-po-val" data-seq-i="3" data-fx="type" style="--chars: 7">PO-4465</span>
+                <span class="fleet-po-err" data-seq-out="3"></span>
+                <svg class="icon fleet-po-ok" data-seq-i="4" data-fx="pop"><use href="#i-check-circle"/></svg>
+              </span>
+              <span class="fleet-po-hint">Mitchell Plumbing Co. needs its purchase order number on every invoice.</span>
+              <span class="fleet-sheet-go">
+                <span class="mock-btn is-off" data-seq-out="4">Charge $254.52</span>
+                <span class="mock-btn" data-seq-i="4" data-fx="fade">Charge $254.52</span>
+              </span>
+            </div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pm" aria-labelledby="pm-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Preventive maintenance</p>
+        <h2 id="pm-title">PM plans <span class="accent-text">that start the RO</span></h2>
+        <p>Presets: oil &amp; filter every 5,000 mi or 6 months, tire rotation every 7,500 mi, annual safety inspection. Each unit shows as up to date, due soon or overdue, and one click starts a PM repair order with the due jobs.</p>
+        <ul class="checklist fleet-points">
+          <li>Due by whichever comes first, the miles or the months.</li>
+          <li>Due soon means within 30 days, or within 10% of the mileage interval (at least 500 mi).</li>
+          <li>Done somewhere else? Record the date and miles by hand.</li>
+        </ul>
+        <a class="link-arrow" href="#portal">What the fleet manager sees <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <figure class="mock-figure fleet-pm-fig" data-reveal="right" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="1500" data-seq-hold="2400" aria-label="Example: Mitchell Plumbing Co.'s units in the sample shop. Unit 14, a 2018 Ford F-150, is 1,044 miles overdue for its oil and filter service, and its tire rotation is 1,456 miles away. Unit 12, another 2018 F-150, is in the shop with its tire rotation due in 124 miles. Unit 15, a 2020 Silverado 1500, has 4,572 miles or 169 days left before its next oil service. PM RO is pressed on Unit 14, and a new repair order opens with the concern Scheduled maintenance: Oil &amp; filter service and the Full synthetic oil &amp; filter service job already added.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage fleet-pm-stage" aria-hidden="true">
+          <div class="fleet-units">
+            <div class="fleet-units-head">
+              <span class="fleet-ico"><svg class="icon"><use href="#i-truck"/></svg></span>
+              <span><strong>Units</strong><small>Mitchell Plumbing Co. &middot; 5 vehicles</small></span>
+            </div>
+            <div class="fleet-urow">
+              <span class="fleet-urow-name"><strong>Unit 14</strong><small>2018 Ford F-150 &middot; FLT 2214</small></span>
+              <span class="fleet-urow-pm">
+                <span class="fleet-pmline"><span class="mock-dot is-stop" data-at="0" data-fx="pop"></span><span>Oil &amp; filter</span><b class="is-stop" data-at="0" data-fx="flip">1,044 mi overdue</b></span>
+                <span class="fleet-pmline"><span class="mock-dot is-ok" data-at="0" data-fx="pop" style="--fx-delay: .15s"></span><span>Tire rotation</span><b class="is-ok" data-at="0" data-fx="flip" style="--fx-delay: .15s">1,456 mi left</b></span>
+              </span>
+              <span class="mock-btn" data-at="1" data-fx="press"><svg class="icon"><use href="#i-plus"/></svg>PM RO</span>
+            </div>
+            <div class="fleet-urow">
+              <span class="fleet-urow-name"><strong>Unit 12</strong><small>2018 Ford F-150 &middot; FLT 2201</small></span>
+              <span class="fleet-urow-pm">
+                <span class="fleet-pmline"><span class="mock-dot is-warn" data-at="0" data-fx="pop" style="--fx-delay: .3s"></span><span>Tire rotation</span><b class="is-due" data-at="0" data-fx="flip" style="--fx-delay: .3s">Due in 124 mi</b></span>
+              </span>
+              <span class="mock-chip">In progress</span>
+            </div>
+            <div class="fleet-urow">
+              <span class="fleet-urow-name"><strong>Unit 15</strong><small>2020 Silverado 1500 &middot; FLT 2215</small></span>
+              <span class="fleet-urow-pm">
+                <span class="fleet-pmline"><span class="mock-dot is-ok" data-at="0" data-fx="pop" style="--fx-delay: .45s"></span><span>Oil &amp; filter</span><b class="is-ok" data-at="0" data-fx="flip" style="--fx-delay: .45s">4,572 mi &middot; 169 days left</b></span>
+              </span>
+              <span class="mock-btn is-ghost"><svg class="icon"><use href="#i-plus"/></svg>RO</span>
+            </div>
+          </div>
+          <div class="fleet-newro" data-at="2">
+            <div class="fleet-newro-head">
+              <span class="fleet-ico"><svg class="icon"><use href="#i-document"/></svg></span>
+              <span><strong>New repair order</strong><small>Mitchell Plumbing Co. &middot; Unit 14</small></span>
+            </div>
+            <div>
+              <span class="mock-label">Customer concern</span>
+              <span class="fleet-concern">Scheduled maintenance: Oil &amp; filter service</span>
+            </div>
+            <div class="fleet-jobs">
+              <span class="fleet-job"><svg class="icon"><use href="#i-check"/></svg>Full synthetic oil &amp; filter service</span>
+            </div>
+            <span class="mock-btn">Create estimate</span>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-paper" id="receivables" aria-labelledby="receivables-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Receivables</p>
+        <h2 id="receivables-title">Aging, statements and <span class="accent-text">one check for many invoices</span></h2>
+        <ul class="checklist pop-list fleet-points">
+          <li>Aging in current, 1&ndash;30, 31&ndash;60, 61&ndash;90 and 90+ days, per account and shop-wide.</li>
+          <li>Receive payment applies one check or ACH across several invoices, oldest first.</li>
+          <li>Printable or PDF statements with aging, open invoices and recent payments, or email them to the billing contact.</li>
+        </ul>
+        <p>Past-due fleet invoices also show up in the Needs attention list on the Today screen, so nobody has to remember to look.</p>
+      </div>
+      <figure class="mock-figure fleet-recv-fig" data-reveal="left" data-reveal-seq aria-label="Example: receiving check 20417 for $1,378.97 from Mitchell Plumbing Co. in the sample shop. Applied oldest first, it pays PO-4462 for Unit 9, $714.72 at 61 to 90 days, and PO-4463 for Unit 14, $514.25 at 31 to 60 days, in full, and $150.00 of PO-4464 for Unit 12, which leaves $342.97 of its $492.97. PO-4461 for Unit 7, $170.48, and PO-4465 for Unit 15, $254.52, are untouched. The account's aging bar loses its 61 to 90 and 31 to 60 day amounts, and the open balance drops from $2,146.94 to $767.97.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="fleet-recv">
+            <div class="fleet-recv-head">
+              <span class="fleet-ico is-green"><svg class="icon"><use href="#i-ledger"/></svg></span>
+              <span><strong>Receive payment</strong><small>Mitchell Plumbing Co. &middot; one payment across invoices</small></span>
+            </div>
+            <div class="fleet-recv-fields">
+              <span><span class="mock-label">Amount</span><span class="mock-field">$1,378.97</span></span>
+              <span><span class="mock-label">Method</span><span class="mock-field">Check</span></span>
+              <span><span class="mock-label">Check number</span><span class="mock-field">20417</span></span>
+            </div>
+            <div class="fleet-recv-rows">
+              <div class="fleet-recv-th"><span>Invoice, oldest first</span><span>Applying</span><span>Balance</span></div>
+              <div class="fleet-irow">
+                <span class="fleet-irow-info"><strong>PO-4462 &middot; Unit 9</strong><small>61&ndash;90 days</small></span>
+                <span class="fleet-apply" data-seq-i="1" data-fx="pop">$714.72</span>
+                <span class="fleet-bal"><span class="fleet-swap"><span data-seq-out="1">$714.72</span><span data-seq-i="1" data-fx="flip">$0.00</span></span><small data-seq-i="2" data-fx="pop">Paid</small></span>
+              </div>
+              <div class="fleet-irow">
+                <span class="fleet-irow-info"><strong>PO-4463 &middot; Unit 14</strong><small>31&ndash;60 days</small></span>
+                <span class="fleet-apply" data-seq-i="3" data-fx="pop">$514.25</span>
+                <span class="fleet-bal"><span class="fleet-swap"><span data-seq-out="3">$514.25</span><span data-seq-i="3" data-fx="flip">$0.00</span></span><small data-seq-i="4" data-fx="pop">Paid</small></span>
+              </div>
+              <div class="fleet-irow">
+                <span class="fleet-irow-info"><strong>PO-4464 &middot; Unit 12</strong><small>1&ndash;30 days</small></span>
+                <span class="fleet-apply" data-seq-i="5" data-fx="pop">$150.00</span>
+                <span class="fleet-bal"><span class="odometer is-plain" data-odometer="342.97" data-from="492.97" data-decimals="2" data-prefix="$" data-duration="1.1" data-seq-i="5" data-fx="none" style="--fx-pre: 1">$342.97</span></span>
+              </div>
+              <div class="fleet-irow">
+                <span class="fleet-irow-info"><strong>PO-4461 &middot; Unit 7</strong><small>1&ndash;30 days</small></span>
+                <span class="fleet-apply is-none">&mdash;</span>
+                <span class="fleet-bal">$170.48</span>
+              </div>
+              <div class="fleet-irow">
+                <span class="fleet-irow-info"><strong>PO-4465 &middot; Unit 15</strong><small>current</small></span>
+                <span class="fleet-apply is-none">&mdash;</span>
+                <span class="fleet-bal">$254.52</span>
+              </div>
+            </div>
+            <div class="fleet-recv-aging">
+              <div class="fleet-recv-aging-top">
+                <span>Account aging</span>
+                <span>Open <span class="fleet-swap"><b data-seq-out="7">$2,146.94</b><b data-seq-i="7" data-fx="fade">$767.97</b></span></span>
+              </div>
+              <div class="fleet-bar">
+                <span class="fleet-c0" style="--w: 11.9%"></span>
+                <span class="fleet-c1 fleet-drain" style="--w: 30.9%; --to: .774; --fx: fleet-drain; --fx-dur: .8s; --fx-pre: 1" data-seq-i="5"></span>
+                <span class="fleet-c2 fleet-drain" style="--w: 23.9%; --fx: fleet-drain; --fx-dur: .8s; --fx-pre: 1" data-seq-i="3"></span>
+                <span class="fleet-c3 fleet-drain" style="--w: 33.3%; --fx: fleet-drain; --fx-dur: .8s; --fx-pre: 1" data-seq-i="1"></span>
+              </div>
+              <div class="fleet-recv-key">
+                <span><i class="fleet-c0"></i>Current</span>
+                <span><i class="fleet-c1"></i>1&ndash;30</span>
+                <span><i class="fleet-c2"></i>31&ndash;60</span>
+                <span><i class="fleet-c3"></i>61&ndash;90</span>
+              </div>
+            </div>
+            <span class="mock-chip is-ok fleet-recv-done" data-seq-i="7" data-fx="pop">$1,378.97 applied to 3 invoices &middot; 2 paid in full</span>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-tint" id="portal" aria-labelledby="portal-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Fleet portal</p>
+        <h2 id="portal-title">A portal <span class="accent-text">for the fleet manager</span></h2>
+        <p>A private link with every unit&rsquo;s maintenance status, what&rsquo;s in the shop (with live status and estimate links), open invoices, the balance, and Pay and Book buttons. No costs, margins or notes. You can turn it off. It uses <a class="text-link" href="../works-with.html#shop-cloud">Shop Cloud</a>.</p>
+        <ul class="checklist fleet-points">
+          <li>No login. Text or email the link to the fleet manager from the account.</li>
+          <li>Your signed-in shop devices keep it current, and an open portal checks for changes every minute.</li>
+          <li>Invoices show totals only, never line costs.</li>
+        </ul>
+      </div>
+      <figure class="mock-figure fleet-portal-fig" data-reveal="right" data-reveal-seq data-play aria-label="Example: the fleet portal for Mitchell Plumbing Co. from Main Street Auto Service, the sample shop. Net 30. Five units, two need maintenance, two are in the shop, and the balance is $767.97, with Pay and Schedule service buttons. Unit 12, a 2018 Ford F-150, is in progress with live status and estimate links, and its tire rotation is due in 124 miles. Unit 14, another F-150, is 1,044 miles overdue for its oil and filter service. Unit 7, a 2020 Silverado 1500, is waiting on parts, with 3,636 miles or 146 days left before its next oil service.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-window fleet-browser">
+            <span class="fleet-url"><svg class="icon"><use href="#i-lock"/></svg><span>Main Street Auto Service &middot; Mitchell Plumbing Co.</span></span>
+            <div class="mock-screen">
+              <div class="fleet-portal-head">
+                <span class="fleet-portal-shop"><span>Main Street Auto Service</span></span>
+                <strong>Mitchell Plumbing Co.</strong>
+                <small>Fleet account &middot; Net 30</small>
+              </div>
+              <div class="fleet-portal-tiles">
+                <div class="mock-tile"><span class="mock-label">Units</span><strong>5</strong></div>
+                <div class="mock-tile"><span class="mock-label">Need maintenance</span><strong>2</strong></div>
+                <div class="mock-tile"><span class="mock-label">In the shop</span><strong>2</strong></div>
+                <div class="mock-tile is-wash"><span class="mock-label">Balance</span><strong><span class="odometer is-plain" data-odometer="767.97" data-decimals="2" data-prefix="$" data-duration="1.6" data-seq-i="0" data-fx="none" style="--fx-pre: 1">$767.97</span></strong></div>
+              </div>
+              <div class="fleet-portal-acts">
+                <span class="mock-btn"><svg class="icon"><use href="#i-card-reader"/></svg>Pay $767.97</span>
+                <span class="mock-btn is-ghost"><svg class="icon"><use href="#i-calendar-check"/></svg>Schedule service</span>
+              </div>
+              <div class="fleet-prow-list">
+                <div class="fleet-prow" data-seq-i="1" data-fx="rise">
+                  <span class="fleet-prow-l"><strong>Unit 12</strong><small>2018&nbsp;Ford&nbsp;F-150 &middot; FLT&nbsp;2201&nbsp;IL</small><span class="fleet-pmline"><span class="mock-dot is-warn"></span><span>Tire rotation</span><b class="is-due">Due in 124 mi</b></span></span>
+                  <span class="fleet-prow-r"><span class="fleet-shop-chip"><span class="live-dot"></span>In progress</span><span class="fleet-prow-links"><span>Live status</span><span>Estimate &amp; photos</span></span></span>
+                </div>
+                <div class="fleet-prow" data-seq-i="2" data-fx="rise">
+                  <span class="fleet-prow-l"><strong>Unit 14</strong><small>2018&nbsp;Ford&nbsp;F-150 &middot; FLT&nbsp;2214&nbsp;IL</small><span class="fleet-pmline"><span class="mock-dot is-stop"></span><span>Oil &amp; filter</span><b class="is-stop">1,044 mi overdue</b></span></span>
+                  <span class="fleet-prow-r"><span class="muted">Not in the shop</span></span>
+                </div>
+                <div class="fleet-prow" data-seq-i="3" data-fx="rise">
+                  <span class="fleet-prow-l"><strong>Unit 7</strong><small>2020&nbsp;Silverado&nbsp;1500 &middot; FLT&nbsp;2207&nbsp;IL</small><span class="fleet-pmline"><span class="mock-dot is-ok"></span><span>Oil &amp; filter</span><b class="is-ok">3,636 mi &middot; 146 days left</b></span></span>
+                  <span class="fleet-prow-r"><span class="fleet-shop-chip is-warn"><span class="mock-dot is-warn"></span>Waiting on parts</span></span>
+                </div>
+                <div class="fleet-portal-more" data-seq-i="4" data-fx="fade">2 more units &middot; Open invoices &middot; Recent payments</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section-paper" id="how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">How it runs</p>
+        <h2 id="how-title">How an account <span class="accent-text">runs</span></h2>
+        <p class="lead">Set the account up once. After that, every visit follows its terms, its PO rule and its PM plans.</p>
+      </div>
+      <div class="roadmap" style="--steps:4" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="Example fleet account in the sample shop">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-briefcase"/></svg></span>
+            <h3>Set up the account</h3>
+            <p>Terms, a credit limit, the PO rule, tax status and the billing email.</p>
+            <span class="roadmap-chip">Account set up</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-truck"/></svg></span>
+            <h3>Add units and PM plans</h3>
+            <p>Unit numbers and drivers, then the oil, rotation and inspection plans.</p>
+            <span class="roadmap-chip">Units &amp; PM plans</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-document"/></svg></span>
+            <h3>Charge visits with the PO</h3>
+            <p>Charge each finished repair order to the account with its PO. It&rsquo;s due on the account&rsquo;s terms.</p>
+            <span class="roadmap-chip">Charged with PO</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-check-circle"/></svg></span>
+            <h3>Statement, then one payment</h3>
+            <p>Send the statement, then apply one check across several invoices.</p>
+            <span class="roadmap-chip">One check, 3 invoices</span>
+          </li>
+        </ol>
+      </div>
+      <p class="roadmap-caption">The invoice count is an example from the sample shop.</p>
+    </div>
+  </section>
+
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> <a href="../works-with.html#shop-cloud">Shop Cloud</a> for the fleet portal. Everything else on this page works without it.</li>
+            <li><strong>Paying from the portal:</strong> the Pay button opens the online payment link you set in Settings: a Stripe Payment Link, a Square link, or PayPal.me, Venmo or Cash App with the balance filled in. Without a link, the portal has no Pay button.</li>
+            <li><strong>Booking from the portal:</strong> Schedule service shows when online booking is turned on.</li>
+            <li><strong>Statements</strong> print or save as a PDF from the statement page. Emailing one sends it as text, from your shop&rsquo;s address with Shop Cloud and Resend, or through your own mail app.</li>
+            <li><strong>PM status</strong> is worked out from each unit&rsquo;s mileage on file and its last PM, taken from repair orders here or a date you enter by hand.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head-row" data-reveal>
+        <div class="section-head">
+          <p class="eyebrow">FAQ</p>
+          <h2 id="faq-title">Fleet questions</h2>
+        </div>
+        <a class="link-arrow" href="../faq.html">All questions <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="fleet-faq"><summary>Can I require a PO?</summary><div class="faq-body"><p>Yes. Turn on PO number required for the account, and Charge to account won&rsquo;t go through until a PO is entered.</p></div></details>
+        <details class="faq" name="fleet-faq"><summary>Can one check pay several invoices?</summary><div class="faq-body"><p>Yes, oldest first. You can also pick just the invoices the remittance lists.</p></div></details>
+        <details class="faq" name="fleet-faq"><summary>Does the fleet manager need a login?</summary><div class="faq-body"><p>No, a private link. You can turn it off from the account at any time.</p></div></details>
+        <details class="faq" name="fleet-faq"><summary>What does the portal hide?</summary><div class="faq-body"><p>Costs, margins and notes. Invoices show their totals, not line costs.</p></div></details>
+      </div>
+    </div>
+  </section>
+
   <section class="section section-sm" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>
@@ -224,8 +1115,8 @@
   </a>
   <a class="card card-link feature-card" href="../features/customers.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
-    <h3>Customers &amp; follow-ups</h3>
-    <p>Oil-service reminders, declined work and win-backs from your own history.</p>
+    <h3>Customers &amp; <span class="nowrap">follow-ups</span></h3>
+    <p><span class="nowrap">Oil-service</span> reminders, declined work and <span class="nowrap">win-backs</span> from your own history.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
 </div>
@@ -240,7 +1131,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -255,7 +1146,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
@@ -322,6 +1213,7 @@
   <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

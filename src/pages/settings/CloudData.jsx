@@ -4,7 +4,7 @@ import { CloudUpload, CloudDownload, RefreshCw, Monitor, LogOut, ShieldCheck, Da
 import { useShop, useSync, useUI, useAccess } from '../../store/hooks';
 import { Modal, Spinner, InlineText, Field } from '../../components/ui';
 import { listBackups, getBackup, backupNow, restoreBackup } from '../../lib/sync/api';
-import { stateFromRows } from '../../lib/sync/records';
+import { stateFromRows, withoutLocal } from '../../lib/sync/records';
 import { downloadJson, syncLabel } from '../../lib/sync/labels';
 import Section from './Section';
 
@@ -165,7 +165,7 @@ export function SyncSection() {
           {confirm === 'leave' && 'This device keeps its current copy but stops sending and receiving changes. You can load the shared data again any time.'}
         </p>
         {confirm === 'join' && (
-          <button className="btn-plain btn-sm mt-2 px-0" onClick={() => downloadJson(state, `wpi-driveline-this-device-${new Date().toISOString().slice(0, 10)}.json`)}>
+          <button className="btn-plain btn-sm mt-2 px-0" onClick={() => downloadJson(withoutLocal(state), `wpi-driveline-this-device-${new Date().toISOString().slice(0, 10)}.json`)}>
             <Download size={13} /> Download this device’s data first
           </button>
         )}

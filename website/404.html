@@ -21,12 +21,12 @@
 <link rel="stylesheet" href="/automotive/assets/css/site.css">
 <script src="/automotive/assets/js/site.js" defer></script>
 <script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"href_matches":"/automotive/app/*"}},{"not":{"selector_matches":"[target=_blank], [data-no-prerender]"}}]},"eagerness":"moderate"}]}</script>
-<link rel="canonical" href="https://blakew316.github.io/automotive/404.html">
+<link rel="canonical" href="https://blakew316.github.io/automotive/not-found.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="WPI Driveline Shop Management System">
 <meta property="og:title" content="Page Not Found | WPI Driveline Shop Management System">
 <meta property="og:description" content="That page isn't here. Find features, request a demo or try the sample shop for WPI Driveline Shop Management System.">
-<meta property="og:url" content="https://blakew316.github.io/automotive/404.html">
+<meta property="og:url" content="https://blakew316.github.io/automotive/not-found.html">
 <meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -36,6 +36,79 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+  /* 404: the detour scene (a car reaches a closed road on Route 404, turns around and parks), destinations, quick links */
+  .nf-hero .hero-actions .btn .icon { margin-right: 2px; }
+  .nf-help { display: flex; align-items: flex-start; gap: 10px; margin-top: 22px; max-width: 34em; color: var(--ink-3); font-size: .95rem; line-height: 1.5; }
+  .nf-help .icon { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--accent); }
+
+  @media (max-width: 959.98px) { .nf-hero .page-hero-grid { gap: 26px; } .nf-help { margin-top: 18px; } }
+  .nf-art { min-height: 0; }
+  .nf-art > .nf-detour { width: min(100%, 520px); }
+  @media (max-width: 959.98px) { .nf-art > .nf-detour { width: min(100%, 460px); } }
+  .nf-detour text { font-family: var(--font); }
+  .nf-road { fill: var(--mist-100); }
+  .nf-lane { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 14 12; stroke-opacity: .26; }
+  .nf-beam { fill: url(#nf-beam-grad); }
+  .nf-tire { fill: var(--ink); }
+  .nf-headlamp { fill: #F2C460; }
+  .nf-taillamp { fill: #E07A70; }
+  .nf-cone { fill: #F5C888; }
+  .nf-stripe-bar { fill: url(#nf-stripes); }
+  .nf-sign-face { fill: #FBE3BD; }
+  .nf-sign-rim { fill: none; stroke: var(--ink); stroke-opacity: .3; stroke-width: 1.2; }
+  .nf-sign-text { font-size: 19.5px; font-weight: 800; letter-spacing: 1.2px; fill: var(--ink); }
+  .nf-shield-small { font-size: 8px; font-weight: 700; letter-spacing: 1.2px; fill: var(--ink-3); }
+  .nf-shield-big { font-size: 23px; font-weight: 800; letter-spacing: -.5px; fill: var(--ink); }
+  .nf-bar-blue { fill: var(--blue); }
+  .nf-bar-green { fill: var(--green); }
+  .nf-grass { stroke-opacity: .55; }
+  /* The U-turn arrow on the detour sign draws, holds, undraws and redraws (5 passes), ending drawn */
+  .nf-arrow, .nf-arrow-head { stroke-width: 3; }
+  .nf-arrow { stroke-dasharray: 80; animation: nf-arrow 2.4s var(--ease-in-out) 1s 5 alternate both; }
+  .nf-arrow-head { animation: nf-arrow-head 2.4s var(--ease-in-out) 1s 5 alternate both; }
+  @keyframes nf-arrow { from { stroke-dashoffset: 80; } 62%, to { stroke-dashoffset: 0; } }
+  @keyframes nf-arrow-head { from, 52% { opacity: 0; } 66%, to { opacity: 1; } }
+  /* Barricade lamps blink in turn (14 blinks), then stay lit. fx-once: Pause shows them lit, not mid-blink */
+  .nf-lamp { fill: #F3B24E; animation: nf-blink 1.3s steps(1) 14; }
+  .nf-lamp.l2 { animation-delay: .65s; }
+  @keyframes nf-blink { 50% { opacity: .2; } }
+  /* Roadside trees sway (6 swings), then stand straight. fx-once: Pause shows them upright */
+  .nf-tree { transform-box: fill-box; transform-origin: 50% 100%; animation: nf-sway 3.2s var(--ease-in-out) 6 alternate; }
+  .nf-tree.t2 { animation-delay: .9s; }
+  @keyframes nf-sway { to { transform: rotate(3deg); } }
+  @media (prefers-reduced-motion: reduce) {
+    .nf-detour :is(.nf-arrow, .nf-arrow-head, .nf-lamp, .nf-tree) { animation: none; }
+  }
+  .nf-art .float-note.note-a { top: 2%; left: -3%; }
+  /* keep the "Road closed" chip off the top of the Route 404 shield */
+  @media (min-width: 600px) and (max-width: 959.98px) { .nf-art .float-note.note-a { top: -1%; } }
+  @media (min-width: 960px) and (max-width: 1239.98px) { .nf-art .float-note.note-a { top: -5%; left: -6%; } }
+  .nf-art .float-note.note-b { top: auto; bottom: -10%; left: 16%; right: auto; }
+
+  #detour.section { padding-bottom: clamp(36px, 1.5rem + 2.5vw, 72px); }
+  #needs.section-sm { padding-top: 0; }
+
+  .grid.nf-dest { grid-template-columns: 1fr; }
+  @media (min-width: 640px) { .grid.nf-dest { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (min-width: 1080px) { .grid.nf-dest { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+  .nf-popular {
+    display: grid; gap: 14px; margin-top: clamp(28px, 1.5rem + 1.5vw, 48px);
+    padding: clamp(18px, 1rem + 1vw, 26px); border-radius: var(--r-lg);
+    background: var(--mist-50); border: 1px solid var(--line);
+  }
+  @media (min-width: 900px) { .nf-popular { grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 28px; } }
+  .nf-popular-title { display: flex; align-items: center; gap: 10px; font-size: 1.05rem; white-space: nowrap; }
+  .nf-popular-title .icon-tile { width: 34px; height: 34px; border-radius: 10px; }
+  .nf-popular-title .icon-tile .icon { width: 18px; height: 18px; }
+  .nf-chips { list-style: none; padding: 0; margin: 0; }
+  .nf-chips .chip { min-height: 40px; text-decoration: none; transition: border-color var(--dur-1) var(--ease), box-shadow var(--dur-2) var(--ease), transform var(--dur-2) var(--ease), color var(--dur-1) var(--ease); }
+  @media (hover: hover) { .nf-chips .chip:hover { border-color: var(--accent); color: var(--ink); transform: translateY(-1px); box-shadow: var(--shadow-1); } }
+  .nf-chips .chip:active { transform: scale(.97); }
+  .nf-chips .chip:focus-visible { outline-offset: 2px; }
+  @media (pointer: coarse) { .nf-chips .chip { min-height: 44px; } }
+</style>
 </head>
 <body data-page="notfound" id="top">
 <!-- @partial icons -->
@@ -163,7 +236,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="/automotive/features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="/automotive/features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="/automotive/features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -191,15 +264,202 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
+  <section class="page-hero nf-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <p class="eyebrow"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-directions"/></svg></span>Error 404 &middot; Page not found</p>
+        <h1 id="hero-title">Looks like you took a <span class="accent-text">wrong turn.</span></h1>
+        <p class="lead">That page isn&rsquo;t here. If you were looking for the old shop pages, this site is now home to WPI Driveline Shop Management System.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="/automotive/index.html"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Back to home</a>
+          <a class="btn btn-secondary btn-lg" href="/automotive/demo.html">Request a demo</a>
+        </div>
+        <p class="nf-help"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Typed the address? Type it again and check the spelling. Followed a broken link on this site? <a class="text-link" href="/automotive/demo.html?topic=question">Tell us</a>.</span></p>
+      </div>
+
+      <figure class="page-hero-art nf-art" data-play aria-label="Illustration: a car drives up to a closed road on Route 404, turns around at the detour sign and parks, facing the way back.">
+        <svg class="nf-detour" viewBox="0 40 440 300" data-smil-rest="15" aria-hidden="true" focusable="false">
+          <defs>
+            <radialGradient id="nf-glow" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="#E1EDFB" stop-opacity=".95"/>
+              <stop offset=".62" stop-color="#EAF3FC" stop-opacity=".55"/>
+              <stop offset="1" stop-color="#F5F9FE" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="nf-fade-grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".16" stop-color="#fff" stop-opacity="1"/><stop offset=".88" stop-color="#fff" stop-opacity="1"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+            <mask id="nf-fade" maskUnits="userSpaceOnUse" x="0" y="0" width="440" height="380">
+              <rect width="440" height="380" fill="url(#nf-fade-grad)"/>
+            </mask>
+            <linearGradient id="nf-beam-grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#C9DEF7" stop-opacity=".85"/><stop offset="1" stop-color="#C9DEF7" stop-opacity="0"/>
+            </linearGradient>
+            <pattern id="nf-stripes" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <rect width="14" height="14" fill="#fff"/><rect width="7" height="14" fill="#F5C888"/>
+            </pattern>
+            <!-- the car, seen from above, facing +x (animateMotion turns it with the road) -->
+            <g id="nf-car-shape">
+              <g transform="scale(1.12)">
+                <path class="nf-beam" d="M22 -6L66 -19V19L22 6Z"/>
+                <rect class="nf-tire" x="-17" y="-14" width="10" height="4.5" rx="1.5"/>
+                <rect class="nf-tire" x="8" y="-14" width="10" height="4.5" rx="1.5"/>
+                <rect class="nf-tire" x="-17" y="9.5" width="10" height="4.5" rx="1.5"/>
+                <rect class="nf-tire" x="8" y="9.5" width="10" height="4.5" rx="1.5"/>
+                <rect class="art-ink art-paper" x="-23" y="-11.5" width="46" height="23" rx="7"/>
+                <rect class="art-ink art-thin art-tint" x="-10" y="-8" width="16" height="16" rx="4"/>
+                <path class="art-ink art-thin art-soft" d="M7 -8.5L13.5 -7Q15.5 0 13.5 7L7 8.5Z"/>
+                <path class="art-ink art-thin art-soft" d="M-12 -7.5L-16.5 -6.5Q-18 0 -16.5 6.5L-12 7.5Z"/>
+                <circle class="nf-headlamp" cx="20.5" cy="-7" r="1.8"/>
+                <circle class="nf-headlamp" cx="20.5" cy="7" r="1.8"/>
+                <rect class="nf-taillamp" x="-23.5" y="-9" width="2.5" height="4" rx="1"/>
+                <rect class="nf-taillamp" x="-23.5" y="5" width="2.5" height="4" rx="1"/>
+              </g>
+            </g>
+          </defs>
+
+          <!-- soft sky behind the signs -->
+          <ellipse cx="232" cy="190" rx="222" ry="150" fill="url(#nf-glow)"/>
+
+          <!-- roadside trees and grass -->
+          <g class="nf-tree fx-once">
+            <path class="art-ink art-thin" d="M170 220v-28"/>
+            <circle class="art-ink art-thin art-soft" cx="170" cy="182" r="17"/>
+          </g>
+          <g class="nf-tree t2 fx-once">
+            <path class="art-ink art-thin" d="M204 220v-22"/>
+            <circle class="art-ink art-thin art-lilac" cx="204" cy="190" r="11"/>
+          </g>
+          <path class="art-ink art-thin nf-grass" d="M136 220q1-7-2-11M141 220q0-9 1-14M146 220q1-6 4-9M226 220q1-6-2-10M231 220q0-8 1-12"/>
+
+          <!-- Route 404 shield -->
+          <rect class="art-ink art-paper" x="88" y="160" width="8" height="58" rx="2"/>
+          <path class="art-ink art-tint" d="M60 104Q92 93 124 104V128Q124 156 92 171Q60 156 60 128Z"/>
+          <text class="nf-shield-small" x="92" y="118" text-anchor="middle">ROUTE</text>
+          <rect class="nf-bar-blue" x="76" y="122.5" width="15" height="2.6" rx="1"/>
+          <rect class="nf-bar-green" x="93" y="122.5" width="15" height="2.6" rx="1"/>
+          <text class="nf-shield-big" x="92" y="149" text-anchor="middle">404</text>
+
+          <!-- the road and the car (faded in and out at the edges) -->
+          <g mask="url(#nf-fade)">
+            <rect class="nf-road" x="0" y="222" width="440" height="80"/>
+            <path class="art-ink art-thin" d="M0 222H440M0 302H440"/>
+            <path class="nf-lane" d="M0 262H360"/>
+            <g>
+              <use href="#nf-car-shape"/>
+              <!-- first pass: in, U-turn at the cones, back out -->
+              <animateMotion dur="8s" begin="0s" rotate="auto" calcMode="spline"
+                path="M-50 282H300A20 20 0 0 0 300 242H-50"
+                keyPoints="0;0.4588;0.5412;1;1" keyTimes="0;0.4;0.6;0.9;1"
+                keySplines="0.15 0.5 0.45 1;0.45 0 0.55 1;0.55 0 0.9 0.55;0 0 1 1"/>
+              <!-- second pass: in, U-turn, then roll to a stop under the detour sign -->
+              <animateMotion dur="6.5s" begin="8s" rotate="auto" calcMode="spline" fill="freeze"
+                path="M-50 282H300A20 20 0 0 0 300 242H236"
+                keyPoints="0;0.734;0.866;1" keyTimes="0;0.52;0.74;1"
+                keySplines="0.15 0.5 0.45 1;0.45 0 0.55 1;0.3 0.2 0.2 1"/>
+            </g>
+          </g>
+
+          <!-- cones -->
+          <g class="art-ink art-thin">
+            <path class="nf-cone" d="M352 232L344 254H360Z"/>
+            <path d="M347.5 244H356.5" stroke="#fff" stroke-width="3"/>
+            <path d="M340 254H364"/>
+            <path class="nf-cone" d="M352 272L344 294H360Z"/>
+            <path d="M347.5 284H356.5" stroke="#fff" stroke-width="3"/>
+            <path d="M340 294H364"/>
+          </g>
+
+          <!-- road-closed barricade with two warning lamps -->
+          <rect class="art-ink art-paper" x="382" y="228" width="7" height="80" rx="2"/>
+          <rect class="art-ink art-paper" x="418" y="228" width="7" height="80" rx="2"/>
+          <rect class="art-ink nf-stripe-bar" x="372" y="238" width="62" height="14" rx="3"/>
+          <rect class="art-ink nf-stripe-bar" x="372" y="262" width="62" height="14" rx="3"/>
+          <circle class="nf-lamp fx-once art-ink art-thin" cx="385.5" cy="222" r="5.5"/>
+          <circle class="nf-lamp l2 fx-once art-ink art-thin" cx="421.5" cy="222" r="5.5"/>
+
+          <!-- detour sign with a U-turn arrow -->
+          <rect class="art-ink art-paper" x="296" y="124" width="8" height="94" rx="2"/>
+          <rect class="art-ink nf-sign-face" x="222" y="66" width="156" height="60" rx="9"/>
+          <rect class="nf-sign-rim" x="228" y="72" width="144" height="48" rx="6"/>
+          <text class="nf-sign-text" x="285" y="103.5" text-anchor="middle">DETOUR</text>
+          <path class="nf-arrow fx-once art-ink" d="M362 112V98A9 9 0 0 0 344 98V110"/>
+          <path class="nf-arrow-head fx-once art-ink" d="M338 105L344 111.5L350 105"/>
+        </svg>
+        <div class="float-note note-a" aria-hidden="true"><span class="dot is-stop"></span><span><strong>Road closed ahead</strong><small>That page isn&rsquo;t here</small></span></div>
+        <div class="float-note note-b" aria-hidden="true"><span class="dot is-ok"></span><span><strong>Detour found</strong><small>Pick a destination below</small></span></div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="detour" aria-labelledby="detour-title">
     <div class="container">
-      <h1>Looks like you took a wrong turn.</h1>
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Your detour</p>
+        <h2 id="detour-title">Where would you like to go?</h2>
+        <p class="lead">Browse the features, ask for a demo, or open the sample shop and click around.</p>
+      </div>
+      <div class="grid grid-4 nf-dest" data-reveal-stagger>
+        <a class="card card-link feature-card" href="/automotive/features.html">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg></span>
+          <h3>All features</h3>
+          <p>Every stop from check-in to paid.</p>
+          <span class="link-arrow">See all features <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+        </a>
+        <a class="card card-link feature-card" href="/automotive/demo.html">
+          <span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>
+          <h3>Request a demo</h3>
+          <p>Tell us about your shop.</p>
+          <span class="link-arrow">Request a demo <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+        </a>
+        <a class="card card-link feature-card" href="/automotive/app/" data-no-prerender>
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span>
+          <h3>Try the sample shop</h3>
+          <p>A made-up shop. No sign-up.</p>
+          <span class="link-arrow">Open the sample shop <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+        </a>
+        <a class="card card-link feature-card" href="/automotive/app/signin" data-no-prerender>
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg></span>
+          <h3>Sign in</h3>
+          <p>Already using it? Sign in with your staff login.</p>
+          <span class="link-arrow">Sign in <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+        </a>
+      </div>
+
+      <div class="nf-popular" data-reveal>
+        <h3 class="nf-popular-title" id="popular-title"><span class="icon-tile" aria-hidden="true"><svg class="icon"><use href="#i-directions"/></svg></span>Quick links</h3>
+        <ul class="pill-cloud nf-chips" aria-labelledby="popular-title">
+          <li><a class="chip" href="/automotive/features/inspections.html"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspections &amp; approvals</a></li>
+          <li><a class="chip" href="/automotive/features/workflow.html"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Workflow board</a></li>
+          <li><a class="chip" href="/automotive/features/payments.html"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Payments</a></li>
+          <li><a class="chip" href="/automotive/mobile.html"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>iPhone &amp; iPad</a></li>
+          <li><a class="chip" href="/automotive/security.html"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Security</a></li>
+          <li><a class="chip" href="/automotive/faq.html"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Old shop pages:</strong> links to the old services, appointment, contact and fleet pages forward to the closest page on this site. This site doesn&rsquo;t book repairs.</li>
+            <li><strong>The sample shop</strong> is Main Street Auto Service, a made-up shop. What you change there stays in this browser. If this browser already holds your own shop, the link opens yours instead.</li>
+            <li><strong>Sign in needs:</strong> <a href="/automotive/works-with.html#shop-cloud">Shop Cloud</a> and a staff login. The owner hands out logins under Team &rarr; Staff &amp; access.</li>
+            <li><strong>Prices:</strong> we don&rsquo;t publish prices. Tell us about your shop in a <a href="/automotive/demo.html">demo request</a>, and ask how <a href="/automotive/works-with.html#shop-cloud">Shop Cloud</a> is set up and billed for you. Services you connect (Stripe, Twilio, Resend, Anthropic, Smartcar, Intuit) bill your shop directly at their own rates.</li>
+          </ul>
+        </div>
+      </aside>
     </div>
   </section>
 </main>
 
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="/automotive/index.html" aria-label="WPI Driveline Shop Management System home">
@@ -266,6 +526,7 @@
   <a class="tab tab-book" href="/automotive/demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="/automotive/mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

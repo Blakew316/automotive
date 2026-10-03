@@ -44,17 +44,24 @@
 .index-today .mock-section-title .mock-chip { padding: 0 7px; line-height: 1.5; }
 .index-today .mock-row { min-height: 32px; padding-block: 6px; }
 .index-today .mock-bars { height: 46px; }
-@media (max-width: 559.98px) {
+/* Five tiles fit one row only when the card is wide; otherwise a 3 + 2 grid */
+@media (max-width: 559.98px), (min-width: 980px) and (max-width: 1239.98px) {
   .index-tiles.mock-tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .index-tiles > :nth-child(-n+3) { grid-column: span 2; }
   .index-tiles > :nth-child(n+4) { grid-column: span 3; }
-  .index-today .mock-tile strong { font-size: 17px; }
 }
+@media (max-width: 559.98px) { .index-today .mock-tile strong { font-size: 17px; } }
+.index-nowrap { white-space: nowrap; }
 
-/* Hero chips: they sit on the card's lower corners, clear of the tag, the title bar and the tiles */
+/* Hero chips: both sit in the band under the card, clear of the tag, the tiles, the rows and the bars.
+   Side by side from 1180px; below that the band is taller and they step down left to right. */
 .index-hero-fig { padding-bottom: 26px; }
-.index-hero-fig .float-note.note-1 { top: auto; bottom: 74px; left: -30px; }
+.index-hero-fig .float-note.note-1 { top: auto; bottom: 0; left: -30px; }
 .index-hero-fig .float-note.note-2 { top: auto; bottom: 0; right: -14px; }
+@media (min-width: 980px) and (max-width: 1179.98px) {
+  .index-hero-fig { padding-bottom: 100px; }
+  .index-hero-fig .float-note.note-1 { bottom: 80px; }
+}
 
 /* Feature ticker band (Reduce Motion wraps it into pills; keep them compact on phones) */
 .index-ticker { position: relative; }
@@ -110,10 +117,13 @@
 .index-approve .card-stage.is-pair > .card-deal:first-child { width: 74%; }
 .index-approve .card-stage.is-pair > .card-deal:nth-child(2) { width: 37%; min-width: 0; margin-bottom: -16%; }
 .index-approve .mock-tablet > .mock-screen { gap: 10px; }
-.index-insp { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 10px; align-items: start; }
+/* The checklist runs full width; the gauge and the photo sit side by side under it on the left,
+   which keeps the tablet's bottom-right corner free for the phone at every width */
+.index-insp { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-items: start; }
 .index-insp .mock-check { padding: 5px 8px; min-height: 30px; gap: 7px; }
-.index-insp-side { display: grid; gap: 8px; justify-items: center; }
+.index-insp-side { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 10px; align-items: end; justify-items: center; width: 62%; justify-self: start; }
 .index-insp-side .mock-gauge { max-width: 140px; }
+@media (min-width: 600px) { .index-insp > .mock-checklist { width: 80%; } }
 .index-photo { position: relative; display: grid; gap: 6px; justify-items: start; width: 100%; }
 .index-photo svg { width: 100%; height: auto; display: block; }
 .index-photo .mock-chip { font-size: 12px; }
@@ -142,8 +152,15 @@
   .index-approve .card-stage.is-pair { padding-bottom: 30%; }
   .index-approve .card-stage.is-pair > .card-deal:first-child { width: 100%; }
   .index-approve .card-stage.is-pair > .card-deal:nth-child(2) { width: 60%; margin-bottom: -34%; margin-right: -2%; }
-  .index-insp { grid-template-columns: minmax(0, 1fr); }
-  .index-insp-side { width: 40%; justify-self: start; }
+  /* Narrow: the gauge sits over the photo in a column that ends before the phone starts */
+  .index-insp-side { grid-template-columns: minmax(0, 1fr); width: 36%; }
+}
+@media (max-width: 379.98px) { /* the phone drops lower so the ratings stay visible */
+  .index-approve .card-stage.is-pair { padding-bottom: 52%; }
+  .index-approve .card-stage.is-pair > .card-deal:nth-child(2) { width: 56%; margin-bottom: -56%; }
+  .index-approve .mock-tablet .mock-appbar { gap: 6px; font-size: 12px; white-space: nowrap; }
+  .index-approve .mock-tablet .mock-appbar small { font-size: 11.5px; }
+  .index-photo .mock-chip { white-space: normal; line-height: 1.3; padding-block: 3px; }
 }
 
 /* Ch 3: board */
@@ -160,6 +177,8 @@
   .index-board .mock-board { padding-top: 5px; }
   .index-board .mock-board > .mock-col { padding-inline: 6px; }
 }
+/* Five columns don't fit until 1180px: show Approved, In Progress and Ready (as site.css does from 900px) */
+@media (min-width: 700px) and (max-width: 899.98px) { .index-board .mock-col.is-optional { display: none; } }
 .index-swap { display: inline-grid; }
 .index-swap > * { grid-area: 1 / 1; justify-self: end; }
 
@@ -198,13 +217,17 @@
 /* Customer pages */
 .index-pages-grid { display: grid; gap: clamp(32px, 2rem + 2vw, 72px); align-items: center; }
 @media (min-width: 1000px) { .index-pages-grid { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } }
-.index-pages-fig .mock-phone { width: 100%; }
+/* The phones size to their content (a fixed 9:18 frame cut off the Powered by line) and share the tallest height */
+.index-pages-fig .mock-phone { width: 100%; aspect-ratio: auto; }
+.index-pages-fig .card-stage.is-trio { align-items: stretch; }
+.index-pages-fig .card-stage.is-trio > .card-deal { align-content: stretch; }
 .index-pages-fig .card-stage.is-trio > .card-deal:nth-child(1) { margin-right: -1.5%; }
 .index-pages-fig .card-stage.is-trio > .card-deal:nth-child(3) { margin-left: -1.5%; }
 .index-cp .mock-line { font-size: 12px; padding: 5px 0; border-bottom: 1px dashed var(--m-line); }
 .index-cp .mock-line > :last-child { font-weight: 650; }
 .index-cp { gap: 9px; }
 .index-cp .mock-btn { min-height: 32px; }
+.index-cp .mock-field { white-space: normal; overflow-wrap: anywhere; }
 .index-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .index-slots span { padding: 6px 4px; border-radius: 9px; border: 1px solid var(--line-strong); text-align: center; font-size: 12px; font-weight: 600; white-space: nowrap; }
 .index-slots .is-on { background: var(--accent-soft); border-color: var(--blue); color: var(--accent-ink); }
@@ -215,6 +238,9 @@
 .index-cp .mock-timeline li { font-size: 12px; gap: 8px; }
 .index-powered { margin-top: auto; padding-top: 8px; font-size: 12px; line-height: 1.3; color: var(--ink-3); text-align: center; }
 .index-pages-pills { justify-content: center; margin-top: clamp(32px, 2rem + 1vw, 48px); }
+@media (max-width: 599.98px) {
+  .index-pages-fig .index-powered { margin-top: 10px; }
+}
 
 /* Built in */
 .index-built { display: grid; gap: 36px; align-items: start; }
@@ -236,6 +262,7 @@
 .index-import-ok { background: var(--green-100); color: var(--green-ink); }
 .index-import .icon { width: 16px; height: 16px; }
 .index-import-flow { width: 64px; height: 16px; flex: none; }
+@media (max-width: 519.98px) { .index-import-flow { display: none; } }
 
 /* FAQ */
 .index-faq { align-items: start; }
@@ -368,7 +395,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -406,7 +433,7 @@
     <div class="container hero-grid">
       <div class="hero-in">
         <p class="chip chip-soft">WPI Driveline Shop Management System</p>
-        <h1 id="hero-title">Every car, from check-in to paid, <span class="accent-text">in one system.</span></h1>
+        <h1 id="hero-title">Every car, from <span class="index-nowrap">check-in</span> to paid, <span class="accent-text">in one system.</span></h1>
         <p class="lead">Shop management for independent auto repair shops. Each car moves from the key drop to the inspection, the approval, the bay, the invoice and the follow-up, on the counter PC, the bay tablet and your phone, and each device keeps working when the internet drops.</p>
         <div class="hero-actions">
           <a class="btn btn-primary btn-lg" href="demo.html">Request a demo</a>
@@ -416,7 +443,7 @@
         <div class="hero-trust">
           <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-wifi-off"/></svg>Works offline</span>
           <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>Installs on iPhone, iPad, Android, Mac &amp; PC</span>
-          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Card payments and texting on your own Stripe &amp; Twilio accounts</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg><span>Card payments and texting on your own Stripe &amp; Twilio accounts, through <a href="works-with.html#shop-cloud">Shop Cloud</a></span></span>
         </div>
       </div>
 
@@ -437,12 +464,12 @@
                   </div>
                   <div class="mock-section-title">Needs attention <span class="mock-chip is-idle">4</span></div>
                   <div class="mock-rows" data-at="1" data-fx="stagger">
-                    <div class="mock-row"><span class="mock-dot is-stop"></span><span>2018 Ford F-150 is past its promise time</span><span class="mock-chip is-stop">Late</span></div>
-                    <div class="mock-row"><span class="mock-dot is-warn"></span><span>2020 Chevrolet Silverado 1500 waiting on parts</span><span class="mock-chip is-warn">Parts</span></div>
+                    <div class="mock-row"><span class="mock-dot is-warn"></span><span>2020 Silverado 1500 waiting on parts</span><span class="mock-chip is-warn">Parts</span></div>
+                    <div class="mock-row"><span class="mock-dot"></span><span>2021 Wrangler Unlimited estimate needs a follow-up</span><span class="mock-chip">Follow up</span></div>
                   </div>
                   <div class="mock-rows" data-at="2" data-fx="stagger">
-                    <div class="mock-row"><span class="mock-dot"></span><span>2019 BMW 330i estimate needs a follow-up</span><span class="mock-chip">Follow up</span></div>
                     <div class="mock-row"><span class="mock-dot is-ok"></span><span>Ready · $254.52 due · Avery T.</span><span class="mock-chip is-ok">Ready</span></div>
+                    <div class="mock-row"><span class="mock-dot is-ok"></span><span>Ready · $444.02 due · Elijah B.</span><span class="mock-chip is-ok">Ready</span></div>
                   </div>
                   <div class="mock-section-title">Invoiced, last 14 days</div>
                   <div class="mock-bars" data-at="3" data-fx="stagger" style="--fx: bar-grow; --fx-stagger: 40ms">
@@ -466,8 +493,8 @@
         <div class="float-note note-2" aria-hidden="true">
           <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-chat"/></svg></span>
           <span class="note-msgs" data-cycle>
-            <span class="is-active"><strong>Text sent to Avery T.</strong><small>Your Accord is ready · live status link</small></span>
-            <span><strong>Marcus R. started a job</strong><small>Water pump · 2020 Ram 1500</small></span>
+            <span class="is-active"><strong>Text sent to Avery T.</strong><small>Your Accord is ready · pay link</small></span>
+            <span><strong>2021 Camry SE → In Progress</strong><small>Kim P. tapped Start · Activity</small></span>
           </span>
         </div>
       </figure>
@@ -536,7 +563,7 @@
     <div class="container split">
       <div class="section-copy" data-reveal="left">
         <p class="eyebrow">Stop 1 · Check-in</p>
-        <h2 id="ch-checkin-title">Check-in: the repair order is waiting <span class="accent-text">when you open up</span></h2>
+        <h2 id="ch-checkin-title">Check-in: the key drop <span class="accent-text">opens the repair order</span></h2>
         <p>Customers request a time from your booking page, and it only offers times you have open. You accept the request, and the customer and vehicle are added or matched.</p>
         <p>After hours, they scan the QR code on the key-drop sign, enter their details and concern, scan the VIN barcode, note the key tag, and sign a diagnosis authorization up to your dollar limit.</p>
         <p>The repair order opens on your shop devices as soon as one is signed in and open. It's matched to the customer and vehicle and attached to today's appointment.</p>
@@ -615,7 +642,7 @@
                       <path class="g-band is-stop" d="M15 60a45 45 0 0 1 8.2-25.9"/>
                       <path class="g-band is-warn" d="M23.2 34.1a45 45 0 0 1 22.6-16.8"/>
                       <path class="g-band is-ok" d="M45.8 17.3a45 45 0 0 1 59.2 42.7"/>
-                      <line class="needle" data-at="1" data-fx="sweep" x1="60" y1="60" x2="60" y2="24" style="--from:-90deg; --to:-22deg; transform-origin: 60px 60px"/>
+                      <line class="needle" data-at="1" data-fx="sweep" x1="60" y1="60" x2="60" y2="24" style="--from:-90deg; --to:-16deg; transform-origin: 60px 60px"/>
                       <circle class="g-hub" cx="60" cy="60" r="4"/>
                       <text x="60" y="80" text-anchor="middle">Tread 6/32</text>
                     </svg>
@@ -691,15 +718,15 @@
           <div class="mock-window board-frame"><div class="mock-screen">
             <div class="mock-board">
               <div class="mock-col is-optional" data-col="estimate"><div class="mock-col-head"><span>Estimate</span><span class="mock-count">3</span></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2019 Tesla Model 3</strong></div><div class="mock-card-meta"><span>Harper N.</span></div><div class="mock-card-foot"><span>Services 0/3</span></div></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2021 Jeep Wrangler</strong></div><div class="mock-card-meta"><span>Wesley G.</span></div><div class="mock-card-foot"><span>Services 0/3</span></div></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2019 BMW 330i</strong></div><div class="mock-card-meta"><span>Lena K.</span></div><div class="mock-card-foot"><span>Services 0/1</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 Tesla Model 3</strong></div><div class="mock-card-meta"><span>Harper N.</span></div><div class="mock-card-foot"><span>50m ago</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2021 Jeep Wrangler</strong></div><div class="mock-card-meta"><span>Wesley G.</span></div><div class="mock-card-foot"><span>18h ago</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 BMW 330i</strong></div><div class="mock-card-meta"><span>Lena K.</span></div><div class="mock-card-foot"><span>20m ago</span></div></div>
               </div>
               <div class="mock-col" data-col="approved"><div class="mock-col-head"><span>Approved</span><span class="mock-count">1</span></div>
                 <div class="mock-card"><div class="mock-card-top"><strong>2016 Nissan Altima</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Carlos M.</span><span class="mock-chip">1:00 PM</span></div><div class="mock-card-foot"><span>Services 0/2</span></div></div>
               </div>
               <div class="mock-col" data-col="progress"><div class="mock-col-head"><span>In Progress</span><span class="mock-count">2</span></div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2018 Ford F-150</strong><span class="mock-avatar">LO</span></div><div class="mock-card-meta"><span>Jordan M.</span><span class="mock-chip is-stop">11:30 AM</span></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2018 Ford F-150</strong><span class="mock-avatar">LO</span></div><div class="mock-card-meta"><span>Jordan M.</span><span class="mock-chip">11:30 AM</span></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
                 <div class="mock-card"><div class="mock-card-top"><strong>2020 Ram 1500</strong><span class="mock-avatar">MR</span></div><div class="mock-card-meta"><span>Carlos M.</span><span class="mock-chip">12:00 PM</span></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
               </div>
               <div class="mock-col is-optional" data-col="parts"><div class="mock-col-head"><span>Waiting on Parts</span><span class="mock-count">1</span></div>
@@ -714,9 +741,9 @@
                   <span class="mock-done-dot" data-at="4" data-fx="pop"></span>
                   <div class="mock-card-top"><strong>2021 Camry SE</strong><span class="mock-avatar">KP</span></div>
                   <div class="mock-card-meta"><span>Priya R.</span><span class="mock-chip">10:30 AM</span></div>
-                  <div class="mock-card-foot"><span>Timer <span class="odometer is-plain" data-odometer="01:12" data-from="00:00" data-duration=".4" data-at="1">01:12</span></span></div>
+                  <div class="mock-card-foot"><span>Services <span class="index-swap"><span data-until="1">0</span><span class="odometer is-plain" data-odometer="4" data-from="0" data-duration=".4" data-at="1" data-fx="fade">4</span></span>/4</span></div>
                 </div>
-                <div class="mock-card"><div class="mock-card-top"><strong>2020 Honda Accord</strong><span class="mock-avatar">KP</span></div><div class="mock-card-meta"><span>Avery T.</span></div><div class="mock-card-foot"><span>Services 2/3</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2020 Honda Accord</strong><span class="mock-avatar">KP</span></div><div class="mock-card-meta"><span>Avery T.</span></div><div class="mock-card-foot"><span>Services 2/2</span></div></div>
                 <div class="mock-card"><div class="mock-card-top"><strong>2019 Honda CR-V</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Elijah B.</span></div><div class="mock-card-foot"><span>Services 2/2</span></div></div>
               </div>
             </div>
@@ -797,7 +824,7 @@
               <span class="icon-tile index-fu-oil" data-seq-i="3" data-fx="pulse" style="--fx-n: 1"><svg class="icon"><use href="#i-oil"/></svg></span>
               <div class="index-fu-odo">
                 <span class="mock-label">2021 Camry SE · projected miles</span>
-                <span class="index-fu-num"><span class="odometer is-plain" data-odometer="35120" data-from="34870" data-group="," data-duration="1.3">35,120</span></span>
+                <span class="index-fu-num"><span class="odometer" data-odometer="35120" data-from="34870" data-group="," data-duration="1.3">35,120</span></span>
               </div>
               <span class="mock-chip is-warn index-fu-due" data-seq-i="3" data-fx="pop">Due</span>
             </div>
@@ -838,8 +865,8 @@
                   <span class="mock-field">2021 Toyota Camry SE</span>
                   <span class="mock-label">What do you need?</span>
                   <span class="mock-field">Oil change</span>
-                  <span class="mock-btn">Request this time</span>
-                  <span class="mock-sub">The shop will confirm by text.</span>
+                  <span class="mock-btn">Request appointment</span>
+                  <span class="mock-sub">We'll confirm by text.</span>
                   <span class="index-powered">Powered by WPI Driveline Shop Management System</span>
                 </div>
               </div>
@@ -865,11 +892,10 @@
               <div class="mock-phone tilt" data-tilt="4">
                 <div class="mock-screen index-cp">
                   <div class="index-cust-head is-sm"><strong>Main Street Auto Service</strong><span>2020 Honda Accord EX-L</span></div>
-                  <span class="mock-label">Balance due</span>
                   <div class="index-cp-amount">$254.52</div>
-                  <div class="mock-line"><span>Invoice total</span><span>$254.52</span></div>
+                  <span class="mock-label">Amount due</span>
                   <span class="mock-btn">Pay $254.52</span>
-                  <span class="mock-sub">Pay by card. The shop sees your payment.</span>
+                  <span class="mock-sub">Secure checkout by Stripe. The shop never sees your card number.</span>
                   <span class="index-powered">Powered by WPI Driveline Shop Management System</span>
                 </div>
               </div>
@@ -903,11 +929,11 @@
         </div>
         <div class="promise-grid" data-reveal-stagger>
           <div class="promise"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-wifi-off"/></svg></span><h3>Works offline</h3><p>Each device keeps the shop's records and installs from the browser on iPhone, iPad, Android, Mac and PC.</p></div>
-          <div class="promise"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg></span><h3>Your accounts, your money</h3><p>Payments go straight to your own Stripe account, and the services you connect bill you directly.</p></div>
-          <div class="promise"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><h3>Assistant drafts wait for staff</h3><p>The AI assistant never sends on its own. The optional AI receptionist is the exception: it says it's a virtual assistant and can text callers your booking link or directions.</p></div>
+          <div class="promise"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg></span><h3>Your accounts, your money</h3><p>Payments go straight to your own Stripe account, and the services you connect through <a href="works-with.html#shop-cloud">Shop Cloud</a> bill you directly.</p></div>
+          <div class="promise"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><h3>Assistant drafts wait for staff</h3><p>The AI assistant never sends on its own. The AI receptionist is the exception: its default greeting says it&rsquo;s the shop&rsquo;s virtual assistant, and it can text callers your booking link or directions. Both use <a href="works-with.html#shop-cloud">Shop Cloud</a>.</p></div>
           <div class="promise"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg></span><h3>Customer pages never show your costs</h3><p>Reports, status and pay pages leave out costs, margins, tech pay and internal notes.</p></div>
           <div class="promise"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg></span><h3>Every change has a history</h3><p>Six months of changes with one-click restore, with <a href="works-with.html#shop-cloud">Shop Cloud</a>.</p></div>
-          <div class="promise"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-cloud"/></svg></span><h3>Backed up every night</h3><p>The last 14 nightly backups are kept, with Shop Cloud.</p></div>
+          <div class="promise"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-cloud"/></svg></span><h3>Backed up every night</h3><p>The 14 most recent backups are kept, with <a href="works-with.html#shop-cloud">Shop Cloud</a>.</p></div>
         </div>
       </div>
     </div>
@@ -920,7 +946,7 @@
         <div class="section-head">
           <p class="eyebrow">Features</p>
           <h2 id="features-grid-title">Every part of the shop, <span class="accent-text">one system</span></h2>
-          <p class="lead">Twelve areas, in the order a car moves through your day.</p>
+          <p class="lead">Twelve parts of one system, from the first booking to the books.</p>
         </div>
         <a class="link-arrow" href="features.html">All features <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
       </div>
@@ -928,8 +954,8 @@
 <div class="grid grid-3" data-reveal-stagger>
   <a class="card card-link feature-card" href="features/booking.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>
-    <h3>Booking, check-in &amp; front desk</h3>
-    <p>Only real open times. A key-drop check-in opens the RO.</p>
+    <h3>Booking, <span class="nowrap">check-in</span> &amp; front desk</h3>
+    <p>Customers pick only times you have open. A <span class="nowrap">key-drop</span> <span class="nowrap">check-in</span> arrives as a new RO on your <span class="nowrap">signed-in</span> devices.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
   <a class="card card-link feature-card" href="features/messaging.html">
@@ -940,14 +966,14 @@
   </a>
   <a class="card card-link feature-card" href="features/customers.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
-    <h3>Customers &amp; follow-ups</h3>
-    <p>Oil-service reminders, declined work and win-backs from your own history.</p>
+    <h3>Customers &amp; <span class="nowrap">follow-ups</span></h3>
+    <p><span class="nowrap">Oil-service</span> reminders, declined work and <span class="nowrap">win-backs</span> from your own history.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
   <a class="card card-link feature-card" href="features/workflow.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span>
     <h3>Workflow board, Today &amp; tech clock</h3>
-    <p>Every car by stage. One-tap job timers.</p>
+    <p>Every car by stage. <span class="nowrap">One-tap</span> job timers.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
   <a class="card card-link feature-card" href="features/inspections.html">
@@ -995,7 +1021,7 @@
   <a class="card card-link feature-card" href="features/ai.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
     <h3>AI assistant</h3>
-    <p>First drafts from Claude. Your team has the last word.</p>
+    <p>First drafts from Claude for your team to review, plus an AI receptionist for calls.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
   <a class="card card-link feature-card card-soft" href="features.html">
@@ -1080,7 +1106,7 @@
         <details class="faq" name="home-faq"><summary>What does it cost?</summary><div class="faq-body"><p>We don't publish prices. Tell us about your shop in a <a href="demo.html">demo request</a>, and ask how <a href="works-with.html#shop-cloud">Shop Cloud</a> is set up and billed for you. Services you connect (Stripe, Twilio, Resend, Anthropic, Smartcar, Intuit) bill your shop directly at their own rates.</p></div></details>
         <details class="faq" name="home-faq"><summary>Is it in the App Store?</summary><div class="faq-body"><p>No. It installs from the browser on iPhone, iPad, Android, Mac or PC and opens full screen with its own icon.</p></div></details>
         <details class="faq" name="home-faq"><summary>Can I look around before talking to anyone?</summary><div class="faq-body"><p>Yes. <a href="app/" data-no-prerender>Try the sample shop</a>; it runs in your browser.</p></div></details>
-        <details class="faq" name="home-faq"><summary>Does it work without internet?</summary><div class="faq-body"><p>Yes, on each device. Sharing between devices, customer links and outside services use Shop Cloud.</p></div></details>
+        <details class="faq" name="home-faq"><summary>Does it work without internet?</summary><div class="faq-body"><p>Yes, on each device. Sharing between devices, customer links and outside services (except the built-in NHTSA data) use Shop Cloud.</p></div></details>
         <details class="faq" name="home-faq"><summary>Do I need Twilio and Stripe?</summary><div class="faq-body"><p>No. Without them, texts open in your device's Messages app and are still logged, and you record payments by hand.</p></div></details>
         <details class="faq" name="home-faq"><summary>Can I bring my data?</summary><div class="faq-body"><p>Customers, vehicles and parts, from a CSV. Past repair orders aren't imported.</p></div></details>
       </div>
@@ -1094,7 +1120,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -1109,7 +1135,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="index.html" aria-label="WPI Driveline Shop Management System home" aria-current="page">
@@ -1176,6 +1202,7 @@
   <a class="tab tab-book" href="demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

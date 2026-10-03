@@ -35,6 +35,227 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<script type="application/ld+json" id="faq-jsonld">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[
+{"@type":"Question","name":"What does it cost?","acceptedAnswer":{"@type":"Answer","text":"We don’t publish prices. Tell us about your shop in a demo request, and ask how Shop Cloud is set up and billed for you. Services you connect (Stripe, Twilio, Resend, Anthropic, Smartcar, Intuit) bill your shop directly at their own rates."}},
+{"@type":"Question","name":"Can I try it before I buy?","acceptedAnswer":{"@type":"Answer","text":"Yes. Open the sample shop: Main Street Auto Service, a made-up shop with customers, cars, repair orders and a full workflow board. It opens in your browser with no sign-up, so click anything. On a device that already has your shop, the link opens your shop instead. Changes you make in the sample stay in that browser. When you want to see it with your own questions, request a demo."}},
+{"@type":"Question","name":"What do I need to run it?","acceptedAnswer":{"@type":"Answer","text":"A current web browser on the devices you already have: the counter PC, a tablet in the bay, your phone. Shop Cloud is optional. It links your devices and runs the server side; without it, each device keeps its own records. Outside accounts such as Stripe or Twilio are optional too, and only needed for the features that use them."}},
+{"@type":"Question","name":"Can I import my repair-order history?","acceptedAnswer":{"@type":"Answer","text":"Not today. You can import customers and vehicles, and your parts inventory, from a CSV export or a spreadsheet. Past repair orders don’t come across, so keep your old system’s records for lookups. The importer is built for exports from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks and Excel or Google Sheets. Columns are matched for you and previewed before import, and duplicates are caught by phone, email, VIN and part number."}},
+{"@type":"Question","name":"Is it in the App Store or Google Play?","acceptedAnswer":{"@type":"Answer","text":"No. It isn’t a native store app. It installs from the browser: on iPhone or iPad, open it in Safari, tap Share, then Add to Home Screen. It opens full screen with its own icon and works offline. On Android, Mac and PC, use the browser’s install option."}},
+{"@type":"Question","name":"Which devices does it run on?","acceptedAnswer":{"@type":"Answer","text":"iPhone, iPad, Android phones and tablets, Macs and Windows PCs, in a current browser. A typical setup is the counter PC, a tablet in each bay, your phone, and a TV in the waiting room for the lobby screen. On iPhone it has a bottom tab bar and sheets you swipe down. On a keyboard, ⌘K or Ctrl+K opens the command palette."}},
+{"@type":"Question","name":"Does it work when the internet drops?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each device keeps the shop’s records, photos and video in its own storage, so it opens and keeps working with no connection. With Shop Cloud, edits made offline stay on the device and sync when it reconnects. A few things wait for the internet. Photos taken on another device download the first time you open them, vehicle data for each make downloads the first time it’s used and then stays on the device, and texts, card payments and NHTSA lookups need a connection."}},
+{"@type":"Question","name":"Can several devices share one shop?","acceptedAnswer":{"@type":"Answer","text":"Yes, with Shop Cloud and shared shop data turned on. Every device works on the same repair orders, customers and schedule, and changes show up on the others live. If two people edit the same record, the edits merge field by field. Lines added to the same RO on two devices are both kept. Without Shop Cloud, each device keeps its own separate records."}},
+{"@type":"Question","name":"Can I put a status screen in the waiting room?","acceptedAnswer":{"@type":"Answer","text":"Yes. The lobby screen runs from a shop device: open it full screen in the browser of a shop computer or tablet connected to the TV. It lists every car’s status by first name and last initial, ready cars first, with your messages, Wi-Fi details and, with Shop Cloud, the self check-in QR code. Long lists page through on their own."}},
+{"@type":"Question","name":"What is Shop Cloud?","acceptedAnswer":{"@type":"Answer","text":"Shop Cloud is the cloud side of WPI Driveline Shop Management System: a private Supabase project that holds one shop’s shared records, logins and files and runs its server functions. It adds shared data across devices, staff logins and two-step sign-in, share links and online approvals, the live status page, the booking inbox and remote check-in, the fleet portal, change history and nightly backups, and encrypted storage for your service keys."}},
+{"@type":"Question","name":"Do outside services need Shop Cloud?","acceptedAnswer":{"@type":"Answer","text":"Yes, all except the built-in NHTSA vehicle data, which needs only an internet connection. Texting and calls (Twilio), card payments (Stripe), email from your own address (Resend), QuickBooks sync (Intuit), connected cars (Smartcar) and the AI features (Anthropic) all run through Shop Cloud. Their keys are stored encrypted on your Shop Cloud server, and no device can read them back. What comes back, like a payment, an approval or a check-in, lands on your signed-in shop devices. A device checks about every minute while it’s open."}},
+{"@type":"Question","name":"How is Shop Cloud set up and billed?","acceptedAnswer":{"@type":"Answer","text":"Ask about it in your demo request: tell us about your shop, and ask how Shop Cloud would be set up and billed for you. Outside services you connect bill your shop directly at their own rates."}},
+{"@type":"Question","name":"Do my customers need an app?","acceptedAnswer":{"@type":"Answer","text":"No. Customer pages open in any phone’s browser with no login or app: the inspection report with approvals, live status, booking, self check-in, pay and the fleet portal. All of them except booking need Shop Cloud, and online pay also needs your own Stripe account. Without Shop Cloud, the booking page sends the customer’s request to you by text or email, and for approvals you hand the customer the counter tablet or send the report as one .html file."}},
+{"@type":"Question","name":"Do I need Twilio to text customers?","acceptedAnswer":{"@type":"Answer","text":"No. Without Twilio, texts and emails open in the device’s own Messages or Mail app, and they’re still logged on the customer. With your shop’s own Twilio number, connected through Shop Cloud, you get two-way business texting, calls that ring up to five of your phones, voicemail, missed-call texts and, with your Anthropic API key, the AI receptionist. U.S. carriers block business texts until A2P 10DLC or toll-free verification is done, and Twilio bills per text and per minute."}},
+{"@type":"Question","name":"When do automatic texts go out?","acceptedAnswer":{"@type":"Answer","text":"Two kinds of scheduled text go out on their own, sent by your Shop Cloud server with Twilio: appointment confirmations and day-before reminders. Both stay off until you switch them on. Scheduled texts never go out before 8 AM or after 9 PM shop time; anything due then waits until 8 AM, and a text more than 6 hours late is dropped. Replies to a customer are different: the missed-call text (on once your Twilio number is connected) and the optional after-hours auto-reply go out right away, whatever the hour. Review requests, service-due reminders, declined-work follow-ups and “we miss you” texts are lined up for your staff to send in one pass."}},
+{"@type":"Question","name":"Does the AI receptionist quote prices?","acceptedAnswer":{"@type":"Answer","text":"Only prices you write into its notes, such as a diagnostic fee. Its instructions say never to make up prices, diagnoses, repair times or policies, so for any other price it says a service advisor will follow up and offers to take a message. With the default greeting it says it’s the shop’s virtual assistant (if you write your own greeting, keep that line). It answers from your shop’s hours and notes, takes appointment requests (they land in Calendar → Requests on your signed-in shop devices), can text the caller the booking link or directions, and during open hours rings your staff when a caller asks for a person. It needs Shop Cloud, your Twilio number and your shop’s Anthropic API key, and its replies on calls count toward the same monthly AI request limit as the assistant. Staff review the AI assistant’s drafts before they reach a customer; the receptionist is the one exception, because it talks to callers directly."}},
+{"@type":"Question","name":"Which card readers work with it?","acceptedAnswer":{"@type":"Answer","text":"Stripe’s internet-connected smart readers: the Stripe Reader S700 and the BBPOS WisePOS E. “Take payment” sends the amount, tip and surcharge to the reader. The customer taps, inserts or swipes, and the payment is recorded on the RO. Bluetooth readers and Tap to Pay on a phone aren’t supported; payments taken that way are recorded by hand. Readers need your own Stripe account and Shop Cloud."}},
+{"@type":"Question","name":"Where does the money go?","acceptedAnswer":{"@type":"Answer","text":"Payments go straight to your own Stripe account at Stripe’s standard rates. Online payments (which need Shop Cloud) land on the RO with the card brand, last four digits and Stripe’s fee, on your signed-in shop devices. A device checks about every minute while it’s open. Cash, checks, ACH, financing, warranty and fleet-account payments are recorded on the RO too."}},
+{"@type":"Question","name":"Can customers finance a repair?","acceptedAnswer":{"@type":"Answer","text":"The app can show an “as low as” monthly figure on bigger estimates and on the customer report, with a link to apply through your own financing partner. You set the partner, the link, an example APR and the minimum amount. There’s no lender integration. Applications, approvals and final terms happen with your lender."}},
+{"@type":"Question","name":"Does it run payroll?","acceptedAnswer":{"@type":"Answer","text":"No. It calculates hours, overtime, flat-rate hours and commission, and the owner can mark each pay period approved. It exports an hours-import CSV for Gusto, ADP, Paychex or QuickBooks Payroll, a detailed payroll CSV and printable timecards. Your payroll service pays people and files taxes."}},
+{"@type":"Question","name":"Does it work with QuickBooks?","acceptedAnswer":{"@type":"Answer","text":"Yes, with QuickBooks Online. Each day’s sales, payments, sales tax, tips, surcharges and Stripe fees post as one balanced journal entry, and re-posting a day updates it instead of doubling it. Direct sync needs Shop Cloud and your own Intuit developer app. Production keys need Intuit’s review, so it runs against a sandbox company until then, and daily posting runs when an owner or manager device is opened that day. CSV exports in QuickBooks Online’s import layouts work without any of that."}},
+{"@type":"Question","name":"Where is my shop’s data kept?","acceptedAnswer":{"@type":"Answer","text":"On each device, in its browser storage, which is why it works offline. With Shop Cloud and shared shop data on, it also lives in a private Supabase project for your one shop, and every device syncs through it. Without Shop Cloud, the records live only in that one browser. Clearing the browser’s data erases them, so export a backup file now and then."}},
+{"@type":"Question","name":"Is my shop backed up?","acceptedAnswer":{"@type":"Answer","text":"With Shop Cloud, the whole shop is backed up every night, and the last 14 backups are kept. You can download any of them, and the owner can restore the shop to one; the current state is backed up first. Every RO, customer and vehicle also keeps six months of change history: who changed what, when and from which device, with one-click restore. Without Shop Cloud, export a backup file by hand."}},
+{"@type":"Question","name":"Can staff use two-step sign-in?","acceptedAnswer":{"@type":"Answer","text":"Yes. It works with authenticator apps such as Google Authenticator, Microsoft Authenticator, 1Password, Authy or the phone’s built-in password app. It’s enforced on the server, not just on screen: with it on, a stolen password alone can’t reach data, files or server functions. The owner can require two-step for chosen roles and reset it for someone who lost their phone. Logins and two-step need Shop Cloud."}},
+{"@type":"Question","name":"What can each person on my staff see?","acceptedAnswer":{"@type":"Answer","text":"Roles decide which pages each person sees on a device. The Owner sees everything. A Shop manager runs the shop without accounting or payroll. A Service advisor works the counter: ROs, customers, messages, scheduling and parts. A Technician gets the tech clock, workflow, ROs and technical info. On a shared tablet, people switch with an optional 4-digit PIN. Roles shape the screens; they aren’t a lock on the data. Any staff login can read the shop’s records. The server guards specific actions: making and restoring backups, changing keys and connecting Stripe are owner-only, and refunds and QuickBooks are for the owner or a manager (connecting QuickBooks is owner-only)."}},
+{"@type":"Question","name":"Does it have security certifications?","acceptedAnswer":{"@type":"Answer","text":"No. We don’t claim SOC 2, PCI DSS or HIPAA certification. Card numbers are handled by Stripe Checkout and Stripe’s card readers and never pass through the app."}},
+{"@type":"Question","name":"Can I order parts inside the app?","acceptedAnswer":{"@type":"Answer","text":"No. Supplier lookup opens RockAuto, NAPA, O’Reilly, AutoZone, Advance and OEM parts stores with the vehicle and part search filled in, and PartsTech, Nexpart and WORLDPAC are links to your accounts there. There’s no live pricing, stock check or electronic ordering inside the app. Purchase orders are tracked in the app from order to receipt. Receiving one adds stocked parts to inventory and marks parts ordered for a repair order as received on that RO."}},
+{"@type":"Question","name":"Does it report service records to CARFAX?","acceptedAnswer":{"@type":"Answer","text":"Not directly. Your shop enrolls in the free CARFAX Car Care service-shop program; the app explains the steps and exports a service-history CSV for any date range. Repair orders without a 17-character VIN are skipped and counted so you can fix them."}},
+{"@type":"Question","name":"Is Auto Diagnosis a diagnosis?","acceptedAnswer":{"@type":"Answer","text":"No. It gives leads to verify: recalls that may cover the concern, what other owners of the same model report to NHTSA, what fixed it at your shop before, and what the codes mean. Symptom checks are general, not make-specific. Recalls match by year, make and model, not an open-recall status for one VIN. NHTSA lookups need internet, and the optional AI test plan needs Shop Cloud and your Anthropic API key. A tech still confirms every lead."}},
+{"@type":"Question","name":"Does it replace OEM service information?","acceptedAnswer":{"@type":"Answer","text":"No. The vehicle database’s diagrams, parts lists and repair guides are generated to represent each configuration. Inferred items are labelled “typical”, and torque values, capacities, pinouts and wire colors are left to factory service information. OEM portals are links, and their subscriptions are separate. Keep ALLDATA, Mitchell or OEM information for those specs."}},
+{"@type":"Question","name":"Can I run more than one location?","acceptedAnswer":{"@type":"Answer","text":"Yes. Each location has its own address, phone, sales tax and labor rate, and all of them share one customer list. Repair orders, appointments, time, purchase orders and inventory belong to a location, and each device picks the location it works at, or all of them. Estimates, invoices and texts use that location’s details. Reports compare locations side by side, and parts can be transferred between them."}},
+{"@type":"Question","name":"Can I bill fleets on account?","acceptedAnswer":{"@type":"Answer","text":"Yes. Business accounts get terms from due on receipt to Net 60, a credit limit, a not-to-exceed amount per visit, required PO numbers and unit numbers. Invoices print the PO, unit, terms and due date, and receivables aging and statements are built in. With Shop Cloud, the fleet manager gets a private portal link: each unit’s maintenance status, what’s in the shop and open invoices."}}]}</script>
+<style>
+  /* ---------- faq: hero search ---------- */
+  .faq-hero { padding-bottom: clamp(20px, .5rem + 2.5vw, 48px); }
+  .faq-hero .lead { max-width: 30em; }
+  html:not(.js) .faq-js { display: none !important; }
+  .faq-search { position: relative; margin-top: 28px; max-width: 560px; }
+  .faq-search > .icon { position: absolute; left: 20px; top: 50%; width: 22px; height: 22px; translate: 0 -50%; color: var(--accent); pointer-events: none; }
+  .faq-search .input { min-height: 60px; padding-inline: 54px 62px; border-radius: var(--pill); border-color: var(--line); font-size: 1.06rem; box-shadow: var(--shadow-2); }
+  .faq-search .input::-webkit-search-cancel-button, .faq-search .input::-webkit-search-decoration { -webkit-appearance: none; appearance: none; }
+  .faq-kbd { position: absolute; right: 22px; top: 50%; translate: 0 -50%; pointer-events: none; color: var(--ink-3); }
+  .faq-search:focus-within .faq-kbd, .faq-search.has-value .faq-kbd { display: none; }
+  @media (hover: none), (max-width: 959.98px) { .faq-kbd { display: none; } }
+  .faq-clear { position: absolute; right: 8px; top: 50%; translate: 0 -50%; width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--ink-2); -webkit-tap-highlight-color: transparent; }
+  .faq-clear::before { content: ""; position: absolute; inset: 8px; border-radius: 50%; background: var(--mist-100); transition: background-color var(--dur-1) var(--ease); }
+  @media (hover: hover) { .faq-clear:hover::before { background: var(--mist-200); } }
+  .faq-clear .icon { position: relative; width: 16px; height: 16px; stroke-width: 2.2; }
+  .faq-clear[hidden] { display: none; }
+
+  .faq-try, .faq-found { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; min-height: 44px; max-width: 560px; }
+  .faq-try[hidden], .faq-found[hidden] { display: none; }
+  .faq-try-label { margin-right: 2px; font-size: .88rem; font-weight: 600; color: var(--ink-3); }
+  .faq-try-chip {
+    display: inline-flex; align-items: center; min-height: 38px; padding: 6px 15px; border-radius: var(--pill);
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink-2); font-size: .9rem; font-weight: 600;
+    transition: border-color var(--dur-1) var(--ease), color var(--dur-1) var(--ease), background-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+  @media (hover: hover) { .faq-try-chip:hover { border-color: var(--line-strong); color: var(--ink); } }
+  .faq-try-chip:active { transform: scale(.96); }
+  @media (pointer: coarse) { .faq-try-chip { min-height: 44px; } }
+  .faq-found { gap: 6px 14px; font-size: .96rem; color: var(--ink-3); }
+  .faq-found strong { color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
+  .faq-found .link-arrow .icon { rotate: 90deg; }
+  @media (hover: hover) { .faq-found .link-arrow:hover .icon { transform: translateY(0) translateX(3px); } }
+
+  /* ---------- faq: hero art (a question-mark road; SMIL car, paused by site.js off-screen, on Pause and under Reduce Motion) ---------- */
+  .faq-art { min-height: 0; }
+  .faq-art > .faq-qroad { width: min(100%, 468px); }
+  @media (max-width: 959.98px) { .faq-art > .faq-qroad { width: min(100%, 400px); } }
+  .faq-qroad text { font-family: var(--font); }
+  .faq-road-edge, .faq-road-top, .faq-lane { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+  .faq-road-edge { stroke: var(--ink); stroke-width: 33; }
+  .faq-road-top { stroke: url(#art-tint); stroke-width: 29; }
+  .faq-lane { stroke: var(--paper); stroke-width: 2.6; stroke-dasharray: 9 12; animation: faq-lane-in .6s var(--ease) 1.7s both; }
+  @keyframes faq-lane-in { from { opacity: 0; } }
+  .faq-shadow { fill: var(--mist-200); opacity: .75; }
+  .faq-tree { transform-box: fill-box; transform-origin: 50% 100%; animation: faq-tree-sway 4.2s var(--ease-in-out) 6 alternate; }
+  .faq-tree.t2 { animation-delay: -1.4s; }
+  .faq-tree.t3 { animation-delay: -2.6s; }
+  @keyframes faq-tree-sway { from { transform: rotate(-2.5deg); } to { transform: rotate(2.5deg); } }
+  .faq-sign { transform-box: fill-box; transform-origin: 50% 100%; animation: faq-sign-pop .7s var(--spring) var(--d, 1.2s) both; }
+  @keyframes faq-sign-pop { from { opacity: 0; transform: translateY(10px) scale(.4); } }
+  .faq-sign-text { font-size: 14.5px; font-weight: 650; letter-spacing: -0.01em; fill: var(--ink); }
+  .faq-bar-blue { fill: var(--blue); }
+  .faq-bar-green { fill: var(--green); }
+  .faq-lamp { fill: var(--blue); }
+  .faq-ring { fill: none; stroke: var(--blue); stroke-width: 2; }
+  .faq-spark-blue { fill: var(--blue); }
+  .faq-spark-green { fill: var(--green); }
+  .faq-qroad .art-pulse { animation-iteration-count: 8; }
+  .faq-art .note-a { top: -3%; left: -6%; }
+  .faq-art .note-b { bottom: 4%; right: -2%; }
+  /* two columns with a narrow art column: compact chips, so they clear the road and the check-mark dot */
+  @media (min-width: 960px) and (max-width: 1179.98px) { .faq-art .float-note small { display: none; } }
+
+  /* ---------- faq: browser (topic pills + groups) ---------- */
+  .faq-layout { display: block; }
+  @media (min-width: 960px) {
+    .faq-layout { display: grid; grid-template-columns: 252px minmax(0, 1fr); gap: clamp(40px, 4vw, 72px); align-items: start; }
+    .faq-side { position: sticky; top: calc(var(--header-offset) + 28px); }
+  }
+  @media (max-width: 959.98px) { .faq-side { display: contents; } }
+
+  .faq-topics ul { list-style: none; margin: 0; padding: 0; }
+  .faq-topic {
+    display: flex; align-items: center; gap: 10px; min-height: 44px; border: 1px solid transparent;
+    color: var(--ink-2); font-size: .95rem; font-weight: 600; letter-spacing: -0.01em; text-decoration: none; white-space: nowrap;
+    transition: color var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .faq-topic > .icon { flex: none; width: 18px; height: 18px; color: var(--accent); transition: transform var(--dur-2) var(--spring); }
+  @media (hover: hover) { .faq-topic:hover > .icon { transform: rotate(-8deg) scale(1.08); } }
+  .faq-topic-count { min-width: 26px; padding: 2px 8px; border-radius: var(--pill); background: var(--mist-100); color: var(--ink-3); font-size: .78rem; font-weight: 650; text-align: center; font-variant-numeric: tabular-nums; transition: background-color var(--dur-2) var(--ease), color var(--dur-2) var(--ease); }
+  .faq-topic[aria-current]:not(.is-empty) { color: var(--ink); }
+  .faq-topic[aria-current]:not(.is-empty) .faq-topic-count { background: var(--accent-soft); color: var(--accent-ink); }
+  .faq-topic.is-empty > .icon { color: var(--ink-3); }
+  /* while searching, a topic with no matches never shows as current (its group is hidden): the page
+     script strips its aria-current, and the pill hides whenever no topic is current */
+  .faq-topics ul:has(.faq-topic.is-empty[aria-current]) .spy-pill,
+  .faq-topics ul:not(:has(.faq-topic[aria-current])) .spy-pill { opacity: 0; }
+  .faq-topics-label { margin: 0 0 8px 13px; font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+
+  @media (min-width: 960px) {
+    .faq-topics ul { display: grid; gap: 2px; }
+    .faq-topic { padding: 0 8px 0 13px; border-radius: 12px; }
+    @media (hover: hover) { .faq-topic:hover { color: var(--ink); background: rgba(15, 43, 76, .04); } }
+    .faq-topic-count { margin-left: auto; }
+    /* without JS (no sliding pill) the current topic is never marked; with JS the pill does it */
+  }
+  @media (max-width: 959.98px) {
+    .faq-topics {
+      position: sticky; top: var(--header-offset); z-index: 30;
+      margin: -8px calc(var(--edge-right) * -1) 22px calc(var(--edge-left) * -1);
+      background: rgba(245, 249, 254, .9); -webkit-backdrop-filter: saturate(180%) blur(20px); backdrop-filter: saturate(180%) blur(20px);
+      border-block: 1px solid transparent; transition: border-color var(--dur-2) var(--ease);
+    }
+    .faq-topics.is-stuck { border-bottom-color: var(--line); }
+    .faq-topics-label { display: none; }
+    .faq-topics ul {
+      display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
+      padding: 10px var(--edge-right) 10px var(--edge-left); scroll-padding-inline: var(--edge-left) var(--edge-right);
+      -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 var(--gutter), #000 calc(100% - var(--gutter) - 8px), transparent 100%);
+      mask-image: linear-gradient(90deg, transparent 0, #000 var(--gutter), #000 calc(100% - var(--gutter) - 8px), transparent 100%);
+    }
+    .faq-topics ul::-webkit-scrollbar { display: none; }
+    .faq-topics li { flex: none; }
+    .faq-topics .spy-pill { display: none; }
+    .faq-topic { gap: 8px; padding: 0 7px 0 14px; border-radius: var(--pill); border-color: var(--line); background: var(--paper); font-size: .92rem; }
+    .faq-topic[aria-current]:not(.is-empty) { background: var(--accent-soft); border-color: color-mix(in srgb, var(--accent) 30%, transparent); color: var(--accent-ink); }
+    .faq-topic[aria-current]:not(.is-empty) .faq-topic-count { background: var(--paper); }
+  }
+
+  .faq-side-help { display: none; }
+  @media (min-width: 960px) {
+    .faq-side-help { display: flex; gap: 12px; align-items: flex-start; margin: 22px 0 0; padding: 18px 0 0 13px; border-top: 1px solid var(--line); font-size: .92rem; color: var(--ink-3); }
+    .faq-side-help .icon { flex: none; width: 20px; height: 20px; margin-top: 1px; color: var(--accent); }
+    .faq-side-help strong { display: block; color: var(--ink); font-weight: 620; }
+  }
+
+  .faq-results-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; min-height: 40px; margin-bottom: 18px; }
+  .faq-count { display: flex; align-items: center; gap: 10px; font-size: .95rem; color: var(--ink-3); }
+  .faq-count::before { content: ""; flex: none; width: 22px; height: 3px; border-radius: 1px; background: var(--bar); }
+  .faq-count strong { color: var(--ink); font-weight: 650; font-variant-numeric: tabular-nums; }
+  .faq-results-head .btn[hidden] { display: none; }
+
+  /* #faq-results too: chips, "See them" and Clear search scroll to it, and on phones the sticky topic row would cover its head */
+  .faq-group, #faq-results { scroll-margin-top: calc(var(--header-offset) + 24px); }
+  @media (max-width: 959.98px) { .faq-group, #faq-results, .faq-results .faq { scroll-margin-top: calc(var(--header-offset) + 84px); } }
+  .faq-group[hidden] { display: none; }
+  .faq-group:not([hidden]) ~ .faq-group { margin-top: clamp(40px, 1.8rem + 1.8vw, 64px); }
+  .faq-group-head { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .faq-group-head h3 { font-size: clamp(1.3rem, 1.1rem + .7vw, 1.7rem); letter-spacing: -0.025em; }
+  .faq-group-count { margin-left: auto; flex: none; padding: 4px 10px; border-radius: var(--pill); background: var(--mist-100); color: var(--ink-3); font-size: .78rem; font-weight: 650; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .faq-results .faq { scroll-margin-top: calc(var(--header-offset) + 24px); }
+  .faq-results .faq summary { text-wrap: pretty; }
+  .faq-sum { flex: 1 1 auto; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-width: 0; }
+  .faq-q { flex: 0 1 auto; min-width: 0; }
+  .faq-in-answer { display: none; flex: none; padding: 3px 9px; border-radius: var(--pill); background: var(--green-50); color: var(--green-ink); font-size: .74rem; font-weight: 650; letter-spacing: .01em; white-space: nowrap; }
+  .faq.is-body-hit:not([open]) .faq-in-answer { display: inline-flex; }
+  .faq-results .faq-body { color: var(--ink-2); line-height: 1.6; }
+  .faq-results .faq-body p { max-width: 62ch; text-wrap: pretty; }
+  .faq-more { padding-top: 2px; }
+  .faq-more .link-arrow { font-size: .94rem; }
+  .faq.is-entering { animation: rise-in .38s var(--ease) both; }
+  .motion-paused .faq.is-entering { animation: none; }
+  mark.faq-hit { background: linear-gradient(180deg, transparent 6%, var(--blue-100) 6%, var(--green-100) 94%, transparent 94%); color: inherit; border-radius: 3px; padding: 0 1px; }
+  @media (max-width: 639.98px) {
+    .faq-results .faq summary { padding: 16px; font-size: 1rem; gap: 12px; }
+    .faq-results .faq-body { padding: 0 16px 18px; }
+    .faq-group-head { gap: 12px; }
+  }
+
+  /* Empty state */
+  .faq-empty { display: grid; justify-items: center; gap: 12px; padding: clamp(32px, 2rem + 2vw, 56px) 22px; border: 1px dashed var(--line-strong); border-radius: var(--r-lg); background: var(--paper); text-align: center; animation: rise-in .45s var(--ease) both; }
+  .motion-paused .faq-empty { animation: none; }
+  .faq-empty[hidden] { display: none; }
+  .faq-empty h3 { font-size: 1.35rem; }
+  .faq-empty p { max-width: 30em; color: var(--ink-3); }
+  .faq-empty .cluster { justify-content: center; margin-top: 6px; }
+  .faq-empty-art { margin: 0; width: 96px; height: 96px; }
+  .faq-empty-art svg { width: 100%; height: 100%; overflow: visible; }
+  .faq-empty-bg { fill: var(--accent-soft); }
+  .faq-lens { transform-box: fill-box; transform-origin: center; animation: faq-lens-search 3.2s var(--ease-in-out) 2; }
+  @keyframes faq-lens-search { 0%, 100% { transform: translate(0, 0) rotate(0deg); } 30% { transform: translate(8px, -4px) rotate(8deg); } 65% { transform: translate(-6px, 3px) rotate(-6deg); } }
+
+  /* ---------- faq: Good to know + ask a person ---------- */
+  .faq-needs { padding-bottom: 0; }
+  .faq-ask { display: grid; gap: 28px; align-items: center; }
+  @media (min-width: 840px) { .faq-ask { grid-template-columns: minmax(0, 1fr) 260px; gap: 48px; } }
+  .faq-ask h2 { margin-top: 10px; font-size: clamp(1.7rem, 1.2rem + 1.8vw, 2.5rem); }
+  .faq-ask-copy > p:not(.eyebrow) { margin-top: 12px; max-width: 34em; color: var(--ink-2); }
+  .faq-ask .hero-actions { margin-top: 24px; }
+  .faq-ask-mail { margin-top: 10px; }
+  .faq-ask-mail:not(:has(.contact-email)) { display: none; }
+  .faq-ask-art { justify-self: center; width: min(100%, 240px); height: auto; overflow: visible; }
+  @media (max-width: 839.98px) { .faq-ask-art { width: 170px; order: -1; justify-self: start; } }
+  @media (max-width: 479.98px) { .faq-ask .hero-actions .btn { flex: 1 1 100%; } }
+</style>
 </head>
 <body data-page="faq" id="top">
 <!-- @partial icons -->
@@ -162,7 +383,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -190,9 +411,402 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
+  <section class="page-hero faq-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <p class="eyebrow"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg></span>Questions &amp; answers</p>
+        <h1 id="hero-title">Questions? <span class="accent-text">Straight answers.</span></h1>
+        <p class="lead">Search, or pick a topic. If it&rsquo;s not here, <a class="text-link" href="#ask">send us a question</a>.</p>
+        <div class="faq-search faq-js" role="search">
+          <label class="visually-hidden" for="faq-search">Search questions</label>
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <input class="input" id="faq-search" type="search" placeholder="Search the answers" autocomplete="off" enterkeyhint="search" spellcheck="false" aria-controls="faq-results">
+          <kbd class="kbd faq-kbd" aria-hidden="true">/</kbd>
+          <button class="faq-clear" type="button" aria-label="Clear search" hidden><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+        </div>
+        <div class="faq-try faq-js" role="group" aria-label="Common searches">
+          <span class="faq-try-label" aria-hidden="true">Try</span>
+          <button class="faq-try-chip" type="button" data-q="price">Pricing</button>
+          <button class="faq-try-chip" type="button" data-q="offline">Offline</button>
+          <button class="faq-try-chip" type="button" data-q="iPhone">iPhone</button>
+          <button class="faq-try-chip" type="button" data-q="Stripe">Stripe</button>
+          <button class="faq-try-chip" type="button" data-q="backup">Backups</button>
+        </div>
+        <p class="faq-found faq-js" hidden><span data-faq-found aria-hidden="true"></span><a class="link-arrow" href="#faq-results" data-faq-jump>See them <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p>
+      </div>
+
+      <figure class="page-hero-art faq-art" data-play aria-label="Illustration: a car drives a road shaped like a question mark, past signs asking Offline, Pricing and iPhone, and stops at a check mark.">
+        <svg class="faq-qroad" viewBox="0 0 440 380" data-smil-rest="16" aria-hidden="true" focusable="false">
+          <defs>
+            <g id="faq-car-shape">
+              <rect class="art-ink art-paper" x="-15" y="-9" width="30" height="18" rx="6" stroke-width="1.8"/>
+              <rect class="art-soft" x="-9" y="-6" width="11" height="12" rx="3"/>
+              <path class="art-ink art-thin" d="M4 -7Q9 0 4 7M-11 -6.5Q-13 0 -11 6.5"/>
+              <circle class="faq-lamp" cx="13.5" cy="-5.5" r="1.5"/><circle class="faq-lamp" cx="13.5" cy="5.5" r="1.5"/>
+            </g>
+          </defs>
+          <!-- ground shadow under the dot -->
+          <ellipse class="faq-shadow" cx="222" cy="364" rx="44" ry="6"/>
+          <!-- trees and grass -->
+          <g class="faq-tree t1"><path class="art-ink art-thin" d="M196 152v14"/><circle class="art-ink art-thin art-lilac" cx="196" cy="138" r="16"/></g>
+          <g class="faq-tree t2"><path class="art-ink art-thin" d="M240 160v10"/><circle class="art-ink art-thin art-soft" cx="240" cy="150" r="11"/></g>
+          <g class="faq-tree t3"><path class="art-ink art-thin" d="M92 300v16"/><circle class="art-ink art-thin art-soft" cx="92" cy="284" r="17"/><circle class="art-ink art-thin art-paper" cx="114" cy="306" r="9"/></g>
+          <path class="art-ink art-thin" d="M362 294q1-7-2-12M367 294q0-9 1-15M372 294q1-6 4-10M58 220q1-6-2-10M63 220q0-8 1-13M68 220q1-5 4-8" stroke-opacity=".55"/>
+
+          <!-- the question-mark road -->
+          <path class="faq-road-edge art-draw" pathLength="100" style="--len: 100" d="M135 163A88 88 0 1 1 282 202C262 218 222 232 222 268L222 288"/>
+          <path class="faq-road-top art-draw" pathLength="100" style="--len: 100" d="M135 163A88 88 0 1 1 282 202C262 218 222 232 222 268L222 288"/>
+          <path class="faq-lane fx-once" d="M135 163A88 88 0 1 1 282 202C262 218 222 232 222 268L222 288"/>
+
+          <!-- road signs -->
+          <g class="faq-sign fx-once" style="--d: 1.1s">
+            <path class="art-ink" d="M65 126v32M57 158h16"/>
+            <rect class="art-ink art-paper" x="22" y="96" width="86" height="30" rx="9"/>
+            <rect class="faq-bar-green" x="29" y="103" width="4" height="16" rx="2"/>
+            <text class="faq-sign-text" x="68" y="116" text-anchor="middle">Offline?</text>
+          </g>
+          <g class="faq-sign fx-once" style="--d: 1.3s">
+            <path class="art-ink" d="M363 64v32M355 96h16"/>
+            <rect class="art-ink art-paper" x="320" y="34" width="86" height="30" rx="9"/>
+            <rect class="faq-bar-blue" x="327" y="41" width="4" height="16" rx="2"/>
+            <text class="faq-sign-text" x="366" y="54" text-anchor="middle">Pricing?</text>
+          </g>
+          <g class="faq-sign fx-once" style="--d: 1.5s">
+            <path class="art-ink" d="M347 262v32M339 294h16"/>
+            <rect class="art-ink art-paper" x="304" y="232" width="86" height="30" rx="9"/>
+            <rect class="faq-bar-blue" x="311" y="239" width="4" height="16" rx="2"/>
+            <text class="faq-sign-text" x="350" y="252" text-anchor="middle">iPhone?</text>
+          </g>
+
+          <!-- the car drives the road twice, then parks above the dot. Markup = end state (parked);
+               the page script begins #faqDrive only (no hyphen: SMIL syncbase ids would need escaping) when motion is allowed. -->
+          <g opacity="0">
+            <use href="#faq-car-shape"/>
+            <animateMotion id="faqDrive" dur="6.5s" begin="indefinite" repeatCount="2" rotate="auto" calcMode="spline" keyPoints="0;1;1" keyTimes="0;.74;1" keySplines=".5 0 .35 1;0 0 1 1" path="M135 163A88 88 0 1 1 282 202C262 218 222 232 222 268L222 288"/>
+            <animate attributeName="opacity" dur="6.5s" begin="faqDrive.begin" repeatCount="2" values="0;1;1;0;0" keyTimes="0;.06;.8;.88;1"/>
+          </g>
+          <g transform="translate(222 288) rotate(90)">
+            <use href="#faq-car-shape"/>
+            <set attributeName="opacity" to="0" begin="faqDrive.begin" dur="11.4s"/>
+          </g>
+
+          <!-- the dot: a destination sign with a check -->
+          <g class="faq-sign fx-once" style="--d: 1.8s">
+            <circle class="faq-ring" cx="222" cy="336" r="23" opacity="0">
+              <animate attributeName="r" dur="6.5s" begin="faqDrive.begin" repeatCount="2" values="23;23;40;40" keyTimes="0;.72;.92;1"/>
+              <animate attributeName="opacity" dur="6.5s" begin="faqDrive.begin" repeatCount="2" values="0;.7;0;0" keyTimes="0;.72;.92;1"/>
+            </circle>
+            <circle class="art-ink art-paper" cx="222" cy="336" r="23"/>
+            <circle class="art-tint" cx="222" cy="336" r="16"/>
+            <path class="art-ink art-accent" d="M213.5 336.5l6 6 11-12" stroke-width="2.6"/>
+          </g>
+
+          <!-- sparkles -->
+          <g transform="translate(20 186)"><path class="art-pulse faq-spark-blue" d="M10 0c.8 6 4 9.2 10 10-6 .8-9.2 4-10 10-.8-6-4-9.2-10-10 6-.8 9.2-4 10-10z"/></g>
+          <g transform="translate(392 156) scale(.6)"><path class="art-pulse faq-spark-green" style="animation-delay: 1.1s" d="M10 0c.8 6 4 9.2 10 10-6 .8-9.2 4-10 10-.8-6-4-9.2-10-10 6-.8 9.2-4 10-10z"/></g>
+        </svg>
+        <div class="float-note note-a" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Offline? Yes.</strong><small>Each device keeps working</small></span>
+        </div>
+        <div class="float-note note-b" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-device-phone"/></svg></span>
+          <span><strong>iPhone? Yes.</strong><small>Installs from the browser</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section faq-browse" id="topics" aria-labelledby="topics-title">
     <div class="container">
-      <h1>Questions? <span class="accent-text">Straight answers.</span></h1>
+      <h2 class="visually-hidden" id="topics-title">All questions, by topic</h2>
+      <div class="faq-layout">
+        <div class="faq-side">
+          <nav class="faq-topics" aria-label="Topics" data-spy data-spy-scope="#faq-results">
+            <p class="faq-topics-label" aria-hidden="true">Topics</p>
+            <ul>
+              <li><a class="faq-topic" href="#getting-started" data-topic="getting-started"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg><span>Getting started</span><span class="faq-topic-count" aria-hidden="true">4</span></a></li>
+              <li><a class="faq-topic" href="#devices" data-topic="devices"><svg class="icon" aria-hidden="true"><use href="#i-device-tablet"/></svg><span>Devices &amp; offline</span><span class="faq-topic-count" aria-hidden="true">5</span></a></li>
+              <li><a class="faq-topic" href="#cloud" data-topic="cloud"><svg class="icon" aria-hidden="true"><use href="#i-cloud"/></svg><span>Shop Cloud</span><span class="faq-topic-count" aria-hidden="true">3</span></a></li>
+              <li><a class="faq-topic" href="#customers" data-topic="customers"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Customers &amp; texting</span><span class="faq-topic-count" aria-hidden="true">4</span></a></li>
+              <li><a class="faq-topic" href="#payments" data-topic="payments"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg><span>Payments &amp; books</span><span class="faq-topic-count" aria-hidden="true">5</span></a></li>
+              <li><a class="faq-topic" href="#data" data-topic="data"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg><span>Data &amp; security</span><span class="faq-topic-count" aria-hidden="true">5</span></a></li>
+              <li><a class="faq-topic" href="#shop" data-topic="shop"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg><span>In the shop</span><span class="faq-topic-count" aria-hidden="true">6</span></a></li>
+              <li class="spy-pill" aria-hidden="true"></li>
+            </ul>
+          </nav>
+          <p class="faq-side-help"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span><strong>Didn&rsquo;t find it?</strong><a class="text-link" href="#ask">Ask a person</a></span></p>
+        </div>
+
+        <div class="faq-results" id="faq-results">
+          <div class="faq-results-head faq-js">
+            <p class="faq-count" aria-hidden="true"><span data-faq-count><strong>32</strong> answers in 7 topics</span></p>
+            <button class="btn btn-ghost btn-sm" type="button" data-faq-reset hidden><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>Clear search</button>
+          </div>
+          <p class="visually-hidden" id="faq-status" role="status" aria-live="polite"></p>
+
+          <section class="faq-group" id="getting-started" aria-labelledby="getting-started-title" data-reveal>
+            <div class="faq-group-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
+              <h3 id="getting-started-title">Getting started</h3>
+              <span class="faq-group-count" aria-hidden="true">4 questions</span>
+            </div>
+            <div class="faq-list">
+              <details class="faq" name="faq-getting-started" id="q-cost" data-keywords="price pricing cost plan plans subscription fee fees quote billing" open>
+                <summary>What does it cost?</summary>
+                <div class="faq-body"><p>We don&rsquo;t publish prices. Tell us about your shop in a <a class="text-link" href="demo.html">demo request</a>, and ask how <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> is set up and billed for you. Services you connect (Stripe, Twilio, Resend, Anthropic, Smartcar, Intuit) bill your shop directly at their own rates.</p></div>
+              </details>
+              <details class="faq" name="faq-getting-started" id="q-try" data-keywords="trial demo sample test sandbox free">
+                <summary>Can I try it before I buy?</summary>
+                <div class="faq-body"><p>Yes. <a class="text-link" href="app/" data-no-prerender>Open the sample shop</a>: Main Street Auto Service, a made-up shop with customers, cars, repair orders and a full workflow board. It opens in your browser with no sign-up, so click anything. On a device that already has your shop, the link opens your shop instead. Changes you make in the sample stay in that browser.</p><p>When you want to see it with your own questions, <a class="text-link" href="demo.html">request a demo</a>.</p></div>
+              </details>
+              <details class="faq" name="faq-getting-started" id="q-need" data-keywords="requirements hardware computer setup install server">
+                <summary>What do I need to run it?</summary>
+                <div class="faq-body"><p>A current web browser on the devices you already have: the counter PC, a tablet in the bay, your phone.</p><p><a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> is optional. It links your devices and runs the server side; without it, each device keeps its own records. Outside accounts such as Stripe or Twilio are optional too, and only needed for the features that use them.</p></div>
+              </details>
+              <details class="faq" name="faq-getting-started" id="q-import" data-keywords="switch switching migrate move data old system csv spreadsheet history">
+                <summary>Can I import my repair-order history?</summary>
+                <div class="faq-body"><p>Not today. You can import customers and vehicles, and your parts inventory, from a CSV export or a spreadsheet. Past repair orders don&rsquo;t come across, so keep your old system&rsquo;s records for lookups.</p><p>The importer is built for exports from Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks and Excel or Google Sheets. Columns are matched for you and previewed before import, and duplicates are caught by phone, email, VIN and part number.</p></div>
+              </details>
+            </div>
+          </section>
+
+          <section class="faq-group" id="devices" aria-labelledby="devices-title" data-reveal>
+            <div class="faq-group-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-device-tablet"/></svg></span>
+              <h3 id="devices-title">Devices &amp; offline</h3>
+              <span class="faq-group-count" aria-hidden="true">5 questions</span>
+            </div>
+            <div class="faq-list">
+              <details class="faq" name="faq-devices" id="q-app-store" data-keywords="app store download install iphone ipad android home screen native">
+                <summary>Is it in the App Store or Google Play?</summary>
+                <div class="faq-body"><p>No. It isn&rsquo;t a native store app. It installs from the browser: on iPhone or iPad, open it in Safari, tap Share, then Add to Home Screen. It opens full screen with its own icon and works offline.</p><p>On Android, Mac and PC, use the browser&rsquo;s install option.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="mobile.html#install">How to install it <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-devices" id="q-devices" data-keywords="iphone ipad android mac windows pc tablet phone computer browser">
+                <summary>Which devices does it run on?</summary>
+                <div class="faq-body"><p>iPhone, iPad, Android phones and tablets, Macs and Windows PCs, in a current browser. A typical setup is the counter PC, a tablet in each bay, your phone, and a TV in the waiting room for the lobby screen.</p><p>On iPhone it has a bottom tab bar and sheets you swipe down. On a keyboard, &#8984;K or Ctrl+K opens the command palette.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="mobile.html#devices">Phones, tablets and PCs <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-devices" id="q-offline" data-keywords="offline internet connection wifi outage down">
+                <summary>Does it work when the internet drops?</summary>
+                <div class="faq-body"><p>Yes. Each device keeps the shop&rsquo;s records, photos and video in its own storage, so it opens and keeps working with no connection. With <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, edits made offline stay on the device and sync when it reconnects.</p><p>A few things wait for the internet. Photos taken on another device download the first time you open them, vehicle data for each make downloads the first time it&rsquo;s used and then stays on the device, and texts, card payments and NHTSA lookups need a connection.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="mobile.html#offline">How offline works <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-devices" id="q-sync" data-keywords="sync multiple devices share shared team tablets">
+                <summary>Can several devices share one shop?</summary>
+                <div class="faq-body"><p>Yes, with <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> and shared shop data turned on. Every device works on the same repair orders, customers and schedule, and changes show up on the others live.</p><p>If two people edit the same record, the edits merge field by field. Lines added to the same RO on two devices are both kept. Without Shop Cloud, each device keeps its own separate records.</p></div>
+              </details>
+              <details class="faq" name="faq-devices" id="q-lobby" data-keywords="lobby tv waiting room screen display status">
+                <summary>Can I put a status screen in the waiting room?</summary>
+                <div class="faq-body"><p>Yes. The lobby screen runs from a shop device: open it full screen in the browser of a shop computer or tablet connected to the TV. It lists every car&rsquo;s status by first name and last initial, ready cars first, with your messages, Wi-Fi details and, with <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, the self check-in QR code. Long lists page through on their own.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/booking.html#lobby">The lobby screen <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+            </div>
+          </section>
+
+          <section class="faq-group" id="cloud" aria-labelledby="cloud-title" data-reveal>
+            <div class="faq-group-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-cloud"/></svg></span>
+              <h3 id="cloud-title">Shop Cloud</h3>
+              <span class="faq-group-count" aria-hidden="true">3 questions</span>
+            </div>
+            <div class="faq-list">
+              <details class="faq" name="faq-cloud" id="q-shop-cloud" data-keywords="cloud server supabase sync hosting">
+                <summary>What is Shop Cloud?</summary>
+                <div class="faq-body"><p>Shop Cloud is the cloud side of WPI Driveline Shop Management System: a private Supabase project that holds one shop&rsquo;s shared records, logins and files and runs its server functions.</p><p>It adds shared data across devices, staff logins and two-step sign-in, share links and online approvals, the live status page, the booking inbox and remote check-in, the fleet portal, change history and nightly backups, and encrypted storage for your service keys.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="works-with.html#shop-cloud">How Shop Cloud works <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-cloud" id="q-cloud-services" data-keywords="integrations twilio stripe resend intuit quickbooks smartcar anthropic keys">
+                <summary>Do outside services need Shop Cloud?</summary>
+                <div class="faq-body"><p>Yes, all except the built-in NHTSA vehicle data, which needs only an internet connection. Texting and calls (Twilio), card payments (Stripe), email from your own address (Resend), QuickBooks sync (Intuit), connected cars (Smartcar) and the AI features (Anthropic) all run through <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>. Their keys are stored encrypted on your Shop Cloud server, and no device can read them back.</p><p>What comes back, like a payment, an approval or a check-in, lands on your signed-in shop devices. A device checks about every minute while it&rsquo;s open.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="works-with.html#providers">Services it works with <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-cloud" id="q-cloud-billing" data-keywords="price pricing cost billing setup hosting">
+                <summary>How is Shop Cloud set up and billed?</summary>
+                <div class="faq-body"><p>Ask about it in your <a class="text-link" href="demo.html">demo request</a>: tell us about your shop, and ask how <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> would be set up and billed for you. Outside services you connect bill your shop directly at their own rates.</p></div>
+              </details>
+            </div>
+          </section>
+
+          <section class="faq-group" id="customers" aria-labelledby="customers-title" data-reveal>
+            <div class="faq-group-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+              <h3 id="customers-title">Customers &amp; texting</h3>
+              <span class="faq-group-count" aria-hidden="true">4 questions</span>
+            </div>
+            <div class="faq-list">
+              <details class="faq" name="faq-customers" id="q-customer-app" data-keywords="customer app login link report approval status phone">
+                <summary>Do my customers need an app?</summary>
+                <div class="faq-body"><p>No. Customer pages open in any phone&rsquo;s browser with no login or app: the inspection report with approvals, live status, booking, self check-in, pay and the fleet portal.</p><p>All of them except booking need <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, and online pay also needs your own Stripe account. Without Shop Cloud, the booking page sends the customer&rsquo;s request to you by text or email, and for approvals you hand the customer the counter tablet or send the report as one .html file.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/inspections.html#approval">Reports and approvals <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-customers" id="q-twilio" data-keywords="text texting sms message phone calls twilio number">
+                <summary>Do I need Twilio to text customers?</summary>
+                <div class="faq-body"><p>No. Without Twilio, texts and emails open in the device&rsquo;s own Messages or Mail app, and they&rsquo;re still logged on the customer.</p><p>With your shop&rsquo;s own Twilio number, connected through <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, you get two-way business texting, calls that ring up to five of your phones, voicemail, missed-call texts and, with your Anthropic API key, the AI receptionist. U.S. carriers block business texts until A2P 10DLC or toll-free verification is done, and Twilio bills per text and per minute.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/messaging.html">Texting, calls &amp; email <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-customers" id="q-quiet-hours" data-keywords="reminders reminder automatic automation quiet hours night marketing">
+                <summary>When do automatic texts go out?</summary>
+                <div class="faq-body"><p>Two kinds of scheduled text go out on their own, sent by your <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> server with Twilio: appointment confirmations and day-before reminders. Both stay off until you switch them on. Scheduled texts never go out before 8 AM or after 9 PM shop time; anything due then waits until 8 AM, and a text more than 6 hours late is dropped.</p><p>Replies to a customer are different: the missed-call text (on once your Twilio number is connected) and the optional after-hours auto-reply go out right away, whatever the hour. Review requests, service-due reminders, declined-work follow-ups and &ldquo;we miss you&rdquo; texts are lined up for your staff to send in one pass.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/messaging.html#quiet-hours">Quiet hours <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-customers" id="q-ai-prices" data-keywords="ai artificial intelligence receptionist phone calls claude price">
+                <summary>Does the AI receptionist quote prices?</summary>
+                <div class="faq-body"><p>Only prices you write into its notes, such as a diagnostic fee. Its instructions say never to make up prices, diagnoses, repair times or policies, so for any other price it says a service advisor will follow up and offers to take a message.</p><p>With the default greeting it says it&rsquo;s the shop&rsquo;s virtual assistant (if you write your own greeting, keep that line). It answers from your shop&rsquo;s hours and notes, takes appointment requests (they land in Calendar &rarr; Requests on your signed-in shop devices), can text the caller the booking link or directions, and during open hours rings your staff when a caller asks for a person. It needs <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, your Twilio number and your shop&rsquo;s Anthropic API key, and its replies on calls count toward the same monthly AI request limit as the assistant. Staff review the AI assistant&rsquo;s drafts before they reach a customer; the receptionist is the one exception, because it talks to callers directly.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/messaging.html#receptionist">The AI receptionist <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+            </div>
+          </section>
+
+          <section class="faq-group" id="payments" aria-labelledby="payments-title" data-reveal>
+            <div class="faq-group-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg></span>
+              <h3 id="payments-title">Payments &amp; books</h3>
+              <span class="faq-group-count" aria-hidden="true">5 questions</span>
+            </div>
+            <div class="faq-list">
+              <details class="faq" name="faq-payments" id="q-readers" data-keywords="card reader terminal credit card tap swipe stripe payment">
+                <summary>Which card readers work with it?</summary>
+                <div class="faq-body"><p>Stripe&rsquo;s internet-connected smart readers: the Stripe Reader S700 and the BBPOS WisePOS E. &ldquo;Take payment&rdquo; sends the amount, tip and surcharge to the reader. The customer taps, inserts or swipes, and the payment is recorded on the RO.</p><p>Bluetooth readers and Tap to Pay on a phone aren&rsquo;t supported; payments taken that way are recorded by hand. Readers need your own Stripe account and <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/payments.html#ways">Ways to get paid <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-payments" id="q-money" data-keywords="money stripe deposit payout fees payment processing">
+                <summary>Where does the money go?</summary>
+                <div class="faq-body"><p>Payments go straight to your own Stripe account at Stripe&rsquo;s standard rates. Online payments (which need <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>) land on the RO with the card brand, last four digits and Stripe&rsquo;s fee, on your signed-in shop devices. A device checks about every minute while it&rsquo;s open.</p><p>Cash, checks, ACH, financing, warranty and fleet-account payments are recorded on the RO too.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/payments.html">Payments &amp; card readers <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-payments" id="q-financing" data-keywords="financing finance loan lender monthly payments">
+                <summary>Can customers finance a repair?</summary>
+                <div class="faq-body"><p>The app can show an &ldquo;as low as&rdquo; monthly figure on bigger estimates and on the customer report, with a link to apply through your own financing partner. You set the partner, the link, an example APR and the minimum amount.</p><p>There&rsquo;s no lender integration. Applications, approvals and final terms happen with your lender.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/payments.html#financing">Customer financing <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-payments" id="q-payroll" data-keywords="payroll pay techs wages timecards hours overtime commission">
+                <summary>Does it run payroll?</summary>
+                <div class="faq-body"><p>No. It calculates hours, overtime, flat-rate hours and commission, and the owner can mark each pay period approved. It exports an hours-import CSV for Gusto, ADP, Paychex or QuickBooks Payroll, a detailed payroll CSV and printable timecards. Your payroll service pays people and files taxes.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/reports.html#payroll">Payroll export <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-payments" id="q-quickbooks" data-keywords="quickbooks accounting bookkeeping intuit journal">
+                <summary>Does it work with QuickBooks?</summary>
+                <div class="faq-body"><p>Yes, with QuickBooks Online. Each day&rsquo;s sales, payments, sales tax, tips, surcharges and Stripe fees post as one balanced journal entry, and re-posting a day updates it instead of doubling it.</p><p>Direct sync needs <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> and your own Intuit developer app. Production keys need Intuit&rsquo;s review, so it runs against a sandbox company until then, and daily posting runs when an owner or manager device is opened that day. CSV exports in QuickBooks Online&rsquo;s import layouts work without any of that.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/reports.html#quickbooks">QuickBooks sync <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+            </div>
+          </section>
+
+          <section class="faq-group" id="data" aria-labelledby="data-title" data-reveal>
+            <div class="faq-group-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+              <h3 id="data-title">Data &amp; security</h3>
+              <span class="faq-group-count" aria-hidden="true">5 questions</span>
+            </div>
+            <div class="faq-list">
+              <details class="faq" name="faq-data" id="q-where-data" data-keywords="data storage database privacy location cloud">
+                <summary>Where is my shop&rsquo;s data kept?</summary>
+                <div class="faq-body"><p>On each device, in its browser storage, which is why it works offline. With <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> and shared shop data on, it also lives in a private Supabase project for your one shop, and every device syncs through it.</p><p>Without Shop Cloud, the records live only in that one browser. Clearing the browser&rsquo;s data erases them, so export a backup file now and then.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="security.html#where">Where your data lives <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-data" id="q-backups" data-keywords="backup backups restore undo history recover lost">
+                <summary>Is my shop backed up?</summary>
+                <div class="faq-body"><p>With <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, the whole shop is backed up every night, and the last 14 backups are kept. You can download any of them, and the owner can restore the shop to one; the current state is backed up first.</p><p>Every RO, customer and vehicle also keeps six months of change history: who changed what, when and from which device, with one-click restore. Without Shop Cloud, export a backup file by hand.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="security.html#history">History and backups <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-data" id="q-two-step" data-keywords="two-step 2fa mfa two factor password login sign in security">
+                <summary>Can staff use two-step sign-in?</summary>
+                <div class="faq-body"><p>Yes. It works with authenticator apps such as Google Authenticator, Microsoft Authenticator, 1Password, Authy or the phone&rsquo;s built-in password app. It&rsquo;s enforced on the server, not just on screen: with it on, a stolen password alone can&rsquo;t reach data, files or server functions.</p><p>The owner can require two-step for chosen roles and reset it for someone who lost their phone. Logins and two-step need <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="security.html#signin">Sign-in and two-step <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-data" id="q-roles" data-keywords="roles permissions staff employees access pin technician advisor manager owner">
+                <summary>What can each person on my staff see?</summary>
+                <div class="faq-body"><p>Roles decide which pages each person sees on a device. The Owner sees everything. A Shop manager runs the shop without accounting or payroll. A Service advisor works the counter: ROs, customers, messages, scheduling and parts. A Technician gets the tech clock, workflow, ROs and technical info. On a shared tablet, people switch with an optional 4-digit PIN.</p><p>Roles shape the screens; they aren&rsquo;t a lock on the data. Any staff login can read the shop&rsquo;s records. The server guards specific actions: making and restoring backups, changing keys and connecting Stripe are owner-only, and refunds and QuickBooks are for the owner or a manager (connecting QuickBooks is owner-only).</p><p class="faq-more" data-no-hl><a class="link-arrow" href="security.html#roles">Roles in detail <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-data" id="q-certifications" data-keywords="soc pci compliance certification card data security">
+                <summary>Does it have security certifications?</summary>
+                <div class="faq-body"><p>No. We don&rsquo;t claim SOC 2, PCI DSS or HIPAA certification. Card numbers are handled by Stripe Checkout and Stripe&rsquo;s card readers and never pass through the app.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="security.html#payments-webhooks">How payments stay with Stripe <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+            </div>
+          </section>
+
+          <section class="faq-group" id="shop" aria-labelledby="shop-title" data-reveal>
+            <div class="faq-group-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+              <h3 id="shop-title">In the shop</h3>
+              <span class="faq-group-count" aria-hidden="true">6 questions</span>
+            </div>
+            <div class="faq-list">
+              <details class="faq" name="faq-shop" id="q-parts-ordering" data-keywords="parts ordering order supplier vendor catalog partstech inventory purchase">
+                <summary>Can I order parts inside the app?</summary>
+                <div class="faq-body"><p>No. Supplier lookup opens RockAuto, NAPA, O&rsquo;Reilly, AutoZone, Advance and OEM parts stores with the vehicle and part search filled in, and PartsTech, Nexpart and WORLDPAC are links to your accounts there. There&rsquo;s no live pricing, stock check or electronic ordering inside the app.</p><p>Purchase orders are tracked in the app from order to receipt. Receiving one adds stocked parts to inventory and marks parts ordered for a repair order as received on that RO.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/parts.html#suppliers">Supplier lookup <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-shop" id="q-carfax" data-keywords="carfax vehicle history report service records">
+                <summary>Does it report service records to CARFAX?</summary>
+                <div class="faq-body"><p>Not directly. Your shop enrolls in the free CARFAX Car Care service-shop program; the app explains the steps and exports a service-history CSV for any date range. Repair orders without a 17-character VIN are skipped and counted so you can fix them.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/customers.html#carfax">CARFAX export <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-shop" id="q-diagnosis" data-keywords="diagnosis diagnose diagnostic codes dtc check engine recall nhtsa">
+                <summary>Is Auto Diagnosis a diagnosis?</summary>
+                <div class="faq-body"><p>No. It gives leads to verify: recalls that may cover the concern, what other owners of the same model report to NHTSA, what fixed it at your shop before, and what the codes mean.</p><p>Symptom checks are general, not make-specific. Recalls match by year, make and model, not an open-recall status for one VIN. NHTSA lookups need internet, and the optional AI test plan needs <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> and your Anthropic API key. A tech still confirms every lead.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/diagnosis.html">Auto Diagnosis <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-shop" id="q-oem" data-keywords="oem service information alldata mitchell wiring diagrams repair info torque specs">
+                <summary>Does it replace OEM service information?</summary>
+                <div class="faq-body"><p>No. The vehicle database&rsquo;s diagrams, parts lists and repair guides are generated to represent each configuration. Inferred items are labelled &ldquo;typical&rdquo;, and torque values, capacities, pinouts and wire colors are left to factory service information.</p><p>OEM portals are links, and their subscriptions are separate. Keep ALLDATA, Mitchell or OEM information for those specs.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/diagnosis.html#database">The vehicle database <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-shop" id="q-locations" data-keywords="locations multi-location stores branches second shop">
+                <summary>Can I run more than one location?</summary>
+                <div class="faq-body"><p>Yes. Each location has its own address, phone, sales tax and labor rate, and all of them share one customer list. Repair orders, appointments, time, purchase orders and inventory belong to a location, and each device picks the location it works at, or all of them.</p><p>Estimates, invoices and texts use that location&rsquo;s details. Reports compare locations side by side, and parts can be transferred between them.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/reports.html#locations">Multiple locations <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+              <details class="faq" name="faq-shop" id="q-fleet" data-keywords="fleet commercial business accounts terms net 30 invoices statements po">
+                <summary>Can I bill fleets on account?</summary>
+                <div class="faq-body"><p>Yes. Business accounts get terms from due on receipt to Net 60, a credit limit, a not-to-exceed amount per visit, required PO numbers and unit numbers. Invoices print the PO, unit, terms and due date, and receivables aging and statements are built in.</p><p>With <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, the fleet manager gets a private portal link: each unit&rsquo;s maintenance status, what&rsquo;s in the shop and open invoices.</p><p class="faq-more" data-no-hl><a class="link-arrow" href="features/fleet.html">Fleet &amp; business accounts <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a></p></div>
+              </details>
+            </div>
+          </section>
+
+          <div class="faq-empty" id="faq-empty" hidden>
+            <figure class="faq-empty-art" data-play aria-hidden="true">
+              <svg viewBox="0 0 96 96" focusable="false"><circle class="faq-empty-bg" cx="48" cy="48" r="46"/><g class="faq-lens"><circle class="art-ink art-paper" cx="43" cy="42" r="17"/><path class="art-ink" d="M55.5 54.5L68 67" stroke-width="4"/><path class="art-ink art-thin art-accent" d="M35 36a10 10 0 0 1 8-5"/></g></svg>
+            </figure>
+            <h3>No answers match <span id="faq-empty-q">that</span> yet.</h3>
+            <p>Try a shorter word, like &ldquo;offline,&rdquo; &ldquo;Stripe&rdquo; or &ldquo;backup.&rdquo; Or send us the question.</p>
+            <div class="cluster">
+              <button class="btn btn-secondary" type="button" data-faq-reset><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>Clear search</button>
+              <a class="btn btn-primary" href="demo.html?topic=question"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Send a question</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm faq-needs" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> a current browser on each device. Shared data across devices, staff logins, share links, the booking inbox, cloud backups and every outside service except the built-in NHTSA data need <a href="works-with.html#shop-cloud">Shop Cloud</a>.</li>
+            <li>Outside services (Stripe, Twilio, Resend, Intuit, Smartcar, Anthropic) run on your shop&rsquo;s own accounts and bill your shop directly at their own rates.</li>
+            <li>It installs from the browser. It isn&rsquo;t in the App Store or Google Play.</li>
+            <li>Prices aren&rsquo;t published. Ask how Shop Cloud is set up and billed in your <a href="demo.html">demo request</a>.</li>
+            <li>Roles and PINs decide what each person sees on a device. They aren&rsquo;t a lock on the data.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section-sm" id="ask" aria-labelledby="ask-title">
+    <div class="container">
+      <div class="panel-wash faq-ask" data-reveal>
+        <div class="faq-ask-copy">
+          <p class="eyebrow">Didn&rsquo;t find it?</p>
+          <h2 id="ask-title">Ask a <span class="accent-text">person.</span></h2>
+          <p>Send it to us. The form opens with Question already picked. Add a line about your shop and how you&rsquo;d like us to reach you.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="demo.html?topic=question"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Send a question</a>
+            <a class="btn btn-secondary btn-lg" href="app/" data-no-prerender>Try the sample shop</a>
+          </div>
+          <p class="faq-ask-mail"><!-- @partial contact-email -->
+
+<!-- @end contact-email --></p>
+        </div>
+        <svg class="faq-ask-art" viewBox="0 0 240 200" aria-hidden="true" focusable="false">
+          <ellipse cx="104" cy="188" rx="76" ry="7" fill="rgba(15, 43, 76, .06)"/>
+          <path class="art-ink art-tint" d="M44 22h120a26 26 0 0 1 26 26v62a26 26 0 0 1-26 26H84l-30 26v-26H44a26 26 0 0 1-26-26V48a26 26 0 0 1 26-26z" stroke-width="2.4"/>
+          <path class="art-ink art-thin" d="M44 36h120a12 12 0 0 1 12 12" stroke-opacity=".25"/>
+          <text x="104" y="102" text-anchor="middle" font-size="64" font-weight="700" fill="#0F2B4C" font-family="-apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif">?</text>
+          <path class="art-ink art-thin" d="M176 112c18 6 30-2 34-20" stroke-dasharray="3 7" stroke-opacity=".6"/>
+          <g transform="translate(188 30) rotate(-14)">
+            <path class="art-ink art-paper" d="M0 30L52 8 40 58 26 40z"/>
+            <path class="art-ink art-thin" d="M26 40L52 8M26 40l-2 16 10-10"/>
+          </g>
+          <circle cx="32" cy="160" r="5" fill="#2DB36A"/>
+          <circle cx="210" cy="140" r="4" fill="#1F7AE0"/>
+        </svg>
+      </div>
     </div>
   </section>
 </main>
@@ -203,7 +817,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -218,7 +832,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="index.html" aria-label="WPI Driveline Shop Management System home">
@@ -285,6 +899,7 @@
   <a class="tab tab-book" href="demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">
@@ -330,5 +945,266 @@
   </div>
 </dialog>
 <!-- @end tabbar -->
+<script>
+/* faq.html: search with <mark> highlighting, "/" to focus, common-search chips, topic counts and
+   deep links (?q=, ?topic=, #q-id). Topic pills are scroll-spy links (site.js [data-spy]). */
+document.addEventListener("DOMContentLoaded", () => {
+  "use strict";
+  const d = document;
+  const W = window.WPI || {};
+  const motionOK = () => (typeof W.motionOK === "function" ? W.motionOK() : !matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+  // Hero art: the markup is the end state (the car parked above the dot). The drive starts only when
+  // motion is allowed, so Reduce Motion, the Pause toggle and no-JS all rest on the parked car.
+  // site.js pauses the SVG while it's off-screen.
+  const drive = d.getElementById("faqDrive");
+  if (drive && typeof drive.beginElementAt === "function" && motionOK()) {
+    try { drive.beginElementAt(1.9); } catch (e) { /* SMIL not supported: the parked car stays */ }
+  }
+
+  const input = d.getElementById("faq-search");
+  const results = d.getElementById("faq-results");
+  if (!input || !results) return;
+  const box = input.closest(".faq-search");
+  const clearBtn = box.querySelector(".faq-clear");
+  const resetBtns = Array.from(d.querySelectorAll("[data-faq-reset]"));
+  const headReset = d.querySelector(".faq-results-head [data-faq-reset]");
+  const countEl = d.querySelector("[data-faq-count]");
+  const statusEl = d.getElementById("faq-status");
+  const empty = d.getElementById("faq-empty");
+  const emptyQ = d.getElementById("faq-empty-q");
+  const tryRow = d.querySelector(".faq-try");
+  const foundRow = d.querySelector(".faq-found");
+  const foundText = d.querySelector("[data-faq-found]");
+  const tryChips = Array.from(d.querySelectorAll(".faq-try-chip"));
+  const groups = Array.from(results.querySelectorAll(".faq-group"));
+  const topicLinks = Array.from(d.querySelectorAll(".faq-topic[data-topic]"));
+
+  const norm = (s) => String(s).toLowerCase().replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, " ");
+  const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+
+  const items = Array.from(results.querySelectorAll("details.faq")).map((el) => {
+    const summary = el.querySelector("summary");
+    // summary is a flex row: keep the question in one span so <mark>s don't become flex items
+    const label = d.createElement("span");
+    label.className = "faq-q";
+    while (summary.firstChild) label.append(summary.firstChild);
+    const tag = d.createElement("span");
+    tag.className = "faq-in-answer";
+    tag.setAttribute("aria-hidden", "true");
+    tag.textContent = "Match in answer";
+    const wrap = d.createElement("span");
+    wrap.className = "faq-sum";
+    wrap.append(label, tag);
+    summary.append(wrap);
+    const paras = Array.from(el.querySelectorAll(".faq-body p:not([data-no-hl])"));
+    const targets = [label, ...paras].map((node) => ({ node, html: node.innerHTML }));
+    const head = norm(label.textContent);
+    const body = norm(paras.map((p) => p.textContent).join(" "));
+    const text = head + " " + body + " " + norm(el.dataset.keywords || "");
+    return { el, label, group: el.closest(".faq-group"), targets, head, body, text, marked: false };
+  });
+  const total = items.length;
+
+  const highlight = (root, re) => {
+    const walker = d.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach((node) => {
+      const t = node.nodeValue;
+      re.lastIndex = 0;
+      if (!re.test(t)) return;
+      re.lastIndex = 0;
+      const frag = d.createDocumentFragment();
+      let last = 0, m;
+      while ((m = re.exec(t))) {
+        if (!m[0].length) { re.lastIndex++; continue; }
+        if (m.index > last) frag.append(t.slice(last, m.index));
+        const mark = d.createElement("mark");
+        mark.className = "faq-hit";
+        mark.textContent = m[0];
+        frag.append(mark);
+        last = m.index + m[0].length;
+      }
+      if (last < t.length) frag.append(t.slice(last));
+      node.replaceWith(frag);
+    });
+  };
+
+  let query = "";
+  let statusTimer, urlTimer;
+
+  let emptyKey = "";
+  const refreshSpy = () => {
+    const key = topicLinks.map((a) => (a.classList.contains("is-empty") ? 1 : 0)).join("");
+    // "resize" makes site.js forget its current topic, so a topic that has matches again is re-marked
+    dispatchEvent(new Event(key !== emptyKey ? "resize" : "scroll"));
+    emptyKey = key;
+  };
+  const unmarkEmpty = () => topicLinks.forEach((a) => {
+    if (a.classList.contains("is-empty") && a.hasAttribute("aria-current")) a.removeAttribute("aria-current");
+  });
+  const topicNav = d.querySelector(".faq-topics");
+  if (topicNav && "MutationObserver" in window)
+    new MutationObserver(unmarkEmpty).observe(topicNav, { subtree: true, attributes: true, attributeFilter: ["aria-current", "class"] });
+
+  const apply = (opts = {}) => {
+    const q = query.trim();
+    const terms = norm(q).split(" ").filter(Boolean);
+    const re = terms.length ? new RegExp(terms.map((t) => esc(t).replace(/'/g, "['’]").replace(/"/g, "[\"“”]")).join("|"), "gi") : null;
+    const perGroup = new Map();
+    let shown = 0;
+
+    items.forEach((it) => {
+      const hit = terms.every((t) => it.text.includes(t));
+      const wasHidden = it.el.hidden;
+      it.el.hidden = !hit;
+      if (it.marked) { it.targets.forEach((t) => (t.node.innerHTML = t.html)); it.marked = false; }
+      it.el.classList.remove("is-body-hit");
+      if (!hit) return;
+      shown++;
+      perGroup.set(it.group, (perGroup.get(it.group) || 0) + 1);
+      if (wasHidden && !opts.silent && motionOK()) {
+        it.el.classList.remove("is-entering");
+        void it.el.offsetWidth;
+        it.el.classList.add("is-entering");
+      }
+      if (re) {
+        it.targets.forEach((t) => highlight(t.node, re));
+        it.marked = true;
+        if (!terms.some((t) => it.head.includes(t)) && terms.some((t) => it.body.includes(t))) it.el.classList.add("is-body-hit");
+      }
+    });
+
+    groups.forEach((g) => {
+      const n = perGroup.get(g) || 0;
+      g.hidden = n === 0;
+      const badge = g.querySelector(".faq-group-count");
+      if (badge) badge.textContent = q ? `${n} of ${g.querySelectorAll("details.faq").length}` : plural(n, "question", "questions");
+    });
+    topicLinks.forEach((a) => {
+      const g = d.getElementById(a.dataset.topic);
+      const n = perGroup.get(g) || 0;
+      a.querySelector(".faq-topic-count").textContent = n;
+      a.classList.toggle("is-empty", n === 0);
+    });
+
+    const nGroups = groups.filter((g) => !g.hidden).length;
+    const strong = d.createElement("strong");
+    strong.textContent = shown;
+    countEl.replaceChildren(strong, q ? ` ${shown === 1 ? "answer" : "answers"} for “${q}”` : ` answers in ${nGroups} topics`);
+    headReset.hidden = !q;
+    empty.hidden = shown !== 0;
+    emptyQ.textContent = q ? `“${q}”` : "that";
+    clearBtn.hidden = !query;
+    box.classList.toggle("has-value", Boolean(query));
+    tryRow.hidden = Boolean(q);
+    foundRow.hidden = !q;
+    if (q) foundText.innerHTML = shown ? `<strong>${shown}</strong> ${shown === 1 ? "answer matches" : "answers match"}.` : "No answers match yet.";
+    foundRow.querySelector("[data-faq-jump]").firstChild.nodeValue = shown ? (shown === 1 ? "See it " : "See them ") : "Ask a person ";
+    foundRow.querySelector("[data-faq-jump]").setAttribute("href", shown ? "#faq-results" : "#ask");
+
+    clearTimeout(statusTimer);
+    if (!opts.silent) statusTimer = setTimeout(() => {
+      statusEl.textContent = shown
+        ? `${plural(shown, "answer", "answers")}${q ? ` match “${q}”` : ""}`
+        : `No answers match${q ? ` “${q}”` : ""}`;
+    }, opts.quiet ? 0 : 500);
+
+    clearTimeout(urlTimer);
+    urlTimer = setTimeout(() => {
+      try {
+        const url = new URL(location.href);
+        if (q) url.searchParams.set("q", q); else url.searchParams.delete("q");
+        if (url.href !== location.href) history.replaceState(history.state, "", url);
+      } catch (e) { /* ignore */ }
+    }, 450);
+    refreshSpy();
+  };
+
+  const setQuery = (value, opts) => { input.value = value; query = value; apply(opts); };
+  const scrollToResults = () => results.scrollIntoView({ behavior: motionOK() ? "smooth" : "auto", block: "start" });
+
+  input.addEventListener("input", () => { query = input.value; apply(); });
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && input.value) { e.preventDefault(); setQuery(""); }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      const first = items.find((it) => !it.el.hidden);
+      if (!first) return;
+      if (query.trim()) first.el.open = true;
+      first.el.querySelector("summary").focus({ preventScroll: true });
+      first.el.scrollIntoView({ behavior: motionOK() ? "smooth" : "auto", block: "start" });
+    }
+  });
+  clearBtn.addEventListener("click", () => { setQuery(""); input.focus(); });
+  resetBtns.forEach((b) => b.addEventListener("click", () => {
+    setQuery("");
+    input.focus({ preventScroll: true });
+    scrollToResults();
+  }));
+  tryChips.forEach((chip) => chip.addEventListener("click", () => {
+    setQuery(chip.dataset.q);
+    scrollToResults();
+  }));
+  d.querySelector("[data-faq-jump]").addEventListener("click", () => { if (d.activeElement === input) input.blur(); });
+
+  // A topic with no matches clears the search, then jumps to it
+  topicLinks.forEach((a) => a.addEventListener("click", () => {
+    const g = d.getElementById(a.dataset.topic);
+    if (g && g.hidden) setQuery("", { silent: true });
+  }));
+
+  // "/" focuses the search from anywhere on the page
+  d.addEventListener("keydown", (e) => {
+    if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    if (t.closest && t.closest("input, textarea, select, [contenteditable]")) return;
+    e.preventDefault();
+    input.focus({ preventScroll: true });
+    input.scrollIntoView({ behavior: motionOK() ? "smooth" : "auto", block: "center" });
+  });
+
+  // Deep links: ?q=, ?topic= and #q-question-id
+  const params = new URLSearchParams(location.search);
+  if (params.get("q")) setQuery(params.get("q"), { quiet: true });
+  else apply({ silent: true });
+  const topic = params.get("topic");
+  const openFromHash = () => {
+    const el = location.hash && d.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (!el) return false;
+    if (el.matches("details.faq")) {
+      if (el.hidden) setQuery("", { silent: true });
+      el.open = true;
+      requestAnimationFrame(() => el.scrollIntoView({ block: "start" }));
+      return true;
+    }
+    return false;
+  };
+  if (!openFromHash() && topic) {
+    const g = d.getElementById(topic);
+    if (g && g.matches(".faq-group")) {
+      if (g.hidden) setQuery("", { silent: true });
+      requestAnimationFrame(() => g.scrollIntoView({ block: "start" }));
+    }
+  }
+  addEventListener("hashchange", openFromHash);
+
+  // Phones: back above the topics (no topic current), the sideways chip row returns to its start
+  const topicsNav = d.querySelector(".faq-topics");
+  const row = topicsNav && topicsNav.querySelector("ul");
+  let rowQueued = false;
+  if (row) addEventListener("scroll", () => {
+    if (rowQueued) return;
+    rowQueued = true;
+    requestAnimationFrame(() => {
+      rowQueued = false;
+      if (row.scrollLeft > 0 && !topicsNav.querySelector("[aria-current]") && results.getBoundingClientRect().top > innerHeight * 0.4)
+        row.scrollTo({ left: 0, behavior: motionOK() ? "smooth" : "auto" });
+    });
+  }, { passive: true });
+});
+</script>
 </body>
 </html>

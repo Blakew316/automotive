@@ -69,6 +69,12 @@
   display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 10px;
   background: var(--green-50); border: 1px solid rgba(45, 179, 106, .28); font-size: 12px; font-weight: 600;
 }
+.payments-ro-pay { display: grid; }
+.payments-ro-pay > * { grid-area: 1 / 1; }
+.payments-ro-none {
+  display: flex; align-items: center; gap: 8px; padding: 7px 10px; border-radius: 10px;
+  border: 1px dashed var(--line-strong); font-size: 12px; font-weight: 600; color: var(--ink-3);
+}
 .payments-ro-paid > span:nth-child(2) { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .payments-ro-paid > span:last-child { margin-left: auto; flex: none; font-variant-numeric: tabular-nums; }
 .payments-ro-bal { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--m-line); }
@@ -80,6 +86,10 @@
   font-variant-numeric: tabular-nums; color: var(--ink); transition: color .5s var(--ease);
 }
 [data-reached~="3"] .payments-ro-bal strong { color: var(--green-ink); }
+/* After the roll to $0.00, fold away the two drums that held "25", so the "$" sits next to the "0" */
+.payments-ro-bal .odometer > .odo-digit { transition: none; }
+[data-reached~="3"] .payments-ro-bal .odometer > .odo-digit:nth-child(-n+3) { width: 0; transition: width .3s var(--ease) 1.6s; }
+@media print { [data-reached~="3"] .payments-ro-bal .odometer > .odo-digit:nth-child(-n+3) { transition: none !important; } }
 .payments-ro-stamp { flex: none; margin-right: 4px; }
 
 .payments-reader { position: relative; z-index: 2; display: grid; justify-items: start; padding-top: 92px; }
@@ -121,16 +131,30 @@
 }
 .payments-hero .float-note.note-1 { top: 44px; left: -10px; }
 .payments-hero .float-note.note-2 { top: auto; bottom: 6px; right: -10px; }
+/* The payment notice belongs to the paid step: it lands after the PAID stamp, never beside an unpaid RO.
+   Reduce Motion and no-JS ship data-reached complete, so they show it. */
+.js .payments-hero:not([data-reached~="3"]) .float-note.note-2 { visibility: hidden; animation: none; }
 @media (min-width: 960px) and (max-width: 1179.98px) {
   .payments-stage { --reader-col: 132px; --reader-w: 112px; }
-  .payments-hero .float-note { display: none; }
-  .payments-stage { padding-top: 24px; padding-bottom: 28px; }
   .payments-ro-name strong { white-space: normal; }
+  /* laptop widths: the chips stay, a little smaller, tucked into the corners clear of the RO */
+  .payments-hero .float-note { scale: .9; }
+  .payments-hero .float-note.note-1 { top: 40px; left: -6px; transform-origin: 0 0; }
+  .payments-hero .float-note.note-2 { bottom: -6px; right: -6px; }
 }
 @media (max-width: 599.98px) {
   .payments-stage { --reader-col: 112px; --reader-w: 104px; column-gap: 10px; padding: 26px 0 30px; }
   .payments-stage::after { bottom: 14px; }
-  .payments-ro { padding: 12px 11px 13px; gap: 8px; font-size: 12px; }
+  /* one minmax(0, 1fr) track, so nothing inside can push the card wider than its column */
+  .payments-ro { grid-template-columns: minmax(0, 1fr); padding: 12px 11px 13px; gap: 8px; font-size: 12px; }
+  /* name on the first row, customer + status chip on the second */
+  .payments-ro-head { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 1px 8px; }
+  .payments-ro-icon { grid-row: 1 / 3; width: 26px; height: 26px; border-radius: 8px; }
+  .payments-ro-name { display: contents; }
+  .payments-ro-name strong { grid-column: 2 / 4; grid-row: 1; min-width: 0; white-space: normal; }
+  .payments-ro-name small { grid-column: 2; grid-row: 2; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .payments-ro-status { grid-column: 3; grid-row: 2; margin: 0; }
+  .payments-ro-kind { display: none; }
   .payments-ro .mock-line > :first-child { white-space: normal; overflow: visible; }
   .payments-ro .mock-line { align-items: flex-start; }
   .payments-ro-bal { padding: 8px 9px; }
@@ -143,6 +167,22 @@
   .payments-card { width: 88px; height: 54px; padding: 7px 8px 6px; left: 4px; top: 4px; }
   .payments-card-num { letter-spacing: -0.02em; }
   .payments-ripple { top: 18px; }
+}
+/* Narrow phones (up to 379px): the RO keeps the full width and the reader sits under it on the right.
+   The card rests to the reader's left and swoops up onto it. */
+@media (max-width: 379.98px) {
+  .payments-stage { grid-template-columns: minmax(0, 1fr); row-gap: 0; padding-bottom: 24px; }
+  .payments-stage::after { left: 40%; bottom: 10px; }
+  .payments-reader { justify-self: end; padding-top: 24px; margin-right: 10px; }
+  .payments-ripple { top: -28px; }
+  .payments-card { left: -122px; top: 50px; rotate: -8deg; }
+  .payments-card[data-at] { --fx: payments-card-tap-sm; }
+}
+@keyframes payments-card-tap-sm {
+  0% { opacity: 0; translate: -70px 30px; rotate: -22deg; }
+  38% { opacity: 1; translate: 128px -30px; rotate: -2deg; scale: 1; }
+  50% { translate: 128px -24px; rotate: -2deg; scale: .94; }
+  62% { translate: 128px -30px; rotate: -2deg; scale: 1; }
 }
 
 /* ---------- Where payments get retyped ---------- */
@@ -169,6 +209,10 @@
   .payments-tabs .tabs-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); width: 100%; }
   .payments-tabs [role="tab"] { justify-content: center; padding: 10px 4px; font-size: .9rem; white-space: nowrap; }
   .payments-tabs [role="tab"] .icon { display: none; }
+}
+/* Under 360px the three labels can't fit on one line each: let them wrap inside their own column */
+@media (max-width: 359.98px) {
+  .payments-tabs [role="tab"] { white-space: normal; line-height: 1.15; padding: 8px 2px; font-size: .84rem; text-align: center; }
 }
 html:not(.js) .payments-tabs .tabs-list { display: none; }
 html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !important; }
@@ -201,8 +245,12 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
 .payments-link-text b { font-size: 13px; font-weight: 680; }
 .payments-link-text small { font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .payments-link > .mock-chip { margin-left: auto; flex: none; position: relative; z-index: 2; }
-.payments-link-veil { position: absolute; inset: 0; z-index: 1; border-radius: inherit; background: rgba(240, 245, 251, .55); pointer-events: none; }
+.payments-link-veil { position: absolute; inset: 0; z-index: 1; border-radius: inherit; background: rgba(240, 245, 251, .4); pointer-events: none; }
+/* The voided link reads as void from the chip and the strike; its text stays above the veil at full contrast */
+.payments-link.is-old .payments-link-text { position: relative; z-index: 2; }
 .payments-link-text small { position: relative; justify-self: start; }
+/* one line, so the single strike runs through the text, not between two lines */
+.payments-link.is-old .payments-link-text small { max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .payments-link-strike { position: absolute; z-index: 2; left: -2px; right: -2px; top: 50%; height: 1.5px; border-radius: 1px; background: var(--ink-3); }
 .payments-links-acts { display: flex; justify-content: flex-end; gap: 6px; flex-wrap: wrap; }
 
@@ -210,7 +258,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
 .payments-take { width: 100%; }
 .payments-take-stage { grid-template-columns: minmax(0, 310px) 134px; justify-content: center; justify-items: stretch; gap: 14px 22px; align-items: center; width: 100%; }
 .payments-sheet {
-  display: grid; gap: 6px; min-width: 0; padding: 14px; border-radius: 18px; text-align: left;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; padding: 14px; border-radius: 18px; text-align: left;
   background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2);
 }
 .payments-sheet-head { display: grid; gap: 1px; padding-bottom: 8px; margin-bottom: 2px; border-bottom: 1px solid var(--m-line); }
@@ -225,7 +273,8 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
 .payments-sheet-sum .mock-total { margin-top: 2px; padding-top: 5px; font-size: 13.5px; }
 .payments-sheet-go { display: grid; justify-items: stretch; margin-top: 6px; }
 .payments-sheet-go > * { justify-content: center; min-height: 30px; }
-.payments-sheet-go .icon { width: 14px; height: 14px; }
+.payments-sheet-go .icon { width: 14px; height: 14px; flex: none; }
+.payments-sheet-go > .mock-btn { white-space: normal; text-align: center; line-height: 1.2; }
 .payments-take-reader.mock-reader { width: 134px; justify-self: center; gap: 8px; padding: 10px 10px 12px; border-radius: 22px; box-shadow: var(--shadow-3); }
 .payments-take-reader .payments-screen-amt strong { font-size: 18px; }
 .payments-steps { grid-column: 1 / -1; list-style: none; margin: 2px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
@@ -234,6 +283,13 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
 [data-reached~="0"] .payments-steps li:nth-child(1), [data-reached~="1"] .payments-steps li:nth-child(2), [data-reached~="2"] .payments-steps li:nth-child(3) { color: var(--ink); border-color: var(--line-strong); }
 [data-reached~="0"] .payments-steps li:nth-child(1) > span, [data-reached~="1"] .payments-steps li:nth-child(2) > span { background: var(--blue); color: #fff; }
 [data-reached~="2"] .payments-steps li:nth-child(3) > span { background: var(--green-ink); color: #fff; }
+/* Before the tip step the sheet looks like the app's: No tip picked, no Tip row in the sum */
+.payments-take:not([data-reached~="1"]) .payments-tip-none { border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink); }
+.payments-take:not([data-reached~="1"]) .payments-tip-row { display: none; }
+/* The reader idles until Send; at step 2 it shows the charge to tap, then Approved */
+.payments-screen-tap[data-at] { --fx: payments-tap-show; --fx-dur: 1.05s; --fx-ease: linear; }
+.payments-take[data-reached~="2"] .payments-screen-tap { opacity: 0; }
+@keyframes payments-tap-show { 0% { opacity: 0; } 14%, 78% { opacity: 1; } 100% { opacity: 0; } }
 @media (max-width: 459.98px) {
   .payments-take-stage { grid-template-columns: minmax(0, 1fr) 104px; gap: 12px 10px; }
   .payments-take-reader.mock-reader { justify-self: end; }
@@ -242,12 +298,15 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
   .payments-take-reader .payments-screen-ok svg { width: 32px; height: 32px; }
   .payments-sheet { padding: 12px 11px; }
 }
+@media (max-width: 379.98px) {
+  .payments-sheet-sum .mock-line > :first-child { white-space: normal; }
+}
 
 /* Other methods panel */
 .payments-other { display: grid; gap: 14px; padding: clamp(18px, 1rem + 1vw, 26px); }
 .payments-other-label { font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
-.payments-method-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 148px), 1fr)); gap: 8px; }
-.payments-method-grid li { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 13px; background: var(--mist-50); border: 1px solid var(--line); font-weight: 620; font-size: .95rem; color: var(--ink); }
+.payments-method-grid { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.payments-method-grid li { flex: 1 1 auto; white-space: nowrap; display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 10px; border-radius: 13px; background: var(--mist-50); border: 1px solid var(--line); font-weight: 620; font-size: .95rem; color: var(--ink); }
 .payments-method-grid .icon-tile { width: 32px; height: 32px; border-radius: 10px; }
 .payments-method-grid .icon-tile .icon { width: 17px; height: 17px; }
 .payments-cap { display: grid; gap: 10px; padding: 14px 16px; border-radius: 16px; background: var(--wash); border: 1px solid rgba(31, 122, 224, .14); }
@@ -271,32 +330,31 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
 .payments-fin-phone.mock-phone { width: min(100%, 292px); margin-left: 4%; }
 .payments-fin-phone > .mock-screen { gap: 11px; padding-bottom: 16px; }
 .payments-report-head { display: grid; gap: 2px; padding-bottom: 9px; border-bottom: 1px solid var(--m-line); }
-.payments-report-shop { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 650; color: var(--ink-2); }
-.payments-report-shop i { flex: none; width: 15px; height: 15px; border-radius: 5px; background: var(--wash); box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .22); }
+.payments-report-shop { font-size: 12px; font-weight: 650; color: var(--ink-2); }
 .payments-report-head strong { margin-top: 6px; font-size: 16px; font-weight: 720; letter-spacing: -0.015em; }
 .payments-report-head small { font-size: 12px; color: var(--ink-3); }
 .payments-report-lines { display: grid; gap: 6px; font-size: 12px; }
+.payments-report-sub { margin-top: 2px; padding-top: 6px; border-top: 1px solid var(--m-line); }
 .payments-report-lines .mock-total { font-size: 14px; }
 .payments-report-fin { display: grid; gap: 8px; padding: 11px 12px 12px; border-radius: 14px; background: var(--wash); border: 1px solid rgba(31, 122, 224, .16); }
 .payments-report-fin-text { display: grid; gap: 2px; min-width: 0; font-size: 12px; line-height: 1.35; color: var(--ink-2); }
 .payments-report-fin-text b { font-size: 13px; font-weight: 700; color: var(--ink); }
 .payments-report-fin-text strong { font-weight: 760; color: var(--ink); font-variant-numeric: tabular-nums; }
 .payments-report-fin-text small { font-size: 12px; color: var(--ink-3); }
-.payments-report-fin .mock-btn { justify-self: start; min-width: 92px; }
+/* The RO's financing card, as in the app: the "As low as" headline, then every term on one line */
 .payments-fin-ro {
-  position: absolute; left: calc(4% + min(100%, 292px) - 16px); bottom: 34px; z-index: 2; display: grid; gap: 9px; width: 196px; padding: 12px 12px 13px;
+  position: absolute; left: calc(4% + min(100%, 292px) - 16px); bottom: 34px; z-index: 2; display: grid; gap: 7px; width: 212px; padding: 12px 12px 13px;
   border-radius: 18px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3); text-align: left;
 }
 .payments-fin-ro-head { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 .payments-fin-ro-head .icon { width: 15px; height: 15px; color: var(--accent); }
-.payments-terms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; border-radius: var(--pill); background: var(--mist-100); }
-.payments-terms > span { padding: 3px 0; border-radius: var(--pill); text-align: center; font-size: 12px; font-weight: 650; line-height: 1.5; white-space: nowrap; color: var(--ink-3); transition: background-color .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease); }
-.payments-terms > span.is-active { background: var(--paper); color: var(--ink); box-shadow: var(--shadow-1); }
-.payments-fin-amts { display: grid; }
-.payments-fin-amt { grid-area: 1 / 1; display: flex; align-items: baseline; gap: 3px; font-size: 24px; font-weight: 760; line-height: 1.2; letter-spacing: -0.02em; color: var(--ink); font-variant-numeric: tabular-nums; transition: opacity .35s var(--ease); }
-.payments-fin-amt small { font-size: 13px; font-weight: 650; letter-spacing: 0; color: var(--ink-3); }
-.payments-fin-amt:not(.is-active) { opacity: 0; }
-.payments-fin-apr { font-size: 12px; color: var(--ink-3); }
+.payments-fin-best { margin: 0; font-size: 13px; line-height: 1.35; color: var(--ink-3); }
+.payments-fin-best strong { font-size: 15px; font-weight: 720; letter-spacing: -0.01em; color: var(--ink); font-variant-numeric: tabular-nums; }
+.payments-fin-line { margin: 0; font-size: 12px; line-height: 1.75; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.payments-terms > span { padding: 2px 4px; margin: 0 -2px; border-radius: 6px; white-space: nowrap; transition: background-color .4s var(--ease), color .4s var(--ease), box-shadow .4s var(--ease); }
+.payments-terms > span.is-hl { background: var(--accent-soft); color: var(--ink); font-weight: 650; box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .22); }
+.payments-fin-ro .odo-digit { -webkit-mask-image: linear-gradient(transparent, #000 16%, #000 84%, transparent); mask-image: linear-gradient(transparent, #000 16%, #000 84%, transparent); }
+.payments-fin-apr { white-space: nowrap; }
 @media (max-width: 599.98px) {
   .payments-fin-stage { justify-items: stretch; }
   .payments-fin-phone.mock-phone { margin: 0 auto; width: min(100%, 300px); }
@@ -304,7 +362,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
 }
 @media (min-width: 900px) and (max-width: 1079.98px) {
   .payments-fin-phone.mock-phone { margin-left: 0; }
-  .payments-fin-ro { left: auto; right: -6px; width: 176px; }
+  .payments-fin-ro { left: auto; right: -6px; width: 188px; }
 }
 </style>
 </head>
@@ -434,7 +492,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -478,7 +536,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
 <!-- @end breadcrumbs -->
         <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-payments"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg></span>Payments &amp; card readers</p>
         <h1 id="hero-title">Get paid at the counter <span class="accent-text">or from a text.</span></h1>
-        <p class="lead">Record any payment on the repair order. With Shop Cloud and your own Stripe account, customers pay from a text link and counter card readers charge the exact RO amount, and both post to the RO on your signed-in shop devices.</p>
+        <p class="lead">Record any payment on the repair order. With <a class="text-link" href="../works-with.html#shop-cloud">Shop Cloud</a> and your own Stripe account, customers pay from a text link and counter card readers charge the exact RO amount, and both post to the RO on your signed-in shop devices.</p>
         <div class="hero-actions">
           <a class="btn btn-primary btn-lg" href="../demo.html?interest=payments">Request a demo</a>
           <a class="btn btn-secondary btn-lg" href="../app/orders" data-no-prerender>Open repair orders in the sample shop</a>
@@ -496,7 +554,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
           <div class="payments-ro">
             <div class="payments-ro-head">
               <span class="payments-ro-icon"><svg class="icon"><use href="#i-document"/></svg></span>
-              <span class="payments-ro-name"><strong>2020 Honda Accord EX-L</strong><small>Avery T. · repair order</small></span>
+              <span class="payments-ro-name"><strong>2020 Honda Accord EX-L</strong><small>Avery T.<span class="payments-ro-kind"> · repair order</span></small></span>
               <span class="payments-swap payments-ro-status"><span class="mock-chip is-ok" data-until="3">Ready</span><span class="mock-chip is-idle" data-at="3" data-fx="flip">Closed</span></span>
             </div>
             <div class="payments-ro-lines">
@@ -506,8 +564,11 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
               <div class="mock-line is-muted"><span>Tax</span><span>$11.66</span></div>
               <div class="mock-total"><span>Total</span><span>$254.52</span></div>
             </div>
-            <div class="payments-ro-paid" data-at="3" data-fx="rise">
-              <span class="mock-dot is-ok"></span><span>Card · Visa ••5521</span><span>$254.52</span>
+            <div class="payments-ro-pay">
+              <div class="payments-ro-none" data-until="3"><span class="mock-dot is-idle"></span><span>No payments yet.</span></div>
+              <div class="payments-ro-paid" data-at="3" data-fx="rise">
+                <span class="mock-dot is-ok"></span><span>Card · Visa ••5521</span><span>$254.52</span>
+              </div>
             </div>
             <div class="payments-ro-bal">
               <span class="payments-ro-bal-l"><span>Balance due</span><strong><span class="odometer is-plain" data-odometer="0.00" data-from="254.52" data-decimals="2" data-prefix="$" data-duration="1.4" data-at="3" data-fx="none" style="--fx-pre: 1">$0.00</span></strong></span>
@@ -542,7 +603,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
         <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
         <div class="float-note note-1" aria-hidden="true">
           <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-link"/></svg></span>
-          <span><strong>Pay link · exact balance</strong><small>Pay link for $254.52 ready</small></span>
+          <span><strong>Pay link · exact balance</strong><small>$254.52 · ready to text</small></span>
         </div>
         <div class="float-note note-2" aria-hidden="true">
           <span class="dot is-ok"></span>
@@ -598,7 +659,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
           <div class="payments-panel">
             <div class="payments-panel-copy">
               <h3>A link for the exact balance</h3>
-              <p>Stripe pay links are always for the exact balance. Make a new link and the old one is voided, so nobody pays a stale amount.</p>
+              <p>Stripe pay links are made for the exact balance. Make a new link and the old one is voided, so a stale amount can't be paid after you send the new one.</p>
               <p>Checkout shows the payment methods you turn on in Stripe: cards, Apple Pay, Google Pay, Link, ACH bank payments, and pay over time with Affirm, Klarna or Afterpay for eligible amounts.</p>
               <div class="pill-cloud payments-methods-pills" data-reveal-stagger="fade">
                 <span class="provider-pill"><span class="provider-dot"></span>Cards</span>
@@ -611,7 +672,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
                 <span class="provider-pill"><span class="provider-dot"></span>Afterpay</span>
               </div>
               <p>The Pay button on the customer's live status page always matches the current balance.</p>
-              <a class="link-arrow" href="messaging.html">Texting the link and the live status page <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+              <a class="link-arrow" href="inspections.html#live-status">The customer's live status page <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
             </div>
             <figure class="mock-figure is-inline payments-mini payments-links" data-reveal-seq aria-label="Example: on the sample shop's repair order for a 2020 Honda Accord, a pay link for $170.48 went out before the wiper blades were approved. A new pay link for the exact balance, $254.52, replaces it, and the old link is void.">
               <span class="mock-tag">Example · sample shop</span>
@@ -623,7 +684,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
                 <div class="payments-links-added" data-seq-i="0"><span class="mock-dot is-ok"></span><span>Wiper blade replacement approved</span><span class="mock-chip is-ok">Added</span></div>
                 <div class="payments-link is-old">
                   <span class="payments-link-icon"><svg class="icon"><use href="#i-link"/></svg></span>
-                  <span class="payments-link-text"><b>Pay link</b><small><span>$170.48 · the old balance</span><i class="payments-link-strike" data-seq-i="1" data-fx="wipe" style="--fx-dur: .55s"></i></small></span>
+                  <span class="payments-link-text"><b>Pay link</b><small><span>$170.48 · old balance</span><i class="payments-link-strike" data-seq-i="1" data-fx="wipe" style="--fx-dur: .55s"></i></small></span>
                   <span class="payments-link-veil" data-seq-i="1" data-fx="fade" style="--fx-dur: .6s"></span>
                   <span class="mock-chip is-idle payments-link-void" data-seq-i="2" data-fx="pop">Void</span>
                 </div>
@@ -654,25 +715,26 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
                   <span class="mock-label">Amount toward invoice</span>
                   <span class="mock-field payments-sheet-amt">$444.02</span>
                   <span class="mock-label">Method</span>
-                  <span class="payments-seg"><span class="is-on">Card</span><span>Cash</span><span>Check</span><span>ACH</span></span>
+                  <span class="payments-seg"><span class="is-on">Card</span><span>Cash</span><span>Check</span><span>ACH</span><span>Financing</span><span>Warranty</span></span>
                   <span class="mock-label">Tip</span>
-                  <span class="payments-seg payments-tips"><span>No tip</span><span class="payments-tip-pick">10%</span><span>15%</span><span>20%</span></span>
+                  <span class="payments-seg payments-tips"><span class="payments-tip-none">No tip</span><span class="payments-tip-pick">10%</span><span>15%</span><span>20%</span></span>
                   <div class="payments-sheet-sum">
                     <div class="mock-line"><span>Toward invoice</span><span>$444.02</span></div>
-                    <div class="mock-line" data-at="1" data-fx="rise"><span>Tip</span><span>$44.40</span></div>
+                    <div class="mock-line payments-tip-row" data-at="1" data-fx="rise"><span>Tip</span><span>$44.40</span></div>
                     <div class="mock-total"><span>Charge</span><span class="payments-swap"><span data-until="1">$444.02</span><span data-at="1" data-fx="swap">$488.42</span></span></div>
                   </div>
                   <span class="payments-swap payments-sheet-go">
-                    <span class="mock-btn" data-until="2"><svg class="icon"><use href="#i-card-reader"/></svg>Send to reader</span>
-                    <span class="mock-chip is-ok" data-at="2" data-fx="pop"><svg class="icon"><use href="#i-check"/></svg>Added to the RO</span>
+                    <span class="mock-btn" data-until="1"><svg class="icon"><use href="#i-card-reader"/></svg>Send $444.02 to reader</span>
+                    <span class="mock-btn" data-at="1" data-until="2" data-fx="swap"><svg class="icon"><use href="#i-card-reader"/></svg>Send $488.42 to reader</span>
+                    <span class="mock-chip is-ok" data-at="2" data-fx="pop" style="--fx-delay: 1.3s"><svg class="icon"><use href="#i-check"/></svg>Added to the RO</span>
                   </span>
                 </div>
                 <div class="mock-reader payments-take-reader">
                   <div class="mock-reader-screen">
-                    <span class="payments-screen-amt" data-until="1"><small>Amount</small><strong>$444.02</strong></span>
-                    <span class="payments-screen-amt" data-at="1" data-until="2" data-fx="swap"><small>Incl. $44.40 tip</small><strong>$488.42</strong></span>
-                    <span class="payments-screen-ok is-approved" data-at="2" data-fx="fade">
-                      <svg viewBox="0 0 40 40" focusable="false"><circle cx="20" cy="20" r="16"/><path data-at="2" data-fx="draw" pathLength="1" d="M12.5 20.5l5 5 10-11"/></svg>
+                    <span class="payments-screen-amt payments-screen-idle" data-until="2"><small>Front counter</small><strong>Ready</strong></span>
+                    <span class="payments-screen-amt payments-screen-tap" data-at="2"><small>Tap, insert or swipe</small><strong>$488.42</strong></span>
+                    <span class="payments-screen-ok is-approved" data-at="2" data-fx="fade" style="--fx-delay: .95s">
+                      <svg viewBox="0 0 40 40" focusable="false"><circle cx="20" cy="20" r="16"/><path data-at="2" data-fx="draw" pathLength="1" d="M12.5 20.5l5 5 10-11" style="--fx-delay: 1.15s"/></svg>
                       <b>Approved</b><small>Visa ••8810</small>
                     </span>
                   </div>
@@ -694,7 +756,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
             <div class="payments-panel-copy">
               <h3>Everything else, recorded on the RO</h3>
               <p>Record card, cash, check, ACH, financing, warranty and fleet-account payments, with tips and an optional card surcharge capped at 4%.</p>
-              <p>Take Square, PayPal.me, Venmo, Cash App or any other link? Add it, and it shows on the customer's online report and live status page and in your payment texts.</p>
+              <p>Take Square, PayPal.me, Venmo or Cash App? Add your payment link in Settings. It goes on the customer's online report, and on texts and the live status page when Stripe isn't connected.</p>
               <p class="fine-print">Those apps are links only. Their payments are recorded on the RO by hand.</p>
               <a class="link-arrow" href="fleet.html">Charging fleet accounts on terms <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
             </div>
@@ -739,7 +801,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
           <span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg></span>
           <div>
             <h3>Refunds, all or part</h3>
-            <p>The owner or a manager can refund all or part of a payment from the RO. <a class="text-link" href="../security.html#payments-webhooks">How payments are secured</a></p>
+            <p>The owner or a manager can refund all or part of an online or card-reader payment, right from the RO. <a class="text-link" href="../security.html#payments-webhooks">How payments are secured</a></p>
           </div>
         </div>
       </div>
@@ -762,21 +824,22 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
         <p>The figure uses standard amortization, and final terms come from the lender after approval.</p>
         <p class="fine-print">It's a display and a link. Applications and credit decisions stay with your financing partner.</p>
       </div>
-      <figure class="mock-figure payments-fin" data-reveal="right" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" aria-label="Example: the sample shop's online estimate for a 2021 Jeep Wrangler Unlimited, total $910.83. Its footer reads Financing available, as low as $42.03 a month for 24 months at a 9.99% example APR, subject to approval, with an Apply button. On the repair order, the team sees $42.03 a month for 24 months, $80.07 for 12 and $156.26 for 6.">
+      <figure class="mock-figure payments-fin" data-reveal="right" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" aria-label="Example: the sample shop's online estimate for Wesley's 2021 Jeep Wrangler Unlimited: subtotal $881.20, tax $29.63, total $910.83. Its footer reads Financing available, as low as $42.03 a month for 24 months, 9.99% APR example, subject to approval. On the repair order, the team sees as low as $42.03 a month for 24 months, and $156.26 for 6 months, $80.07 for 12 or $42.03 for 24.">
         <span class="mock-tag">Example · sample shop</span>
         <div class="mock-stage payments-fin-stage" aria-hidden="true">
           <div class="mock-phone is-auto payments-fin-phone">
             <div class="mock-screen">
               <div class="payments-report-head">
-                <span class="payments-report-shop"><i></i>Main Street Auto Service</span>
-                <strong>Your estimate</strong>
-                <small>2021 Jeep Wrangler Unlimited · Wesley G.</small>
+                <span class="payments-report-shop">Main Street Auto Service</span>
+                <strong>2021 Jeep Wrangler Unlimited</strong>
+                <small>Prepared for Wesley</small>
               </div>
               <div class="payments-report-lines" data-at="0" data-fx="stagger" style="--fx-stagger: 110ms">
                 <div class="mock-line"><span>Front track bar &amp; steering stabilizer</span><span>$537.10</span></div>
                 <div class="mock-line"><span>Four-wheel alignment</span><span>$145.00</span></div>
                 <div class="mock-line"><span>Tire installation (set of 4)</span><span>$173.00</span></div>
-                <div class="mock-line is-muted"><span>Shop supplies &amp; tax</span><span>$55.73</span></div>
+                <div class="mock-line is-muted payments-report-sub"><span>Subtotal</span><span>$881.20</span></div>
+                <div class="mock-line is-muted"><span>Tax</span><span>$29.63</span></div>
                 <div class="mock-total"><span>Total</span><span>$910.83</span></div>
               </div>
               <div class="payments-report-fin" data-at="1" data-fx="rise">
@@ -785,23 +848,15 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
                   <span>As low as <strong><span class="odometer is-plain" data-odometer="42.03" data-decimals="2" data-prefix="$" data-duration="1.2">$42.03</span>/mo</strong> for 24 months</span>
                   <small>9.99% APR example, subject to approval</small>
                 </span>
-                <span class="mock-btn is-ghost">Apply</span>
               </div>
             </div>
           </div>
           <div class="payments-fin-ro" data-at="2" data-fx="pop">
             <div class="payments-fin-ro-head"><svg class="icon"><use href="#i-handshake"/></svg>On the RO</div>
-            <span class="payments-terms" data-cycle data-cycle-ms="3200">
-              <span class="is-active">24 mo</span>
-              <span>12 mo</span>
-              <span>6 mo</span>
-            </span>
-            <span class="payments-fin-amts">
-              <span class="payments-fin-amt is-active"><span class="odometer is-plain" data-odometer="42.03" data-decimals="2" data-prefix="$" data-duration="1">$42.03</span><small>/mo</small></span>
-              <span class="payments-fin-amt"><span class="odometer is-plain" data-odometer="80.07" data-decimals="2" data-prefix="$" data-duration="1">$80.07</span><small>/mo</small></span>
-              <span class="payments-fin-amt"><span class="odometer is-plain" data-odometer="156.26" data-decimals="2" data-prefix="$" data-duration="1">$156.26</span><small>/mo</small></span>
-            </span>
-            <small class="payments-fin-apr">9.99% APR example</small>
+            <p class="payments-fin-best"><strong>As low as <span class="odometer is-plain" data-odometer="42.03" data-decimals="2" data-prefix="$" data-duration="1">$42.03</span>/mo</strong> <span>for 24 months</span></p>
+            <p class="payments-fin-line">
+              <span class="payments-terms" data-cycle data-cycle-ms="3200"><span><span class="odometer is-plain" data-odometer="156.26" data-decimals="2" data-prefix="$" data-duration="1">$156.26</span>&nbsp;×&nbsp;6</span> · <span><span class="odometer is-plain" data-odometer="80.07" data-decimals="2" data-prefix="$" data-duration="1">$80.07</span>&nbsp;×&nbsp;12</span> · <span class="is-hl"><span class="odometer is-plain" data-odometer="42.03" data-decimals="2" data-prefix="$" data-duration="1">$42.03</span>&nbsp;×&nbsp;24</span></span> · <span class="payments-fin-apr">9.99% APR example</span>
+            </p>
           </div>
         </div>
         <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
@@ -846,7 +901,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
           </li>
         </ol>
       </div>
-      <p class="roadmap-caption">QuickBooks sync uses Shop Cloud and your own Intuit app. <a class="text-link" href="reports.html#quickbooks">Reports, payroll &amp; QuickBooks</a></p>
+      <p class="roadmap-caption">QuickBooks sync uses <a class="text-link" href="../works-with.html#shop-cloud">Shop Cloud</a> and your own Intuit app. <a class="text-link" href="reports.html#quickbooks">Reports, payroll &amp; QuickBooks</a></p>
     </div>
   </section>
 
@@ -861,7 +916,7 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
             <li><strong>Readers:</strong> only Stripe's internet-connected smart readers, the Stripe Reader S700 and BBPOS WisePOS E. Bluetooth readers and Tap to Pay on a phone aren't supported; record those payments by hand.</li>
             <li><strong>Other apps:</strong> Square, PayPal, Venmo and Cash App are links only.</li>
             <li><strong>Financing</strong> is a display and a link, with no applications or credit decisions in the app.</li>
-            <li><strong>Card numbers</strong> go to Stripe Checkout or the reader and never pass through the app.</li>
+            <li><strong>Card numbers</strong> go to Stripe Checkout or the reader and never pass through WPI Driveline Shop Management System.</li>
           </ul>
         </div>
       </aside>
@@ -879,9 +934,9 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
       </div>
       <div class="faq-list" data-reveal>
         <details class="faq" name="pay-faq"><summary>Where does the money go?</summary><div class="faq-body"><p>Straight to your own Stripe account at Stripe's standard rates.</p></div></details>
-        <details class="faq" name="pay-faq"><summary>Can I add a surcharge?</summary><div class="faq-body"><p>Optional, capped at 4%. It's added to card payments only, so check your state's rules and card-network registration first.</p></div></details>
-        <details class="faq" name="pay-faq"><summary>Who can refund?</summary><div class="faq-body"><p>The owner or a manager, for all or part of a payment, from the RO.</p></div></details>
-        <details class="faq" name="pay-faq"><summary>Can I take Square?</summary><div class="faq-body"><p>As a payment link on the customer's online report and in payment texts; the counter readers are Stripe.</p></div></details>
+        <details class="faq" name="pay-faq"><summary>Can I add a surcharge?</summary><div class="faq-body"><p>Optional, capped at 4%. It's added to card payments taken on the RO, by hand or on the reader, not to online pay links. Check your state's rules and card-network registration first.</p></div></details>
+        <details class="faq" name="pay-faq"><summary>Who can refund?</summary><div class="faq-body"><p>The owner or a manager. They can refund all or part of an online or card-reader payment from the RO.</p></div></details>
+        <details class="faq" name="pay-faq"><summary>Can I take Square?</summary><div class="faq-body"><p>Yes, as a payment link on the customer's online report. Texts and the live status page use it when Stripe isn't connected. The counter readers are Stripe only.</p></div></details>
       </div>
     </div>
   </section>
@@ -914,17 +969,22 @@ html:not(.js) .payments-tabs [role="tabpanel"][hidden] { display: block !importa
     </div>
   </section>
 <script>
-/* Financing figure: when the RO's term chips cycle, show that term's monthly figure and roll it again. */
+/* Financing figure: the RO's terms line, as in the app ("$156.26 × 6 · $80.07 × 12 · $42.03 × 24").
+   data-cycle steps through it; the highlight starts and rests on the longest term, the one in the
+   "As low as" headline, and that term's monthly figure rolls again each time it's highlighted. */
 document.addEventListener("DOMContentLoaded", () => {
   const terms = document.querySelector(".payments-terms[data-cycle]");
   if (!terms) return;
-  const amts = Array.from(document.querySelectorAll(".payments-fin-amt"));
+  const fig = terms.closest("[data-seq]");
+  const items = Array.from(terms.children);
   terms.addEventListener("cycle", (e) => {
     const i = e.detail && typeof e.detail.index === "number" ? e.detail.index : 0;
-    amts.forEach((a, k) => a.classList.toggle("is-active", k === i));
-    const odo = amts[i] && amts[i].querySelector(".odometer");
+    const k = items.length - 1 - i;
+    items.forEach((it, j) => it.classList.toggle("is-hl", j === k));
+    const shown = !fig || (fig.dataset.reached || "").split(" ").includes("2");
+    const odo = items[k] && items[k].querySelector(".odometer");
     const roll = odo && odo._roll;
-    if (roll && window.WPI && window.WPI.motionOK()) { roll.reset(); roll.run(false); }
+    if (shown && roll && window.WPI && window.WPI.motionOK()) { roll.reset(); roll.run(false); }
   });
 });
 </script>
@@ -936,7 +996,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -951,7 +1011,7 @@ document.addEventListener("DOMContentLoaded", () => {
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
@@ -1018,6 +1078,7 @@ document.addEventListener("DOMContentLoaded", () => {
   <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

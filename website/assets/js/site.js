@@ -36,10 +36,40 @@
       if (label) label.textContent = paused ? "Play animations" : "Pause animations";
     });
   };
-  const setPaused = (on, fromLoad) => {
-    paused = on;
+  const canList = typeof d.getAnimations === "function";
+  const isCssAnim = (a) => typeof CSSAnimation !== "undefined" && a instanceof CSSAnimation;
+  // Pausing freezes CSS animations in place (html.motion-paused), but a CSS transition or a script
+  // animation already in flight (a 2.2s counter roll, a board card's hop) would keep running: land it now.
+  // An endless script animation (a page's own element.animate loop) can't finish: hold it, and play it on resume.
+  const held = new Set();
+  const landInFlight = () => {
+    if (!canList) return;
+    d.getAnimations().forEach((a) => {
+      if (isCssAnim(a) || a.playState !== "running") return;
+      try { a.finish(); } catch { try { a.pause(); held.add(a); } catch { /* detached */ } }
+    });
+  };
+  // While paused, one-shot entrances (Hero entrance, reveals, reached Mock player steps, the open sheet, a
+  // toast) are switched off, so their end frame shows. Switching them back on would replay them all at once:
+  // finish every finite CSS animation that resuming created, and let only the loops carry on.
+  const setPausedClass = (on, fromLoad) => {
+    const before = canList && !on && !fromLoad ? new Set(d.getAnimations()) : null;
     root.classList.toggle("motion-paused", on);
     root.classList.toggle("motion-parked", on && Boolean(fromLoad));
+    if (!before) return;
+    d.getAnimations().forEach((a) => {
+      if (before.has(a) || !isCssAnim(a)) return;
+      const timing = a.effect && a.effect.getComputedTiming ? a.effect.getComputedTiming() : null;
+      if (!timing || timing.iterations === Infinity) return;
+      try { a.finish(); } catch { /* not finishable */ }
+    });
+    held.forEach((a) => { try { a.play(); } catch { /* gone */ } });
+    held.clear();
+  };
+  const setPaused = (on, fromLoad) => {
+    paused = on;
+    if (on && !fromLoad) landInFlight();
+    setPausedClass(on, fromLoad);
     paintToggles();
     if (!fromLoad) {
       try { if (on) localStorage.setItem(MOTION_KEY, "paused"); else localStorage.removeItem(MOTION_KEY); } catch { /* storage blocked */ }
@@ -66,9 +96,9 @@
   let ticking = false;
 
   if (lane && stages.length) {
-    ticks = stages.map((s, i) => {
+    ticks = stages.map(() => {
       const t = d.createElement("span");
-      t.className = "lane-tick" + (i >= Math.floor(stages.length / 2) ? " is-late" : "");
+      t.className = "lane-tick";
       lane.append(t);
       return t;
     });
@@ -77,10 +107,12 @@
     lane.append(label);
   }
 
-  // Steps in the second half of a road reach green (5 steps: 3-5; 4 steps: 3-4).
+  // Steps with index >= ceil(n/2) reach green, matching the road's blue | green split under their markers
+  // (5 steps: 4-5; 4 steps: 3-4; 3 steps: 3). The header lane ticks do the same by position: a tick past the
+  // middle of the lane, where its bar turns green, is .is-late (set in measureRoads).
   roadmaps.forEach((rm) => {
     const steps = $$(".roadmap-step", rm);
-    steps.forEach((s, i) => s.classList.toggle("is-late", i >= Math.floor(steps.length / 2)));
+    steps.forEach((s, i) => s.classList.toggle("is-late", i >= Math.ceil(steps.length / 2)));
   });
 
   const docTop = (el) => el.getBoundingClientRect().top + window.scrollY;
@@ -95,6 +127,7 @@
         const t = max > 0 ? clamp((docTop(s) - innerHeight * 0.4) / max) : 0;
         ticks[i].dataset.t = t;
         ticks[i].style.setProperty("--t", t.toFixed(4));
+        ticks[i].classList.toggle("is-late", t >= 0.5);
       });
     }
   };
@@ -151,6 +184,18 @@
   addEventListener("scroll", requestScroll, { passive: true });
   addEventListener("resize", () => { measureRoads(); requestScroll(); }, { passive: true });
   addEventListener("load", () => { measureRoads(); requestScroll(); });
+  // Late layout changes (web font swap, a tab or <details> opening, the role filter) move the chapters:
+  // re-measure the lane ticks and road widths whenever the page height changes.
+  if ((ticks.length || roadmaps.length) && "ResizeObserver" in window) {
+    let lastH = 0, roTimer = 0;
+    new ResizeObserver(() => {
+      const h = d.body.offsetHeight;
+      if (h === lastH) return;
+      lastH = h;
+      clearTimeout(roTimer);
+      roTimer = setTimeout(() => { measureRoads(); requestScroll(); }, 120);
+    }).observe(d.body);
+  }
   measureRoads();
   onScroll();
 
@@ -276,12 +321,19 @@
     else { el.setAttribute("role", "img"); el.setAttribute("aria-label", label); }
     el.textContent = "";
     if (prefix) el.append(cell("odo-sep", prefix));
+    // Counting up from zero (no data-from), the drums before the last whole-number digit, and the commas
+    // among them, are folded away while the counter rests at zero: it reads "$0", not "$0,000".
+    const point = t.indexOf(".");
+    const intEnd = point < 0 ? len : point;
+    let lastInt = -1;
+    for (let j = 0; j < intEnd; j++) if (isDigit(t[j])) lastInt = j;
+    const isLead = (j) => !f && j < lastInt;
     const strips = [];
     let idx = 0;
     for (let j = 0; j < len; j++) {
       const tc = t[j], fc = f ? f[j] : " ";
       if (!isDigit(tc) && !isDigit(fc)) {
-        if (tc.trim()) el.append(cell("odo-sep", tc));
+        if (tc.trim()) el.append(cell(isLead(j) ? "odo-sep odo-lead" : "odo-sep", tc));
         continue;
       }
       // Each strip is [blank, 0-9 × cycles]; index 0 is a blank cell (for digits the other value lacks).
@@ -296,7 +348,7 @@
         start = 1;
         end = isDigit(tc) ? 1 + (cycles - 1) * 10 + Number(tc) : 0;
       }
-      const c = cell("odo-digit");
+      const c = cell(isLead(j) ? "odo-digit odo-lead" : "odo-digit");
       const strip = d.createElement("span");
       strip.className = "odo-strip";
       strip.innerHTML = "<span>&nbsp;</span>" + Array.from({ length: cycles * 10 }, (_, k) => `<span>${k % 10}</span>`).join("");
@@ -320,9 +372,16 @@
     if (el.dataset.duration) el.style.setProperty("--odo-dur", `${Number(el.dataset.duration)}s`);
     const base = seqBase(el);
     if (base) el.style.setProperty("--odo-base", `${base}s`);
+    const hasLead = !f && lastInt > 0;
+    const setZero = (on, instant) => {
+      if (!hasLead) return;
+      if (instant) el.classList.add("is-instant");
+      el.classList.toggle("is-zero", on);
+      if (instant) { reflow(el); el.classList.remove("is-instant"); }
+    };
     el._roll = {
-      run: (instant) => { strips.forEach((s) => setStrip(s.strip, s.end, instant)); if (el._tenth) el._tenth.classList.toggle("is-running", !instant && motionOK()); },
-      reset: () => { strips.forEach((s) => setStrip(s.strip, s.start, true)); if (el._tenth) el._tenth.classList.remove("is-running"); },
+      run: (instant) => { setZero(false, instant); strips.forEach((s) => setStrip(s.strip, s.end, instant)); if (el._tenth) el._tenth.classList.toggle("is-running", !instant && motionOK()); },
+      reset: () => { setZero(true, true); strips.forEach((s) => setStrip(s.strip, s.start, true)); if (el._tenth) el._tenth.classList.remove("is-running"); },
     };
     el._roll.reset();
     return el._roll;
@@ -500,13 +559,20 @@
   const playFigures = $$("[data-play]");
   const players = [];
   const smilIn = (fig) => $$("svg", fig).filter((s) => typeof s.pauseAnimations === "function" && s.querySelector("animate, animateMotion, animateTransform, set"));
+  // An SVG with data-smil-rest="<seconds>" is a one-shot: it rests at that time (its end frame) under Reduce
+  // Motion, on a paused load and when the visitor pauses it. Its first real run starts from 0 if it was parked
+  // there, so a figure that loaded paused still plays from the beginning. (Seeking back also drops a page
+  // script's beginElement(), so the time is only reset after a park.)
+  const seekSmil = (svg, t) => { try { svg.setCurrentTime(t); svg._atRest = t > 0; } catch { /* not supported */ } };
   const setSmil = (fig, run) => smilIn(fig).forEach((svg) => {
-    if (run) svg.unpauseAnimations();
-    else {
-      svg.pauseAnimations();
-      const rest = svg.getAttribute("data-smil-rest");
-      if (rest != null && !fig._smilStarted) { try { svg.setCurrentTime(Number(rest)); } catch { /* not supported */ } }
+    const rest = svg.getAttribute("data-smil-rest");
+    if (run) {
+      if (!fig._smilStarted) { fig._smilStarted = true; if (svg._atRest) seekSmil(svg, 0); }
+      svg.unpauseAnimations();
+      return;
     }
+    svg.pauseAnimations();
+    if (rest != null && (fig._smilStarted ? paused : !motionOK())) seekSmil(svg, Number(rest));
   });
 
   /* Board slide: a card with data-path="approved progress ready" moves to the column for each step. */
@@ -597,7 +663,9 @@
       movers.forEach((m) => moveCard(m.el, m.path[Math.min(k, m.path.length - 1)], instant));
       fig.dispatchEvent(new CustomEvent("seqstep", { detail: { step: k, final: k === N - 1 } }));
     };
-    const clear = () => { clearTimeout(p.timer); p.timer = 0; };
+    // Stopping (pause, hidden tab, off screen) during the 300ms loop fade abandons the reset, so the stage
+    // never stays faded out: it keeps showing the final step.
+    const clear = () => { clearTimeout(p.timer); p.timer = 0; fig.classList.remove("is-resetting"); };
     const canRun = () => p.armed && p.playing && !paused && !reduceMotion.matches && !d.hidden && !d.prerendering && !p.done;
     const schedule = () => {
       clear();
@@ -651,6 +719,23 @@
       apply(N - 1, true);
       p.done = true;
     };
+    // The Pause toggle parks a sequence on its final frame (like Reduce Motion, print and a paused load),
+    // never on an in-between or not-yet-played frame. On Play, a figure on screen keeps that frame (Replay
+    // runs it again); one off screen re-arms and plays the next time it's scrolled into view.
+    p.park = () => {
+      if (p.done && p.live && p.step === N - 1) return clear();
+      if (!p.done) p.parked = true;
+      p.finalize();
+    };
+    p.unpark = () => {
+      if (!p.parked) return schedule();
+      p.parked = false;
+      if (p.playing) return undefined;
+      p.done = false;
+      p.loop = 0;
+      p.runLoops = loops;
+      return toStart();
+    };
     p.replay = () => {
       if (!motionOK()) return;
       if (!p.armed) { p.armed = true; fig.classList.add("is-armed"); }
@@ -661,17 +746,34 @@
     };
     p.schedule = schedule;
     p.clear = clear;
+    p.apply = apply;
     return p;
   };
 
   const setPlaying = (fig, on) => {
     fig.classList.toggle("is-playing", on);
-    if (on) fig._smilStarted = fig._smilStarted || motionOK();
     setSmil(fig, on && motionOK());
     const p = fig._player;
     if (!p) return;
     p.playing = on;
     if (on) p.schedule(); else p.clear();
+  };
+
+  // A Replay button without its own aria-label is named after the heading its figure sits under, so several
+  // on one page don't all read "Replay": "Replay the example: <heading>" ("the second example" for a repeat).
+  const replayNames = new Map();
+  const ORDINAL = ["", "second ", "third ", "fourth ", "fifth "];
+  const nameReplay = (btn, fig) => {
+    if (btn.hasAttribute("aria-label") || btn.hasAttribute("aria-labelledby")) return;
+    const scope = fig.closest("section, article, main") || d.body;
+    const before = $$("h1, h2, h3", scope).filter((h) => !fig.contains(h) && !h.closest("[aria-hidden='true']") &&
+      (h.compareDocumentPosition(fig) & Node.DOCUMENT_POSITION_FOLLOWING));
+    const h = before[before.length - 1] || $("h1, h2, h3", scope);
+    const text = h ? h.textContent.replace(/\s+/g, " ").trim().replace(/[.:!?]+$/, "") : "";
+    if (!text) return;
+    const n = (replayNames.get(text) || 0) + 1;
+    replayNames.set(text, n);
+    btn.setAttribute("aria-label", `Replay the ${ORDINAL[n - 1] ?? `${n}th `}example: ${text}`);
   };
 
   playFigures.forEach((fig) => {
@@ -680,7 +782,10 @@
       players.push(fig._player);
     }
     const replay = $(".mock-replay", fig);
-    if (replay) replay.addEventListener("click", () => fig._player && fig._player.replay());
+    if (replay) {
+      nameReplay(replay, fig);
+      replay.addEventListener("click", () => fig._player && fig._player.replay());
+    }
   });
 
   if (!hasIO || reduceMotion.matches) {
@@ -701,27 +806,27 @@
     onMotion((nowPaused) => {
       playFigures.forEach((fig) => setSmil(fig, !nowPaused && fig.classList.contains("is-playing")));
       players.forEach((p) => {
-        if (nowPaused) p.clear();
+        if (nowPaused) p.park();
         else if (!p.armed) p.arm();
-        else p.schedule();
+        else p.unpark();
       });
     });
     d.addEventListener("visibilitychange", () => players.forEach((p) => (d.hidden ? p.clear() : p.schedule())));
     if (d.prerendering) d.addEventListener("prerenderingchange", () => players.forEach((p) => p.schedule()), { once: true });
   }
-  // Print every sequence on its final frame (with its Example tag), then put it back.
+  // Print every sequence on its final frame (with its Example tag, counters at their final values and
+  // board cards in their final columns), then put it back where it was.
   const printState = new Map();
   addEventListener("beforeprint", () => players.forEach((p) => {
-    printState.set(p, p.step);
+    printState.set(p, { step: p.step, live: p.live });
     p.clear();
-    p.fig.classList.remove("is-resetting");
-    p.fig.dataset.step = String(p.N - 1);
-    p.fig.dataset.reached = Array.from({ length: p.N }, (_, i) => i).join(" ");
+    p.live = true;
+    p.apply(p.N - 1, true);
   }));
   addEventListener("afterprint", () => players.forEach((p) => {
-    const k = printState.has(p) ? printState.get(p) : p.N - 1;
-    p.fig.dataset.step = String(k);
-    p.fig.dataset.reached = Array.from({ length: k + 1 }, (_, i) => i).join(" ");
+    const was = printState.get(p);
+    if (was) { p.live = was.live; if (was.step !== p.N - 1) p.apply(was.step, true); }
+    printState.delete(p);
     p.schedule();
   }));
 
@@ -743,7 +848,7 @@
     const schedule = () => {
       clearTimeout(timer);
       timer = 0;
-      if (!visible || !motionOK() || d.hidden || rounds >= max) return;
+      if (!visible || !motionOK() || d.hidden || d.prerendering || rounds >= max) return;
       timer = setTimeout(() => {
         const next = (idx + 1) % items.length;
         if (next === 0) rounds++;
@@ -758,8 +863,10 @@
         schedule();
       }, { threshold: 0.15 }).observe(box.closest("[data-play]") || box);
     }
-    onMotion(schedule);
+    // Pausing rests on the first item, as Reduce Motion and the end of the last cycle do.
+    onMotion((nowPaused) => { if (nowPaused && idx !== 0) show(0); schedule(); });
     d.addEventListener("visibilitychange", schedule);
+    if (d.prerendering) d.addEventListener("prerenderingchange", schedule, { once: true });
     schedule();
   });
 
@@ -905,6 +1012,21 @@
   const spyRefreshers = [];
   const refreshSpies = () => spyRefreshers.forEach((fn) => fn());
 
+  // Directory: a card left alone at the end of a two-column row (before a full-width featured card, or last)
+  // takes the whole row (.is-span). sync.mjs writes the classes for the unfiltered list; this redoes them
+  // after the role filter hides cards.
+  const spanLoneCards = () => $$(".dir-cards").forEach((list) => {
+    const cards = $$(".dir-card", list).filter((c) => !c.hidden);
+    let col = 0;
+    cards.forEach((c, i) => {
+      const wide = c.classList.contains("is-feature");
+      const next = cards[i + 1];
+      const alone = !wide && col === 0 && (!next || next.classList.contains("is-feature"));
+      c.classList.toggle("is-span", alone);
+      col = wide || alone ? 0 : 1 - col;
+    });
+  });
+
   /* ------------------------------------------------------------------
      Role filter (features.html directory): chips filter .dir-card[data-roles]; supports ?role=
      ------------------------------------------------------------------ */
@@ -934,6 +1056,7 @@
         }
       });
       if (roleStatus) roleStatus.textContent = `Showing ${shown} of ${roleCards.length} features`;
+      spanLoneCards();
       refreshSpies();
     };
     const setRole = (role, animate) => {
@@ -992,8 +1115,14 @@
       const headerH = header ? header.offsetHeight : 0;
       const line = Math.max(headerH + 64, innerHeight * 0.3);
       let idx = -1;
-      targets.forEach((t, k) => { if (t && t.offsetParent !== null && t.getBoundingClientRect().top <= line) idx = k; });
-      if (idx === -1 && targets[0] && targets[0].getBoundingClientRect().top < innerHeight) idx = 0;
+      const shown = (t) => t && t.offsetParent !== null;
+      targets.forEach((t, k) => { if (shown(t) && t.getBoundingClientRect().top <= line) idx = k; });
+      // Nothing has reached the line yet: light the first shown target once it is on screen (a hidden
+      // one, such as a topic with no search matches, reports top 0 and is skipped).
+      if (idx === -1) {
+        const first = targets.findIndex(shown);
+        if (first > -1 && targets[first].getBoundingClientRect().top < innerHeight) idx = first;
+      }
       if (innerHeight + window.scrollY >= root.scrollHeight - 2) {
         for (let k = targets.length - 1; k >= 0; k--) if (targets[k] && targets[k].offsetParent !== null) { idx = k; break; }
       }
@@ -1018,8 +1147,11 @@
     if (!lamps.length) return;
     const host = grid.dataset.lamps ? d.getElementById(grid.dataset.lamps) : null;
     const panels = host ? $$("[data-lamp-panel]", host) : [];
+    // Roving tabindex: the grid is one Tab stop (the pressed lamp, or the one last moved to with the arrows).
+    const rove = (lamp) => lamps.forEach((b) => { b.tabIndex = b === lamp ? 0 : -1; });
     const select = (lamp, fromUser) => {
       lamps.forEach((b) => b.setAttribute("aria-pressed", String(b === lamp)));
+      rove(lamp);
       panels.forEach((p) => p.classList.toggle("is-active", p.dataset.lampPanel === lamp.dataset.lamp));
       grid.dispatchEvent(new CustomEvent("lampselect", { detail: { lamp: lamp.dataset.lamp, fromUser } }));
     };
@@ -1027,7 +1159,10 @@
     const pressed = lamps.find((b) => b.getAttribute("aria-pressed") === "true");
     const activePanel = panels.find((p) => p.classList.contains("is-active")) || panels[0];
     if (pressed) select(pressed, false);
-    else if (activePanel) panels.forEach((p) => p.classList.toggle("is-active", p === activePanel));
+    else {
+      rove(lamps[0]);
+      if (activePanel) panels.forEach((p) => p.classList.toggle("is-active", p === activePanel));
+    }
     grid.addEventListener("keydown", (e) => {
       const i = lamps.indexOf(e.target);
       if (i < 0) return;
@@ -1035,7 +1170,9 @@
       const map = { ArrowRight: i + 1, ArrowLeft: i - 1, ArrowDown: i + cols, ArrowUp: i - cols, Home: 0, End: lamps.length - 1 };
       if (!(e.key in map)) return;
       e.preventDefault();
-      lamps[clamp(map[e.key], 0, lamps.length - 1)].focus();
+      const next = lamps[clamp(map[e.key], 0, lamps.length - 1)];
+      rove(next);
+      next.focus();
     });
     let running = false;
     const bulbCheck = () => {
@@ -1294,7 +1431,7 @@
   };
 
   window.CCA = { validateFields, submitForm, showSuccess, showError, summarize, nextField };
-  window.WPI = { motionOK, isPaused: () => paused, onMotion, shifter, replay: (fig) => fig && fig._player && fig._player.replay() };
+  window.WPI = { motionOK, isPaused: () => paused, onMotion, shifter, refreshSpies, replay: (fig) => fig && fig._player && fig._player.replay() };
 
   $$("form[data-form]").forEach((form) => {
     formStart.set(form, Date.now());

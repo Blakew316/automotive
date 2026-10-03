@@ -131,7 +131,7 @@ await page.screenshot({ path: `${SP}/shots/f-tech.png`, fullPage: true });
 const clockIn = page.getByRole('button', { name: /Clock in/ });
 if (await clockIn.count()) await clockIn.first().click();
 await page.waitForTimeout(200);
-const start = page.getByRole('button', { name: /^Start/ });
+const start = page.getByRole('button', { name: 'Start', exact: true });
 ok((await start.count()) > 0, `tech has jobs to start (${await start.count()})`);
 await start.first().click();
 await page.waitForTimeout(300);

@@ -242,6 +242,10 @@ h4, .h4 { font-size: 1.05rem; line-height: 1.3; letter-spacing: -0.015em; font-w
 @media (hover: hover) { .prose a:hover, .text-link:hover { text-decoration-color: currentColor; } }
 
 /* ---------- Layout ---------- */
+/* Tilted mocks, dealing cards and float-notes may poke past the screen edge; clip them at <main> so phones never
+   get a wider layout viewport. (body's overflow propagates to the viewport, so it can't do this; clip, unlike
+   hidden, is not a scroll container, so position: sticky inside keeps working.) */
+main { overflow-x: clip; }
 .container {
   width: 100%; max-width: calc(var(--container) + var(--gutter) * 2); margin-inline: auto;
   /* In landscape the gutter grows to clear the notch / Dynamic Island; backgrounds still run edge to edge. */
@@ -521,7 +525,7 @@ html:not(.js) .has-menu:is(:hover, :focus-within) .mega { opacity: 1; visibility
 @media (hover: hover) { .mega-item:hover .icon-tile { background: var(--wash); transform: rotate(-6deg); } }
 .mega-text { display: grid; min-width: 0; line-height: 1.25; }
 .mega-text strong { font-size: .93rem; font-weight: 620; color: var(--ink); }
-.mega-text small { font-size: .8rem; color: var(--ink-3); }
+.mega-text small { font-size: .8rem; color: var(--ink-3); text-wrap: balance; }
 /* 1080-1199px: four columns are narrow, so tighten the items to keep the short labels on one line */
 @media (min-width: 1080px) and (max-width: 1199.98px) {
   .mega { padding: 14px; }
@@ -572,6 +576,10 @@ html:not(.js) .has-menu:is(:hover, :focus-within) .mega { opacity: 1; visibility
 }
 .tab-book:active .tab-book-dot { transform: scale(.9) rotate(-4deg); }
 .tab-book.is-active { color: var(--accent); }
+/* More opens the sheet with site.js; without JS the same tab is a link to the footer's full link list */
+.tab-more-link { display: none; }
+html:not(.js) .tabbar [data-open-sheet] { display: none; }
+html:not(.js) .tab-more-link { display: flex; }
 .tab-book.is-active .tab-book-dot { background: var(--accent-strong); box-shadow: 0 10px 22px -10px rgba(26, 111, 214, .6), 0 0 0 4px var(--canvas), 0 0 0 6px rgba(45, 179, 106, .45); }
 
 .sheet {
@@ -695,11 +703,13 @@ main { view-transition-name: page; }
   :is(.feature-card, .service-card, .dir-card, .promise, .value-card):hover .icon-tile .icon use { animation: icon-wiggle .6s var(--ease); }
 }
 .feature-card.card-soft { justify-content: center; }
+/* "Works alongside" on feature pages: room between the heading and the related cards */
+.related { margin-top: 20px; }
 @media (max-width: 639.98px) {
   .feature-card, .service-card { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; column-gap: 14px; row-gap: 2px; align-items: center; padding: 16px; border-radius: var(--r); }
   :is(.feature-card, .service-card) .icon-tile { grid-row: 1 / span 2; margin: 0; width: 46px; height: 46px; border-radius: 13px; }
   :is(.feature-card, .service-card) h3 { grid-column: 2; font-size: 1.04rem; }
-  :is(.feature-card, .service-card) p { grid-column: 2; font-size: .9375rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  :is(.feature-card, .service-card) p { grid-column: 2; font-size: .9375rem; line-height: 1.4; } /* never clamped: a blurb cut mid-word reads as broken */
   :is(.feature-card, .service-card) .link-arrow { grid-column: 3; grid-row: 1 / span 2; margin: 0; padding: 0; font-size: 0; gap: 0; color: var(--ink-4); }
   :is(.feature-card, .service-card) .link-arrow .icon { width: 20px; height: 20px; }
 }
@@ -711,13 +721,16 @@ main { view-transition-name: page; }
   .grid-3 > :is(.feature-card, .service-card):last-child:nth-child(odd) > p { grid-column: 2; align-self: start; margin: 0; }
   .grid-3 > :is(.feature-card, .service-card):last-child:nth-child(odd) > .link-arrow { grid-column: 3; grid-row: 1 / span 2; margin: 0; padding: 0; }
 }
-/* Phones: icon cards in a 3-up grid become compact rows */
+/* Phones: icon cards in a 3-up grid become compact rows. The rows below the icon + title get only default
+   spacing at zero specificity (:where), so a page's own class (a badge, a pill, a rule tile) keeps its size,
+   margins and position; inline pieces (spans, links) keep their own width instead of stretching. */
 @media (max-width: 639.98px) {
   .grid-3 > .card:not(.card-link):has(> .icon-tile:first-child) { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: center; padding: 18px; border-radius: var(--r); }
   .grid-3 > .card:not(.card-link):has(> .icon-tile:first-child) > .icon-tile { width: 44px; height: 44px; border-radius: 13px; }
   .grid-3 > .card:not(.card-link):has(> .icon-tile:first-child) > .icon-tile .icon { width: 23px; height: 23px; }
   .grid-3 > .card:not(.card-link):has(> .icon-tile:first-child) > h3 { margin-top: 0; font-size: 1.1rem; }
-  .grid-3 > .card:not(.card-link):has(> .icon-tile:first-child) > :not(.icon-tile, h3) { grid-column: 1 / -1; margin-top: 10px; font-size: .95rem; }
+  :where(.grid-3 > .card:not(.card-link):has(> .icon-tile:first-child)) > :where(:not(.icon-tile, h3)) { grid-column: 1 / -1; margin-top: 10px; font-size: .95rem; }
+  :where(.grid-3 > .card:not(.card-link):has(> .icon-tile:first-child)) > :where(span:not(.icon-tile), a) { justify-self: start; }
 }
 
 .feature { display: flex; gap: 16px; align-items: flex-start; }
@@ -783,6 +796,14 @@ main { view-transition-name: page; }
 .callout-list li::before { content: ""; position: absolute; left: 0; top: .66em; width: 12px; height: 3px; border-radius: 1px; background: var(--bar); }
 .callout-list strong { color: var(--ink); font-weight: 620; }
 .callout .text-link, .callout a:not(.btn, .link-arrow) { color: var(--link, var(--accent-ink)); }
+/* Phones: the icon sits above the text so the text gets the full card width
+   (Good to know below 480px, every callout below 400px). */
+@media (max-width: 479.98px) {
+  .callout.good-to-know { flex-direction: column; gap: 10px; }
+}
+@media (max-width: 399.98px) {
+  .callout { flex-direction: column; gap: 8px; }
+}
 
 /* Wash feature panel (one per page at most) */
 .panel-wash { position: relative; overflow: hidden; padding: clamp(24px, 1.2rem + 2vw, 44px); border-radius: var(--r-xl); background: var(--wash); border: 1px solid rgba(31, 122, 224, .12); }
@@ -873,6 +894,12 @@ main { view-transition-name: page; }
   background: radial-gradient(closest-side, rgba(15, 43, 76, .16), transparent);
   filter: blur(6px);
 }
+/* Brand card orbit (about hero): a gauge ring of ticks turning slowly behind the card, with a green sweep.
+   svg.card-orbit is the first child of a position:relative wrapper; it loops only while its [data-play] figure plays. */
+.card-orbit { position: absolute; inset: 50% auto auto 50%; width: min(118%, 640px); aspect-ratio: 1; translate: -50% -54%; z-index: -1; pointer-events: none; overflow: visible; }
+.card-orbit .ticks { transform-box: fill-box; transform-origin: center; animation: art-spin 90s linear infinite; }
+.card-orbit .sweep { transform-box: view-box; transform-origin: 200px 200px; animation: orbit-sweep 7s var(--ease-in-out) infinite; }
+@keyframes orbit-sweep { 0% { transform: rotate(-120deg); opacity: 0; } 20% { opacity: 1; } 70% { opacity: 1; } 100% { transform: rotate(120deg); opacity: 0; } }
 
 /* ---------- App card stage (index hero, index #customer-pages, mobile hero) ----------
    figure.mock-figure[data-tilt-scope] > .card-stage.mock-stage > .card-deal > .app-card[data-tilt]
@@ -899,7 +926,9 @@ main { view-transition-name: page; }
   color: var(--ink); font-size: 13px; line-height: 1.35; letter-spacing: -0.005em;
 }
 .app-card > :not(.app-card-sheen) { position: relative; z-index: 1; }
-@media (max-width: 599.98px) { .app-card, .tilt { --rx: 3deg; --ry: -4deg; } }
+/* Phones and Reduce Motion: no tilt at all. A resting tilt softens small mock text at phone sizes. */
+@media (max-width: 599.98px) { .app-card, .tilt { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .app-card, .tilt { transform: none; } }
 /* Two or three cards in one scope */
 .card-stage.is-trio { display: flex; justify-content: center; align-items: flex-end; }
 .card-stage.is-trio > .card-deal { flex: 0 1 34%; max-width: 236px; min-width: 0; }
@@ -945,6 +974,8 @@ main { view-transition-name: page; }
 .hero .hero-actions { margin-top: 30px; }
 .hero-trust { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
 @media (max-width: 479.98px) { .hero-actions .btn, .cta-actions .btn { flex: 1 1 100%; } }
+/* Phones: a long label ("Open repair orders in the sample shop") wraps to two balanced lines instead of being cut off */
+@media (max-width: 479.98px) { .btn { white-space: normal; text-wrap: balance; text-align: center; } }
 
 .hero-in > * { animation: rise-in .8s var(--ease) both; }
 .hero-in > *:nth-child(2) { animation-delay: .06s; }
@@ -962,6 +993,8 @@ main { view-transition-name: page; }
 .page-hero { position: relative; overflow: clip; padding-block: clamp(28px, 1.5rem + 3vw, 72px) clamp(44px, 2rem + 4vw, 96px); }
 .page-hero-grid { display: grid; gap: 40px; align-items: center; }
 .page-hero-grid > * { min-width: 0; }
+/* Safety net for page-local hero grids: a wide mock never stretches the copy column past a phone screen */
+.page-hero > .container > *, .hero > .container > * { min-width: 0; }
 @media (min-width: 960px) { .page-hero-grid { grid-template-columns: 1.1fr .9fr; } }
 .page-hero .breadcrumb { margin-bottom: 18px; }
 .page-hero h1 { font-size: clamp(2.1rem, 1.3rem + 3.4vw, 4rem); margin-top: 14px; }
@@ -981,6 +1014,13 @@ main { view-transition-name: page; }
 .breadcrumb a { text-decoration: none; color: var(--ink-3); }
 @media (hover: hover) { .breadcrumb a:hover { color: var(--ink); } }
 .breadcrumb [aria-current="page"] { color: var(--ink); font-weight: 550; }
+/* Phones: one row; a long current title ends in an ellipsis (the hero eyebrow right below repeats it in full) */
+@media (max-width: 599.98px) {
+  .breadcrumb ol { flex-wrap: nowrap; }
+  .breadcrumb li { flex: none; }
+  .breadcrumb li:last-child { flex: 0 1 auto; min-width: 0; }
+  .breadcrumb [aria-current="page"] { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+}
 
 /* ---------- Mock figures (example data lives only in here) ----------
    figure.mock-figure[aria-label="Example: …"] > span.mock-tag + .mock-stage[aria-hidden] (+ button.mock-replay, .float-note)
@@ -1084,7 +1124,7 @@ html:not(.js) .mock-replay { display: none; }
 /* List rows with a coloured dot (fills only; text stays ink) */
 .mock-rows { display: grid; gap: 6px; }
 .mock-row { display: flex; align-items: center; gap: 9px; min-height: 34px; padding: 7px 10px; border-radius: 10px; background: var(--paper); border: 1px solid var(--m-line); min-width: 0; }
-.mock-row > :is(span, div):not(.mock-dot, .mock-chip, .live-dot, .mock-avatar, .mock-toggle, .mock-value, .mock-btn, .stamp) { flex: 1 1 auto; min-width: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.mock-row > :is(span, div):not(.mock-dot, .mock-chip, .live-dot, .mock-avatar, .mock-toggle, .mock-value, .mock-btn, .stamp, .mock-tickbox) { flex: 1 1 auto; min-width: 0; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .mock-row > :is(.mock-chip, .mock-value, .mock-btn) { flex: none; margin-left: auto; }
 .mock-row .mock-value { font-weight: 650; font-variant-numeric: tabular-nums; }
 .mock-dot { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--dot-info); }
@@ -1429,7 +1469,7 @@ html:not(.js) .mock-replay { display: none; }
 /* scene-checklist: inspection rows with a tick box and a rating; plus a semicircle gauge */
 .mock-checklist { display: grid; gap: 6px; }
 .mock-check { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; min-height: 32px; padding: 6px 9px; border-radius: 10px; background: var(--paper); border: 1px solid var(--m-line, var(--mist-200)); font-size: 12.5px; }
-.mock-tickbox { position: relative; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid var(--line-strong); background: var(--paper); }
+.mock-tickbox { position: relative; flex: none; display: grid; place-items: center; width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid var(--line-strong); background: var(--paper); }
 .mock-tickbox > i { position: absolute; inset: -1.5px; border-radius: 6px; background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4L18 8.5'/%3E%3C/svg%3E") center / 12px no-repeat; }
 .mock-rating { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
 .mock-rating::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: var(--rate, var(--dot-ok)); }
@@ -1542,8 +1582,10 @@ html:not(.js) .mock-replay { display: none; }
 
 /* ---------- RO journey road (.roadmap) ----------
    Vertical by default; horizontal from 900px (4 steps or fewer) or from 1180px (5 or more).
-   site.js sets --p, .is-reached and .is-late (steps in the second half reach green). */
-.roadmap { --p: 0; position: relative; }
+   site.js sets --p, .is-reached and .is-late (steps with index >= ceil(n/2) reach green, matching the road's
+   blue | green split under them). Without JS the road ships full (p = 1) with every step reached. */
+.roadmap { --p: 1; position: relative; }
+.js .roadmap { --p: 0; }
 .roadmap-steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 22px; position: relative; }
 .roadmap-step { position: relative; padding-left: 64px; min-width: 0; }
 .roadmap-marker {
@@ -1556,6 +1598,14 @@ html:not(.js) .mock-replay { display: none; }
 .roadmap-marker .icon { width: 22px; height: 22px; }
 .roadmap-step.is-reached .roadmap-marker { background: var(--accent-soft); color: var(--accent-ink); border-color: var(--blue); transform: scale(1.06); }
 .roadmap-step.is-late.is-reached .roadmap-marker { background: var(--green-100); color: var(--green-ink); border-color: var(--green); }
+/* No JS: every step shows reached; the second half (position from the start > position from the end) is green */
+html:not(.js) .roadmap-marker { background: var(--accent-soft); color: var(--accent-ink); border-color: var(--blue); }
+html:not(.js) :is(.roadmap-step:nth-child(2):nth-last-child(1), .roadmap-step:nth-child(3):nth-last-child(-n+2),
+  .roadmap-step:nth-child(4):nth-last-child(-n+3), .roadmap-step:nth-child(5):nth-last-child(-n+4),
+  .roadmap-step:nth-child(6):nth-last-child(-n+5)) .roadmap-marker { background: var(--green-100); color: var(--green-ink); border-color: var(--green); }
+html:not(.js) :is(.roadmap-step:nth-child(2):nth-last-child(1), .roadmap-step:nth-child(3):nth-last-child(-n+2),
+  .roadmap-step:nth-child(4):nth-last-child(-n+3), .roadmap-step:nth-child(5):nth-last-child(-n+4),
+  .roadmap-step:nth-child(6):nth-last-child(-n+5)) .roadmap-chip { color: var(--green-ink); }
 .roadmap-step h3 { font-size: 1.15rem; margin-bottom: 6px; }
 .roadmap-step h3 a { color: inherit; text-decoration: none; }
 .roadmap-step h3 a::after { content: " \2192"; color: var(--accent); }
@@ -1583,7 +1633,9 @@ html:not(.js) .mock-replay { display: none; }
 .roadmap-car { display: none; }
 @media (min-width: 900px) and (max-width: 1179.98px) {
   .roadmap:not(:has(.roadmap-step:nth-child(5))) .roadmap-steps { grid-template-columns: repeat(var(--steps, 4), minmax(0, 1fr)); gap: 28px; padding-top: 86px; }
-  .roadmap:not(:has(.roadmap-step:nth-child(5))) .roadmap-step { padding-left: 0; }
+  .roadmap:not(:has(.roadmap-step:nth-child(5))) .roadmap-step { padding-left: 0; display: flex; flex-direction: column; }
+  .roadmap:not(:has(.roadmap-step:nth-child(5))) .roadmap-step > .roadmap-chip { align-self: flex-start; margin-top: auto; }
+  .roadmap:not(:has(.roadmap-step:nth-child(5))) .roadmap-step > :has(+ .roadmap-chip) { margin-bottom: 8px; }
   .roadmap:not(:has(.roadmap-step:nth-child(5))) .roadmap-marker { top: -86px; z-index: 2; }
   .roadmap:not(:has(.roadmap-step:nth-child(5))) .roadmap-road { left: 0; right: 0; top: 16px; bottom: auto; width: auto; height: 12px; border-radius: 8px; }
   .roadmap:not(:has(.roadmap-step:nth-child(5))) .roadmap-road::before { background: var(--bar); clip-path: inset(0 calc(100% - var(--p) * 100%) 0 0); }
@@ -1592,7 +1644,10 @@ html:not(.js) .mock-replay { display: none; }
 }
 @media (min-width: 1180px) {
   .roadmap-steps { grid-template-columns: repeat(var(--steps, 4), minmax(0, 1fr)); gap: 28px; padding-top: 86px; }
-  .roadmap-step { padding-left: 0; }
+  .roadmap-step { padding-left: 0; display: flex; flex-direction: column; }
+  /* chips line up along the bottom of the row, however long each step's text runs */
+  .roadmap-step > .roadmap-chip { align-self: flex-start; margin-top: auto; }
+  .roadmap-step > :has(+ .roadmap-chip) { margin-bottom: 8px; }
   .roadmap-marker { top: -86px; z-index: 2; }
   .roadmap-road { left: 0; right: 0; top: 16px; bottom: auto; width: auto; height: 12px; border-radius: 8px; }
   .roadmap-road::before { background: var(--bar); clip-path: inset(0 calc(100% - var(--p) * 100%) 0 0); }
@@ -1631,6 +1686,12 @@ html:not(.js) .mock-replay { display: none; }
 .odometer.is-plain .odo-digit { width: 1ch; background: none; box-shadow: none; border-radius: 0; }
 .odometer.is-plain .odo-digit::after { display: none; }
 .odometer.is-plain .odo-sep { align-self: auto; padding: 0; color: inherit; }
+/* Counting up from zero: the leading drums (and commas among them) stay folded while the counter rests on
+   zero, so it reads "$0" rather than "$0,000", and open as the roll starts. */
+.odo-lead { max-width: 1.6em; overflow: hidden; transition: max-width .45s var(--ease), opacity .3s var(--ease), margin .45s var(--ease); transition-delay: var(--odo-base, 0s); }
+.odometer.is-zero .odo-lead { max-width: 0; opacity: 0; padding-inline: 0; }
+.odometer:not(.is-plain).is-zero .odo-lead { margin-right: -3px; }
+.odometer.is-instant .odo-lead { transition: none; }
 
 /* ---------- Slot roll (VINs, two-step codes, masked keys) ---------- */
 .slot-roll { display: inline-flex; align-items: stretch; gap: 2px; font-family: var(--font-mono); font-weight: 650; font-variant-numeric: tabular-nums; line-height: 1.28; letter-spacing: 0; white-space: nowrap; vertical-align: baseline; }
@@ -2091,12 +2152,20 @@ html.vt-finder main, html.vt-roles main { view-transition-name: none; }
 .dir-card-needs .icon { width: 1.05em; height: 1.05em; margin-top: .18em; color: var(--accent); }
 .dir-card-needs strong { color: var(--ink-2); font-weight: 620; }
 .dir-card-note { font-size: .86rem; color: var(--warn); }
-.dir-card-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--line); }
+/* The links stack, so every card's foot is the same height; each label wraps with its arrow on the last word
+   (sync.mjs wraps the text and icon in one span, joined by a no-break space). */
+.dir-card-foot { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; margin-top: auto; padding-top: 10px; border-top: 1px solid var(--line); }
 .dir-card-foot .link-arrow { font-size: .94rem; min-height: 38px; }
+.dir-card-foot .link-arrow .icon { display: inline-block; vertical-align: -.16em; }
 @media (pointer: coarse) { .dir-card-foot .link-arrow { min-height: 44px; } }
 .dir-card.is-feature { background: var(--wash); --link: var(--accent-ink); border-color: rgba(31, 122, 224, .14); }
 .dir-card.is-feature .dir-card-foot { border-top-color: rgba(31, 122, 224, .14); }
-@media (min-width: 640px) { .dir-card.is-feature { grid-column: 1 / -1; } }
+@media (min-width: 640px) {
+  .dir-card.is-feature { grid-column: 1 / -1; }
+  /* a card left alone at the end of a row (sync.mjs, and site.js after the role filter) takes the whole row */
+  .dir-card.is-span { grid-column: 1 / -1; }
+  .dir-card.is-span > p { max-width: 68ch; }
+}
 /* Highlighted by a finder result link: one ring pulse */
 .dir-card.is-match { animation: match-ring 1.4s var(--ease) 1; }
 @keyframes match-ring { 0% { box-shadow: 0 0 0 0 rgba(31, 122, 224, .55), var(--shadow-1); } 70% { box-shadow: 0 0 0 14px rgba(31, 122, 224, 0), var(--shadow-1); } 100% { box-shadow: var(--shadow-1); } }
@@ -2197,6 +2266,7 @@ html.vt-finder main, html.vt-roles main { view-transition-name: none; }
 .cta-road { position: relative; overflow: hidden; padding: clamp(56px, 3rem + 3vw, 104px) 0 0; background: linear-gradient(180deg, var(--canvas), #e9f2fd 70%, #edf7f2); border-top: 1px solid var(--line); }
 .cta-road-inner { display: grid; gap: 28px; align-items: end; padding-bottom: 28px; }
 @media (min-width: 900px) { .cta-road-inner { grid-template-columns: 1.2fr auto; } }
+.cta-road-copy { min-width: 0; }
 .cta-road h2 { margin-top: 12px; }
 .cta-road .lead { margin-top: 14px; max-width: 32em; }
 .cta-road-actions { display: flex; flex-wrap: wrap; gap: 12px; }
@@ -2333,6 +2403,9 @@ html.vt-finder main, html.vt-roles main { view-transition-name: none; }
    Loops (tickers, the CTA road, glow, sheen, live dots, orbit, chip float) pause in place; one-shot
    entrances jump to their end frame so nothing is ever stuck invisible. SMIL and timers stop in site.js. */
 .motion-paused *, .motion-paused *::before, .motion-paused *::after { animation-play-state: paused !important; }
+/* State changes (road markers and chips, counters revealed while paused, pills, hovers) land at once, without travel */
+.motion-paused *, .motion-paused *::before, .motion-paused *::after { transition-duration: 0s !important; transition-delay: 0s !important; }
+html.motion-paused { scroll-behavior: auto; }
 .motion-paused :is(.hero-in > *, .accent-text, .card-deal, [data-reveal].is-in, .float-note, .form-success, [role="tabpanel"],
   .finder-result, .finder-jump, .lamp-detail, .lamp svg, .mock-count, .dir-card.is-match, .field-error, .gear, .knob-body,
   .quick-chip .icon, .finder-chip .i-on, .choice-card .icon, .signal-list li, .fx-once),
@@ -2376,6 +2449,8 @@ html.vt-finder main, html.vt-roles main { view-transition-name: none; }
   .ticker::before, .ticker::after { display: none; }
   .lane-tick, .road-progress-label { display: none; }
   .finder-gauge .g-needle { animation: none !important; }
+  .card-orbit .ticks, .card-orbit .sweep { animation: none !important; }
+  .card-orbit .sweep { opacity: 0; }
   .live-dot { animation: none !important; }
   .mock-toast { display: none; }
   .scanline, .ring { display: none; }

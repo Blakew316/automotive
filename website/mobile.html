@@ -35,6 +35,345 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* mobile.html: page-local styles (slug-prefixed) */
+
+/* ---------- Hero: Add to Home Screen on the phone, the app full screen on the tablet ---------- */
+.mobile-hero h1 { text-wrap: balance; }
+.mobile-hero h1 .accent-text { white-space: nowrap; }
+@media (min-width: 960px) { .mobile-hero .page-hero-grid { grid-template-columns: minmax(0, 1.02fr) minmax(0, .98fr); gap: 48px; } }
+.mobile-hero-fig { width: 100%; max-width: 560px; justify-self: center; }
+.mobile-hero-stage { isolation: isolate; }
+.mobile-hero-stage::before { /* a soft glow behind the devices */
+  content: ""; position: absolute; inset: 4% -8% -6% -4%; z-index: -1; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(31, 122, 224, .13), rgba(45, 179, 106, .07) 62%, transparent);
+}
+.card-stage.is-pair.mobile-hero-stage { padding-bottom: 0; }
+.card-stage.is-pair.mobile-hero-stage > .card-deal:first-child { width: 84%; margin-top: 6px; }
+/* The phone sits low enough to leave the board's column heads and cards in view */
+.card-stage.is-pair.mobile-hero-stage > .card-deal:nth-child(2) { width: 36%; min-width: 0; margin: 168px 0 0; }
+.mobile-tablet, .mobile-phone { width: 100%; }
+.mobile-tablet { container: mobile-tablet / inline-size; }
+.mobile-phone { container: mobile-phone / inline-size; }
+/* The phone rests upright: a rotated layer turns its small text soft on 1x screens (pointer tilt still applies) */
+.tilt.mobile-phone { --rx: 0deg; --ry: 0deg; }
+@media (min-width: 960px) and (max-width: 1199.98px) {
+  .card-stage.is-pair.mobile-hero-stage > .card-deal:first-child { width: 82%; }
+  .card-stage.is-pair.mobile-hero-stage > .card-deal:nth-child(2) { width: 40%; }
+}
+/* Narrow devices drop the extras instead of clipping them */
+@container mobile-tablet (max-width: 430px) {
+  .mobile-app-side .is-extra { display: none; }
+  .mobile-tablet .mobile-app { grid-template-columns: 34% minmax(0, 1fr); }
+  .mobile-tablet .mobile-app-cols { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mobile-app-col:first-child { display: none; }
+}
+@media (max-width: 599.98px) {
+  .card-stage.is-pair.mobile-hero-stage > .card-deal:first-child { display: none; }
+  .card-stage.is-pair.mobile-hero-stage > .card-deal:nth-child(2) { width: min(66%, 250px); justify-self: center; margin: 0; }
+}
+.mobile-tablet > .mock-screen, .mobile-phone > .mock-screen { padding: 0; display: block; }
+.mobile-layer { position: absolute; inset: 0; display: flex; flex-direction: column; }
+
+/* The tablet: the app open full screen, no browser bars (no shop data, just the layout) */
+.mobile-app { position: absolute; inset: 0; display: grid; grid-template-columns: 31% minmax(0, 1fr); }
+.mobile-app-side { display: flex; flex-direction: column; gap: 2px; padding: 12px 8px; background: var(--mist-50); border-right: 1px solid var(--m-line); font-size: 12px; color: var(--ink-2); min-width: 0; }
+.mobile-app-side img { width: 54px; height: auto; margin: 0 6px 8px; }
+.mobile-app-side b { margin: 6px 6px 2px; font-size: 12px; font-weight: 650; color: var(--ink-3); }
+.mobile-app-side span { padding: 3px 6px; border-radius: 7px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mobile-app-side span.is-on { background: var(--accent-soft); color: var(--accent-ink); font-weight: 650; }
+.mobile-app-main { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 9px; padding: 11px 10px 10px; min-width: 0; }
+.mobile-app-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mobile-app-top b { font-size: 14px; font-weight: 700; color: var(--ink); }
+.mobile-app-top i { width: 30%; height: 18px; border-radius: var(--pill); background: var(--mist-100); border: 1px solid var(--m-line); }
+.mobile-app-cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; min-height: 0; overflow: hidden; }
+.mobile-app-col { display: flex; flex-direction: column; gap: 6px; padding: 6px; border-radius: 10px; background: var(--mist-50); border: 1px solid var(--m-line); min-width: 0; }
+.mobile-app-col > span { font-size: 12px; font-weight: 650; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mobile-sk { display: grid; gap: 5px; padding: 7px 7px 7px 9px; border-radius: 8px; background: var(--paper); border: 1px solid var(--m-line); box-shadow: inset 3px 0 0 var(--mist-300), var(--shadow-1); }
+.mobile-sk::before, .mobile-sk::after { content: ""; height: 5px; border-radius: 3px; background: var(--mist-200); }
+.mobile-sk::before { width: 82%; background: var(--mist-300); }
+.mobile-sk::after { width: 52%; }
+.mobile-sk.is-info { box-shadow: inset 3px 0 0 var(--blue), var(--shadow-1); }
+.mobile-sk.is-ok { box-shadow: inset 3px 0 0 var(--green), var(--shadow-1); }
+
+/* The phone: the app's Today screen in Safari (layout only, no shop data), the share sheet, then the Home Screen */
+.mobile-safari { gap: 8px; padding: 36px 11px 9px; background: linear-gradient(180deg, #f5f9fe, #fff 46%); }
+.mobile-today { flex: 1 1 auto; display: flex; flex-direction: column; gap: 7px; min-height: 0; overflow: hidden; padding: 0 2px; }
+.mobile-today-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.mobile-today-top img { width: 38px; height: auto; }
+.mobile-today-top i { width: 22px; height: 22px; border-radius: 50%; background: var(--mist-100); border: 1px solid var(--m-line); }
+.mobile-today > b { font-size: 15px; font-weight: 700; line-height: 1.2; color: var(--ink); }
+.mobile-today-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.mobile-today-tiles > i { display: grid; align-content: center; gap: 5px; height: 38px; padding: 0 8px; border-radius: 9px; background: var(--paper); border: 1px solid var(--m-line); box-shadow: var(--shadow-1); }
+.mobile-today-tiles > i::before, .mobile-today-tiles > i::after { content: ""; height: 5px; border-radius: 3px; background: var(--mist-200); }
+.mobile-today-tiles > i::before { width: 46%; }
+.mobile-today-tiles > i::after { width: 70%; height: 7px; background: var(--mist-300); }
+.mobile-today-tiles > i:nth-child(1)::after { background: var(--blue-100); }
+.mobile-today-tiles > i:nth-child(4)::after { background: var(--green-100); }
+.mobile-today .mobile-sk { flex: none; }
+.mobile-url { display: flex; align-items: center; justify-content: center; gap: 6px; flex: none; height: 25px; border-radius: 9px; background: var(--mist-100); color: var(--ink-3); }
+.mobile-url .icon { width: 11px; height: 11px; stroke-width: 2.2; }
+.mobile-url i { width: 46%; height: 5px; border-radius: 3px; background: var(--mist-300); }
+.mobile-toolbar { display: flex; align-items: center; justify-content: space-between; flex: none; padding: 1px 4px 0; color: var(--accent); }
+.mobile-toolbar .icon { width: 17px; height: 17px; stroke-width: 1.9; }
+.mobile-share-btn { position: relative; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; }
+.mobile-share-btn .ring { position: absolute; inset: -5px; border-radius: 50%; border: 2px solid var(--blue); }
+.mobile-hero-fig[data-reached~="0"]:not([data-reached~="1"]) .mobile-share-btn { background: var(--accent-soft); }
+.mobile-scrim { position: absolute; inset: 0; background: rgba(15, 43, 76, .14); }
+.mobile-sheet {
+  position: absolute; left: 0; right: 0; bottom: 0; display: grid; gap: 8px; padding: 7px 9px 12px;
+  border-radius: 18px 18px 0 0; background: var(--mist-50); box-shadow: 0 -12px 28px -12px rgba(15, 43, 76, .32);
+}
+.mobile-sheet[data-at] { --fx: sheet-up; --fx-dur: .6s; }
+.mobile-grabber { justify-self: center; width: 32px; height: 4px; border-radius: 2px; background: var(--mist-300); }
+.mobile-sheet-head { display: flex; align-items: center; gap: 8px; min-width: 0; padding-bottom: 8px; border-bottom: 1px solid var(--m-line); }
+.mobile-sheet-head img { flex: none; width: 28px; height: 28px; border-radius: 7px; box-shadow: 0 0 0 1px var(--m-line); }
+.mobile-sheet-head > span { display: grid; gap: 4px; min-width: 0; line-height: 1.25; }
+/* The page title (the product's full name) wraps instead of being cut; a grey bar stands in for the address */
+.mobile-sheet-head b { font-size: 12.5px; font-weight: 700; color: var(--ink); text-wrap: balance; }
+.mobile-sheet-head span > i { width: 58%; height: 5px; border-radius: 3px; background: var(--mist-300); }
+.mobile-targets { display: flex; justify-content: space-between; padding: 0 2px; }
+.mobile-targets > span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--paper); border: 1px solid var(--m-line); color: var(--ink-3); }
+.mobile-targets .icon { width: 15px; height: 15px; }
+.mobile-rows { display: grid; border-radius: 11px; background: var(--paper); border: 1px solid var(--m-line); overflow: hidden; }
+.mobile-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 30px; padding: 5px 9px;
+  font-size: 12px; font-weight: 560; color: var(--ink); white-space: nowrap;
+  transition: background-color .35s var(--ease), color .35s var(--ease), box-shadow .35s var(--ease);
+}
+.mobile-row + .mobile-row { border-top: 1px solid var(--m-line); }
+.mobile-row .icon { flex: none; width: 14px; height: 14px; color: var(--ink-2); }
+.mobile-hero-fig[data-reached~="2"] .mobile-a2hs { background: var(--accent-soft); color: var(--accent-ink); box-shadow: inset 0 0 0 1.5px var(--accent-ring); }
+.mobile-hero-fig[data-reached~="2"] .mobile-a2hs .icon { color: var(--accent); }
+.mobile-home { gap: 14px; padding: 40px 12px 10px; background: linear-gradient(165deg, #dbe8fb 0%, #edf3fd 50%, #ddf2e5 100%); }
+.mobile-home-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 17px 10px; }
+.mobile-home-grid > i { aspect-ratio: 1; border-radius: 24%; background: rgba(255, 255, 255, .78); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .9), 0 3px 8px -4px rgba(15, 43, 76, .18); opacity: .7; }
+.mobile-home-grid > i:nth-child(3n+1) { background: rgba(207, 226, 250, .95); }
+.mobile-home-grid > i:nth-child(4n+2) { background: rgba(206, 238, 219, .95); }
+.mobile-home-app { position: relative; aspect-ratio: 1; }
+.mobile-home-app img { display: block; width: 100%; height: 100%; border-radius: 24%; box-shadow: 0 8px 16px -8px rgba(15, 43, 76, .45), 0 0 0 1px rgba(15, 43, 76, .06); transition: box-shadow .45s var(--ease); }
+/* Once installed, the new icon keeps a green outline so it stands out from the placeholder tiles */
+.mobile-hero-fig[data-reached~="3"] .mobile-home-app img { box-shadow: 0 0 0 2px var(--green), 0 8px 16px -8px rgba(15, 43, 76, .45); }
+.mobile-home-app > span { position: absolute; top: calc(100% + 3px); left: 50%; translate: -50% 0; font-size: 12px; font-weight: 650; line-height: 1.2; color: var(--ink); white-space: nowrap; }
+.mobile-home-app[data-at] { --fx-dur: .75s; --fx-delay: .45s; }
+.mobile-home-ring { position: absolute; inset: -6px; border-radius: 30%; border: 2px solid var(--green); }
+.mobile-home-search { margin-top: auto; align-self: center; display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; border-radius: var(--pill); background: rgba(255, 255, 255, .6); font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.mobile-home-search .icon { width: 12px; height: 12px; stroke-width: 2.2; }
+.mobile-dock { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; padding: 8px; border-radius: 18px; background: rgba(255, 255, 255, .55); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .85); }
+.mobile-dock i { aspect-ratio: 1; border-radius: 24%; background: rgba(255, 255, 255, .88); }
+/* A narrow phone drops the share targets (and a row) instead of clipping the sheet */
+@container mobile-phone (max-width: 214px) { .mobile-targets, .mobile-sheet-head img { display: none; } }
+@container mobile-phone (max-width: 196px) { .mobile-row.is-extra { display: none; } .mobile-sheet-head span > i { display: none; } .mobile-today-tiles > i:nth-child(n+3) { display: none; } }
+
+/* App chips: "Installed" shows up with the Home Screen, beside the phone and below the tablet */
+.mobile-hero-fig .float-note.note-1 { top: auto; bottom: 24%; right: calc(36% - 28px); left: auto; }
+.mobile-hero-fig .float-note.note-2 { top: auto; bottom: 7%; left: -14px; right: auto; }
+.mobile-hero-fig .float-note { transition: filter .45s var(--ease); }
+.mobile-hero-fig:not([data-reached~="3"]) .float-note.note-1 { filter: opacity(0); }
+@media (min-width: 960px) and (max-width: 1199.98px) { .mobile-hero-fig .float-note.note-1 { right: calc(40% - 24px); } }
+@media (min-width: 960px) and (max-width: 1119.98px) { .mobile-hero-fig .float-note.note-2 { left: -6px; } }
+
+/* ---------- Install: tabs with numbered steps and a "what to look for" card ---------- */
+.mobile-install [role="tab"] { display: inline-flex; align-items: center; gap: 8px; }
+.mobile-install [role="tab"] .icon { width: 18px; height: 18px; }
+@media (max-width: 539.98px) {
+  .mobile-install .tabs-list { display: flex; width: 100%; }
+  .mobile-install [role="tab"] { flex: 1 1 auto; justify-content: center; padding-inline: 10px; }
+  .mobile-install [role="tab"] .icon { display: none; }
+}
+@media (max-width: 359.98px) { .mobile-install [role="tab"] { padding-inline: 6px; font-size: .92rem; white-space: nowrap; } }
+.mobile-panel { display: grid; gap: 28px 64px; align-items: center; }
+@media (min-width: 900px) { .mobile-panel { grid-template-columns: minmax(0, 1.2fr) minmax(0, .8fr); } }
+.mobile-panel .name-row h3 { font-size: clamp(1.2rem, 1.05rem + .6vw, 1.55rem); line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance; }
+.mobile-panel .name-row p { text-wrap: pretty; }
+.mobile-panel-kicker { display: none; }
+html:not(.js) .mobile-panel-kicker { display: flex; align-items: center; gap: 10px; grid-column: 1 / -1; font-weight: 650; color: var(--ink); }
+html:not(.js) .mobile-install .tabs-list { display: none; }
+html:not(.js) .mobile-install [role="tabpanel"][hidden] { display: block !important; margin-top: 56px; }
+.mobile-hint { display: grid; gap: 14px; width: 100%; max-width: 400px; justify-self: center; padding: 22px; border-radius: var(--r-lg); background: var(--wash); border: 1px solid rgba(31, 122, 224, .14); }
+.mobile-hint-label { display: flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: .02em; color: var(--ink-2); }
+.mobile-hint-label::before { content: ""; width: 14px; height: 3px; border-radius: 1px; background: var(--bar); }
+.mobile-hint-ui { display: grid; gap: 10px; padding: 10px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2); font-size: 13px; color: var(--ink); }
+.mobile-hint-bar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 10px; color: var(--accent); }
+.mobile-hint-bar .icon { width: 18px; height: 18px; }
+.mobile-hint-addr { display: flex; align-items: center; gap: 8px; padding: 0 4px 0 10px; height: 34px; border-radius: 10px; background: var(--mist-100); color: var(--ink-3); }
+.mobile-hint-addr > .icon { width: 13px; height: 13px; }
+.mobile-hint-addr > i { flex: 1 1 auto; height: 6px; max-width: 60%; border-radius: 3px; background: var(--mist-300); }
+.mobile-hint-addr > .mobile-hint-hot { margin-left: auto; }
+.mobile-hint-hot { position: relative; display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+.mobile-hint-hot .icon { width: 18px; height: 18px; }
+.mobile-hint-hot .ring { position: absolute; inset: -4px; border-radius: 50%; border: 2px solid var(--blue); }
+.mobile-hint-menu { display: grid; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.mobile-hint-menu > span { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 12px; font-weight: 560; }
+.mobile-hint-menu > span + span { border-top: 1px solid var(--line); }
+.mobile-hint-menu .icon { width: 16px; height: 16px; color: var(--ink-3); }
+.mobile-hint-menu > .is-hot { background: var(--accent-soft); color: var(--accent-ink); box-shadow: inset 3px 0 0 var(--blue); }
+.mobile-hint-menu > .is-hot .icon { color: var(--accent); }
+.mobile-hint-win { display: grid; gap: 10px; }
+.mobile-hint-dots { display: flex; gap: 5px; padding: 2px 2px 0; }
+.mobile-hint-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--mist-300); }
+.mobile-hint-pop { display: grid; gap: 8px; padding: 12px; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow-2); background: var(--paper); }
+.mobile-hint-pop b { font-size: 14px; }
+.mobile-hint-app { display: flex; align-items: center; gap: 9px; min-width: 0; font-size: 12px; color: var(--ink-3); }
+.mobile-hint-app img { flex: none; width: 26px; height: 26px; border-radius: 7px; box-shadow: 0 0 0 1px var(--m-line, var(--mist-200)); }
+.mobile-hint-app span { min-width: 0; }
+.mobile-hint-btns { display: flex; justify-content: flex-end; gap: 6px; }
+.mobile-install-note { margin-top: clamp(28px, 1.5rem + 1.5vw, 44px); max-width: 860px; }
+
+/* ---------- iPhone ---------- */
+.mobile-ios-grid > .card { display: flex; flex-direction: column; }
+.mobile-ios-grid h3 { font-size: 1.15rem; }
+.grid-3.mobile-ios-grid > .card:not(.card-link) > .icon-tile.mobile-mini { width: 54px; height: 72px; padding: 0; align-items: end; overflow: hidden; border-radius: 15px; }
+.mobile-mini-phone { position: relative; display: block; width: 32px; height: 58px; margin-bottom: -2px; border-radius: 8px 8px 0 0; border: 2px solid var(--ink); border-bottom: 0; background: var(--paper); overflow: hidden; }
+.mobile-mini-phone::before { content: ""; position: absolute; top: 4px; left: 50%; width: 10px; height: 3px; translate: -50% 0; border-radius: 2px; background: var(--mist-300); }
+.mobile-mini-tabs { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-around; padding: 4px 3px 5px; border-top: 1px solid var(--mist-200); }
+.mobile-mini-tabs i { width: 4px; height: 4px; border-radius: 50%; background: var(--mist-300); }
+.mobile-mini-tabs i:first-child { background: var(--blue); }
+.mobile-mini-sheet { position: absolute; left: 0; right: 0; bottom: 0; height: 64%; }
+.mobile-mini-sheet[data-seq-i] { --fx: sheet-up; --fx-dur: .6s; }
+.mobile-mini-sheet > span { display: grid; align-content: start; justify-items: center; gap: 4px; height: 100%; padding-top: 4px; border-radius: 7px 7px 0 0; background: var(--paper); box-shadow: 0 -4px 10px -2px rgba(15, 43, 76, .25); border-top: 1px solid var(--mist-200); }
+.mobile-mini-sheet > span::before { content: ""; width: 10px; height: 2px; border-radius: 1px; background: var(--mist-300); }
+.mobile-mini-sheet b { width: 70%; height: 3px; border-radius: 2px; background: var(--mist-200); }
+.mobile-mini-sheet b:nth-of-type(2) { width: 52%; background: var(--blue-100); }
+/* the sheet slides up, is swiped down once, and settles back up (site sheet-up / sheet-down keyframes) */
+.js [data-reveal-seq].is-in .mobile-mini-sheet > span { animation: sheet-down .5s var(--ease-in-out) 1.75s 2 alternate both; }
+@media (max-width: 639.98px) {
+  .grid-3.mobile-ios-grid > .card:not(.card-link) > .icon-tile.mobile-mini { width: 44px; height: 58px; border-radius: 13px; }
+  .mobile-mini-phone { width: 27px; height: 47px; }
+}
+.mobile-shortcuts { display: flex; gap: 14px; align-items: flex-start; margin-top: clamp(20px, 1rem + 1vw, 32px); padding: 18px 20px; border-radius: var(--r); background: var(--mist-50); border: 1px dashed var(--line-strong); }
+.mobile-shortcuts p { color: var(--ink-3); font-size: .95rem; }
+.mobile-shortcuts p strong { color: var(--ink); font-weight: 650; }
+.mobile-shortcut-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.mobile-shortcut-list .chip { font-size: .86rem; }
+
+/* ---------- Offline: the merge diagram ---------- */
+.mobile-sync-fig { width: 100%; max-width: 560px; justify-self: center; }
+.mobile-sync { display: grid; width: 100%; }
+/* Both cards share one height, so each connector starts at a card's bottom edge */
+.mobile-devs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: stretch; }
+.mobile-dev { display: flex; flex-direction: column; gap: 8px; padding: 11px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); min-width: 0; text-align: left; }
+.mobile-dev-head { display: flex; align-items: center; gap: 7px; min-width: 0; }
+.mobile-dev-head > .icon { flex: none; width: 17px; height: 17px; color: var(--accent); }
+.mobile-dev-head b { flex: 1 1 auto; min-width: 0; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mobile-wifi { flex: none; width: 20px; height: 20px; overflow: visible; color: var(--ink-4); transition: color .4s var(--ease); }
+.mobile-wifi path, .mobile-wifi circle { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.mobile-wifi circle { fill: currentColor; stroke: none; }
+.mobile-wifi .mobile-slash { stroke: var(--dot-stop); stroke-width: 2.4; }
+.mobile-sync-fig[data-reached~="2"] .mobile-wifi { color: var(--green-ink); }
+.mobile-dev-head .live-dot { margin-right: 4px; }
+.mobile-swap { display: grid; justify-items: start; }
+.mobile-swap > * { grid-area: 1 / 1; }
+.mobile-dev-ro { display: grid; line-height: 1.3; font-size: 12px; color: var(--ink-3); }
+.mobile-dev-ro strong { font-size: 12.5px; font-weight: 650; color: var(--ink); }
+.mobile-q { display: grid; gap: 5px; }
+.mobile-q > span { display: flex; align-items: center; gap: 7px; min-width: 0; padding: 5px 8px; border-radius: 9px; background: var(--mist-50); border: 1px solid var(--m-line); font-size: 12px; white-space: nowrap; }
+.mobile-q > span > span { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.mobile-q .mock-dot { width: 8px; height: 8px; background: var(--dot-warn); transition: background-color .4s var(--ease); }
+.mobile-sync-fig[data-reached~="2"] .mobile-q .mock-dot { background: var(--dot-ok); }
+.mobile-field-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 6px 8px; border-radius: 9px; background: var(--mist-50); border: 1px solid var(--m-line); font-size: 12px; color: var(--ink-3); }
+.mobile-field-row b { font-weight: 700; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.mobile-sync-fig[data-reached~="1"] .mobile-field-row { background: var(--accent-soft); border-color: rgba(31, 122, 224, .3); }
+.mobile-dev-note { margin-top: auto; font-size: 12px; color: var(--ink-3); }
+.mobile-links { display: block; width: 100%; height: auto; overflow: visible; margin-block: -2px; }
+.mobile-target { display: grid; }
+.mobile-target > * { grid-area: 1 / 1; }
+.mobile-cloud { display: grid; align-content: start; gap: 5px; padding: 11px 12px; border-radius: 16px; border: 2px dashed var(--line-strong); background: rgba(255, 255, 255, .5); }
+.mobile-cloud-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.mobile-cloud-head .icon { flex: none; width: 22px; height: 22px; color: var(--accent); }
+.mobile-cloud-head > span { display: grid; line-height: 1.3; }
+.mobile-cloud-head b { font-size: 13px; font-weight: 700; color: var(--ink); }
+.mobile-cloud-head small { font-size: 12px; color: var(--ink-3); }
+.mobile-cloud > i { height: 27px; border-radius: 9px; background: repeating-linear-gradient(90deg, var(--mist-100) 0 40%, transparent 40% 62%, var(--mist-100) 62% 80%, transparent 80%); border: 1px dashed var(--mist-300); opacity: .8; }
+.mobile-merged { display: grid; gap: 9px; padding: 12px; border-radius: 16px; background: var(--paper); border: 1px solid rgba(45, 179, 106, .45); box-shadow: 0 0 0 4px rgba(45, 179, 106, .1), var(--shadow-2); text-align: left; }
+.mobile-merged-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+.mobile-merged-head > span:first-child { display: grid; min-width: 0; line-height: 1.3; }
+.mobile-merged-head strong { font-size: 13.5px; font-weight: 700; color: var(--ink); }
+.mobile-merged-head small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mobile-synced { flex: none; gap: 4px; padding: 3px 9px 3px 6px; }
+.mobile-synced svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+.mobile-merged-rows { display: grid; gap: 5px; }
+.mobile-merged-rows > span { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px; padding: 6px 9px; border-radius: 9px; background: var(--green-50); border: 1px solid rgba(45, 179, 106, .3); font-size: 12px; color: var(--ink-3); }
+.mobile-merged-rows > span > span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.mobile-merged-rows b { font-weight: 700; color: var(--ink); white-space: nowrap; }
+.mobile-merged-rows em { font-style: normal; font-weight: 650; padding: 1px 7px; border-radius: var(--pill); background: var(--paper); border: 1px solid var(--m-line); color: var(--ink-2); }
+.mobile-merged-foot { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-3); }
+.mobile-merged-foot .icon { width: 15px; height: 15px; color: var(--accent); }
+@media (max-width: 419.98px) {
+  .mobile-devs { gap: 8px; }
+  .mobile-dev { padding: 9px; }
+  .mobile-merged-rows em { display: none; }
+}
+/* Narrow phones: rows wrap instead of spilling past the card or cutting the example values */
+@media (max-width: 379.98px) {
+  .mobile-devs { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .mobile-field-row { flex-wrap: wrap; row-gap: 2px; }
+  .mobile-q > span { white-space: normal; }
+  .mobile-q > span > span { overflow: visible; }
+}
+
+/* ---------- Devices: outlines draw, then the dashed line that links them ---------- */
+.mobile-devices { position: relative; }
+.mobile-devices > .grid { position: relative; z-index: 1; }
+.mobile-dev-card { display: grid; align-content: start; justify-items: center; gap: 4px; padding: 24px 22px 26px; text-align: center; }
+.mobile-dev-art { display: block; width: 100%; max-width: 168px; height: 112px; margin-bottom: 12px; overflow: visible; }
+.mobile-dev-card h3 { font-size: 1.14rem; }
+.mobile-dev-card p { margin-top: 4px; color: var(--ink-3); font-size: .96rem; text-wrap: pretty; }
+.mobile-art-fill { fill: url(#art-tint); }
+.mobile-art-soft { fill: var(--blue-100); }
+.mobile-art-green { fill: var(--green-100); }
+.mobile-art-paper { fill: var(--paper); }
+.mobile-art-line { fill: var(--mist-200); }
+.mobile-art-blue { fill: var(--blue); }
+.mobile-art-ok { fill: var(--green); }
+.mobile-art-warn { fill: var(--dot-warn); }
+.mobile-art-ink { fill: var(--ink); }
+.mobile-art-hair { fill: none; stroke: var(--line-strong); stroke-width: 1.2; }
+.mobile-art-pill { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.2; }
+.mobile-art-dim { fill: var(--mist-300); }
+.mobile-art-track { fill: var(--paper); stroke: var(--mist-200); stroke-width: 3; }
+.mobile-art-arc { fill: none; stroke: var(--green); stroke-width: 3; stroke-linecap: round; }
+.mobile-art-tick { fill: none; stroke: #fff; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.mobile-rail { position: absolute; z-index: 0; pointer-events: none; }
+.mobile-dev-card::before, .mobile-dev-card::after { /* ports where the sync line meets each card */
+  content: ""; position: absolute; width: 9px; height: 9px; border-radius: 50%; background: var(--paper); border: 2px solid var(--blue);
+  opacity: 0; transition: opacity .4s var(--ease) 2s;
+}
+.mobile-devices.is-in .mobile-dev-card::before, .mobile-devices.is-in .mobile-dev-card::after, html:not(.js) .mobile-dev-card::before, html:not(.js) .mobile-dev-card::after { opacity: 1; }
+.mobile-dev-card:nth-child(n+3)::before, .mobile-dev-card:nth-child(n+3)::after { border-color: var(--green); }
+@media (prefers-reduced-motion: reduce) { .mobile-dev-card::before, .mobile-dev-card::after { opacity: 1; } }
+@media (min-width: 960px) {
+  .mobile-devices > .grid { gap: 36px; }
+  .mobile-dev-card::before { left: -6px; top: 75px; }
+  .mobile-dev-card::after { right: -6px; top: 75px; }
+  .mobile-dev-card:first-child::before, .mobile-dev-card:last-child::after { display: none; }
+  .mobile-rail { left: 10%; right: 10%; top: 79px; height: 3px; background: repeating-linear-gradient(90deg, transparent 0 8px, var(--paper) 8px 14px), var(--bar); }
+}
+@media (min-width: 560px) and (max-width: 959.98px) { .mobile-dev-card::before, .mobile-dev-card::after { display: none; } .mobile-devices > .grid { gap: 28px; } }
+@media (max-width: 559.98px) { .mobile-devices > .grid { gap: 24px; } }
+@media (max-width: 959.98px) {
+  .mobile-devices .mobile-rail { --fx: fx-wipe-down; top: 70px; bottom: 70px; left: 50%; width: 3px; margin-left: -1.5px; background: repeating-linear-gradient(180deg, transparent 0 8px, var(--paper) 8px 14px), var(--bar-v); }
+}
+@media (max-width: 559.98px) {
+  .mobile-dev-card { grid-template-columns: 96px minmax(0, 1fr); column-gap: 16px; row-gap: 2px; justify-items: start; align-items: center; padding: 16px 18px; text-align: left; border-radius: var(--r); }
+  .mobile-dev-art { grid-row: 1 / span 2; width: 96px; height: 66px; margin: 0; }
+  .mobile-dev-card h3 { align-self: end; font-size: 1.06rem; }
+  .mobile-dev-card p { align-self: start; margin: 0; font-size: .93rem; }
+  .mobile-devices .mobile-rail { top: 50px; bottom: 50px; left: 66px; }
+  .mobile-dev-card::before { left: 61.5px; top: -6px; }
+  .mobile-dev-card::after { left: 61.5px; bottom: -6px; }
+  .mobile-dev-card:first-child::before, .mobile-dev-card:last-child::after { display: none; }
+  .mobile-sync-cap p { font-size: .94rem; }
+}
+.mobile-sync-cap { display: flex; justify-content: center; margin-top: clamp(22px, 1rem + 1vw, 34px); }
+.mobile-sync-cap p { display: inline-flex; align-items: center; gap: 10px; padding: 8px 18px 8px 8px; border-radius: var(--pill); background: var(--wash); border: 1px solid rgba(31, 122, 224, .16); color: var(--ink-2); font-weight: 560; text-wrap: balance; }
+.mobile-sync-cap .icon-tile { width: 32px; height: 32px; border-radius: 50%; background: var(--paper); }
+.mobile-sync-cap .icon-tile .icon { width: 17px; height: 17px; }
+
+/* ---------- FAQ ---------- */
+.section-sm + .mobile-faq { padding-top: clamp(16px, .5rem + 2vw, 48px); }
+.mobile-faq .section-head { margin-bottom: clamp(24px, 1.5rem + 1vw, 40px); }
+</style>
 </head>
 <body data-page="mobile" id="top">
 <!-- @partial icons -->
@@ -162,7 +501,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -190,9 +529,538 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <symbol id="mobile-share" viewBox="0 0 24 24"><path d="M12 3.5v11"/><path d="M8.2 7.2 12 3.5l3.8 3.7"/><path d="M8.6 10H6.6A1.6 1.6 0 0 0 5 11.6v7.3a1.6 1.6 0 0 0 1.6 1.6h10.8a1.6 1.6 0 0 0 1.6-1.6v-7.3a1.6 1.6 0 0 0-1.6-1.6h-2"/></symbol>
+    <symbol id="mobile-add" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8.5v7M8.5 12h7"/></symbol>
+    <symbol id="mobile-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2.4"/><path d="M15.5 8.5V6A1.5 1.5 0 0 0 14 4.5H6A1.5 1.5 0 0 0 4.5 6v8A1.5 1.5 0 0 0 6 15.5h2.5"/></symbol>
+    <symbol id="mobile-more" viewBox="0 0 24 24"><circle cx="12" cy="5.5" r="1.3" fill="currentColor"/><circle cx="12" cy="12" r="1.3" fill="currentColor"/><circle cx="12" cy="18.5" r="1.3" fill="currentColor"/></symbol>
+    <symbol id="mobile-install" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2.2"/><path d="M8.5 20.5h7"/><path d="M12 7.6v6M9.4 11.1l2.6 2.6 2.6-2.6"/></symbol>
+  </svg>
+
+  <!-- ===== Hero ===== -->
+  <section class="page-hero mobile-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <p class="eyebrow"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg></span>iPhone, iPad, Android, Mac &amp; PC</p>
+        <h1 id="hero-title">On the counter, in the bay, <span class="accent-text">in your pocket.</span></h1>
+        <p class="lead">Install WPI Driveline Shop Management System from the browser. It opens full screen like an app, and each device keeps working when the Wi-Fi in the back bay doesn&rsquo;t.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="demo.html">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="app/" data-no-prerender>Open the app, then Add to Home Screen</a>
+        </div>
+        <p class="hero-note">On a device with no saved shop, the app opens Main Street Auto Service, a made-up sample shop. No sign-up.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>No App Store needed</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Works offline</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Launch screens &amp; safe areas</span>
+        </div>
+      </div>
+
+      <figure class="page-hero-art mobile-hero-fig" data-play data-tilt-scope data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="1500" aria-label="Illustration: on a phone, the app open in Safari on its Today screen, the Share button, and the share sheet with Add to Home Screen picked. The app's WPI icon now sits on the Home Screen. Behind the phone, a tablet shows the app open full screen on the workflow board.">
+        <div class="card-stage is-pair mock-stage mobile-hero-stage" aria-hidden="true">
+          <!-- The tablet: the installed app, full screen -->
+          <div class="card-deal" style="--deal-delay: 0ms">
+            <div class="mock-tablet tilt mobile-tablet" data-tilt="6">
+              <div class="mock-screen">
+                <div class="mobile-app">
+                  <div class="mobile-app-side">
+                    <img src="assets/img/logo-mark.svg" alt="" width="507" height="250" decoding="async">
+                    <b>Shop floor</b>
+                    <span>Today</span>
+                    <span class="is-on">Workflow</span>
+                    <span>Repair Orders</span>
+                    <span>Calendar</span>
+                    <span>Front Desk</span>
+                    <span>Messages</span>
+                    <b class="is-extra">Technical</b>
+                    <span class="is-extra">Auto Diagnosis</span>
+                    <span class="is-extra">Tech Time Clock</span>
+                  </div>
+                  <div class="mobile-app-main">
+                    <div class="mobile-app-top"><b>Workflow</b><i></i></div>
+                    <div class="mobile-app-cols">
+                      <div class="mobile-app-col"><span>Approved</span><i class="mobile-sk is-info"></i><i class="mobile-sk"></i></div>
+                      <div class="mobile-app-col"><span>In Progress</span><i class="mobile-sk is-info"></i><i class="mobile-sk is-info"></i><i class="mobile-sk"></i></div>
+                      <div class="mobile-app-col"><span>Ready</span><i class="mobile-sk is-ok"></i><i class="mobile-sk is-ok"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <span class="app-card-sheen"></span>
+            </div>
+          </div>
+          <!-- The phone: Share, Add to Home Screen, the icon on the Home Screen -->
+          <div class="card-deal" style="--deal-delay: 120ms">
+            <div class="mock-phone tilt mobile-phone" data-tilt="10">
+              <div class="mock-screen">
+                <div class="mobile-layer mobile-safari">
+                  <div class="mobile-today">
+                    <div class="mobile-today-top"><img src="assets/img/logo-mark.svg" alt="" width="507" height="250" decoding="async"><i></i></div>
+                    <b>Today</b>
+                    <div class="mobile-today-tiles"><i></i><i></i><i></i><i></i></div>
+                    <i class="mobile-sk is-info"></i>
+                    <i class="mobile-sk is-ok"></i>
+                    <i class="mobile-sk"></i>
+                  </div>
+                  <div class="mobile-url"><svg class="icon"><use href="#i-lock"/></svg><i></i></div>
+                  <div class="mobile-toolbar">
+                    <svg class="icon"><use href="#i-chevron-left"/></svg>
+                    <svg class="icon"><use href="#i-chevron-right"/></svg>
+                    <span class="mobile-share-btn">
+                      <span class="ring" data-at="0" data-fx="ring" style="--fx-n: 2; --fx-dur: .9s"></span>
+                      <svg class="icon" data-at="0" data-fx="press"><use href="#mobile-share"/></svg>
+                    </span>
+                    <svg class="icon"><use href="#i-book"/></svg>
+                    <svg class="icon"><use href="#mobile-copy"/></svg>
+                  </div>
+                </div>
+                <span class="mobile-scrim" data-at="1" data-fx="fade"></span>
+                <div class="mobile-sheet" data-at="1">
+                  <span class="mobile-grabber"></span>
+                  <div class="mobile-sheet-head">
+                    <img src="assets/img/icon-192.png" alt="" width="192" height="192" decoding="async">
+                    <span><b>WPI Driveline Shop Management System</b><i></i></span>
+                  </div>
+                  <div class="mobile-targets">
+                    <span><svg class="icon"><use href="#i-chat"/></svg></span>
+                    <span><svg class="icon"><use href="#i-mail"/></svg></span>
+                    <span><svg class="icon"><use href="#i-document"/></svg></span>
+                    <span><svg class="icon"><use href="#i-link"/></svg></span>
+                  </div>
+                  <div class="mobile-rows">
+                    <span class="mobile-row">Copy<svg class="icon"><use href="#mobile-copy"/></svg></span>
+                    <span class="mobile-row">Add to Favorites<svg class="icon"><use href="#i-star"/></svg></span>
+                    <span class="mobile-row mobile-a2hs" data-at="2" data-fx="press">Add to Home Screen<svg class="icon"><use href="#mobile-add"/></svg></span>
+                    <span class="mobile-row is-extra">Find on Page<svg class="icon"><use href="#i-search"/></svg></span>
+                  </div>
+                </div>
+                <div class="mobile-layer mobile-home" data-at="3" data-fx="fade">
+                  <div class="mobile-home-grid">
+                    <i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i>
+                    <i></i><i></i><i></i><i></i>
+                    <i></i>
+                    <span class="mobile-home-app" data-at="3" data-fx="pop">
+                      <img src="assets/img/icon-192.png" alt="" width="192" height="192" decoding="async">
+                      <span>WPI Driveline</span>
+                      <span class="ring mobile-home-ring" data-at="3" data-fx="ring" style="--fx-delay: .9s; --fx-n: 1"></span>
+                    </span>
+                  </div>
+                  <span class="mobile-home-search"><svg class="icon"><use href="#i-search"/></svg>Search</span>
+                  <div class="mobile-dock"><i></i><i></i><i></i><i></i></div>
+                </div>
+              </div>
+              <span class="app-card-sheen"></span>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Installed</strong><small>Opens full screen</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="dot"></span>
+          <span><strong>Offline</strong><small>Changes saved</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Install ===== -->
+  <section class="section section-paper" id="install" aria-labelledby="install-title">
     <div class="container">
-      <h1>On the counter, in the bay, <span class="accent-text">in your pocket.</span></h1>
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Install</p>
+        <h2 id="install-title">Install it <span class="accent-text">in a minute</span></h2>
+        <p class="lead">Open the app in the browser on each device and add it to the Home Screen or the dock. From then on it opens full screen, with its own icon. With <a href="works-with.html#shop-cloud">Shop Cloud</a>, sign in once on each device and the shop&rsquo;s data loads.</p>
+      </div>
+      <div class="mobile-install" data-tabs data-reveal>
+        <div class="tabs-list" role="tablist" aria-label="Install on">
+          <span class="tabs-thumb" aria-hidden="true"></span>
+          <button role="tab" id="mobile-t-ios" aria-controls="mobile-p-ios" aria-selected="true" type="button"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>iPhone &amp; iPad</button>
+          <button role="tab" id="mobile-t-android" aria-controls="mobile-p-android" aria-selected="false" type="button"><svg class="icon" aria-hidden="true"><use href="#i-device-tablet"/></svg>Android</button>
+          <button role="tab" id="mobile-t-desktop" aria-controls="mobile-p-desktop" aria-selected="false" type="button"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>Mac &amp; PC</button>
+        </div>
+
+        <div role="tabpanel" id="mobile-p-ios" aria-labelledby="mobile-t-ios">
+          <div class="mobile-panel">
+            <p class="mobile-panel-kicker"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>On iPhone and iPad</p>
+            <div class="name-rows">
+              <div class="name-row" style="--i:0"><span class="name-num">01</span><h3>Open the app in Safari</h3><p>Use the same address on every device in the shop.</p></div>
+              <div class="name-row" style="--i:1"><span class="name-num">02</span><h3>Tap Share, then Add to Home Screen</h3><p>Share is the square with the arrow. The icon lands on the Home Screen and opens full screen, without Safari&rsquo;s bars.</p></div>
+              <div class="name-row" style="--i:2"><span class="name-num">03</span><h3>Open it from the Home Screen</h3><p>With <a href="works-with.html#shop-cloud">Shop Cloud</a>, sign in once and your shop&rsquo;s data loads onto that iPhone or iPad. Without it, each device keeps its own copy. To move the records, export a backup in Settings &rarr; Data and import it on the other device.</p></div>
+            </div>
+            <div class="mobile-hint" data-reveal-seq aria-hidden="true">
+              <span class="mobile-hint-label">In Safari</span>
+              <div class="mobile-hint-ui">
+                <div class="mobile-hint-bar">
+                  <svg class="icon"><use href="#i-chevron-left"/></svg>
+                  <svg class="icon"><use href="#i-chevron-right"/></svg>
+                  <span class="mobile-hint-hot" data-seq-i="0" data-fx="pop"><svg class="icon"><use href="#mobile-share"/></svg><span class="ring" data-seq-i="1" data-fx="ring" style="--fx-n: 2"></span></span>
+                  <svg class="icon"><use href="#i-book"/></svg>
+                  <svg class="icon"><use href="#mobile-copy"/></svg>
+                </div>
+                <div class="mobile-hint-menu" data-seq-i="2" data-fx="drop">
+                  <span>Copy<svg class="icon"><use href="#mobile-copy"/></svg></span>
+                  <span>Add to Favorites<svg class="icon"><use href="#i-star"/></svg></span>
+                  <span class="is-hot">Add to Home Screen<svg class="icon"><use href="#mobile-add"/></svg></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="mobile-p-android" aria-labelledby="mobile-t-android" hidden>
+          <div class="mobile-panel">
+            <p class="mobile-panel-kicker"><svg class="icon" aria-hidden="true"><use href="#i-device-tablet"/></svg>On Android</p>
+            <div class="name-rows">
+              <div class="name-row" style="--i:0"><span class="name-num">01</span><h3>Open the app in Chrome</h3><p>Use the same address as the counter and the other devices.</p></div>
+              <div class="name-row" style="--i:1"><span class="name-num">02</span><h3>Choose Install app</h3><p>Open the menu (&#8942;) and choose Install app, or Add to Home screen. It gets its own icon and opens full screen.</p></div>
+              <div class="name-row" style="--i:2"><span class="name-num">03</span><h3>Open it from the icon</h3><p>With <a href="works-with.html#shop-cloud">Shop Cloud</a>, sign in once and your shop&rsquo;s data loads onto the phone or tablet. Without it, each device keeps its own copy. To move the records, export a backup in Settings &rarr; Data and import it on the other device.</p></div>
+            </div>
+            <div class="mobile-hint" data-reveal-seq aria-hidden="true">
+              <span class="mobile-hint-label">In Chrome</span>
+              <div class="mobile-hint-ui">
+                <div class="mobile-hint-addr"><svg class="icon"><use href="#i-lock"/></svg><i></i><span class="mobile-hint-hot" data-seq-i="0" data-fx="pop"><svg class="icon"><use href="#mobile-more"/></svg><span class="ring" data-seq-i="1" data-fx="ring" style="--fx-n: 2"></span></span></div>
+                <div class="mobile-hint-menu" data-seq-i="2" data-fx="drop">
+                  <span>New tab<svg class="icon"><use href="#i-plus"/></svg></span>
+                  <span>Bookmarks<svg class="icon"><use href="#i-star"/></svg></span>
+                  <span class="is-hot">Install app<svg class="icon"><use href="#mobile-install"/></svg></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div role="tabpanel" id="mobile-p-desktop" aria-labelledby="mobile-t-desktop" hidden>
+          <div class="mobile-panel">
+            <p class="mobile-panel-kicker"><svg class="icon" aria-hidden="true"><use href="#i-tv"/></svg>On a Mac or PC</p>
+            <div class="name-rows">
+              <div class="name-row" style="--i:0"><span class="name-num">01</span><h3>Open the app in your browser</h3><p>On the counter PC, the office Mac or a laptop.</p></div>
+              <div class="name-row" style="--i:1"><span class="name-num">02</span><h3>Use the Install option</h3><p>In Chrome or Edge, click the install icon in the address bar, or the Install the app button in Settings &rarr; General &rarr; Mobile &amp; desktop app when your browser offers it. In Safari on a Mac, choose File &rarr; Add to Dock.</p></div>
+              <div class="name-row" style="--i:2"><span class="name-num">03</span><h3>Open it like any program</h3><p>It runs in its own window with its own icon. With <a href="works-with.html#shop-cloud">Shop Cloud</a>, sign in once and your shop&rsquo;s data loads.</p></div>
+            </div>
+            <div class="mobile-hint" data-reveal-seq aria-hidden="true">
+              <span class="mobile-hint-label">In the address bar</span>
+              <div class="mobile-hint-ui mobile-hint-win">
+                <div class="mobile-hint-dots"><i></i><i></i><i></i></div>
+                <div class="mobile-hint-addr"><svg class="icon"><use href="#i-lock"/></svg><i></i><span class="mobile-hint-hot" data-seq-i="0" data-fx="pop"><svg class="icon"><use href="#mobile-install"/></svg><span class="ring" data-seq-i="1" data-fx="ring" style="--fx-n: 2"></span></span></div>
+                <div class="mobile-hint-pop" data-seq-i="2" data-fx="drop">
+                  <b>Install app?</b>
+                  <span class="mobile-hint-app"><img src="assets/img/icon-192.png" alt="" width="192" height="192" loading="lazy" decoding="async"><span>WPI Driveline Shop Management System</span></span>
+                  <span class="mobile-hint-btns"><span class="mock-btn is-ghost">Cancel</span><span class="mock-btn">Install</span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="callout mobile-install-note" data-reveal>
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div><p>It isn&rsquo;t an App Store or Google Play app, so there&rsquo;s nothing to download from a store. A notice appears when a newer version is published. Install from the app, not from this website.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== iPhone ===== -->
+  <section class="section" id="iphone" aria-labelledby="iphone-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">On iPhone and iPad</p>
+        <h2 id="iphone-title">Made for iPhone, <span class="accent-text">not squeezed onto it</span></h2>
+        <p class="lead">On a phone the layout changes, not just the size. Navigation moves to the bottom, forms stay above the keyboard, and nothing hides under the notch.</p>
+      </div>
+      <div class="grid grid-3 mobile-ios-grid" data-reveal-stagger>
+        <div class="card">
+          <span class="icon-tile mobile-mini" aria-hidden="true">
+            <span class="mobile-mini-phone" data-reveal-seq>
+              <span class="mobile-mini-tabs"><i></i><i></i><i></i><i></i></span>
+              <span class="mobile-mini-sheet" data-seq-i="1"><span><b></b><b></b><b></b></span></span>
+            </span>
+          </span>
+          <h3 class="mt-2">Tab bar and sheets</h3>
+          <p>A bottom tab bar, and sheets with a grabber that close with a swipe down.</p>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg></span>
+          <h3 class="mt-2">Keyboard and safe areas</h3>
+          <p>Keyboard-aware screens, no zoom on inputs, and safe-area spacing around the notch and the home bar.</p>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sun"/></svg></span>
+          <h3 class="mt-2">Launch screens</h3>
+          <p>Light and dark launch screens for iPhone and iPad screen sizes.</p>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#mobile-share"/></svg></span>
+          <h3 class="mt-2">The share sheet</h3>
+          <p>Links and PDFs go out through the system share sheet: Save to Files, Print, Mail, Messages, AirDrop.</p>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-timer"/></svg></span>
+          <h3 class="mt-2">A tab bar for techs</h3>
+          <p>Techs get their own tab bar: Clock, Board, Orders, Diagnose.</p>
+        </div>
+        <div class="card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span>
+          <h3 class="mt-2">Dark mode and <span class="kbd">&#8984;K</span></h3>
+          <p>Optional dark mode, and a <span class="kbd">&#8984;K</span> / <span class="kbd">Ctrl+K</span> command palette on keyboards.</p>
+        </div>
+      </div>
+      <div class="mobile-shortcuts" data-reveal>
+        <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg></span>
+        <div>
+          <p><strong>App shortcuts.</strong> Long-press or right-click the app icon on Android, Windows and Mac to jump straight in:</p>
+          <div class="mobile-shortcut-list">
+            <span class="chip">New repair order</span>
+            <span class="chip">Tech time clock</span>
+            <span class="chip">Workflow board</span>
+            <span class="chip">Messages</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Offline ===== -->
+  <section class="section section-wash" id="offline" aria-labelledby="offline-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Offline-first</p>
+        <h2 id="offline-title">Works with <span class="accent-text">no connection</span></h2>
+        <p>Each device keeps the shop&rsquo;s records, so it opens and works offline, and vehicle data is saved as you use it. Edits made offline survive reloads.</p>
+        <p><strong>With <a href="works-with.html#shop-cloud">Shop Cloud</a>:</strong></p>
+        <ul class="checklist pop-list">
+          <li><span>The counter, bay tablets and your phone update live.</span></li>
+          <li><span>Edits made offline are sent when the device reconnects.</span></li>
+          <li><span>Photos from other devices download the first time you open them.</span></li>
+          <li><span>Two edits to the same record merge field by field, and lines added to the same RO on two devices are both kept.</span></li>
+          <li><span>RO and PO numbers created offline are renumbered the same way everywhere.</span></li>
+        </ul>
+      </div>
+      <figure class="mock-figure mobile-sync-fig" data-reveal="right" data-play data-seq="4" data-loops="1" data-step="3" data-reached="0 1 2 3" data-seq-ms="1700" aria-label="Example with Shop Cloud: the bay iPad, offline, saves three changes to Priya R.'s 2021 Camry SE while the counter moves the promised time to 11:00 AM. When the iPad reconnects, both sets of changes merge into one repair order, marked Synced.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mobile-sync">
+            <div class="mobile-devs">
+              <!-- Device A: the bay iPad drops off the Wi-Fi and queues three edits -->
+              <div class="mobile-dev">
+                <div class="mobile-dev-head">
+                  <svg class="icon"><use href="#i-device-tablet"/></svg><b>Bay iPad</b>
+                  <svg class="mobile-wifi" viewBox="0 0 24 24"><path d="M3.5 9.2a12.5 12.5 0 0 1 17 0"/><path d="M6.6 12.6a8 8 0 0 1 10.8 0"/><path d="M9.6 15.9a3.6 3.6 0 0 1 4.8 0"/><circle cx="12" cy="19" r="1.3"/><g data-until="2"><path class="mobile-slash" data-at="0" data-fx="draw" pathLength="1" d="M4 3.5l16 17"/></g></svg>
+                </div>
+                <span class="mobile-swap">
+                  <span class="mock-chip is-warn" data-at="0" data-until="2" data-fx="pop">Offline · 3 waiting</span>
+                  <span class="mock-chip is-ok" data-at="2" data-fx="pop">Back online · sent</span>
+                </span>
+                <span class="mobile-dev-ro"><strong>2021 Camry SE</strong>Priya R.</span>
+                <div class="mobile-q" data-at="0" data-fx="stagger" style="--fx: fx-pop; --fx-stagger: 160ms; --fx-delay: .3s">
+                  <span><span class="mock-dot"></span><span>Front pads · 3&nbsp;mm</span></span>
+                  <span><span class="mock-dot"></span><span>2 photos added</span></span>
+                  <span><span class="mock-dot"></span><span>Wiper blades added</span></span>
+                </div>
+              </div>
+              <!-- Device B: the counter changes the promised time -->
+              <div class="mobile-dev">
+                <div class="mobile-dev-head"><svg class="icon"><use href="#i-tv"/></svg><b>Counter</b><span class="live-dot"></span></div>
+                <span class="mobile-swap"><span class="mock-chip is-ok">Online</span></span>
+                <span class="mobile-dev-ro"><strong>2021 Camry SE</strong>Priya R.</span>
+                <div class="mobile-field-row"><span>Promised</span>
+                  <span class="mobile-swap">
+                    <b data-until="1">10:30 AM</b>
+                    <b data-at="1" data-fx="flip">11:00 AM</b>
+                  </span>
+                </div>
+                <span class="mobile-dev-note" data-at="1" data-fx="fade" style="--fx-delay: .3s">Changed at the counter</span>
+              </div>
+            </div>
+            <svg class="mobile-links" viewBox="0 0 400 64">
+              <path class="flow-line is-broken" data-until="2" d="M100 2C100 36 200 28 200 62"/>
+              <path class="flow-line is-blue" data-at="2" data-fx="fade" d="M100 2C100 36 200 28 200 62"/>
+              <path class="flow-dot" pathLength="100" data-at="2" data-fx="flow" style="--fx-delay: .2s" d="M100 2C100 36 200 28 200 62"/>
+              <path class="flow-line is-blue" d="M300 2C300 36 200 28 200 62"/>
+              <path class="flow-dot is-green" pathLength="100" data-at="1" data-fx="flow" style="--fx-delay: .6s" d="M300 2C300 36 200 28 200 62"/>
+            </svg>
+            <div class="mobile-target">
+              <div class="mobile-cloud" data-until="3">
+                <span class="mobile-cloud-head"><svg class="icon"><use href="#i-cloud"/></svg><span><b>Shop Cloud</b><small>Waiting for the iPad</small></span></span>
+                <i></i><i></i><i></i><i></i>
+              </div>
+              <div class="mobile-merged" data-at="3">
+                <div class="mobile-merged-head">
+                  <span><strong>2021 Camry SE · Priya R.</strong><small>One repair order, both changes</small></span>
+                  <span class="mock-chip is-ok mobile-synced"><svg viewBox="0 0 16 16"><path data-at="3" data-fx="draw" pathLength="1" style="--fx-delay: .55s" d="M3.5 8.5l3 3 6-6.5"/></svg>Synced</span>
+                </div>
+                <div class="mobile-merged-rows" data-at="3" data-fx="stagger" style="--fx-stagger: 110ms; --fx-delay: .2s">
+                  <span><span>Promised</span><b>11:00 AM</b><em>Counter</em></span>
+                  <span><span>Front pads</span><b>3 mm</b><em>iPad</em></span>
+                  <span><span>Photos</span><b>2 added</b><em>iPad</em></span>
+                  <span><span>Line added</span><b>Wiper blades</b><em>iPad</em></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <p class="mock-caption">With Shop Cloud, the iPad&rsquo;s edits and the counter&rsquo;s edit end up on the same repair order.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Devices ===== -->
+  <section class="section section-paper" id="devices" aria-labelledby="devices-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Every device in the shop</p>
+        <h2 id="devices-title">One system, <span class="accent-text">every screen</span></h2>
+        <p class="lead">The same repair orders on the counter, in the bay, in a tech&rsquo;s pocket and on the lobby wall, each laid out for the job it does there.</p>
+      </div>
+      <div class="mobile-devices" data-reveal-seq>
+        <div class="grid grid-4">
+          <div class="card mobile-dev-card">
+            <svg class="mobile-dev-art" viewBox="0 0 168 112" aria-hidden="true">
+              <g data-seq-i="0" data-fx="fade" style="--fx-delay: .55s">
+                <rect class="mobile-art-fill" x="24" y="14" width="120" height="60" rx="3"/>
+                <rect class="mobile-art-soft" x="24" y="14" width="27" height="60" rx="3" opacity=".75"/>
+                <rect class="mobile-art-paper" x="29" y="21" width="17" height="3.5" rx="1.75"/>
+                <rect class="mobile-art-paper" x="29" y="29" width="13" height="3.5" rx="1.75"/>
+                <rect class="mobile-art-paper" x="29" y="37" width="17" height="3.5" rx="1.75"/>
+                <rect class="mobile-art-paper" x="29" y="45" width="11" height="3.5" rx="1.75"/>
+                <rect class="mobile-art-pill" x="57" y="19" width="81" height="11" rx="5.5"/>
+                <circle class="mobile-art-hair" cx="63.5" cy="24.5" r="2.4"/>
+                <rect class="mobile-art-line" x="124" y="21.5" width="10" height="6" rx="1.5"/>
+                <rect class="mobile-art-paper" x="57" y="36" width="81" height="9" rx="2.5"/>
+                <rect class="mobile-art-paper" x="57" y="48" width="81" height="9" rx="2.5"/>
+                <rect class="mobile-art-paper" x="57" y="60" width="54" height="9" rx="2.5"/>
+                <circle class="mobile-art-blue" cx="62.5" cy="40.5" r="2"/>
+                <circle class="mobile-art-ok" cx="62.5" cy="52.5" r="2"/>
+                <circle class="mobile-art-warn" cx="62.5" cy="64.5" r="2"/>
+              </g>
+              <path class="art-ink" pathLength="1" data-seq-i="0" data-fx="draw" d="M25 8h118a7 7 0 0 1 7 7v58a7 7 0 0 1-7 7H25a7 7 0 0 1-7-7V15a7 7 0 0 1 7-7z"/>
+              <path class="art-ink" pathLength="1" data-seq-i="0" data-fx="draw" d="M76 80l-5 15h26l-5-15M58 98h52"/>
+            </svg>
+            <h3>Counter PC or Mac</h3>
+            <p>The full back office: estimates, invoices, payments and reports. <span class="kbd">&#8984;K</span> or <span class="kbd">Ctrl+K</span> jumps to a page, customer or vehicle.</p>
+          </div>
+          <div class="card mobile-dev-card">
+            <svg class="mobile-dev-art" viewBox="0 0 168 112" aria-hidden="true">
+              <g data-seq-i="1" data-fx="fade" style="--fx-delay: .55s">
+                <rect class="mobile-art-fill" x="27" y="19" width="114" height="70" rx="4"/>
+                <rect class="mobile-art-green" x="33" y="25" width="40" height="30" rx="3"/>
+                <path class="mobile-art-paper" d="M35 53l10-11 7 7 6-6 13 10z" opacity=".95"/>
+                <circle class="mobile-art-paper" cx="64" cy="32" r="3"/>
+                <rect class="mobile-art-soft" x="33" y="60" width="19" height="14" rx="2"/>
+                <rect class="mobile-art-green" x="54" y="60" width="19" height="14" rx="2" opacity=".8"/>
+                <circle class="mobile-art-ok" cx="84" cy="29" r="4"/>
+                <circle class="mobile-art-ok" cx="84" cy="42" r="4"/>
+                <circle class="mobile-art-warn" cx="84" cy="55" r="4"/>
+                <path class="mobile-art-tick" d="M82.2 29.2l1.3 1.3 2.4-2.6M82.2 42.2l1.3 1.3 2.4-2.6"/>
+                <rect class="mobile-art-paper" x="92" y="26.5" width="40" height="5" rx="2.5"/>
+                <rect class="mobile-art-paper" x="92" y="39.5" width="33" height="5" rx="2.5"/>
+                <rect class="mobile-art-paper" x="92" y="52.5" width="37" height="5" rx="2.5"/>
+                <circle class="mobile-art-blue" cx="129" cy="76" r="7"/>
+                <circle class="mobile-art-paper" cx="129" cy="76" r="2.8"/>
+                <circle class="mobile-art-ink" cx="23.5" cy="54" r="1.2"/>
+              </g>
+              <path class="art-ink" pathLength="1" data-seq-i="1" data-fx="draw" d="M31 12h106a11 11 0 0 1 11 11v62a11 11 0 0 1-11 11H31a11 11 0 0 1-11-11V23a11 11 0 0 1 11-11z"/>
+            </svg>
+            <h3>Bay iPad</h3>
+            <p>Inspections with photos and video taken at the car, and a workflow board you drag.</p>
+          </div>
+          <div class="card mobile-dev-card">
+            <svg class="mobile-dev-art" viewBox="0 0 168 112" aria-hidden="true">
+              <g data-seq-i="2" data-fx="fade" style="--fx-delay: .55s">
+                <rect class="mobile-art-fill" x="65" y="9" width="38" height="92" rx="6"/>
+                <rect class="mobile-art-line" x="77" y="12.5" width="14" height="4" rx="2"/>
+                <circle class="mobile-art-track" cx="84" cy="38" r="11"/>
+                <path class="mobile-art-arc" d="M84 27a11 11 0 0 1 10.5 14.3"/>
+                <rect class="mobile-art-paper" x="69" y="57" width="30" height="8" rx="2.5"/>
+                <rect class="mobile-art-paper" x="69" y="68" width="30" height="8" rx="2.5"/>
+                <circle class="mobile-art-blue" cx="73" cy="61" r="1.8"/>
+                <circle class="mobile-art-ok" cx="73" cy="72" r="1.8"/>
+                <path class="mobile-art-hair" d="M65 86h38"/>
+                <circle class="mobile-art-blue" cx="71" cy="93" r="2"/>
+                <circle class="mobile-art-dim" cx="79.7" cy="93" r="2"/>
+                <circle class="mobile-art-dim" cx="88.3" cy="93" r="2"/>
+                <circle class="mobile-art-dim" cx="97" cy="93" r="2"/>
+              </g>
+              <path class="art-ink" pathLength="1" data-seq-i="2" data-fx="draw" d="M70 4h28a10 10 0 0 1 10 10v82a10 10 0 0 1-10 10H70a10 10 0 0 1-10-10V14a10 10 0 0 1 10-10z"/>
+            </svg>
+            <h3>Tech iPhone</h3>
+            <p>Clock, Board, Orders and Diagnose in a tab bar of its own, with one-tap job timers.</p>
+          </div>
+          <div class="card mobile-dev-card">
+            <svg class="mobile-dev-art" viewBox="0 0 168 112" aria-hidden="true">
+              <g data-seq-i="3" data-fx="fade" style="--fx-delay: .55s">
+                <rect class="mobile-art-fill" x="16" y="14" width="136" height="66" rx="2"/>
+                <rect class="mobile-art-soft" x="22" y="20" width="44" height="5" rx="2.5"/>
+                <rect class="mobile-art-paper" x="22" y="30" width="84" height="9" rx="2.5"/>
+                <rect class="mobile-art-paper" x="22" y="42" width="84" height="9" rx="2.5"/>
+                <rect class="mobile-art-paper" x="22" y="54" width="84" height="9" rx="2.5"/>
+                <rect class="mobile-art-paper" x="22" y="66" width="84" height="9" rx="2.5"/>
+                <circle class="mobile-art-ok" cx="27.5" cy="34.5" r="2"/>
+                <circle class="mobile-art-ok" cx="27.5" cy="46.5" r="2"/>
+                <circle class="mobile-art-blue" cx="27.5" cy="58.5" r="2"/>
+                <circle class="mobile-art-warn" cx="27.5" cy="70.5" r="2"/>
+                <rect class="mobile-art-paper" x="113" y="24" width="32" height="32" rx="2.5"/>
+                <rect class="mobile-art-ink" x="116" y="27" width="8" height="8" rx="1"/>
+                <rect class="mobile-art-ink" x="134" y="27" width="8" height="8" rx="1"/>
+                <rect class="mobile-art-ink" x="116" y="45" width="8" height="8" rx="1"/>
+                <rect class="mobile-art-ink" x="134" y="45" width="3" height="3"/>
+                <rect class="mobile-art-ink" x="139" y="49" width="3" height="3"/>
+                <rect class="mobile-art-ink" x="128" y="38" width="3" height="3"/>
+                <rect class="mobile-art-ink" x="127" y="29" width="3" height="3"/>
+                <rect class="mobile-art-line" x="113" y="61" width="32" height="4" rx="2"/>
+              </g>
+              <path class="art-ink" pathLength="1" data-seq-i="3" data-fx="draw" d="M16 8h136a6 6 0 0 1 6 6v66a6 6 0 0 1-6 6H16a6 6 0 0 1-6-6V14a6 6 0 0 1 6-6z"/>
+              <path class="art-ink" pathLength="1" data-seq-i="3" data-fx="draw" d="M62 86l-6 13M106 86l6 13M46 100h76"/>
+            </svg>
+            <h3>Lobby TV</h3>
+            <p>Run from a shop device: each car&rsquo;s status by first name and last initial, and the check-in QR code.</p>
+          </div>
+        </div>
+        <span class="mobile-rail" data-seq-i="4" data-fx="wipe" aria-hidden="true"></span>
+      </div>
+      <div class="mobile-sync-cap" data-reveal>
+        <p><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sync"/></svg></span><span>With <a href="works-with.html#shop-cloud">Shop Cloud</a>, every device stays in sync.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Not a store app:</strong> it isn&rsquo;t an App Store or Google Play app. It installs from the browser.</li>
+            <li><strong>Without Shop Cloud:</strong> data lives only in that browser, and clearing browser data erases it, so export backups from Settings &rarr; Data.</li>
+            <li><strong>Needs:</strong> syncing between devices needs <a href="works-with.html#shop-cloud">Shop Cloud</a>.</li>
+            <li><strong>Large files:</strong> with <a href="works-with.html#shop-cloud">Shop Cloud</a>, photo and video files over 50 MB aren&rsquo;t uploaded, so they stay on the device that took them.</li>
+            <li><strong>On iPhone and iPad:</strong> the Home Screen app keeps its own data, separate from Safari, so add it to the Home Screen before you start entering work. Without Shop Cloud, export backups from Settings &rarr; Data.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section mobile-faq" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">App questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="mobile-faq"><summary>Is it in the App Store?</summary><div class="faq-body"><p>No. It installs from the browser with Add to Home Screen or Install app, so there&rsquo;s no store listing. A notice appears in the app when a newer version is published.</p></div></details>
+        <details class="faq" name="mobile-faq"><summary>Which browsers?</summary><div class="faq-body"><p>A current Safari, Chrome, Edge or Firefox. Dictation needs a browser with speech recognition: Chrome, Edge or Safari. If your browser has no Install option, the app still runs in a normal tab.</p></div></details>
+        <details class="faq" name="mobile-faq"><summary>Does the barcode scanner work on iPhone?</summary><div class="faq-body"><p>Yes, with a decoder bundled for Safari. The camera reads part barcodes and VIN barcodes, and a photo of the barcode or typing the code works too.</p></div></details>
+        <details class="faq" name="mobile-faq"><summary>What happens if we lose internet?</summary><div class="faq-body"><p>Keep working. Each device has the shop&rsquo;s records, and edits made offline stay on the device. With <a href="works-with.html#shop-cloud">Shop Cloud</a>, they sync to the other devices when it reconnects.</p></div></details>
+      </div>
     </div>
   </section>
 </main>
@@ -203,7 +1071,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -218,7 +1086,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="index.html" aria-label="WPI Driveline Shop Management System home">
@@ -285,6 +1153,7 @@
   <a class="tab tab-book" href="demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab is-active" href="mobile.html" data-nav="mobile" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

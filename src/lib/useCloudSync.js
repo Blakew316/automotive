@@ -155,11 +155,13 @@ function applyInbox(rows, { state, addBookingRequests, authorize, addMessage, ad
       handled.push(row.id);
       continue;
     }
-    // Contact and fleet forms on the shop's website.
+    // The product website's demo form, and contact and fleet forms on a shop's own website.
     if (row.kind === 'message' && !row.ref && p.source === 'website') {
       const text = String(p.text || '').trim().slice(0, 2000);
       if (p.name && text && (p.phone || p.email)) {
+        const demo = p.form === 'demo' && text.startsWith('Demo request');
         addWebsiteMessage({
+          ...(p.form === 'demo' && (demo ? { extraTags: ['Demo request'], notes: 'Requested a demo through the website' } : { extraTags: ['Website question'] })),
           remoteId: row.id,
           name: String(p.name).slice(0, 120),
           phone: String(p.phone || '').slice(0, 40),

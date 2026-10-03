@@ -29,6 +29,10 @@ const ia = JSON.parse(readFileSync(join(ROOT, "partials/features.json"), "utf8")
 const partial = (name) => readFileSync(join(ROOT, "partials", `${name}.html`), "utf8").trimEnd();
 
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+// Display text for card titles, kickers and blurbs: a hyphenated word ("check-in", "one-tap") is wrapped in
+// span.nowrap so it never splits across lines at its hyphen. (Not U+2011: the Inter subset has no glyph for
+// it, so it would fall back to another font.) JSON-LD, meta, finder data and labels keep plain text.
+const nbh = (s) => esc(s).replace(/\p{L}+(?:-\p{L}+)+/gu, (w) => `<span class="nowrap">${w}</span>`);
 const icon = (id, cls = "icon") => `<svg class="${cls}" aria-hidden="true"><use href="#${id}"/></svg>`;
 const arrow = icon("i-arrow-right");
 
@@ -100,8 +104,8 @@ const featureCard = (f, indent) =>
   [
     `${indent}<a class="card card-link feature-card" href="${featureHref(f.slug)}">`,
     `${indent}  <span class="icon-tile">${icon(f.icon)}</span>`,
-    `${indent}  <h3>${esc(f.title)}</h3>`,
-    `${indent}  <p>${esc(f.blurb)}</p>`,
+    `${indent}  <h3>${nbh(f.title)}</h3>`,
+    `${indent}  <p>${nbh(f.blurb)}</p>`,
     `${indent}  <span class="link-arrow">Learn more ${arrow}</span>`,
     `${indent}</a>`,
   ].join("\n");
@@ -152,44 +156,64 @@ const related = (page) => {
 };
 
 const roleAttr = (roles) => (roles || []).join(" ");
-const dirCard = (f) => {
-  const cls = ["card", "dir-card", f.featured ? "is-feature" : ""].filter(Boolean).join(" ");
+// A link label and its arrow wrap as one run (the arrow stays on the last word): see .dir-card-foot.
+const footLink = (href, label, iconId, extra = "") =>
+  `<a class="link-arrow" href="${href}"${extra}><span>${label}&nbsp;${icon(iconId)}</span></a>`;
+const dirCard = (f, span) => {
+  const cls = ["card", "dir-card", f.featured ? "is-feature" : "", span ? "is-span" : ""].filter(Boolean).join(" ");
   return [
     `          <article class="${cls}" id="dir-${f.slug}" data-slug="${f.slug}" data-roles="${roleAttr(f.roles)}">`,
     `            <div class="dir-card-head">`,
     `              <span class="icon-tile">${icon(f.icon)}</span>`,
-    `              <div><h4>${esc(f.title)}</h4><p class="dir-card-kicker">${esc(f.line)}</p></div>`,
+    `              <div><h4>${nbh(f.title)}</h4><p class="dir-card-kicker">${nbh(f.line)}</p></div>`,
     `            </div>`,
-    `            <p>${esc(f.blurb)}</p>`,
+    `            <p>${nbh(f.blurb)}</p>`,
     `            <p class="dir-card-needs">${icon("i-info")}<span>${needsLine(f.needs)}</span></p>`,
     f.note ? `            <p class="dir-card-note">${esc(f.note)}</p>` : "",
     `            <div class="dir-card-foot">`,
-    `              <a class="link-arrow" href="${featureHref(f.slug)}">Learn more<span class="visually-hidden"> about ${esc(f.title)}</span> ${arrow}</a>`,
-    `              <a class="link-arrow" href="{{appLink}}${esc(f.appRoute)}" data-no-prerender>${esc(f.demoLabel)} ${icon("i-arrow-up-right")}</a>`,
+    `              ${footLink(featureHref(f.slug), `Learn more<span class="visually-hidden"> about ${esc(f.title)}</span>`, "i-arrow-right")}`,
+    `              ${footLink(`{{appLink}}${esc(f.appRoute)}`, esc(f.demoLabel), "i-arrow-up-right", " data-no-prerender")}`,
     `            </div>`,
     `          </article>`,
   ]
     .filter(Boolean)
     .join("\n");
 };
-const everywhereCard = (item) =>
+const everywhereCard = (item, span) =>
   [
-    `          <article class="card dir-card">`,
+    `          <article class="card dir-card${span ? " is-span" : ""}">`,
     `            <div class="dir-card-head">`,
     `              <span class="icon-tile">${icon(item.icon)}</span>`,
-    `              <div><h4>${esc(item.title)}</h4></div>`,
+    `              <div><h4>${nbh(item.title)}</h4></div>`,
     `            </div>`,
     `            <p>${cloudLink(item.blurb)}</p>`,
     `            <div class="dir-card-foot">`,
-    `              <a class="link-arrow" href="{{root}}${esc(item.href)}">Learn more<span class="visually-hidden"> about ${esc(item.title)}</span> ${arrow}</a>`,
+    `              ${footLink(`{{root}}${esc(item.href)}`, `Learn more<span class="visually-hidden"> about ${esc(item.title)}</span>`, "i-arrow-right")}`,
     `            </div>`,
     `          </article>`,
   ].join("\n");
 
+// Which cards sit alone at the end of a two-column row (a featured card always takes a whole row);
+// those get .is-span and take the row too. site.js redoes this after the role filter.
+const loneCards = (wide) => {
+  let col = 0;
+  return wide.map((isWide, i) => {
+    const alone = !isWide && col === 0 && (i === wide.length - 1 || wide[i + 1]);
+    col = isWide || alone ? 0 : 1 - col;
+    return alone;
+  });
+};
 const featuresDirectory = () => {
   const groups = [
-    ...ia.groups.map((g) => ({ ...g, cards: features.filter((f) => f.group === g.id).map(dirCard) })),
-    { ...ia.everywhere, cards: ia.everywhere.items.map(everywhereCard) },
+    ...ia.groups.map((g) => {
+      const list = features.filter((f) => f.group === g.id);
+      const span = loneCards(list.map((f) => Boolean(f.featured)));
+      return { ...g, cards: list.map((f, i) => dirCard(f, span[i])) };
+    }),
+    (() => {
+      const span = loneCards(ia.everywhere.items.map(() => false));
+      return { ...ia.everywhere, cards: ia.everywhere.items.map((item, i) => everywhereCard(item, span[i])) };
+    })(),
   ];
   const nav = groups
     .map((g) => `      <li><a href="#grp-${g.id}">${icon(g.icon)}${esc(g.title)}<span class="count">${g.cards.length}</span></a></li>`)
@@ -323,7 +347,8 @@ const tokens = (page, src) => {
   const depth = page.split("/").length - 1;
   // 404.html is served at arbitrary URLs, so it uses root-absolute paths (under basePath).
   const root = page === "404.html" ? basePath : "../".repeat(depth);
-  const canonical = page === "index.html" ? `${site}/` : `${site}/${page}`;
+  // 404.html is published as not-found.html (scripts/pages.mjs); the site's 404.html is the app's forwarder.
+  const canonical = page === "index.html" ? `${site}/` : page === "404.html" ? `${site}/not-found.html` : `${site}/${page}`;
   const title = ((src.match(/<title>([^<]*)<\/title>/) || [])[1] || biz.name).trim();
   const description = ((src.match(/<meta name="description" content="([^"]*)"/) || [])[1] || biz.description).trim();
   return {

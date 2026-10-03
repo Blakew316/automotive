@@ -35,6 +35,177 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* demo.html: page-local styles (slug-prefixed) */
+
+/* ---------- Hero: the copy, plus a DEMO key tag swinging on its hook (900px and up) ---------- */
+.demo-hero { padding-bottom: clamp(18px, .25rem + 2.4vw, 48px); }
+.demo-hero .lead { max-width: 33em; }
+.demo-hero-art { display: none; margin: 0; min-height: 0; isolation: isolate; }
+@media (min-width: 900px) {
+  .demo-hero .page-hero-grid { grid-template-columns: minmax(0, 1.14fr) minmax(0, .86fr); gap: clamp(24px, 1rem + 2vw, 56px); }
+  .demo-hero-art { display: grid; }
+}
+.demo-hero-art::before { /* a soft blue-to-green glow behind the hook */
+  content: ""; position: absolute; inset: 0 -4% -6%; z-index: -1; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(31, 122, 224, .13), rgba(45, 179, 106, .07) 58%, transparent);
+  pointer-events: none;
+}
+.demo-hero-art > svg { width: min(100%, 410px); }
+.demo-hero-art .tag-text { font-size: 13px; letter-spacing: .26em; fill: var(--ink); }
+.demo-sparkle { fill: var(--accent); opacity: .72; }
+.demo-sparkle.is-green { fill: var(--green); opacity: .6; }
+.demo-hero-art .float-note.note-a { top: 52%; left: -4%; }
+/* 900–1099px: the art column is too narrow for the note to sit beside the fob, so it flows under the SVG */
+@media (min-width: 900px) and (max-width: 1099.98px) {
+  .demo-hero-art .float-note.note-a { position: relative; top: auto; left: auto; justify-self: start; margin-top: -6px; }
+}
+.demo-hero .hero-note { text-wrap: pretty; max-width: 34em; }
+
+/* ---------- The form ---------- */
+.demo-hero + .demo-form-sec { padding-top: clamp(6px, .25rem + 1.2vw, 28px); }
+/* In-page jumps to the form keep the card's "Request a demo · * Required" row clear of the fixed header */
+#demo-form { scroll-margin-top: 58px; }
+.booking-card:has(#demo-success:not([hidden])) .demo-form-head p { display: none; }
+.demo-form-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 16px; margin-bottom: 16px; }
+.demo-form-head .eyebrow { margin: 0; line-height: 1.3; }
+.demo-form-head p { font-size: .86rem; color: var(--ink-3); }
+.demo-form-head .req { color: var(--accent); font-weight: 700; }
+.demo-form .step-title { font-size: clamp(1.35rem, 1.1rem + .9vw, 1.8rem); }
+.demo-only { display: grid; gap: 22px; }
+.demo-only[hidden], .demo-preselect[hidden], .quick-chips[hidden], .review-row[hidden] { display: none; }
+[data-msg-slot] { display: contents; }
+/* Short answer sets sit on one row: pills (locations, bays, best time) and the three contact tiles */
+.choice-grid.demo-pills { grid-template-columns: repeat(var(--n, 4), minmax(0, 1fr)); gap: 8px; }
+.demo-pills .choice-pill { min-height: 48px; padding: 8px 6px; font-variant-numeric: tabular-nums; }
+.choice-grid.demo-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 479.98px) {
+  .demo-tiles .choice-tile { padding: 11px 10px 12px; gap: 6px; }
+  .demo-tiles .choice-tile small { font-size: .78rem; }
+}
+.demo-preselect { align-items: center; font-size: .94rem; }
+.demo-preselect > .icon { flex: none; margin-top: 0; }
+.demo-form .review-head h4 { font-size: 1.1rem; }
+.demo-legal { display: flex; align-items: flex-start; gap: 8px; }
+.demo-legal .icon { flex: none; width: 16px; height: 16px; margin-top: 2px; color: var(--accent); }
+.demo-success p { font-size: .98rem; }
+
+/* ---------- Other ways in (sticky beside the form from 1000px) ---------- */
+.demo-aside { display: grid; gap: 12px; align-content: start; }
+.demo-aside > .eyebrow { margin: 4px 0 2px; }
+.demo-aside .aside-card { padding: clamp(18px, .9rem + .6vw, 22px); }
+.demo-aside h3 { font-size: 1.1rem; letter-spacing: -0.015em; }
+.demo-aside .aside-text { margin-top: 6px; font-size: .93rem; line-height: 1.5; }
+.demo-aside .aside-row { margin-top: 14px; }
+.demo-aside .contact-email { margin-top: 8px; }
+/* Fails closed: the card shows only when the contact-email partial rendered a link (business.json email set) */
+.demo-email-card { display: none; }
+.demo-email-card:has(.contact-email) { display: block; }
+.demo-live-tile { display: grid; place-items: center; flex: none; width: 32px; height: 32px; border-radius: 10px; background: var(--green-100); }
+
+/* ---------- What happens next ---------- */
+.demo-next .section-head { margin-inline: auto; text-align: center; }
+.demo-next .section-head .eyebrow { justify-content: center; }
+.demo-next .roadmap { max-width: 1040px; margin-inline: auto; }
+
+/* ---------- Switching: copy + the import scene, then the setup checklist ---------- */
+.demo-switch-copy .demo-note {
+  display: flex; align-items: flex-start; gap: 10px; padding: 12px 14px; border-radius: var(--r);
+  background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); font-size: .94rem; color: var(--ink-2);
+}
+.demo-note .icon { flex: none; width: 18px; height: 18px; margin-top: 2px; color: var(--accent); }
+.demo-switch-copy .link-arrow { min-height: 44px; }
+
+.demo-imp-fig { width: 100%; margin: 0; }
+.demo-imp-stage {
+  width: min(100%, 540px); display: grid; align-items: center; justify-items: stretch; column-gap: 12px;
+  grid-template-columns: minmax(0, 1fr) clamp(110px, 33%, 182px);
+  grid-template-areas: "sheet gears" "out out";
+  text-align: left; isolation: isolate;
+}
+.demo-imp-card { min-width: 0; background: var(--paper); border: 1px solid var(--line-strong); border-radius: 16px; box-shadow: var(--shadow-2); }
+/* The CSV sheet (step 1 slides it into the gears) */
+.demo-imp-sheet { grid-area: sheet; position: relative; z-index: 2; padding: 10px 10px 9px; rotate: -1.5deg; }
+.demo-imp-file { display: flex; align-items: center; gap: 7px; min-width: 0; padding: 0 2px 8px; font-size: 12px; color: var(--ink-2); }
+.demo-imp-file .icon { flex: none; width: 16px; height: 16px; color: var(--green-ink); }
+.demo-imp-file b { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: var(--font-mono); font-weight: 650; letter-spacing: 0; }
+.demo-imp-file .mock-chip { margin-left: auto; flex: none; }
+/* The VIN column keeps room for all 17 characters: the story turns on a VIN already on file */
+.demo-imp-grid { display: grid; grid-template-columns: minmax(0, 1fr) max-content minmax(15ch, 1.4fr); border: 1px solid var(--mist-200); border-radius: 8px; overflow: hidden; font-size: 12px; line-height: 1.3; }
+.demo-imp-grid > span { min-width: 0; padding: 5px 7px; border-top: 1px solid var(--mist-200); border-left: 1px solid var(--mist-200); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-2); }
+.demo-imp-grid > span:nth-child(3n + 1) { border-left: 0; }
+.demo-imp-grid > span.is-head { border-top: 0; background: var(--mist-50); font-weight: 650; color: var(--ink); }
+.demo-imp-grid > span.is-blank { background: repeating-linear-gradient(135deg, var(--mist-50) 0 4px, var(--paper) 4px 8px); }
+.demo-imp-grid .mock-mono { font-size: 11px; letter-spacing: -.02em; }
+/* Meshing gears (careers-art geometry, art-spin / art-spin-rev); they stop once the result shows */
+.demo-imp-gears { grid-area: gears; position: relative; z-index: 1; }
+.demo-imp-gears svg { display: block; width: 100%; height: auto; overflow: visible; }
+.demo-gear-big { animation-duration: 16s; }
+.demo-gear-small { animation-duration: 10s; }
+.demo-imp-fig[data-reached~="2"] :is(.demo-gear-big, .demo-gear-small) { animation-play-state: paused; }
+.demo-gear-shadow { fill: rgba(15, 43, 76, .06); }
+/* Rows of the sheet feeding into the big gear (gone in the final frame) */
+.demo-feed { position: absolute; left: -12%; width: 30%; height: 6px; border-radius: 3px; background: var(--blue-100); box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .2); opacity: 0; }
+.demo-feed.is-green { background: var(--green-100); box-shadow: inset 0 0 0 1px rgba(45, 179, 106, .25); }
+.demo-feed[data-at] { --fx: demo-feed; --fx-dur: .9s; --fx-ease: var(--ease-in-out); }
+@keyframes demo-feed { 0% { opacity: 0; translate: 0 0; } 20% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; translate: 150% 0; } }
+/* The importer's answer, as the app lays it out: Match columns, Ready to import, Preview */
+.demo-imp-out { grid-area: out; position: relative; z-index: 3; display: grid; gap: 10px; margin: -6px 0 0 9%; padding: 12px 12px 13px; }
+.demo-imp-out-head { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; min-width: 0; }
+.demo-imp-out-head .mock-sub { white-space: nowrap; }
+.demo-imp-map { display: grid; gap: 6px; }
+.demo-imp-pair { display: grid; grid-template-columns: minmax(0, 1fr) 16px minmax(0, 1fr) 20px; align-items: center; gap: 8px; min-height: 34px; padding: 5px 8px; border-radius: 10px; background: var(--mist-50); border: 1px solid var(--mist-200); }
+.demo-imp-src { justify-self: start; max-width: 100%; padding: 1px 7px; border-radius: 6px; background: var(--paper); border: 1px solid var(--mist-200); font-family: var(--font-mono); font-size: 12px; letter-spacing: 0; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demo-imp-arrow { width: 16px; height: 16px; color: var(--ink-4); }
+.demo-imp-dst { min-width: 0; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demo-imp-ok { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--green); color: #fff; }
+.demo-imp-ok .icon { width: 13px; height: 13px; stroke-width: 3; }
+.demo-imp-label { font-size: 12px; font-weight: 650; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-3); }
+.demo-imp-ready { display: grid; gap: 6px; }
+.demo-imp-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.demo-imp-tiles .mock-tile { position: relative; isolation: isolate; padding: 7px 9px 6px; box-shadow: none; }
+.demo-imp-tiles .mock-tile > :not(.demo-imp-flash) { position: relative; z-index: 1; }
+.demo-imp-tiles .mock-label { color: var(--ink-3); }
+.demo-imp-tiles strong { justify-self: start; }
+/* The customer already on file: amber from step 3 on (the overlay flashes in, then stays) */
+.demo-imp-flash { position: absolute; inset: -1px; z-index: 0; border-radius: inherit; background: var(--warn-soft); box-shadow: inset 0 0 0 1px rgba(227, 161, 59, .6), 0 0 0 3px rgba(227, 161, 59, .14); }
+.demo-imp-prev, .demo-imp-rows { display: grid; gap: 6px; }
+.demo-imp-row { display: flex; align-items: center; gap: 9px; min-width: 0; padding: 6px 9px; border-radius: 10px; border: 1px solid var(--mist-200); background: var(--paper); }
+.demo-imp-who { display: grid; flex: 1 1 auto; min-width: 0; line-height: 1.25; }
+.demo-imp-who b { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.demo-imp-who small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Phones, and the two-column split until the container reaches full width (900–1219px): the sheet, the
+   gears and the result stack, with the gears peeking out between the cards */
+@media (max-width: 599.98px), (min-width: 900px) and (max-width: 1219.98px) {
+  .demo-imp-stage { grid-template-columns: minmax(0, 1fr); grid-template-areas: "sheet" "gears" "out"; }
+  .demo-imp-sheet { rotate: -1deg; }
+  .demo-imp-gears { justify-self: end; width: 150px; margin: -30px 10px -40px 0; }
+  .demo-imp-out { margin: 0; }
+  .demo-feed { display: none; }
+}
+/* Very narrow phones: the VIN column goes so the names and phones stay whole */
+@media (max-width: 379.98px) {
+  .demo-imp-grid { grid-template-columns: minmax(0, 1fr) max-content; }
+  .demo-imp-grid > span:nth-child(3n) { display: none; }
+}
+
+.demo-setup { margin-top: clamp(44px, 2rem + 2.4vw, 80px); }
+.demo-setup .ro-head .icon-tile { flex: none; }
+@media (min-width: 760px) { .demo-setup .ro-list { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 40px; } }
+.demo-setup .ro-list h3 { font-size: 1.04rem; }
+
+/* ---------- Pricing, Good to know, questions: one reading column ---------- */
+.demo-price-sec { padding-bottom: clamp(16px, .5rem + 1.4vw, 32px); }
+.section + .demo-price-sec { padding-top: 0; }
+.demo-price-sec + .section-sm { padding-top: clamp(16px, .5rem + 1.4vw, 32px); }
+#needs + #faq { padding-top: clamp(44px, 3rem + 2vw, 80px); }
+.demo-price { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px 22px; align-items: start; }
+.demo-price h2 { font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.3rem); }
+.demo-price p { margin-top: 10px; color: var(--ink-2); max-width: 40em; }
+.demo-price .cluster { margin-top: 18px; --cluster: 8px 24px; }
+.demo-price .link-arrow { min-height: 44px; }
+@media (max-width: 599.98px) { .demo-price { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body data-page="demo" id="top">
 <!-- @partial icons -->
@@ -162,7 +333,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -190,15 +361,899 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
+
+  <!-- ===== Hero ===== -->
+  <section class="page-hero demo-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <p class="eyebrow">Talk to us</p>
+        <h1 id="hero-title">See it with <span class="accent-text">your shop in mind.</span></h1>
+        <p class="lead">Tell us about your shop and what you want to fix first, and we&rsquo;ll get back to you. Or try the sample shop right now: it runs in your browser with no sign-in.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="#demo-form">Start your request <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          <a class="btn btn-secondary btn-lg" href="app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Try the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
+      </div>
+
+      <figure class="page-hero-art demo-hero-art" data-play aria-label="Illustration of a key tag marked DEMO swinging on its hook, with its box checked off">
+        <svg class="keytag-art" viewBox="-40 0 440 320" aria-hidden="true">
+          <path class="art-ink art-thin" d="M70 32h300" stroke-opacity=".28"/>
+          <g class="art-ink art-thin" stroke-opacity=".45">
+            <rect class="art-paper" x="96" y="23" width="30" height="18" rx="7"/><path d="M111 41v9"/>
+            <rect class="art-paper" x="314" y="23" width="30" height="18" rx="7"/><path d="M329 41v9"/>
+          </g>
+          <rect class="art-ink art-paper" x="188" y="18" width="64" height="28" rx="11"/>
+          <circle class="art-ink art-thin art-soft" cx="202" cy="32" r="3.5"/>
+          <circle class="art-ink art-thin art-soft" cx="238" cy="32" r="3.5"/>
+          <path class="art-ink" d="M220 46v12" stroke-width="5"/>
+          <g class="swing">
+            <circle class="art-ink" cx="220" cy="82" r="24" stroke-width="3"/>
+            <path class="art-ink art-thin" d="M199.6 70.4a24 24 0 0 1 12-11" stroke-opacity=".55"/>
+            <g class="fob">
+              <path class="art-ink" d="M206 101c-4 4-8 9-10 15"/>
+              <rect class="art-ink art-lilac" x="150" y="116" width="62" height="100" rx="26"/>
+              <circle class="art-ink art-paper" cx="181" cy="142" r="10"/>
+              <path class="art-ink art-thin" d="M177.6 143h6.8v4.6h-6.8zM179 143v-2a2 2 0 0 1 4 0v2"/>
+              <circle class="art-ink art-paper" cx="181" cy="168" r="10"/>
+              <path class="art-ink art-thin" d="M177.6 169h6.8v4.6h-6.8zM179 169v-2a2 2 0 0 1 4-.6"/>
+              <circle class="art-ink art-soft" cx="181" cy="194" r="6"/>
+              <rect class="art-ink art-paper" x="172" y="214" width="18" height="12" rx="3"/>
+              <path class="art-ink art-paper" d="M175 226h12v56l-6 9-6-9z"/>
+              <path class="art-ink art-thin" d="M187 238h-4v6h4M187 254h-4v6h4M187 268h-4v5h4" stroke-opacity=".7"/>
+              <path class="art-ink art-thin" d="M181 232v44" stroke-opacity=".35"/>
+            </g>
+            <g class="tag">
+              <path class="art-ink art-paper" d="M258 126h50l16 16v130a8 8 0 0 1-8 8h-66a8 8 0 0 1-8-8V142z"/>
+              <circle class="art-tint" cx="283" cy="145" r="11"/>
+              <circle class="art-ink art-thin art-paper" cx="283" cy="145" r="5.5"/>
+              <path class="art-ink art-thin" d="M236 101c15 10 31 24 47 41" stroke-opacity=".8"/>
+              <rect class="art-tint" x="243" y="166" width="80" height="24"/>
+              <text class="tag-text" x="283" y="183" text-anchor="middle">DEMO</text>
+              <rect class="art-ink art-thin art-paper" x="255" y="204" width="14" height="14" rx="4"/>
+              <path class="tag-check art-ink art-accent" d="M257 210l5 5 11-13" stroke-width="2.6"/>
+              <path class="art-ink art-thin" d="M277 211h34M256 234h55M256 250h40" stroke-opacity=".32"/>
+            </g>
+          </g>
+          <g transform="translate(344 92)"><path class="demo-sparkle art-pulse" d="M10 0c.8 5.6 4.4 9.2 10 10-5.6.8-9.2 4.4-10 10-.8-5.6-4.4-9.2-10-10 5.6-.8 9.2-4.4 10-10z"/></g>
+          <g transform="translate(62 70) scale(.62)"><path class="demo-sparkle is-green art-pulse" style="animation-delay: 1.1s" d="M10 0c.8 5.6 4.4 9.2 10 10-5.6.8-9.2 4.4-10 10-.8-5.6-4.4-9.2-10-10 5.6-.8 9.2-4.4 10-10z"/></g>
+        </svg>
+        <div class="float-note note-a" aria-hidden="true">
+          <span class="live-dot"></span>
+          <span><strong>Sample shop</strong><small>Main Street Auto Service</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Request a demo (the form) + other ways in ===== -->
+  <section class="section demo-form-sec" id="form" aria-labelledby="form-title">
+    <div class="container booking-layout">
+
+      <div class="card booking-card">
+        <div class="demo-form-head">
+          <h2 class="eyebrow" id="form-title">Request a demo</h2>
+          <p><span class="req" aria-hidden="true">*</span> Required</p>
+        </div>
+
+        <form class="form booking-form demo-form" id="demo-form" name="demo" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" data-form="manual" data-success="#demo-success" data-subject="Demo request · WPI Driveline Shop Management System" novalidate>
+          <input type="hidden" name="form-name" value="demo">
+          <p class="hp-field"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+
+          <!-- Gear shifter: one gear per step -->
+          <div class="shifter">
+            <svg class="shifter-gate" viewBox="0 0 200 150" aria-hidden="true" focusable="false">
+              <defs>
+                <linearGradient id="shift-trail-grad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1F7AE0"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+                <radialGradient id="shift-knob-grad" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#3B8CEB"/><stop offset="1" stop-color="#1662C2"/></radialGradient>
+                <radialGradient id="shift-boot-grad" cx=".5" cy=".4" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCE5F0"/></radialGradient>
+              </defs>
+              <rect class="gate-plate" x="1" y="1" width="198" height="148" rx="24"/>
+              <circle class="gate-screw" cx="22" cy="75" r="3"/><circle class="gate-screw" cx="178" cy="75" r="3"/>
+              <path class="gate-slot" d="M64 28V122M136 28V122M64 75H136"/>
+              <path class="gate-groove" d="M64 28V122M136 28V122M64 75H136"/>
+              <path class="gate-trail" d="M64 28L64 122L64 75L136 75L136 28L136 122"/>
+              <g class="gear is-current" data-gear="1"><circle cx="24" cy="28" r="11"/><text x="24" y="28" text-anchor="middle" dominant-baseline="central">1</text></g>
+              <g class="gear" data-gear="2"><circle cx="24" cy="122" r="11"/><text x="24" y="122" text-anchor="middle" dominant-baseline="central">2</text></g>
+              <g class="gear" data-gear="3"><circle cx="176" cy="28" r="11"/><text x="176" y="28" text-anchor="middle" dominant-baseline="central">3</text></g>
+              <g class="gear" data-gear="4"><circle cx="176" cy="122" r="11"/><text x="176" y="122" text-anchor="middle" dominant-baseline="central">4</text></g>
+              <g class="knob" style="transform: translate(64px, 75px)"><ellipse class="knob-shadow" cx="2" cy="5" rx="22" ry="20"/><g class="knob-body"><circle class="knob-boot" r="22"/><circle class="knob-stitch" r="17.5"/><circle class="knob-top" r="13"/><circle class="knob-rim" r="10"/><ellipse class="knob-shine" cx="-4.5" cy="-5.5" rx="4.6" ry="3.2" transform="rotate(-35 -4.5 -5.5)"/></g></g>
+            </svg>
+            <p class="shift-now" aria-live="polite" aria-atomic="true"><span class="shift-count">Step <span data-shift-num>1</span> of <span data-shift-total>4</span></span><span class="shift-name" data-shift-name>Your shop</span></p>
+            <ol class="shift-steps">
+              <li><button class="shift-step is-current" type="button" data-go="1" aria-current="step"><span class="num" aria-hidden="true">1</span><span><span class="visually-hidden">Step 1: </span>Shop</span></button></li>
+              <li><button class="shift-step" type="button" data-go="2" disabled><span class="num" aria-hidden="true">2</span><span><span class="visually-hidden">Step 2: </span>See</span></button></li>
+              <li><button class="shift-step" type="button" data-go="3" disabled><span class="num" aria-hidden="true">3</span><span><span class="visually-hidden">Step 3: </span>Contact</span></button></li>
+              <li><button class="shift-step" type="button" data-go="4" disabled><span class="num" aria-hidden="true">4</span><span><span class="visually-hidden">Step 4: </span>Review</span></button></li>
+            </ol>
+          </div>
+
+          <div class="steps">
+
+            <!-- Gear 1: Your shop -->
+            <section class="step-panel" id="step-1" data-name="Your shop" aria-labelledby="s1-title">
+              <div class="step-head">
+                <h3 class="step-title" id="s1-title" tabindex="-1">Tell us about your shop</h3>
+                <p class="step-lead">Start with what this is about. A few shop details help us show you what fits your shop.</p>
+              </div>
+
+              <div class="field">
+                <label class="field-label" for="d-topic">What can we help with?</label>
+                <select class="select" id="d-topic" name="topic" data-label="Topic">
+                  <option value="Demo request" selected>Request a demo</option>
+                  <option value="Question">Question</option>
+                  <option value="Switching from another system">Switching from another system</option>
+                  <option value="Something else">Something else</option>
+                </select>
+              </div>
+
+              <div class="field">
+                <label class="field-label" for="d-company">Shop name <span class="req" aria-hidden="true" data-company-req>*</span><span class="opt" data-company-opt hidden>(optional)</span></label>
+                <input class="input" id="d-company" name="company" type="text" autocomplete="organization" autocapitalize="words" enterkeyhint="next" required data-label="Shop" data-error="Please enter your shop&rsquo;s name.">
+                <p class="field-error" id="d-company-err"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your shop&rsquo;s name.</span></p>
+              </div>
+
+              <div class="demo-only" data-demo-only>
+                <div class="form-grid form-grid-2">
+                  <div class="field">
+                    <label class="field-label" for="d-role">Your role <span class="opt">(optional)</span></label>
+                    <select class="select" id="d-role" name="role" data-label="Role">
+                      <option value="">Choose one</option>
+                      <option>Owner</option>
+                      <option>Shop manager</option>
+                      <option>Service advisor</option>
+                      <option>Technician</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label class="field-label" for="d-system">What you use now <span class="opt">(optional)</span></label>
+                    <select class="select" id="d-system" name="current_system" data-label="Current system">
+                      <option value="">Choose one</option>
+                      <option>Shopmonkey</option>
+                      <option>Tekmetric</option>
+                      <option>Mitchell 1</option>
+                      <option>ALLDATA Manage</option>
+                      <option>Shop-Ware</option>
+                      <option>NAPA TRACS</option>
+                      <option>RO Writer</option>
+                      <option>QuickBooks only</option>
+                      <option>Paper or spreadsheets</option>
+                      <option>Another system</option>
+                      <option>Nothing yet</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-grid form-grid-2">
+                  <fieldset class="field">
+                    <legend class="field-label">Locations <span class="opt">(optional)</span></legend>
+                    <div class="choice-grid demo-pills" style="--n: 3">
+                      <label class="choice"><input type="radio" name="locations" value="1" data-label="Locations"><span class="choice-card choice-pill">1</span></label>
+                      <label class="choice"><input type="radio" name="locations" value="2–3" data-label="Locations"><span class="choice-card choice-pill">2&ndash;3</span></label>
+                      <label class="choice"><input type="radio" name="locations" value="4+" data-label="Locations"><span class="choice-card choice-pill">4+</span></label>
+                    </div>
+                  </fieldset>
+                  <fieldset class="field">
+                    <legend class="field-label">Bays <span class="opt">(optional)</span></legend>
+                    <div class="choice-grid demo-pills" style="--n: 4">
+                      <label class="choice"><input type="radio" name="bays" value="1–2" data-label="Bays"><span class="choice-card choice-pill">1&ndash;2</span></label>
+                      <label class="choice"><input type="radio" name="bays" value="3–5" data-label="Bays"><span class="choice-card choice-pill">3&ndash;5</span></label>
+                      <label class="choice"><input type="radio" name="bays" value="6–10" data-label="Bays"><span class="choice-card choice-pill">6&ndash;10</span></label>
+                      <label class="choice"><input type="radio" name="bays" value="11+" data-label="Bays"><span class="choice-card choice-pill">11+</span></label>
+                    </div>
+                  </fieldset>
+                </div>
+              </div>
+
+              <div data-msg-slot="1"></div>
+
+              <div class="step-nav">
+                <button class="btn btn-primary btn-lg" type="button" data-next><span data-next-label>Next: What to see</span> <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              </div>
+            </section>
+
+            <!-- Gear 2: What to see (demo requests only) -->
+            <section class="step-panel" id="step-2" data-name="What to see" aria-labelledby="s2-title">
+              <div class="step-head">
+                <h3 class="step-title" id="s2-title" tabindex="-1">What do you want to see?</h3>
+                <p class="step-lead">Tick what matters to your shop. Not sure yet? Skip it.</p>
+              </div>
+
+              <p class="callout demo-preselect" data-preselect hidden><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg><span>We ticked <strong data-preselect-name>this feature</strong> from the page you came from. Add anything else.</span></p>
+
+              <fieldset class="field">
+                <legend class="field-label">Features <span class="opt">(optional)</span></legend>
+                <!-- @partial featuresInterests -->
+<div class="choice-grid interest-grid">
+  <label class="choice"><input type="checkbox" name="interests" value="Booking, check-in &amp; front desk" data-slug="booking" data-title="Booking, check-in &amp; front desk" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg><span class="choice-text"><span class="choice-name">Booking, check-in &amp; front desk</span><small>Real open times, key-drop check-in</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Texting, calls &amp; email" data-slug="messaging" data-title="Texting, calls &amp; email" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span class="choice-text"><span class="choice-name">Texting, calls &amp; email</span><small>One thread per customer</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Customers &amp; follow-ups" data-slug="customers" data-title="Customers &amp; follow-ups" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg><span class="choice-text"><span class="choice-name">Customers &amp; follow-ups</span><small>Oil-service and declined-work lists</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Workflow board, Today &amp; tech clock" data-slug="workflow" data-title="Workflow board, Today &amp; tech clock" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg><span class="choice-text"><span class="choice-name">Workflow board, Today &amp; tech clock</span><small>Every car by stage, one-tap timers</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Inspections &amp; approvals" data-slug="inspections" data-title="Inspections &amp; approvals" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg><span class="choice-text"><span class="choice-name">Inspections &amp; approvals</span><small>Photos, ratings and a yes by phone</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Auto Diagnosis &amp; vehicle data" data-slug="diagnosis" data-title="Auto Diagnosis &amp; vehicle data" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg><span class="choice-text"><span class="choice-name">Auto Diagnosis &amp; vehicle data</span><small>Recalls, owner reports, your fixes</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Parts, inventory &amp; tires" data-slug="parts" data-title="Parts, inventory &amp; tires" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg><span class="choice-text"><span class="choice-name">Parts, inventory &amp; tires</span><small>Stock, POs, scanning, tire DOT log</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Estimates, ROs &amp; invoices" data-slug="repair-orders" data-title="Estimates, ROs &amp; invoices" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg><span class="choice-text"><span class="choice-name">Estimates, ROs &amp; invoices</span><small>One record, estimate to receipt</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Payments &amp; card readers" data-slug="payments" data-title="Payments &amp; card readers" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg><span class="choice-text"><span class="choice-name">Payments &amp; card readers</span><small>Exact-balance pay links and readers</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Fleet &amp; business accounts" data-slug="fleet" data-title="Fleet &amp; business accounts" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg><span class="choice-text"><span class="choice-name">Fleet &amp; business accounts</span><small>Terms, PM plans, statements</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="Reports, payroll &amp; QuickBooks" data-slug="reports" data-title="Reports, payroll &amp; QuickBooks" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg><span class="choice-text"><span class="choice-name">Reports, payroll &amp; QuickBooks</span><small>Goals, payroll export, daily journal</small></span></span></label>
+  <label class="choice"><input type="checkbox" name="interests" value="AI assistant" data-slug="ai" data-title="AI assistant" data-label="Interested in"><span class="choice-card"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg><span class="choice-text"><span class="choice-name">AI assistant</span><small>Drafts to review and an AI receptionist</small></span></span></label>
+</div>
+<!-- @end featuresInterests -->
+              </fieldset>
+
+              <div data-msg-slot="2">
+                <div class="field" data-msg-field>
+                  <label class="field-label" for="d-message"><span data-msg-label>What do you want to fix first?</span> <span class="opt">(optional)</span></label>
+                  <textarea class="textarea" id="d-message" name="message" rows="4" maxlength="1200" data-label="Message" aria-describedby="d-message-hint" placeholder="Where your day gets stuck, what you use now, anything we should know."></textarea>
+                  <p class="field-hint" id="d-message-hint">Up to 1,200 characters.</p>
+                  <div class="quick-chips" data-quick-chips>
+                    <span class="quick-chips-label" id="d-quick-label">Add:</span>
+                    <button class="quick-chip" type="button" data-quick="Cars get lost between bays." aria-describedby="d-quick-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Cars get lost between bays</button>
+                    <button class="quick-chip" type="button" data-quick="Approvals take too long." aria-describedby="d-quick-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Approvals take too long</button>
+                    <button class="quick-chip" type="button" data-quick="Phones ring all day." aria-describedby="d-quick-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Phones ring all day</button>
+                    <button class="quick-chip" type="button" data-quick="Month-end takes forever." aria-describedby="d-quick-label"><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg>Month-end takes forever</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="step-nav">
+                <button class="btn btn-secondary btn-lg" type="button" data-back><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg>Back</button>
+                <button class="btn btn-primary btn-lg" type="button" data-next>Next: Contact <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              </div>
+            </section>
+
+            <!-- Gear 3: Contact -->
+            <section class="step-panel" id="step-3" data-name="Contact" aria-labelledby="s3-title">
+              <div class="step-head">
+                <h3 class="step-title" id="s3-title" tabindex="-1">How should we reach you?</h3>
+                <p class="step-lead">We&rsquo;ll use these details only to reply to you.</p>
+              </div>
+
+              <div class="form-grid form-grid-2">
+                <div class="field">
+                  <label class="field-label" for="d-name">Your name <span class="req" aria-hidden="true">*</span></label>
+                  <input class="input" id="d-name" name="name" type="text" autocomplete="name" autocapitalize="words" autocorrect="off" spellcheck="false" enterkeyhint="next" required data-label="Name" data-error="Please enter your name.">
+                  <p class="field-error" id="d-name-err"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter your name.</span></p>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="d-email">Email <span class="req" aria-hidden="true">*</span></label>
+                  <input class="input" id="d-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next" required data-label="Email">
+                  <p class="field-error" id="d-email-err"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter a valid email address.</span></p>
+                </div>
+                <div class="field">
+                  <label class="field-label" for="d-phone">Phone <span class="opt">(optional)</span></label>
+                  <input class="input" id="d-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" enterkeyhint="next" data-label="Phone" aria-describedby="d-phone-hint">
+                  <p class="field-hint" id="d-phone-hint">10 digits, if you&rsquo;d like a call or a text.</p>
+                  <p class="field-error" id="d-phone-err"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg><span>Please enter a 10-digit phone number.</span></p>
+                </div>
+              </div>
+
+              <fieldset class="field">
+                <legend class="field-label">Best way to reach you <span class="opt">(optional)</span></legend>
+                <div class="choice-grid demo-tiles">
+                  <label class="choice"><input type="radio" name="contact_method" value="Email" data-label="Contact by"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg><span class="choice-text"><span class="choice-name">Email</span><small>We reply by email</small></span></span></label>
+                  <label class="choice"><input type="radio" name="contact_method" value="Phone call" data-label="Contact by"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span class="choice-text"><span class="choice-name">Phone call</span><small>We give you a call</small></span></span></label>
+                  <label class="choice"><input type="radio" name="contact_method" value="Text" data-label="Contact by"><span class="choice-card choice-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span class="choice-text"><span class="choice-name">Text</span><small>We send a text</small></span></span></label>
+                </div>
+              </fieldset>
+
+              <fieldset class="field">
+                <legend class="field-label">Best time <span class="opt">(optional)</span></legend>
+                <div class="choice-grid demo-pills" style="--n: 3">
+                  <label class="choice"><input type="radio" name="best_time" value="Mornings" data-label="Best time"><span class="choice-card choice-pill">Mornings</span></label>
+                  <label class="choice"><input type="radio" name="best_time" value="Afternoons" data-label="Best time"><span class="choice-card choice-pill">Afternoons</span></label>
+                  <label class="choice"><input type="radio" name="best_time" value="Anytime" data-label="Best time"><span class="choice-card choice-pill">Anytime</span></label>
+                </div>
+              </fieldset>
+
+              <div class="step-nav">
+                <button class="btn btn-secondary btn-lg" type="button" data-back><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg>Back</button>
+                <button class="btn btn-primary btn-lg" type="button" data-next>Next: Review <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              </div>
+            </section>
+
+            <!-- Gear 4: Review, styled like a repair order -->
+            <section class="step-panel" id="step-4" data-name="Review" aria-labelledby="s4-title">
+              <div class="step-head">
+                <h3 class="step-title" id="s4-title" tabindex="-1">Check it over</h3>
+                <p class="step-lead">Make sure it looks right, then send it.</p>
+              </div>
+
+              <div class="review">
+                <div class="review-head">
+                  <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+                  <div><h4 data-review-title>Demo request</h4><p>Not sent yet</p></div>
+                  <span class="badge">Draft</span>
+                </div>
+                <dl class="review-list">
+                  <div class="review-row">
+                    <dt>Shop</dt>
+                    <dd><span class="review-val is-empty" data-review="shop">No shop name yet</span><button class="review-edit" type="button" data-go="1" aria-label="Edit your shop details">Edit</button></dd>
+                  </div>
+                  <div class="review-row" data-review-see>
+                    <dt>To see</dt>
+                    <dd><span class="review-val is-empty" data-review="see">Nothing ticked</span><button class="review-edit" type="button" data-go="2" aria-label="Edit what you want to see">Edit</button></dd>
+                  </div>
+                  <div class="review-row">
+                    <dt>Message</dt>
+                    <dd><span class="review-val is-empty" data-review="message">No message</span><button class="review-edit" type="button" data-go="2" data-msg-edit aria-label="Edit your message">Edit</button></dd>
+                  </div>
+                  <div class="review-row">
+                    <dt>Contact</dt>
+                    <dd><span class="review-val is-empty" data-review="contact">Add your details</span><button class="review-edit" type="button" data-go="3" aria-label="Edit your contact details">Edit</button></dd>
+                  </div>
+                </dl>
+              </div>
+
+              <p class="form-legal demo-legal"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg><span>We&rsquo;ll use this only to reply to you. See <a class="text-link" href="privacy.html">Privacy</a>.</span></p>
+
+              <div class="step-nav">
+                <button class="btn btn-secondary btn-lg" type="button" data-back><svg class="icon" aria-hidden="true"><use href="#i-chevron-left"/></svg>Back</button>
+                <button class="btn btn-primary btn-lg" type="submit">Send request <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></button>
+              </div>
+            </section>
+
+          </div>
+
+          <div class="callout callout-warn form-status" data-form-error role="alert" hidden></div>
+        </form>
+
+        <div class="form-success demo-success" id="demo-success" hidden tabindex="-1">
+          <svg class="success-mark" viewBox="0 0 84 84" aria-hidden="true"><circle cx="42" cy="42" r="42"/><path d="M26 43l11 11 21-23"/></svg>
+          <h3>Request received. Thanks, we&rsquo;ll be in touch.</h3>
+          <p>The sample shop runs in your browser, with no sign-in.</p>
+          <div class="cluster"><a class="btn btn-secondary" href="app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Try the sample shop while you wait</a></div>
+        </div>
+      </div>
+
+      <aside class="booking-aside demo-aside" id="aside" aria-labelledby="aside-title" data-reveal="right">
+        <h2 class="eyebrow" id="aside-title">Other ways in</h2>
+
+        <div class="card aside-card demo-email-card">
+          <h3>Prefer email?</h3>
+          <!-- @partial contact-email -->
+
+<!-- @end contact-email -->
+        </div>
+
+        <div class="card aside-card">
+          <h3>Already using it?</h3>
+          <p class="aside-text">Sign in to open your shop in WPI Driveline Shop Management System on this device.</p>
+          <a class="aside-row" href="app/signin" data-no-prerender>
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg></span>
+            <span><small>Your shop</small><strong>Sign in</strong></span>
+            <svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a>
+        </div>
+
+        <div class="card aside-card">
+          <h3>Sample shop</h3>
+          <p class="aside-text">The sample shop runs in your browser and keeps its data on this device. If this device already has a shop set up, the app opens that shop instead.</p>
+          <a class="aside-row" href="app/" data-no-prerender>
+            <span class="demo-live-tile"><span class="live-dot"></span></span>
+            <span><small>Sample shop</small><strong>Main Street Auto Service</strong></span>
+            <svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg>
+          </a>
+        </div>
+      </aside>
+
+    </div>
+  </section>
+
+  <!-- ===== What happens next ===== -->
+  <section class="section section-paper demo-next" id="next" aria-labelledby="next-title">
     <div class="container">
-      <h1>See it with <span class="accent-text">your shop in mind.</span></h1>
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">After you send it</p>
+        <h2 id="next-title">What happens <span class="accent-text">next</span></h2>
+        <p class="lead">No account to create and nothing to install.</p>
+      </div>
+      <div class="roadmap" style="--steps:3" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="What happens after you send a request">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-document"/></svg></span>
+            <h3>You send the request</h3>
+            <p>Your answers reach us as one message: your shop, what you want to see, and how to reach you.</p>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-board"/></svg></span>
+            <h3>Try the sample shop while you wait</h3>
+            <p>Main Street Auto Service is a made-up shop that opens in your browser. <a class="text-link" href="app/" data-no-prerender>Open the sample shop</a></p>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-chat"/></svg></span>
+            <h3>We get back to you the way you picked</h3>
+            <p>By email, a phone call or a text: whichever you picked in the form, or by email if you didn&rsquo;t pick.</p>
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Switching? Bring your data. ===== -->
+  <section class="section" id="switching" aria-labelledby="switching-title">
+    <div class="container split">
+      <div class="section-copy demo-switch-copy" data-reveal="left">
+        <p class="eyebrow">Switching</p>
+        <h2 id="switching-title">Switching? <span class="accent-text">Bring your data.</span></h2>
+        <p class="lead">Import customers and vehicles, or parts inventory, from any CSV export or by pasting from a spreadsheet.</p>
+        <p>Columns are matched by common header names such as Customer, Cell, Phone, VIN, Part number and Qty on hand. Export a CSV from your current system (Shopmonkey, Tekmetric, Mitchell 1, ALLDATA Manage, Shop-Ware, NAPA TRACS, RO Writer, QuickBooks) or a spreadsheet, then check or change any match and see a preview before you import.</p>
+        <p>Customers already on file (same phone or email) aren&rsquo;t added twice, and neither are vehicles whose VIN is already on file. A part number you already stock updates that part&rsquo;s quantity and cost. A sample file shows the layout.</p>
+        <p class="demo-note"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>Past repair orders aren&rsquo;t imported; keep your old system&rsquo;s records for reference.</span></p>
+        <a class="link-arrow" href="#demo-form" data-set-topic="Switching from another system">Ask about switching <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+
+      <figure class="mock-figure demo-imp-fig" data-reveal="right" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="1400" aria-label="Example: a customers CSV goes through the importer. Customer matches Full name, Cell matches Phone and VIN matches VIN. Ready to import: 2 new customers, 1 new vehicle, and 1 already on file (same phone), which isn&rsquo;t added twice.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage demo-imp-stage" aria-hidden="true">
+          <!-- 1: the CSV sheet slides into the gears (Sofia Castillo and her RAV4's VIN are already in the sample shop) -->
+          <div class="demo-imp-card demo-imp-sheet" data-at="0" data-fx="left">
+            <div class="demo-imp-file"><svg class="icon"><use href="#i-document"/></svg><b>customers.csv</b><span class="mock-chip is-idle">3 rows</span></div>
+            <div class="demo-imp-grid">
+              <span class="is-head">Customer</span><span class="is-head">Cell</span><span class="is-head">VIN</span>
+              <span>Rosa Delgado</span><span>(217) 555-0163</span><span class="is-blank"></span>
+              <span>Ben Carter</span><span>(217) 555-0187</span><span class="mock-mono">1HGCM82633A004352</span>
+              <span>Sofia Castillo</span><span>(217) 555-0107</span><span class="mock-mono">2T3P1RFV7LC159666</span>
+            </div>
+          </div>
+          <div class="demo-imp-gears">
+            <svg viewBox="94 47 284 260">
+              <ellipse class="demo-gear-shadow" cx="200" cy="300" rx="96" ry="7"/>
+              <g transform="translate(308.7 116)"><g class="art-spin-rev demo-gear-small">
+                <path class="art-ink art-thin art-lilac" d="M-36.8 22L-58.8 28.8A65.5 65.5 0 0 1 -63.5 15.7L-42.3 6.9A42.9 42.9 0 0 1 -42.7 -3.9L-64.5 -11.2A65.5 65.5 0 0 1 -60.6 -24.6L-38.3 -19.3A42.9 42.9 0 0 1 -32.3 -28.3L-45.6 -47A65.5 65.5 0 0 1 -34.6 -55.6L-19.6 -38.2A42.9 42.9 0 0 1 -9.5 -41.8L-9.2 -64.8A65.5 65.5 0 0 1 4.7 -65.3L6.6 -42.4A42.9 42.9 0 0 1 16.9 -39.4L30.6 -57.9A65.5 65.5 0 0 1 42.2 -50L30.2 -30.4A42.9 42.9 0 0 1 36.8 -22L58.8 -28.8A65.5 65.5 0 0 1 63.5 -15.7L42.3 -6.9A42.9 42.9 0 0 1 42.7 3.9L64.5 11.2A65.5 65.5 0 0 1 60.6 24.6L38.3 19.3A42.9 42.9 0 0 1 32.3 28.3L45.6 47A65.5 65.5 0 0 1 34.6 55.6L19.6 38.2A42.9 42.9 0 0 1 9.5 41.8L9.2 64.8A65.5 65.5 0 0 1 -4.7 65.3L-6.6 42.4A42.9 42.9 0 0 1 -16.9 39.4L-30.6 57.9A65.5 65.5 0 0 1 -42.2 50L-30.2 30.4A42.9 42.9 0 0 1 -36.8 22Z"/>
+                <circle class="art-ink art-thin" r="31" stroke-opacity=".35"/>
+                <circle class="art-ink art-paper" r="15"/>
+                <path class="art-ink art-thin" d="M-5 -5h10v10h-10z" stroke-opacity=".6"/>
+              </g></g>
+              <g transform="translate(196 204)"><g class="art-spin demo-gear-big">
+                <path class="art-ink art-thin art-tint" d="M53.9 -53.4L73.4 -65.7A98.5 98.5 0 0 1 81.5 -55.3L64.9 -39.4A75.9 75.9 0 0 1 70.2 -28.7L92.9 -32.6A98.5 98.5 0 0 1 96.4 -19.9L75 -11.5A75.9 75.9 0 0 1 75.9 0.3L98.3 5.5A98.5 98.5 0 0 1 96.7 18.5L73.7 18A75.9 75.9 0 0 1 70 29.4L88.7 42.7A98.5 98.5 0 0 1 82.3 54.1L61.2 44.9A75.9 75.9 0 0 1 53.4 53.9L65.7 73.4A98.5 98.5 0 0 1 55.3 81.5L39.4 64.9A75.9 75.9 0 0 1 28.7 70.2L32.6 92.9A98.5 98.5 0 0 1 19.9 96.4L11.5 75A75.9 75.9 0 0 1 -0.3 75.9L-5.5 98.3A98.5 98.5 0 0 1 -18.5 96.7L-18 73.7A75.9 75.9 0 0 1 -29.4 70L-42.7 88.7A98.5 98.5 0 0 1 -54.1 82.3L-44.9 61.2A75.9 75.9 0 0 1 -53.9 53.4L-73.4 65.7A98.5 98.5 0 0 1 -81.5 55.3L-64.9 39.4A75.9 75.9 0 0 1 -70.2 28.7L-92.9 32.6A98.5 98.5 0 0 1 -96.4 19.9L-75 11.5A75.9 75.9 0 0 1 -75.9 -0.3L-98.3 -5.5A98.5 98.5 0 0 1 -96.7 -18.5L-73.7 -18A75.9 75.9 0 0 1 -70 -29.4L-88.7 -42.7A98.5 98.5 0 0 1 -82.3 -54.1L-61.2 -44.9A75.9 75.9 0 0 1 -53.4 -53.9L-65.7 -73.4A98.5 98.5 0 0 1 -55.3 -81.5L-39.4 -64.9A75.9 75.9 0 0 1 -28.7 -70.2L-32.6 -92.9A98.5 98.5 0 0 1 -19.9 -96.4L-11.5 -75A75.9 75.9 0 0 1 0.3 -75.9L5.5 -98.3A98.5 98.5 0 0 1 18.5 -96.7L18 -73.7A75.9 75.9 0 0 1 29.4 -70L42.7 -88.7A98.5 98.5 0 0 1 54.1 -82.3L44.9 -61.2A75.9 75.9 0 0 1 53.9 -53.4Z"/>
+                <circle class="art-ink art-thin" r="62" stroke-opacity=".3"/>
+                <g class="art-ink art-thin art-paper">
+                  <circle cx="0" cy="-44" r="9"/><circle cx="38.1" cy="-22" r="9"/><circle cx="38.1" cy="22" r="9"/>
+                  <circle cx="0" cy="44" r="9"/><circle cx="-38.1" cy="22" r="9"/><circle cx="-38.1" cy="-22" r="9"/>
+                </g>
+                <circle class="art-ink art-paper" r="24"/>
+              </g></g>
+            </svg>
+            <span class="demo-feed" data-at="0" style="top: 52%; --fx-delay: .55s"></span>
+            <span class="demo-feed is-green" data-at="0" style="top: 59%; --fx-delay: .75s"></span>
+            <span class="demo-feed" data-at="0" style="top: 66%; --fx-delay: .95s"></span>
+          </div>
+          <!-- 2: the importer's answer, laid out as in the app. The card and the CSV's column names show from the
+               start; the matches tick green on step 2, and the counts and preview land on step 3. -->
+          <div class="demo-imp-card demo-imp-out">
+            <div class="demo-imp-out-head"><span class="mock-title">Match columns</span><span class="mock-sub">Customers &amp; vehicles</span></div>
+            <div class="demo-imp-map">
+              <div class="demo-imp-pair"><span class="demo-imp-src">Customer</span><svg class="icon demo-imp-arrow" data-at="1" data-fx="fade" style="--fx-delay: .1s"><use href="#i-arrow-right"/></svg><span class="demo-imp-dst" data-at="1" data-fx="left" style="--fx-delay: .15s">Full name</span><span class="demo-imp-ok" data-at="1" data-fx="tick" style="--fx-delay: .45s"><svg class="icon"><use href="#i-check"/></svg></span></div>
+              <div class="demo-imp-pair"><span class="demo-imp-src">Cell</span><svg class="icon demo-imp-arrow" data-at="1" data-fx="fade" style="--fx-delay: .35s"><use href="#i-arrow-right"/></svg><span class="demo-imp-dst" data-at="1" data-fx="left" style="--fx-delay: .4s">Phone</span><span class="demo-imp-ok" data-at="1" data-fx="tick" style="--fx-delay: .7s"><svg class="icon"><use href="#i-check"/></svg></span></div>
+              <div class="demo-imp-pair"><span class="demo-imp-src">VIN</span><svg class="icon demo-imp-arrow" data-at="1" data-fx="fade" style="--fx-delay: .6s"><use href="#i-arrow-right"/></svg><span class="demo-imp-dst" data-at="1" data-fx="left" style="--fx-delay: .65s">VIN</span><span class="demo-imp-ok" data-at="1" data-fx="tick" style="--fx-delay: .95s"><svg class="icon"><use href="#i-check"/></svg></span></div>
+            </div>
+            <!-- 3: Ready to import (the app's own tiles); the customer already on file flashes amber -->
+            <div class="demo-imp-ready">
+              <span class="demo-imp-label">Ready to import</span>
+              <div class="demo-imp-tiles">
+                <div class="mock-tile"><span class="mock-label">New customers</span><strong data-at="2" data-fx="pop" style="--fx-delay: .05s">2</strong></div>
+                <div class="mock-tile"><span class="mock-label">New vehicles</span><strong data-at="2" data-fx="pop" style="--fx-delay: .2s">1</strong></div>
+                <div class="mock-tile"><span class="demo-imp-flash" data-at="2" data-fx="flash" style="--fx-pre: 0; --fx-delay: .35s"></span><span class="mock-label">Already on file</span><strong data-at="2" data-fx="pop" style="--fx-delay: .35s">1</strong></div>
+              </div>
+            </div>
+            <div class="demo-imp-prev">
+              <span class="demo-imp-label">Preview</span>
+              <div class="demo-imp-rows" data-at="2" data-fx="stagger" style="--fx-stagger: 120ms">
+                <div class="demo-imp-row"><span class="mock-avatar">RD</span><span class="demo-imp-who"><b>Rosa Delgado</b><small>(217) 555-0163</small></span></div>
+                <div class="demo-imp-row"><span class="mock-avatar">BC</span><span class="demo-imp-who"><b>Ben Carter</b><small>(217) 555-0187</small></span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+
+    <div class="container">
+      <div class="ro-card demo-setup" data-reveal>
+        <div class="ro-head">
+          <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+          <div><strong>Setup checklist</strong><small>What to set up once your data is in</small></div>
+          <span class="badge">After import</span>
+        </div>
+        <ul class="checklist ro-list" role="list">
+          <li><div><h3>Labor rate, tax and shop supplies</h3><p>Your default labor rate, your sales tax, and shop supplies as a percent of labor with a dollar cap.</p></div></li>
+          <li><div><h3>Canned jobs and the parts matrix</h3><p>Your menu of canned jobs with set hours, and parts markup in tiers by cost.</p></div></li>
+          <li><div><h3>Inspection template</h3><p>Start from the 37-point multi-point template and edit it to match how your techs work.</p></div></li>
+          <li><div><h3>Team roles, PINs and logins</h3><p>Owner, shop manager, service advisor and technician. Each person&rsquo;s own login uses <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>.</p></div></li>
+          <li><div><h3>Locations</h3><p>Each location keeps its own address, phone, sales tax and labor rate.</p></div></li>
+          <li><div><h3>Booking hours and capacity</h3><p>Slot length, notice needed, how far ahead people can book, and how many bookings at once. With <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, requests land in the app and booked times are left out; without it, the booking page shows your hours and sends requests by text or email.</p></div></li>
+          <li><div><h3>Connect what you want</h3><p>Stripe, Twilio, Resend and QuickBooks, on your own accounts, through Shop Cloud.</p></div></li>
+          <li><div><h3>Install on every device</h3><p>Add it from the browser to the counter PC, the bay iPad and your phone.</p></div></li>
+        </ul>
+        <p class="ro-foot"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg><span>None of it has to happen in one sitting, and each setting can be changed later.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Pricing ===== -->
+  <section class="section-sm demo-price-sec" id="pricing" aria-labelledby="pricing-title">
+    <div class="container container-narrow">
+      <div class="panel-wash demo-price" data-reveal="fade">
+        <span class="icon-tile icon-tile-lg"><svg class="icon" aria-hidden="true"><use href="#i-tag"/></svg></span>
+        <div>
+          <h2 id="pricing-title">What about <span class="accent-text">pricing?</span></h2>
+          <p>We don&rsquo;t publish prices. Tell us about your shop in a demo request, and ask how <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> is set up and billed for you.</p>
+          <p>Services you connect (Stripe, Twilio, Resend, Anthropic, Smartcar, Intuit) bill your shop directly at their own rates.</p>
+          <div class="cluster">
+            <a class="link-arrow" href="works-with.html#billing">Who bills you for what <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+            <a class="link-arrow" href="#demo-form">Ask in your request <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container container-narrow">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Sample shop:</strong> it runs in your browser and keeps its data on this device. If the device already has a shop set up, the app opens that shop instead.</li>
+            <li><strong>Import:</strong> customers and vehicles, or parts inventory, from a CSV file or a spreadsheet paste. Past repair orders aren&rsquo;t imported.</li>
+            <li><strong>Needs:</strong> <a href="works-with.html#shop-cloud">Shop Cloud</a> to share records between devices and for each person&rsquo;s own login. Texting, card payments, email, QuickBooks, connected cars and AI also run on your shop&rsquo;s own Twilio, Stripe, Resend, Intuit, Smartcar and Anthropic accounts.</li>
+            <li><strong>Prices:</strong> we don&rsquo;t publish prices. Ask in your request.</li>
+            <li><strong>The form:</strong> we need your name and email, plus your shop name for a demo request. Everything else is optional.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== Demo questions ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head-row" data-reveal>
+        <div class="section-head">
+          <p class="eyebrow">Questions</p>
+          <h2 id="faq-title">Demo questions</h2>
+        </div>
+        <a class="link-arrow" href="faq.html">All questions <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="demo-faq"><summary>Do I need to install anything to try it?</summary><div class="faq-body"><p>No. The sample shop runs in your browser, with no sign-in. It keeps its data on that device.</p></div></details>
+        <details class="faq" name="demo-faq"><summary>Can I run my old system alongside?</summary><div class="faq-body"><p>Yes. Import is a one-way CSV, so your old system keeps all of its records and nothing is sent back to it.</p></div></details>
+        <details class="faq" name="demo-faq"><summary>What happens to what I send?</summary><div class="faq-body"><p>We use it only to reply to you. See the <a class="text-link" href="privacy.html">privacy page</a> for the details.</p></div></details>
+      </div>
     </div>
   </section>
 </main>
 
+<script>
+/* demo.html: drives the demo form's four gears (window.CCA does validation and sending; WPI.shifter moves the knob). */
+document.addEventListener("DOMContentLoaded", () => {
+  "use strict";
+  const d = document;
+  const form = d.getElementById("demo-form");
+  if (!form) return;
+  const C = window.CCA;
+  const W = window.WPI;
+  // Without site.js the page falls back to the no-JS layout: every step shows and the form posts normally.
+  if (!C || !W) { d.documentElement.classList.remove("js"); return; }
+
+  const $ = (s, el = d) => el.querySelector(s);
+  const $$ = (s, el = d) => Array.from(el.querySelectorAll(s));
+  const EASE_OUT = "cubic-bezier(.22, 1, .36, 1)";
+  const EASE_IN_OUT = "cubic-bezier(.65, 0, .35, 1)";
+
+  const steps = $(".steps", form);
+  const panels = $$(".step-panel", form);
+  const gear = W.shifter(form);
+  const numEl = $("[data-shift-num]", form);
+  const totalEl = $("[data-shift-total]", form);
+  const nameEl = $("[data-shift-name]", form);
+  const header = $("[data-header]");
+  const topic = $("#d-topic");
+  const company = $("#d-company");
+  const demoOnly = $("[data-demo-only]", form);
+  const msgField = $("[data-msg-field]", form);
+  const msg = $("#d-message");
+  const quick = $("[data-quick-chips]", form);
+  const slots = { 1: $('[data-msg-slot="1"]', form), 2: $('[data-msg-slot="2"]', form) };
+  const interests = $$('input[name="interests"]', form);
+  let current = 1;
+  let reached = 1;
+  let busy = false;
+  let shifted = false;
+  let showErrorsOnArrival = false;
+  let parked = null; // interests ticked before the topic moved away from a demo request
+
+  const isDemo = () => topic.value === "Demo request";
+  // Gear 2 (What to see) is only for a demo request; other topics drive 1 → 3 → 4.
+  const order = () => (isDemo() ? [1, 2, 3, 4] : [1, 3, 4]);
+  const neighbour = (k, dir) => {
+    const o = order();
+    const i = Math.max(0, o.indexOf(k));
+    return o[Math.max(0, Math.min(o.length - 1, i + dir))];
+  };
+
+  /* ---------- Shifter text and gears ---------- */
+  const paint = () => {
+    const o = order();
+    numEl.textContent = String(Math.max(1, o.indexOf(current) + 1));
+    totalEl.textContent = String(o.length);
+    nameEl.textContent = panels[current - 1].dataset.name;
+    gear.paint(current, { reached, skip: isDemo() ? [] : [2] });
+  };
+
+  /* ---------- Validation helpers ---------- */
+  const clearError = (field) => {
+    if (!field || !field.classList.contains("is-invalid")) return;
+    field.classList.remove("is-invalid");
+    const ctrl = $("input, select, textarea", field);
+    const err = $(".field-error", field);
+    if (!ctrl) return;
+    ctrl.setAttribute("aria-invalid", "false");
+    if (err && err.id) {
+      const ids = (ctrl.getAttribute("aria-describedby") || "").split(/\s+/).filter((id) => id && id !== err.id);
+      if (ids.length) ctrl.setAttribute("aria-describedby", ids.join(" "));
+      else ctrl.removeAttribute("aria-describedby");
+    }
+  };
+  // A silent check for steps that aren't on screen (validateFields skips hidden panels).
+  const quietValid = (panel) =>
+    $$(".field", panel).every((f) => {
+      if (f.closest("[hidden]")) return true;
+      if (f.hasAttribute("data-required-group")) return $$("input:checked", f).length > 0;
+      const c = $("input:not([type=hidden]), select, textarea", f);
+      if (!c || c.disabled) return true;
+      if (c.type === "tel" && c.value && c.value.replace(/\D/g, "").length < 10) return false;
+      return c.checkValidity();
+    });
+
+  /* ---------- Panel swap ---------- */
+  const bringIntoView = () => {
+    const offset = (header ? header.offsetHeight : 0) + 12;
+    const top = form.getBoundingClientRect().top;
+    if (top < offset) scrollTo({ top: scrollY + top - offset, behavior: W.motionOK() ? "smooth" : "auto" });
+  };
+  const focusHeading = (panel) => {
+    const h = $(".step-title", panel);
+    if (h) h.focus({ preventScroll: true });
+    if (showErrorsOnArrival) {
+      showErrorsOnArrival = false;
+      C.validateFields(panel);
+    }
+  };
+  const swap = (out, inn, dir) => {
+    if (!W.motionOK() || !out.animate) {
+      out.hidden = true;
+      inn.hidden = false;
+      focusHeading(inn);
+      return;
+    }
+    busy = true;
+    const h0 = steps.offsetHeight;
+    steps.classList.add("is-animating");
+    const leave = out.animate(
+      [{ opacity: 1, transform: "none" }, { opacity: 0, transform: `translateX(${-26 * dir}px)` }],
+      { duration: 170, easing: EASE_IN_OUT, fill: "forwards" }
+    );
+    leave.onfinish = () => {
+      out.hidden = true;
+      leave.cancel();
+      inn.hidden = false;
+      const h1 = steps.offsetHeight;
+      steps.animate([{ height: `${h0}px` }, { height: `${h1}px` }], { duration: 420, easing: EASE_OUT }).onfinish = () => steps.classList.remove("is-animating");
+      inn.animate([{ opacity: 0, transform: `translateX(${30 * dir}px)` }, { opacity: 1, transform: "none" }], { duration: 460, easing: EASE_OUT });
+      busy = false;
+      focusHeading(inn);
+    };
+  };
+
+  const goTo = (n, opts = {}) => {
+    if (busy || n === current || !panels[n - 1] || !order().includes(n)) return;
+    if (n > current) {
+      if (n > reached && n !== neighbour(current, 1)) return;
+      if (!C.validateFields(panels[current - 1])) return;
+      // Jumping ahead with a step pill: stop at any step that was changed and no longer passes.
+      for (const k of order()) {
+        if (k > current && k < n && !quietValid(panels[k - 1])) { n = k; opts.showErrors = true; break; }
+      }
+    }
+    showErrorsOnArrival = Boolean(opts.showErrors);
+    const from = current;
+    current = n;
+    reached = Math.max(reached, n);
+    shifted = true;
+    if (n === 4) buildReview();
+    paint();
+    bringIntoView();
+    gear.shiftTo(from, n);
+    swap(panels[from - 1], panels[n - 1], n > from ? 1 : -1);
+  };
+
+  $$("[data-next]", form).forEach((b) => b.addEventListener("click", () => goTo(neighbour(current, 1))));
+  $$("[data-back]", form).forEach((b) => b.addEventListener("click", () => goTo(neighbour(current, -1))));
+  $$("[data-go]", form).forEach((b) => b.addEventListener("click", () => goTo(Number(b.dataset.go))));
+
+  // Enter moves forward (text fields, selects and choice cards); the message box keeps its newlines.
+  // In a text field it first walks to the next field of the step, like Return on an iPhone keyboard.
+  form.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter" || e.isComposing || e.shiftKey) return;
+    const t = e.target;
+    if (!(t instanceof HTMLInputElement || t instanceof HTMLSelectElement)) return;
+    e.preventDefault();
+    const next = C.nextField(panels[current - 1], t);
+    if (next) next.focus();
+    else if (current < 4) goTo(neighbour(current, 1));
+    else if (form.requestSubmit) form.requestSubmit();
+  });
+
+  /* ---------- Topic: a demo request asks more about the shop; other topics go straight to a message ---------- */
+  const setTopic = (animate) => {
+    const demo = isDemo();
+    const wasHidden = demoOnly.hidden;
+    demoOnly.hidden = !demo;
+    $$("input, select, textarea", demoOnly).forEach((c) => (c.disabled = !demo));
+    if (!demo && !parked) {
+      parked = interests.filter((i) => i.checked);
+      parked.forEach((i) => (i.checked = false));
+    } else if (demo && parked) {
+      parked.forEach((i) => (i.checked = true));
+      parked = null;
+    }
+    company.required = demo;
+    $("[data-company-req]", form).hidden = !demo;
+    $("[data-company-opt]", form).hidden = demo;
+    if (!demo) clearError(company.closest(".field"));
+    const slot = slots[demo ? 2 : 1];
+    const moved = msgField.parentElement !== slot;
+    if (moved) slot.append(msgField);
+    $("[data-msg-label]", form).textContent = demo ? "What do you want to fix first?" : "Your message";
+    quick.hidden = !demo;
+    $("[data-next-label]", panels[0]).textContent = demo ? "Next: What to see" : "Next: Contact";
+    $("[data-msg-edit]", form).dataset.go = demo ? "2" : "1";
+    paint();
+    if (animate && W.motionOK()) {
+      const shown = demo ? (wasHidden ? demoOnly : null) : moved ? msgField : null;
+      if (shown && shown.animate) shown.animate([{ opacity: 0, transform: "translateY(10px)" }, { opacity: 1, transform: "none" }], { duration: 380, easing: EASE_OUT });
+    }
+  };
+  topic.addEventListener("change", () => setTopic(true));
+
+  // In-page links that pick a topic ("Ask about switching")
+  $$("a[data-set-topic]").forEach((a) =>
+    a.addEventListener("click", () => {
+      if (busy || !form.isConnected || form.hidden) return;
+      if (current !== 1) goTo(1);
+      topic.value = a.dataset.setTopic;
+      setTopic(false);
+    })
+  );
+
+  /* ---------- Quick-add chips append to the message ---------- */
+  $$("[data-quick]", form).forEach((b) =>
+    b.addEventListener("click", () => {
+      const add = b.dataset.quick;
+      const v = msg.value.trim();
+      if (!v.toLowerCase().includes(add.toLowerCase())) {
+        msg.value = (v ? `${v}${/[.!?]$/.test(v) ? " " : ". "}${add}` : add).slice(0, Number(msg.maxLength) > 0 ? msg.maxLength : 1200);
+        msg.dispatchEvent(new Event("input", { bubbles: true }));
+      }
+      b.classList.add("is-added");
+      const use = $("use", b);
+      if (use) use.setAttribute("href", "#i-check");
+      msg.focus();
+      msg.setSelectionRange(msg.value.length, msg.value.length);
+    })
+  );
+
+  /* ---------- Review, styled like a repair order ---------- */
+  const value = (name) => {
+    const el = form.elements.namedItem(name);
+    return el && el.tagName && !el.disabled ? String(el.value || "").trim() : "";
+  };
+  const picked = (name) => {
+    const el = $(`input[name="${name}"]:checked:not(:disabled)`, form);
+    return el ? el.value : "";
+  };
+  const count = (v, one, many) => (v ? `${v} ${v === "1" ? one : many}` : "");
+  const setRow = (key, main, sub, empty) => {
+    const el = $(`[data-review="${key}"]`, form);
+    el.textContent = main || empty;
+    el.classList.toggle("is-empty", !main);
+    if (sub) {
+      const s = d.createElement("small");
+      s.textContent = sub;
+      el.append(s);
+    }
+  };
+  const buildReview = () => {
+    const demo = isDemo();
+    $("[data-review-title]", form).textContent = demo ? "Demo request" : topic.options[topic.selectedIndex].text;
+    const system = value("current_system");
+    const shopSub = demo
+      ? [value("role"), count(picked("locations"), "location", "locations"), count(picked("bays"), "bay", "bays"), system && (system === "Nothing yet" ? "No shop system yet" : `Uses ${/^(Another|Paper)/.test(system) ? system.toLowerCase() : system}`)].filter(Boolean).join(" · ")
+      : "";
+    setRow("shop", value("company"), shopSub, "No shop name");
+    $("[data-review-see]", form).hidden = !demo;
+    setRow("see", interests.filter((i) => i.checked && !i.disabled).map((i) => i.dataset.title).join(", "), "", "Nothing ticked");
+    const m = value("message");
+    setRow("message", m.length > 160 ? `${m.slice(0, 158).trim()}…` : m, "", "No message");
+    const method = picked("contact_method");
+    const contactSub = [value("email"), value("phone"), method && `By ${method.toLowerCase()}`, picked("best_time")].filter(Boolean).join(" · ");
+    setRow("contact", value("name"), contactSub, "Add your details");
+  };
+  const refresh = () => { if (current === 4) buildReview(); };
+  form.addEventListener("input", refresh);
+  form.addEventListener("change", refresh);
+
+  /* ---------- Send ---------- */
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (current < 4) return goTo(neighbour(current, 1));
+    const errBox = $("[data-form-error]", form);
+    if (errBox) { errBox.hidden = true; errBox.classList.remove("is-visible"); }
+    // An earlier step may have changed since it was checked: go back to it and show why.
+    const stale = order().find((k) => k < 4 && !quietValid(panels[k - 1]));
+    if (stale) return goTo(stale, { showErrors: true });
+    const btn = $('[type="submit"]', form);
+    btn.classList.add("is-loading");
+    btn.disabled = true;
+    try {
+      await C.submitForm(form);
+      C.showSuccess(form);
+    } catch {
+      C.showError(form);
+    } finally {
+      btn.classList.remove("is-loading");
+      btn.disabled = false;
+    }
+  });
+
+  /* ---------- Deep links: ?topic=question, ?interest=<feature slug> ---------- */
+  const params = new URLSearchParams(location.search);
+  if ((params.get("topic") || "").toLowerCase() === "question") topic.value = "Question";
+  const slug = (params.get("interest") || "").toLowerCase();
+  const pre = slug && interests.find((i) => i.dataset.slug === slug);
+  if (pre) {
+    pre.checked = true;
+    const note = $("[data-preselect]", form);
+    if (note) {
+      $("[data-preselect-name]", note).textContent = pre.dataset.title;
+      note.hidden = false;
+    }
+  }
+
+  /* ---------- Start ---------- */
+  panels.forEach((p, i) => (p.hidden = i !== 0));
+  setTopic(false);
+  paint();
+  steps.classList.add("is-ready");
+  // The knob shifts out of neutral into first the first time the shifter comes into view.
+  const shiftIn = () => {
+    if (shifted) return;
+    shifted = true;
+    gear.shiftTo(0, 1);
+  };
+  const gate = $(".shifter", form);
+  if (!W.motionOK() || !("IntersectionObserver" in window) || !gate) shiftIn();
+  else {
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((en) => en.isIntersecting)) return;
+      io.disconnect();
+      setTimeout(shiftIn, 260);
+    }, { threshold: 0.6 });
+    io.observe(gate);
+  }
+});
+</script>
+
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="index.html" aria-label="WPI Driveline Shop Management System home">
@@ -265,6 +1320,7 @@
   <a class="tab tab-book is-active" href="demo.html" data-nav="demo" aria-current="page"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

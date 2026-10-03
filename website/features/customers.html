@@ -35,6 +35,221 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* ===== features/customers.html (page-local; classes prefixed customers-) ===== */
+
+/* Hero: the oil-service list. A projected odometer reaches the oil-service mark, the car joins the list, Send to all. */
+.customers-hero { width: 100%; }
+.customers-hero-stage { width: min(100%, 470px); padding-bottom: 56px; }
+@media (max-width: 599.98px) { .customers-hero-stage { padding-bottom: 0; } }
+.customers-hero-win { width: 100%; }
+.customers-hero-win > .mock-screen { gap: 12px; padding: 14px; }
+.customers-hero-top { display: grid; gap: 2px; justify-items: start; }
+.customers-hero-status { display: grid; justify-items: start; }
+.customers-hero-status > * { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 6px; font-size: 17px; font-weight: 680; letter-spacing: -0.02em; white-space: nowrap; color: var(--ink); }
+.customers-hero-status .is-done { color: var(--green-ink); }
+.customers-hero-status .is-done svg { width: 18px; height: 18px; }
+.customers-car { display: grid; gap: 8px; padding: 12px 12px 10px; border-radius: 14px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.customers-car-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.customers-oil { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 11px; background: var(--accent-soft); color: var(--accent); }
+.customers-oil .icon { width: 21px; height: 21px; }
+.customers-car-name { display: grid; flex: 1 1 auto; min-width: 0; }
+.customers-car-name b { font-size: 14px; font-weight: 680; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-car-name small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-odo { flex: none; font-size: 20px; padding: 4px; gap: 2px; border-radius: 10px; }
+.customers-odo .odo-digit { border-radius: 4px; }
+/* The tenth wheel turns once with the roll and rests on 0 (35,120.0), so the hero rests on its last step */
+.customers-odo .odo-digit.is-tenth .odo-strip.is-running { animation: odo-tenth var(--odo-dur, 2.2s) var(--ease) var(--odo-base, 0s) both; }
+/* ...and turns again on the next loop (the restart clears data-reached first) */
+.customers-hero:not([data-reached~="0"]) .customers-odo .odo-digit.is-tenth .odo-strip.is-running { animation: none; }
+.motion-paused .customers-odo .odo-strip { animation: none !important; }
+/* The status line never goes blank: each count stays until the next text lands (fx-hide is a shared keyframe) */
+.customers-hero.is-armed[data-reached~="2"] .customers-hero-status [data-until="2"] { animation: fx-hide .2s var(--ease) .45s both; }
+.customers-hero.is-armed[data-reached~="3"] .customers-hero-status [data-until="3"] { animation: fx-hide .2s var(--ease) 1.2s both; }
+.motion-paused .customers-hero-status > * { animation: none !important; }
+/* The mileage ruler: 34,750 to 35,250 in 50-mile ticks; the car rolls to the 35,120 flag */
+.customers-ruler { position: relative; height: 52px; margin: 0 6px; }
+.customers-ruler-ticks { position: absolute; left: 0; right: 0; bottom: 8px; height: 7px; border-right: 1.5px solid var(--mist-300); background: repeating-linear-gradient(90deg, var(--mist-300) 0 1.5px, transparent 1.5px 10%); }
+.customers-ruler-major { position: absolute; left: 0; right: 0; bottom: 8px; height: 13px; border-right: 2px solid var(--ink-4); background: repeating-linear-gradient(90deg, var(--ink-4) 0 2px, transparent 2px 50%); opacity: .55; }
+.customers-ruler-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; border-radius: var(--pill); background: var(--mist-200); }
+.customers-ruler-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 74%; border-radius: inherit; background: var(--bar); transform-origin: 0 50%; transition: scale 1.9s var(--ease-in-out); }
+.customers-ride { position: absolute; left: 0; bottom: 9px; width: 74%; height: 14px; pointer-events: none; transition: translate 1.9s var(--ease-in-out); }
+.customers-ride svg { position: absolute; right: 3px; bottom: 0; width: 34px; height: 15px; color: var(--ink); }
+/* Until the odometer starts rolling (site.js marks its tenth wheel .is-running), the fill and the car wait at 34,870;
+   then they travel with it. A transition, not a page keyframe. A loop restart clears data-reached
+   (with a reflow) before step 0, which resets them too. */
+.customers-hero.is-armed:is(:not([data-reached~="0"]), :not(:has(.odo-strip.is-running))) .customers-ruler-fill { scale: .324 1; transition: none; }
+.customers-hero.is-armed:is(:not([data-reached~="0"]), :not(:has(.odo-strip.is-running))) .customers-ride { translate: -67.6% 0; transition: none; }
+.customers-flag { position: absolute; left: 74%; bottom: 0; height: 52px; }
+.customers-flag::before { content: ""; position: absolute; left: -1px; bottom: 0; width: 2px; height: 34px; border-radius: 1px; background: var(--ink-4); }
+.customers-flag > span { position: absolute; right: -1px; top: 0; display: grid; justify-items: end; }
+.customers-flag > span > * { grid-area: 1 / 1; }
+.customers-flag .mock-chip { border-radius: 9px 2px 2px 9px; padding: 1px 7px 1px 8px; font-size: 12px; transform-origin: 100% 50%; }
+.customers-flag .is-idle { background: var(--mist-100); color: var(--ink-3); }
+.customers-ruler-labels { display: flex; justify-content: space-between; margin: -2px 2px 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.customers-car .mock-sub { margin-top: -2px; }
+.customers-list-title { padding-top: 2px; }
+.customers-list .mock-row { gap: 10px; padding: 7px 10px; }
+.customers-list .mock-row > span:not(.mock-tickbox, .mock-chip) { display: grid; gap: 1px; -webkit-line-clamp: unset; }
+.customers-list b { font-size: 12.5px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-list small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-new { position: relative; z-index: 2; border-color: rgba(31, 122, 224, .35) !important; background: var(--accent-soft) !important; }
+.customers-hero .float-note.note-1 { top: 50px; left: auto; right: -14px; }
+.customers-hero .float-note.note-2 { bottom: 0; right: auto; left: -18px; max-width: 400px; }
+/* An empty slot waits at the top of the list until the reminder lands in it */
+.customers-slot { border-radius: 10px; outline: 1.5px dashed var(--mist-300); outline-offset: -1.5px; }
+
+/* Pains: a data-free illustration of three leaks flowing into one follow-up list */
+.customers-pains-side { display: grid; gap: 18px; min-width: 0; }
+.customers-art { min-height: 0; }
+.customers-art > svg { width: min(100%, 480px); }
+.customers-art-pop { transform-box: fill-box; transform-origin: center; }
+
+/* Six follow-up lists. Each card ends on its built-in rule (a product default, not example data). */
+.customers-auto { display: flex; flex-direction: column; align-items: flex-start; }
+.customers-auto > h3 { font-size: 1.15rem; }
+.customers-auto > p { margin-top: 8px; color: var(--ink-3); }
+.customers-auto-mode { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 4px 10px 4px 8px; border-radius: var(--pill); background: var(--mist-50); border: 1px solid var(--line); font-size: .82rem; font-weight: 620; line-height: 1.35; color: var(--ink-2); white-space: nowrap; }
+.customers-auto-mode .icon { flex: none; width: 15px; height: 15px; color: var(--accent); }
+.customers-auto-mode.is-server { background: var(--green-50); border-color: rgba(45, 179, 106, .22); color: var(--green-ink); }
+.customers-auto-mode.is-server .icon { color: var(--green-ink); }
+.customers-rule { position: relative; display: grid; gap: 1px; width: 100%; margin-top: auto; padding: 10px 12px 10px 20px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.customers-auto > .customers-auto-mode { margin-bottom: 16px; }
+.customers-rule::before { content: ""; position: absolute; left: 10px; top: 11px; bottom: 11px; width: 2px; border-radius: 1px; background: var(--bar-v); }
+.customers-rule b { font-size: 15.5px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: var(--ink); }
+.customers-rule small { font-size: 12.5px; line-height: 1.35; color: var(--ink-3); }
+.customers-auto-note { margin-top: clamp(20px, 1rem + 1vw, 32px); }
+
+/* Campaigns: one message, three names */
+.customers-camp-stage { width: min(100%, 460px); justify-items: stretch; gap: 14px; }
+.customers-camp-card { display: grid; gap: 12px; padding: 14px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); }
+.customers-camp-head { display: flex; align-items: center; gap: 10px; }
+.customers-camp-head > span:last-child { display: grid; min-width: 0; }
+.customers-camp-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.customers-filter { display: grid; gap: 1px; min-width: 0; padding: 6px 9px; border-radius: 9px; border: 1px solid var(--line-strong); font-size: 12.5px; font-weight: 620; white-space: nowrap; }
+.customers-filter > * { overflow: hidden; text-overflow: ellipsis; }
+.customers-filter small { font-size: 12px; font-weight: 500; color: var(--ink-3); }
+.customers-camp-msg { display: grid; gap: 5px; }
+.customers-camp-body { padding: 9px 11px; border-radius: 10px; border: 1px solid var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); background: var(--paper); font-size: 12.5px; line-height: 1.5; }
+.customers-key { font-family: var(--font-mono); font-size: 12px; padding: 1px 5px; border-radius: 5px; background: var(--accent-soft); color: var(--accent-ink); white-space: nowrap; }
+.customers-camp-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; }
+.customers-camp-foot .mock-seg { width: 124px; }
+.customers-camp-count { margin-left: auto; font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.customers-camp-count b { font-size: 16px; font-weight: 700; color: var(--ink); }
+.customers-camp-sends { display: grid; gap: 10px; padding-inline: 6px 2px; }
+.customers-camp-first { justify-self: end; font-size: 12px; font-weight: 650; color: var(--ink-2); }
+.customers-camp-send { display: grid; justify-items: end; gap: 3px; }
+.customers-camp-to { font-size: 12px; color: var(--ink-3); }
+.customers-camp-send .mock-bubble { max-width: 90%; }
+.customers-token { display: inline-grid; justify-items: start; vertical-align: bottom; }
+.customers-token > * { grid-area: 1 / 1; }
+.customers-token-key { font-size: 12px; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; }
+.customers-token-key > span { box-shadow: inset 0 -1.5px 0 rgba(255, 255, 255, .75); }
+.customers-token-val { font-weight: 700; white-space: nowrap; }
+
+/* History: a vehicle's service timeline */
+.customers-history-head { margin-bottom: clamp(32px, 2rem + 1.5vw, 56px); }
+.customers-tl-win { width: min(100%, 470px); }
+.customers-tl-win > .mock-screen { gap: 12px; padding: 14px; }
+.customers-tl-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.customers-tl-head > span:nth-child(2) { display: grid; flex: 1 1 auto; min-width: 0; }
+.customers-tl-head b { font-size: 14px; font-weight: 680; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-tl-head small { font-size: 12px; color: var(--ink-3); }
+.customers-tl-head .mock-btn { flex: none; }
+.customers-tl-sum { font-weight: 550; color: var(--ink-3); }
+.customers-tl { position: relative; display: grid; gap: 10px; padding-left: 28px; }
+.customers-tl::before { content: ""; position: absolute; left: 9px; top: 14px; bottom: 14px; width: 2px; border-radius: 1px; background: var(--mist-200); }
+.customers-tl-line { position: absolute; left: 9px; top: 14px; bottom: 14px; width: 2px; border-radius: 1px; background: var(--bar-v); }
+.customers-tl-item { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 6px 10px; padding: 9px 11px; border-radius: 11px; background: var(--paper); border: 1px solid var(--m-line); }
+.customers-tl-dot { position: absolute; left: -25px; top: 12px; width: 14px; height: 14px; border-radius: 50%; background: var(--blue); border: 3px solid var(--paper); box-shadow: 0 0 0 1.5px var(--blue-100); }
+.customers-tl-item:last-child .customers-tl-dot { background: var(--green); box-shadow: 0 0 0 1.5px var(--green-100); }
+/* The line ends at the last (green) dot: paper covers the tail below it */
+.customers-tl-item:last-child::after { content: ""; position: absolute; left: -22px; top: 28px; bottom: 0; width: 8px; background: var(--paper); }
+.customers-tl-item b { display: block; font-size: 13px; font-weight: 650; }
+.customers-tl-item small { display: block; font-size: 12px; line-height: 1.35; color: var(--ink-3); }
+.customers-tl-item .mock-chip { font-family: var(--font-mono); font-weight: 600; }
+/* Declined work lives on the customer's page, not in the vehicle's service history */
+.customers-tl-declined { display: grid; gap: 6px; justify-items: start; min-width: 0; max-width: 100%; padding: 10px 11px; border-radius: 11px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.customers-tl-declined .mock-chip { max-width: 100%; white-space: normal; font-weight: 650; }
+.customers-tl-declined svg { flex: none; width: 13px; height: 13px; }
+
+/* Connected cars: oil life drains, tires settle */
+.customers-cc-card { width: min(100%, 440px); display: grid; gap: 12px; padding: 16px; border-radius: 18px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); }
+.customers-cc-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.customers-cc-head > span:nth-child(2) { display: grid; flex: 1 1 auto; min-width: 0; }
+.customers-cc-head b { font-size: 14px; font-weight: 680; }
+.customers-cc-head small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-cc-head .mock-chip { flex: none; }
+.customers-cc-alert { display: flex; align-items: center; gap: 8px; padding: 8px 11px; border-radius: 10px; border: 1px solid rgba(154, 93, 18, .22); background: var(--warn-soft); color: var(--warn); font-size: 12.5px; font-weight: 620; transform-origin: 0 50%; }
+.customers-cc-alert svg { flex: none; width: 16px; height: 16px; }
+.customers-cc-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.customers-cc-tile { position: relative; display: grid; align-content: start; gap: 3px; min-width: 0; padding: 9px 10px; border-radius: 11px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.customers-cc-tile .mock-label { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.customers-cc-tile .mock-label svg { flex: none; width: 13px; height: 13px; }
+.customers-cc-tile strong { font-size: 16px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.customers-cc-val { display: grid; }
+.customers-cc-val > * { grid-area: 1 / 1; }
+.customers-cc-val .is-warn { color: var(--warn); }
+.customers-cc-tint { position: absolute; inset: -1px; border-radius: inherit; background: var(--warn-soft); border: 1px solid rgba(154, 93, 18, .3); }
+.customers-cc-tile > :not(.customers-cc-tint) { position: relative; }
+.customers-cc-bar { display: block; height: 6px; margin-top: 2px; border-radius: var(--pill); background: var(--mist-200); overflow: hidden; }
+.customers-cc-fill { display: block; height: 100%; border-radius: inherit; background: var(--accent); transform-origin: 0 50%; scale: var(--level, .6) 1; }
+.customers-cc-fill.is-oil { scale: .15 1; background: var(--dot-warn); transition: scale 1.8s var(--ease-in-out) .9s, background-color .5s var(--ease) 2.1s; }
+/* Before the figure is revealed, oil life sits at 62% (blue); the reveal drains it to 15% with the counter (a transition, not a page keyframe) */
+.js .customers-cc:not(.is-in) .customers-cc-fill.is-oil { scale: .62 1; background-color: var(--blue); transition: none; }
+.customers-cc-tires { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.customers-tire { display: grid; }
+.customers-tire > * { grid-area: 1 / 1; }
+.customers-tire-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; border-radius: 9px; background: var(--mist-50); font-size: 12.5px; }
+.customers-tire-row b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.customers-tire-row.is-low { background: var(--warn-soft); color: var(--warn); }
+.customers-cc-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.customers-cc-foot .mock-chip svg { width: 13px; height: 13px; }
+.customers-cc-foot .mock-sub { margin-left: auto; }
+
+
+/* CARFAX */
+.customers-carfax { display: grid; gap: clamp(20px, 1rem + 2vw, 48px); align-items: center; }
+@media (min-width: 900px) { .customers-carfax { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } }
+.customers-carfax .section-copy { gap: 14px; }
+.customers-carfax .callout { padding: clamp(18px, 1rem + 1vw, 26px); border-radius: var(--r-lg); background: var(--paper); border-color: var(--line); box-shadow: var(--shadow-1); }
+.customers-carfax .callout > .icon { width: 24px; height: 24px; padding: 6px; box-sizing: content-box; border-radius: 11px; background: var(--accent-soft); margin-top: 0; }
+.customers-carfax .callout p + p { margin-top: 10px; }
+.customers-carfax .cluster { --cluster: 8px; margin-top: 14px; }
+
+@media (max-width: 599.98px) {
+  .customers-hero-win > .mock-screen, .customers-tl-win > .mock-screen { padding: 12px; }
+  .customers-odo { font-size: 18px; }
+  .customers-camp-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .customers-camp-filters > :last-child { grid-column: 1 / -1; }
+  .customers-cc-card { padding: 14px; }
+  .customers-cc-tile { padding: 8px; }
+  .customers-cc-tile strong { font-size: 15px; }
+  .customers-car-name small { white-space: normal; }
+  .customers-carfax .callout { flex-direction: column; }
+}
+/* Narrow phones: the car's name takes the first row and the odometer drops under it */
+@media (max-width: 379.98px) {
+  .customers-car-head { flex-wrap: wrap; }
+  .customers-car-name { flex-basis: calc(100% - 48px); }
+  .customers-odo { margin-left: 48px; font-size: 16px; }
+  .customers-car-name b { white-space: normal; }
+  .customers-tl-head b, .customers-cc-head small { white-space: normal; }
+}
+/* Very narrow phones: the odometer gets its own row so "68,412 mi" never spills out of its tile */
+@media (max-width: 359.98px) {
+  .customers-cc-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .customers-cc-tile:first-child { grid-column: 1 / -1; }
+}
+/* Phones: icon cards become compact rows (site.css); keep the send-mode pill and the rule tile compact inside them */
+@media (max-width: 639.98px) {
+  .customers-auto > .customers-auto-mode { margin-top: 12px; margin-bottom: 0; }
+  .customers-auto > .customers-rule { margin-top: 12px; }
+}
+@media (max-width: 359.98px) {
+  .customers-auto > .customers-auto-mode { font-size: .78rem; }
+}
+</style>
 </head>
 <body data-page="features" data-tab="features" id="top">
 <!-- @partial icons -->
@@ -162,7 +377,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -190,9 +405,12 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
-    <div class="container">
-      <!-- @partial breadcrumbs -->
+  <!-- ===== Hero ===== -->
+  <section class="page-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
 <nav class="breadcrumb" aria-label="Breadcrumb">
   <ol>
     <li><a href="../index.html">Home</a></li>
@@ -202,10 +420,482 @@
 </nav>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Customers & follow-ups","item":"https://blakew316.github.io/automotive/features/customers.html"}]}</script>
 <!-- @end breadcrumbs -->
-      <h1>Bring them back for the work <span class="accent-text">they put off.</span></h1>
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-customers"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>Customers &amp; follow-ups</p>
+        <h1 id="hero-title">Bring them back for the work <span class="accent-text">they put off.</span></h1>
+        <p class="lead">Follow-up lists built from the work you&rsquo;ve already done: oil service due, declined work, customers you haven&rsquo;t seen and review requests. Your team sends them in one pass.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=customers">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/marketing" data-no-prerender>Open follow-ups in the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Oil service by time or mileage</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Declined work, remembered</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Connected-car oil life</span>
+        </div>
+      </div>
+      <figure class="page-hero-art mock-figure customers-hero" data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="2200" aria-label="Example: in the sample shop, about five months after the 2021 Camry SE's 30,000-mile service, its projected mileage reaches 35,120, 5,000 miles after that service, so Priya R. joins the oil-service list next to two customers already due, Owen R. and Hannah P. Send to all goes out, and the list shows all caught up.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage customers-hero-stage" aria-hidden="true">
+          <div class="mock-window customers-hero-win"><div class="mock-screen">
+            <div class="customers-hero-top">
+              <span class="mock-label">Oil-service reminders</span>
+              <span class="customers-hero-status">
+                <span data-until="2">2 ready to send</span>
+                <span data-at="2" data-until="3" data-fx="swap" style="--fx-delay: .5s">3 ready to send</span>
+                <span class="is-done" data-at="3" data-fx="swap" style="--fx-delay: 1.25s"><svg class="icon"><use href="#i-check-circle"/></svg>All caught up</span>
+              </span>
+            </div>
+            <div class="customers-car">
+              <div class="customers-car-head">
+                <span class="customers-oil" data-at="1" data-fx="pulse"><svg class="icon"><use href="#i-oil"/></svg></span>
+                <span class="customers-car-name"><b>2021 Camry SE</b><small>Priya R. · projected miles</small></span>
+                <span class="odometer customers-odo" data-odometer="35120" data-from="34870" data-group="," data-tenth data-duration="1.9" data-at="0">35,120</span>
+              </div>
+              <div class="customers-ruler">
+                <span class="customers-ruler-ticks"></span>
+                <span class="customers-ruler-major"></span>
+                <span class="customers-ruler-bar"><span class="customers-ruler-fill"></span></span>
+                <span class="customers-ride"><svg viewBox="0 0 32 14"><use href="#i-car-mini"/></svg></span>
+                <span class="customers-flag">
+                  <span>
+                    <span class="mock-chip is-idle" data-until="1">Due · 35,120</span>
+                    <span class="mock-chip is-warn" data-at="1" data-fx="pop">Due · 35,120</span>
+                  </span>
+                </span>
+              </div>
+              <div class="customers-ruler-labels"><span>34,750</span><span>35,000</span><span>35,250</span></div>
+              <span class="mock-sub">Projected from the 30,000-mile service at 30,120 mi · every 5,000 mi or 6 months</span>
+            </div>
+            <div class="mock-section-title customers-list-title"><span>Due for an oil service</span><span class="mock-btn" data-at="3" data-fx="press">Send to all</span></div>
+            <div class="mock-rows customers-list">
+              <div class="customers-slot"><div class="mock-row customers-new" data-at="2" data-fx="drop"><span class="mock-tickbox"><i data-at="3" data-fx="tick" style="--fx-delay: .35s"></i></span><span><b>Priya R. · 2021 Camry SE</b><small>Oil service due for your Camry</small></span><span class="mock-chip is-idle">Text</span></div></div>
+              <div class="mock-row"><span class="mock-tickbox"><i data-at="3" data-fx="tick" style="--fx-delay: .55s"></i></span><span><b>Owen R. · 2015 Ford Escape</b><small>Oil service due for your Escape</small></span><span class="mock-chip is-idle">Text</span></div>
+              <div class="mock-row"><span class="mock-tickbox"><i data-at="3" data-fx="tick" style="--fx-delay: .75s"></i></span><span><b>Hannah P. · 2017 Hyundai Elantra</b><small>Oil service due for your Elantra</small></span><span class="mock-chip is-idle">Text</span></div>
+            </div>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="dot"></span>
+          <span><strong>Follow-ups ready to send</strong><small>Oil service list</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-chat"/></svg></span>
+          <span><strong>Texts go out from your business number</strong><small>With Shop Cloud and Twilio</small></span>
+        </div>
+      </figure>
     </div>
   </section>
-  <section class="section section-sm" id="related" aria-labelledby="related-title">
+
+  <!-- ===== Where repeat visits slip away ===== -->
+  <section class="section section-paper" id="pains" aria-labelledby="pains-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-title">Where repeat visits <span class="accent-text">slip away</span></h2>
+        <ul class="signal-list">
+          <li>Declined work forgotten.</li>
+          <li>Reminder postcards nobody reads.</li>
+          <li class="is-critical">No idea who&rsquo;s overdue.</li>
+        </ul>
+        <p>Your repair orders already know whose oil is due, who said &ldquo;not now&rdquo; to brakes and who hasn&rsquo;t been back. WPI Driveline Shop Management System reads them and lines up the follow-ups, so nobody has to keep a list in their head.</p>
+      </div>
+      <div class="customers-pains-side">
+        <figure class="page-hero-art customers-art" data-reveal="right" data-reveal-seq aria-label="Illustration: a sticky note about brakes, a calendar with a question mark and a postcard dropped in a wastebasket all flow into one follow-up list, which gets three checks and a green check mark">
+          <svg viewBox="0 0 480 300" aria-hidden="true">
+            <ellipse class="art-tint" cx="372" cy="152" rx="118" ry="126" opacity=".6"/>
+            <!-- declined work on a sticky note: brakes, next time? -->
+            <g data-seq-i="0" data-fx="pop" class="customers-art-pop">
+              <g transform="rotate(-7 82 58)">
+                <path d="M46 24h72v52l-15 15H46z" fill="var(--warn-soft)" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/>
+                <path d="M103 91V80a4 4 0 0 1 4-4h11" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/>
+                <circle cx="70" cy="52" r="13" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.6"/>
+                <circle cx="70" cy="52" r="5" fill="var(--mist-200)" stroke="var(--ink)" stroke-width="1.3"/>
+                <g fill="var(--ink-4)"><circle cx="70" cy="43.5" r="1.3"/><circle cx="78.5" cy="52" r="1.3"/><circle cx="70" cy="60.5" r="1.3"/><circle cx="61.5" cy="52" r="1.3"/></g>
+                <path d="M90 42c0-6.5 10-6.5 10 0 0 4.2-5 4.7-5 9M95 58v.4" fill="none" stroke="var(--dot-warn)" stroke-width="2.4" stroke-linecap="round"/>
+                <path class="art-ink art-thin" d="M56 74c5-3 9 3 14 0s9-3 14 0" stroke-opacity=".5"/>
+              </g>
+            </g>
+            <!-- no idea who's overdue: a calendar with a question mark -->
+            <g data-seq-i="1" data-fx="pop" class="customers-art-pop">
+              <rect class="art-ink art-paper" x="140" y="112" width="76" height="68" rx="10"/>
+              <path d="M140 132h76" stroke="var(--ink)" stroke-width="1.4"/>
+              <rect x="141" y="113" width="74" height="18" rx="9" fill="var(--blue-100)"/>
+              <path class="art-ink" d="M158 106v12M198 106v12" stroke-width="2.2"/>
+              <g fill="var(--mist-300)"><circle cx="154" cy="144" r="2.6"/><circle cx="166" cy="144" r="2.6"/><circle cx="178" cy="144" r="2.6"/><circle cx="190" cy="144" r="2.6"/><circle cx="202" cy="144" r="2.6"/><circle cx="154" cy="156" r="2.6"/><circle cx="166" cy="156" r="2.6"/><circle cx="178" cy="156" r="2.6"/><circle cx="190" cy="156" r="2.6"/><circle cx="202" cy="156" r="2.6"/><circle cx="154" cy="168" r="2.6"/><circle cx="166" cy="168" r="2.6"/><circle cx="178" cy="168" r="2.6"/></g>
+              <circle cx="214" cy="176" r="13" fill="var(--dot-stop)" stroke="var(--paper)" stroke-width="2.5"/>
+              <path d="M209.6 172.4c0-5.6 8.8-5.6 8.8 0 0 3.4-4.4 3.8-4.4 7M214 183.4v.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+            </g>
+            <!-- a reminder postcard drops into the wastebasket -->
+            <path class="art-ink art-thin" data-seq-i="2" data-fx="fade" d="M50 226h66" stroke-opacity=".5"/>
+            <g data-seq-i="2" data-fx="drop" style="--fx-delay: .35s" class="customers-art-pop">
+              <g transform="rotate(14 86 214)">
+                <rect class="art-ink art-paper" x="50" y="190" width="72" height="48" rx="5"/>
+                <rect x="102" y="196" width="14" height="16" rx="2" fill="var(--blue-100)" stroke="var(--accent)" stroke-width="1.2"/>
+                <path class="art-ink art-thin" d="M58 202h32M58 211h26M90 222h24M90 229h18" stroke-opacity=".4"/>
+                <path d="M86 198v34" stroke="var(--mist-300)" stroke-width="1.2"/>
+              </g>
+            </g>
+            <g data-seq-i="2" data-fx="pop" class="customers-art-pop">
+              <path class="art-ink art-paper" d="M48 226h70l-7 60H55z"/>
+              <path class="art-ink art-thin" d="M66 238l2 40M83 238v40M100 238l-2 40" stroke-opacity=".45"/>
+              <path class="art-ink" d="M44 226h78" stroke-width="2.4"/>
+            </g>
+            <!-- everything flows into one list -->
+            <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" d="M124 54c76 0 110 30 166 44"/>
+            <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" style="--fx-delay: .12s" d="M232 150h58"/>
+            <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" style="--fx-delay: .24s" d="M132 214c66 0 100-12 158-18"/>
+            <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130" d="M124 54c76 0 110 30 166 44"/>
+            <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130; --fx-delay: .15s" d="M232 150h58"/>
+            <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130; --fx-delay: .3s" d="M132 214c66 0 100-12 158-18"/>
+            <g data-seq-i="4" data-fx="pop" class="customers-art-pop">
+              <rect class="art-ink art-paper" x="292" y="42" width="172" height="218" rx="18"/>
+              <circle cx="322" cy="74" r="15" fill="var(--blue-50)" stroke="var(--blue)" stroke-width="1.6"/>
+              <path d="M322 64.5c3.6 4.3 6.4 7.6 6.4 11.1a6.4 6.4 0 0 1-12.8 0c0-3.5 2.8-6.8 6.4-11.1z" fill="var(--paper)" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/>
+              <rect x="346" y="66" width="84" height="8" rx="4" fill="var(--ink)" opacity=".8"/>
+              <rect x="346" y="80" width="52" height="6" rx="3" fill="var(--mist-300)"/>
+              <path d="M306 102h144" stroke="var(--mist-200)" stroke-width="2"/>
+            </g>
+            <g data-seq-i="5" data-fx="stagger" style="--fx: fx-left; --fx-stagger: 120ms">
+              <g>
+                <rect x="306" y="116" width="18" height="18" rx="5" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5"/>
+                <rect x="336" y="118" width="96" height="6" rx="3" fill="var(--ink-4)" opacity=".55"/>
+                <rect x="336" y="128" width="62" height="5" rx="2.5" fill="var(--mist-300)"/>
+              </g>
+              <g>
+                <rect x="306" y="152" width="18" height="18" rx="5" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5"/>
+                <rect x="336" y="154" width="84" height="6" rx="3" fill="var(--ink-4)" opacity=".55"/>
+                <rect x="336" y="164" width="72" height="5" rx="2.5" fill="var(--mist-300)"/>
+              </g>
+              <g>
+                <rect x="306" y="188" width="18" height="18" rx="5" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5"/>
+                <rect x="336" y="190" width="100" height="6" rx="3" fill="var(--ink-4)" opacity=".55"/>
+                <rect x="336" y="200" width="54" height="5" rx="2.5" fill="var(--mist-300)"/>
+              </g>
+            </g>
+            <g data-seq-i="6" data-fx="tick" class="customers-art-pop"><rect x="306" y="116" width="18" height="18" rx="5" fill="var(--accent)"/><path d="M310.5 125.2l3.2 3.2 6-6.4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <g data-seq-i="6" data-fx="tick" style="--fx-delay: .16s" class="customers-art-pop"><rect x="306" y="152" width="18" height="18" rx="5" fill="var(--accent)"/><path d="M310.5 161.2l3.2 3.2 6-6.4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <g data-seq-i="6" data-fx="tick" style="--fx-delay: .32s" class="customers-art-pop"><rect x="306" y="188" width="18" height="18" rx="5" fill="var(--accent)"/><path d="M310.5 197.2l3.2 3.2 6-6.4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <g data-seq-i="5" data-fx="pop" style="--fx-delay: .3s" class="customers-art-pop">
+              <rect x="306" y="222" width="144" height="24" rx="12" fill="var(--accent)"/>
+              <path d="M362 228.5l13 5.5-13 5.5 2.6-5.5z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>
+              <rect x="380" y="231.5" width="34" height="5" rx="2.5" fill="#fff" opacity=".85"/>
+            </g>
+            <g data-seq-i="7" data-fx="pop" class="customers-art-pop">
+              <circle cx="458" cy="48" r="15" fill="var(--green)" stroke="var(--paper)" stroke-width="3"/>
+              <path d="M451 48.5l4.6 4.6 9-9.6" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Six follow-up lists ===== -->
+  <section class="section" id="automations" aria-labelledby="automations-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Follow-up lists</p>
+        <h2 id="automations-title">Six <span class="accent-text">follow-up lists</span></h2>
+        <p class="lead">Marketing builds each list from your own appointments, repair orders and messages. Every card shows who&rsquo;s ready now and what went out in the last 30 days, and you switch each one on or off.</p>
+      </div>
+      <div class="grid grid-3 customers-autos" data-reveal-stagger>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>
+          <h3 class="mt-2">Appointment confirmation</h3>
+          <p>Confirms new bookings so the customer knows they&rsquo;re on the schedule. Switched on, the server texts bookings made from then on, from your business number.</p>
+          <span class="customers-auto-mode is-server"><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg>Server sends it when on</span>
+          <span class="customers-rule"><b>New bookings</b><small>Made after you switch it on</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span>
+          <h3 class="mt-2">Day-before reminder</h3>
+          <p>The day before each appointment. Switched on, the server texts it from your business number at the hour you pick (8 AM to 5 PM); otherwise it waits in the list for your team.</p>
+          <span class="customers-auto-mode is-server"><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg>Server sends it when on</span>
+          <span class="customers-rule"><b>The day before</b><small>At the hour you pick</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+          <h3 class="mt-2">Review request</h3>
+          <p>Asks customers from recently closed visits how you did, with your Google review link once you add it in Settings.</p>
+          <span class="customers-auto-mode"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Your team sends it in one pass</span>
+          <span class="customers-rule"><b>Closed visits</b><small>Each customer is asked once</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg></span>
+          <h3 class="mt-2">Oil-service reminder</h3>
+          <p>Due by time or by projected mileage since the last oil service: 6 months or 5,000 miles by default, both your settings. A connected car&rsquo;s latest oil-life reading (15% or less) counts too.</p>
+          <span class="customers-auto-mode"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Your team sends it in one pass</span>
+          <span class="customers-rule"><b>6 mo or <span class="odometer is-plain" data-odometer="5000" data-group=",">5,000</span> mi</b><small>Due every, by default</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+          <h3 class="mt-2">Declined-work follow-up</h3>
+          <p>Work a customer said &ldquo;not now&rdquo; to that hasn&rsquo;t been done since. It comes up two weeks after the visit.</p>
+          <span class="customers-auto-mode"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Your team sends it in one pass</span>
+          <span class="customers-rule"><b><span class="odometer is-plain" data-odometer="14">14</span> days</b><small>After the visit</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-handshake"/></svg></span>
+          <h3 class="mt-2">We miss you</h3>
+          <p>Customers you haven&rsquo;t seen in a while and who aren&rsquo;t already booked. Nine months by default, and you set the number.</p>
+          <span class="customers-auto-mode"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Your team sends it in one pass</span>
+          <span class="customers-rule"><b><span class="odometer is-plain" data-odometer="9">9</span>+ months</b><small>Without a visit, by default</small></span>
+        </div>
+      </div>
+      <div class="callout customers-auto-note" data-reveal>
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <p class="callout-title">What the server sends, and what waits for your team</p>
+          <p>Confirmations and day-before reminders, once you switch them on, are sent by the server with Twilio (<a href="../works-with.html#shop-cloud">Shop Cloud</a>). Until then they wait in the list with the others, for your team to send in one pass.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Campaigns ===== -->
+  <section class="section section-tint" id="campaigns" aria-labelledby="campaigns-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Campaigns</p>
+        <h2 id="campaigns-title">Campaigns, <span class="accent-text">written once</span></h2>
+        <p>Build a custom campaign by customer tag, the make they drive or when they last visited. Write the message once with merge fields like <span class="mono">{first}</span> and <span class="mono">{vehicle}</span>, and each customer gets their own name and their car on file.</p>
+        <p>Send everything at once from your business number (Twilio) or your email (Resend), with Shop Cloud. Otherwise send one tap at a time from the shop phone, as one BCC email, or export the list for a bulk tool.</p>
+        <p>Every send is logged on the customer&rsquo;s thread. With Resend, addresses that bounced or marked you as spam are skipped.</p>
+        <p class="fine-print">One-pass sending uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> with your Twilio number or Resend. See <a href="messaging.html">Texting, calls &amp; email</a>.</p>
+      </div>
+      <figure class="mock-figure customers-camp" data-reveal="left" data-reveal-seq aria-label="Example: a campaign to Toyota drivers, with any last visit, goes to 39 recipients in the sample shop. The first three texts show the first-name merge field as Priya, Sofia and Tyler.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage customers-camp-stage" aria-hidden="true">
+          <div class="customers-camp-card">
+            <div class="customers-camp-head"><span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-chat"/></svg></span><span><span class="mock-title">New campaign</span><span class="mock-sub">Write once, personalize automatically</span></span></div>
+            <div class="customers-camp-filters">
+              <span class="customers-filter"><small>Customer tag</small><span>All customers</span></span>
+              <span class="customers-filter"><small>Drives a</small><span>Toyota</span></span>
+              <span class="customers-filter"><small>Last visit</small><span>Anyone</span></span>
+            </div>
+            <div class="customers-camp-msg">
+              <span class="mock-label">Message</span>
+              <span class="customers-camp-body">Hi <span class="customers-key">{first}</span>, it&rsquo;s <span class="customers-key">{shop}</span>. This month: free brake &amp; tire check with any oil service. Call <span class="customers-key">{phone}</span> or book online: <span class="customers-key">{bookLink}</span></span>
+            </div>
+            <div class="customers-camp-foot">
+              <span class="mock-seg" style="--segs:2; --seg:0"><span>Text</span><span>Email</span></span>
+              <span class="customers-camp-count"><b>39</b> recipients</span>
+              <span class="mock-btn">Review &amp; send</span>
+            </div>
+          </div>
+          <div class="customers-camp-sends">
+            <span class="customers-camp-first" data-seq-i="1" data-fx="fade">First 3 of 39</span>
+            <div class="customers-camp-send" data-seq-i="1" data-fx="bubble">
+              <span class="customers-camp-to">To Priya R.</span>
+              <span class="mock-bubble out">Hi <span class="customers-token"><span class="customers-token-key" data-seq-out="4"><span>{first}</span>,</span><span class="customers-token-val" data-seq-i="4" data-fx="swap" style="--fx-dur: .6s">Priya,</span></span> it&rsquo;s Main Street Auto Service. This month: free brake &amp; tire check&hellip;</span>
+            </div>
+            <div class="customers-camp-send" data-seq-i="2" data-fx="bubble">
+              <span class="customers-camp-to">To Sofia C.</span>
+              <span class="mock-bubble out">Hi <span class="customers-token"><span class="customers-token-key" data-seq-out="5"><span>{first}</span>,</span><span class="customers-token-val" data-seq-i="5" data-fx="swap" style="--fx-dur: .6s">Sofia,</span></span> it&rsquo;s Main Street Auto Service. This month: free brake &amp; tire check&hellip;</span>
+            </div>
+            <div class="customers-camp-send" data-seq-i="3" data-fx="bubble">
+              <span class="customers-camp-to">To Tyler O.</span>
+              <span class="mock-bubble out">Hi <span class="customers-token"><span class="customers-token-key" data-seq-out="6"><span>{first}</span>,</span><span class="customers-token-val" data-seq-i="6" data-fx="swap" style="--fx-dur: .6s">Tyler,</span></span> it&rsquo;s Main Street Auto Service. This month: free brake &amp; tire check&hellip;</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Customer and vehicle history ===== -->
+  <section class="section section-paper" id="history" aria-labelledby="history-title">
+    <div class="container">
+      <div class="split customers-history-head">
+        <div class="section-copy" data-reveal="left">
+          <p class="eyebrow">History</p>
+          <h2 id="history-title">The whole story on every <span class="accent-text">customer and vehicle</span></h2>
+          <p>Every repair order and message stays on the customer and the vehicle, and declined work stays on the customer&rsquo;s page. Whoever picks up the phone sees what was done, at what mileage, and what&rsquo;s still waiting.</p>
+          <a class="link-arrow" href="diagnosis.html">Auto Diagnosis &amp; vehicle data <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+        <figure class="mock-figure customers-tl-fig" data-reveal="right" data-reveal-seq aria-label="Example: the service history of the sample shop's 2021 Toyota Camry SE, 4 visits and 3,016.52 dollars lifetime. The current 30,000-mile service at 30,120 miles is approved. Earlier visits: full synthetic oil and filter, tire installation and rear brakes at 29,474 miles; front lower control arms at 26,852 miles; rear brakes and a cooling system service at 24,914 miles. Declined work shows on the customer's page, not in the vehicle's history: front struts, declined at 29,474 miles and not done since.">
+          <span class="mock-tag">Example · sample shop</span>
+          <div class="mock-stage" aria-hidden="true">
+            <div class="mock-window customers-tl-win"><div class="mock-screen">
+              <div class="customers-tl-head">
+                <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-car"/></svg></span>
+                <span><b>2021 Toyota Camry SE</b><small>Priya R. · PRY 921</small></span>
+                <span class="mock-btn is-soft"><svg class="icon" style="width:14px;height:14px"><use href="#i-diagnostics"/></svg>Diagnose</span>
+              </div>
+              <div class="mock-section-title"><span>Service history</span><span class="customers-tl-sum">4 visits · $3,016.52 lifetime</span></div>
+              <div class="customers-tl">
+                <span class="customers-tl-line" data-seq-i="0" data-fx="wipe-down" style="--fx-dur: 1.5s; --fx-ease: var(--ease-in-out)"></span>
+                <div class="customers-tl-item">
+                  <span class="customers-tl-dot" data-seq-i="1" data-fx="pop"></span>
+                  <span><b>30,000-mile service</b><small>Approved · oil &amp; filter, tire rotation, air filters, brake fluid</small></span>
+                  <span class="mock-chip" data-seq-i="1" data-fx="pop">30,120 mi</span>
+                </div>
+                <div class="customers-tl-item">
+                  <span class="customers-tl-dot" data-seq-i="2" data-fx="pop"></span>
+                  <span><b>Oil &amp; filter, tire installation, rear brakes</b><small>Closed</small></span>
+                  <span class="mock-chip" data-seq-i="2" data-fx="pop">29,474 mi</span>
+                </div>
+                <div class="customers-tl-item">
+                  <span class="customers-tl-dot" data-seq-i="3" data-fx="pop"></span>
+                  <span><b>Front lower control arms</b><small>Closed</small></span>
+                  <span class="mock-chip" data-seq-i="3" data-fx="pop">26,852 mi</span>
+                </div>
+                <div class="customers-tl-item">
+                  <span class="customers-tl-dot" data-seq-i="4" data-fx="pop"></span>
+                  <span><b>Rear brakes, cooling system service</b><small>Closed</small></span>
+                  <span class="mock-chip" data-seq-i="4" data-fx="pop">24,914 mi</span>
+                </div>
+              </div>
+              <div class="customers-tl-declined" data-seq-i="5" data-fx="pop">
+                <span class="mock-label">Declined work · customer page</span>
+                <span class="mock-chip is-warn" data-seq-i="6" data-fx="pulse" style="--fx-n: 1"><svg class="icon"><use href="#i-alert"/></svg>Declined: front struts · not done since</span>
+              </div>
+            </div></div>
+          </div>
+        </figure>
+      </div>
+      <div class="grid grid-3" data-reveal-stagger>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
+          <h3 class="mt-2">Customers</h3>
+          <p>Lifetime spend, visit history, recent messages, declined work to follow up and tags, on one page. <a href="ai.html">Summarize with AI</a> (Shop Cloud with your Anthropic key) gives the advisor a short summary.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span>
+          <h3 class="mt-2">Vehicles</h3>
+          <p>A service timeline with mileage and lifetime spend, the vehicle&rsquo;s configuration (system diagrams, parts list and repair guides) and a <a href="diagnosis.html">Diagnose</a> button.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+          <h3 class="mt-2">Recalls and record history</h3>
+          <p>NHTSA recalls, complaints and crash ratings on demand: tap Check now, or turn on Always check. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, every record keeps a change history with one-click restore.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Connected cars ===== -->
+  <section class="section" id="connected-cars" aria-labelledby="connected-cars-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Connected cars</p>
+        <h2 id="connected-cars-title">Connected cars, <span class="accent-text">with the owner&rsquo;s OK</span></h2>
+        <p><strong>Send connect link</strong> texts the owner a link, good for 7 days, that opens Smartcar Connect. They sign in to their carmaker account and approve access.</p>
+        <p>Access is read-only: vehicle info, VIN, odometer, oil life, tire pressure, fuel and battery. There is no unlocking, starting or location.</p>
+        <p>When someone opens the vehicle and the last reading is more than 12 hours old, or taps Read now, the app reads the car: the mileage updates, and oil life of 15% or less and tires under 28 psi are flagged. A low oil-life reading puts the car on your oil-service list for your team to send, once it has had an oil service with you.</p>
+        <p class="fine-print">Tokens stay on your <a href="../works-with.html#shop-cloud">Shop Cloud</a> server and never reach a device. The owner can disconnect any time.</p>
+      </div>
+      <figure class="mock-figure customers-cc" data-reveal="right" data-reveal-seq aria-label="Example: a connected 2019 Honda CR-V reads 68,412 miles, oil life 15% and fuel 58%. Oil life is flagged as due for an oil change, the rear-right tire reads 26 psi and is flagged low, and the car is added to the oil-service list. Connected cars need Shop Cloud and Smartcar, so the sample shop has none connected.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="customers-cc-card">
+            <div class="customers-cc-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-car"/></svg></span>
+              <span><b>Connected car</b><small>2019 Honda CR-V · read-only</small></span>
+              <span class="mock-chip is-ok"><span class="mock-dot is-ok"></span>Connected</span>
+            </div>
+            <div class="customers-cc-alert" data-seq-i="6" data-fx="pop"><svg class="icon"><use href="#i-alert"/></svg>Oil life 15% · due for an oil change</div>
+            <div class="customers-cc-tiles" data-seq-i="0" data-fx="stagger">
+              <div class="customers-cc-tile">
+                <span class="mock-label"><svg class="icon"><use href="#i-gauge"/></svg>Odometer</span>
+                <strong><span class="odometer is-plain" data-odometer="68412" data-from="68330" data-group="," data-duration="1.6">68,412</span> mi</strong>
+              </div>
+              <div class="customers-cc-tile is-low">
+                <span class="customers-cc-tint" data-seq-i="6" data-fx="fade"></span>
+                <span class="mock-label"><svg class="icon"><use href="#i-oil"/></svg>Oil life</span>
+                <strong class="customers-cc-val"><span data-seq-out="6"><span data-seq-i="2" data-fx="none"><span class="odometer is-plain" data-odometer="15" data-from="62" data-duration="1.8" data-suffix="%">15%</span></span></span><span class="is-warn" data-seq-i="6" data-fx="fade">15%</span></strong>
+                <span class="customers-cc-bar"><span class="customers-cc-fill is-oil"></span></span>
+              </div>
+              <div class="customers-cc-tile">
+                <span class="mock-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20.5V5a1.5 1.5 0 0 1 1.5-1.5h6A1.5 1.5 0 0 1 14 5v15.5M3.5 20.5h12M5 10h9M14 8l3 2.5v7a1.5 1.5 0 0 0 3 0V9.5L17.5 7"/></svg>Fuel</span>
+                <strong>58%</strong>
+                <span class="customers-cc-bar"><span class="customers-cc-fill" style="--level: .58"></span></span>
+              </div>
+            </div>
+            <span class="mock-label">Tire pressure (psi)</span>
+            <div class="customers-cc-tires" data-seq-i="1" data-fx="stagger">
+              <span class="customers-tire"><span class="customers-tire-row"><span>Front left</span><b><span class="odometer is-plain" data-odometer="35" data-from="30" data-duration="1.3">35</span></b></span></span>
+              <span class="customers-tire"><span class="customers-tire-row"><span>Front right</span><b><span class="odometer is-plain" data-odometer="35" data-from="31" data-duration="1.3">35</span></b></span></span>
+              <span class="customers-tire"><span class="customers-tire-row"><span>Rear left</span><b><span class="odometer is-plain" data-odometer="34" data-from="29" data-duration="1.3">34</span></b></span></span>
+              <span class="customers-tire">
+                <span class="customers-tire-row" data-seq-out="7"><span>Rear right</span><b><span class="odometer is-plain" data-odometer="26" data-from="31" data-duration="1.3">26</span></b></span>
+                <span class="customers-tire-row is-low" data-seq-i="7" data-fx="fade"><span>Rear right</span><b>26</b></span>
+              </span>
+            </div>
+            <div class="customers-cc-foot">
+              <span class="mock-chip" data-seq-i="8" data-fx="pop"><svg class="icon"><use href="#i-oil"/></svg>Added to the oil-service list</span>
+              <span class="mock-sub">No unlock, start or location</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== CARFAX ===== -->
+  <section class="section section-tint" id="carfax" aria-labelledby="carfax-title">
+    <div class="container customers-carfax">
+      <div class="section-copy" data-reveal="fade">
+        <p class="eyebrow">Vehicle history reports</p>
+        <h2 id="carfax-title">Service records <span class="accent-text">for CARFAX</span></h2>
+        <p>Get the work you&rsquo;ve finished onto vehicle history reports, tied to each VIN.</p>
+      </div>
+      <div class="callout" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>
+        <div>
+          <p class="callout-title">Guidance and a CSV, not a direct connection</p>
+          <p>The app explains how to enroll in the free CARFAX Car Care service-shop program and exports a service-history CSV for any date range. ROs without a 17-character VIN are skipped and counted so you can fix them. Records reach CARFAX only after your shop enrolls.</p>
+          <p>Each row carries the VIN, year, make and model, service date, odometer, RO number, the service performed and your shop&rsquo;s name, address and phone.</p>
+          <div class="cluster">
+            <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-import"/></svg>CSV export</span>
+            <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Any date range</span>
+            <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-vin"/></svg>ROs without a VIN counted</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> one-pass texting uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> with Twilio, and one-pass email uses Shop Cloud with Resend. Without them, your team sends one tap at a time from the shop phone or mail app.</li>
+            <li>U.S. carriers block business texts until A2P 10DLC or toll-free verification is done, and Twilio bills per text. See <a href="messaging.html">Texting, calls &amp; email</a>.</li>
+            <li>Automatic appointment confirmations and day-before reminders are off until you turn them on.</li>
+            <li>Connected cars need Shop Cloud, Smartcar (free developer tier, paid beyond) and the owner&rsquo;s OK. Which readings are available depends on the car&rsquo;s make, model and year.</li>
+            <li>Smartcar&rsquo;s Simulated mode is for trials with test vehicles only.</li>
+            <li>Summarize with AI uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your own Anthropic API key, billed to your shop.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Follow-up questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="feat-faq"><summary>Do follow-ups send themselves?</summary><div class="faq-body"><p>Only appointment confirmations and day-before reminders, once you switch them on. The server sends those from your Twilio number through <a href="../works-with.html#shop-cloud">Shop Cloud</a>. Your team sends the rest in one pass from the Marketing page.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Can customers opt out?</summary><div class="faq-body"><p>Yes. STOP is honored: when a customer replies STOP to your business number, texts to them are blocked until they reply START.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Does connected-car access track location?</summary><div class="faq-body"><p>No. Access is read-only and covers vehicle info, VIN, odometer, oil life, tire pressure, fuel and battery. Location, unlocking and starting aren&rsquo;t part of it.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Does it report to CARFAX automatically?</summary><div class="faq-body"><p>No. Once your shop enrolls in the CARFAX Car Care program, you export the service-history CSV and send it the way CARFAX asks.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Related ===== -->
+  <section class="section section-sm customers-related" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>
       <!-- @partial related -->
@@ -225,7 +915,7 @@
   <a class="card card-link feature-card" href="../features/ai.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
     <h3>AI assistant</h3>
-    <p>First drafts from Claude. Your team has the last word.</p>
+    <p>First drafts from Claude for your team to review, plus an AI receptionist for calls.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
 </div>
@@ -240,7 +930,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -255,7 +945,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
@@ -322,6 +1012,7 @@
   <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

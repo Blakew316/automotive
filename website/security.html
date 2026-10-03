@@ -35,6 +35,413 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* ===== security.html (page-local; classes prefixed security-) ===== */
+
+/* ---------- Shared bits ---------- */
+#hero { padding-bottom: clamp(40px, 1.5rem + 3vw, 76px); }
+.subnav + .section { padding-top: clamp(44px, 2rem + 2.5vw, 88px); }
+.section-copy ul.pill-cloud { list-style: none; margin: 0; padding: 0; }
+.security-ico { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 9px; background: var(--blue-50); color: var(--accent); box-shadow: inset 0 0 0 1px var(--blue-100); }
+.security-ico .icon { width: 15px; height: 15px; stroke-width: 1.9; }
+.security-ico.is-green { background: var(--green-50); color: var(--green-ink); box-shadow: inset 0 0 0 1px var(--green-100); }
+.security-card-name { display: grid; min-width: 0; line-height: 1.3; }
+.security-card-name b { font-size: 13px; font-weight: 680; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.security-card-name small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ---------- Hero: shield + padlock, a two-step code, a key readout, fourteen backup nights ---------- */
+.security-hero { width: 100%; }
+.security-stage {
+  display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr);
+  grid-template-areas: "shield code" "shield key" "backups backups";
+  gap: 12px 14px; align-items: center; width: min(100%, 520px); padding: 6px 0 14px; text-align: left; justify-items: stretch;
+}
+.security-shield { grid-area: shield; display: grid; place-items: center; align-self: stretch; min-width: 0; }
+.security-shield svg { width: 100%; max-width: 236px; height: auto; overflow: visible; }
+.security-shackle { translate: 0 0; }
+.security-hero:not([data-reached~="1"]) .security-shackle { translate: 0 -9px; }
+@keyframes security-pk-click { 0%, 30% { translate: 0 -9px; } 62% { translate: 0 1.6px; } 80% { translate: 0 -.6px; } 100% { translate: 0 0; } }
+.security-shield-ok { transform-box: fill-box; transform-origin: center; }
+
+.security-card {
+  position: relative; z-index: 1; display: grid; gap: 10px; align-content: start; min-width: 0;
+  padding: 12px 13px 13px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2);
+}
+.security-card-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.security-code { grid-area: code; align-self: end; }
+.security-key { grid-area: key; align-self: start; }
+.security-backups { grid-area: backups; }
+
+.security-code-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.security-code-digits { font-size: 19px; color: var(--ink); }
+.security-code-digits.is-boxed .slot-cell { width: 1.42ch; background: var(--blue-50); box-shadow: inset 0 0 0 1px var(--blue-100); }
+.security-ring { flex: none; width: 30px; height: 30px; rotate: -90deg; }
+.security-ring circle { fill: none; stroke-width: 3.4; }
+.security-ring-track { stroke: var(--mist-200); }
+.security-ring-arc { stroke: var(--blue); stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: .3; }
+.security-ring-arc[data-at] { --fx: security-ring-draw; }
+@keyframes security-ring-draw { from { stroke-dashoffset: 1; } }
+.security-verified {
+  justify-self: start; display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: var(--pill);
+  background: var(--green-100); color: var(--green-ink); font-size: 12px; font-weight: 650; white-space: nowrap;
+}
+.security-verified .icon { width: 13px; height: 13px; stroke-width: 2.6; }
+
+.security-key-field {
+  display: flex; align-items: center; gap: 6px; min-width: 0; padding: 5px 9px; border-radius: 9px;
+  border: 1px solid var(--line-strong); background: var(--mist-50); overflow: hidden;
+}
+.security-key-blur { flex: 1 1 auto; min-width: 0; overflow: hidden; white-space: nowrap; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); filter: blur(3.2px); user-select: none; }
+.security-key-field .icon { flex: none; width: 14px; height: 14px; color: var(--ink-3); }
+.security-key-status { display: flex; align-items: center; gap: 5px; min-width: 0; font-size: 12px; font-weight: 650; color: var(--green-ink); white-space: nowrap; }
+.security-key-status .icon { width: 13px; height: 13px; stroke-width: 2.6; }
+.security-key-status small { font-size: 12px; font-weight: 500; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; }
+
+.security-backups-chip { margin-left: auto; }
+.security-nights { display: grid; }
+.security-nights > span { grid-area: 1 / 1; display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 5px; }
+.security-nights i { display: block; height: 16px; border-radius: 5px; }
+.security-nights-track i { background: var(--mist-50); box-shadow: inset 0 0 0 1.5px var(--mist-200); }
+.security-nights-fill i { background: var(--green); box-shadow: inset 0 -3px 0 rgba(15, 43, 76, .1); transform-origin: center; }
+.security-nights-fill i:first-child { background: var(--blue); }
+
+.security-hero .float-note.note-1 { top: 46px; left: -34px; }
+.security-hero .float-note.note-2 { top: auto; bottom: -34px; right: 22px; }
+@media (min-width: 960px) and (max-width: 1179.98px) {
+  .security-hero .float-note { display: none; }
+}
+@media (max-width: 599.98px) {
+  .security-stage { grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr); gap: 10px; padding-bottom: 6px; }
+  .security-card { padding: 10px 10px 11px; border-radius: 14px; gap: 8px; }
+  .security-card-head { gap: 7px; }
+  .security-ico { width: 24px; height: 24px; border-radius: 8px; }
+  .security-ico .icon { width: 13px; height: 13px; }
+  .security-code-digits { font-size: 16px; }
+  .security-code-digits.is-boxed { gap: 2px; }
+  .security-ring { width: 24px; height: 24px; }
+  .security-nights > span { gap: 3px; }
+  .security-nights i { height: 13px; border-radius: 4px; }
+}
+@media (max-width: 359.98px) {
+  .security-stage { grid-template-columns: minmax(0, .64fr) minmax(0, 1.36fr); gap: 10px 8px; }
+  .security-code-digits { font-size: 14px; }
+  .security-code-digits.is-boxed .slot-cell { width: 1.25ch; }
+  .security-ring { width: 20px; height: 20px; }
+  .security-verified { padding: 3px 7px 3px 5px; gap: 3px; }
+  .security-key-status small { display: none; }
+}
+
+/* ---------- Where it lives ---------- */
+.security-where-warn { padding: 14px 16px; }
+.security-where-warn .callout-title { font-size: 1rem; }
+.security-where-warn p:not(.callout-title) { color: var(--ink-2); }
+.security-where {
+  position: relative; display: grid; gap: 0; padding: clamp(18px, 1rem + 1vw, 28px);
+  border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2); overflow: hidden;
+}
+.security-where::before { content: ""; position: absolute; inset: 0 0 auto; height: 5px; background: var(--bar); }
+.security-devices { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.security-device {
+  display: grid; justify-items: center; gap: 6px; padding: 14px 8px 12px; border-radius: 16px; text-align: center;
+  background: var(--mist-50); border: 1px solid var(--line);
+}
+.security-device-ico { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: var(--paper); color: var(--ink); box-shadow: var(--shadow-1), inset 0 0 0 1px var(--line); }
+.security-device-ico .icon { width: 24px; height: 24px; stroke-width: 1.6; }
+.security-device strong { font-size: .95rem; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); line-height: 1.2; }
+.security-device small { display: inline-flex; align-items: center; gap: 4px; font-size: .78rem; font-weight: 600; color: var(--ink-3); line-height: 1.2; }
+.security-device small .icon { width: 13px; height: 13px; color: var(--accent); }
+.security-sync { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; height: 54px; }
+.security-sync i { justify-self: center; width: 0; height: 100%; border-left: 2px dashed color-mix(in srgb, var(--blue) 50%, transparent); }
+.security-sync-chip {
+  position: absolute; left: 50%; top: 50%; translate: -50% -50%;
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px 4px 9px; border-radius: var(--pill);
+  background: var(--paper); border: 1px solid var(--blue-100); box-shadow: var(--shadow-1);
+  font-size: .8rem; font-weight: 650; color: var(--accent-ink); white-space: nowrap;
+}
+.security-sync-chip .icon { width: 14px; height: 14px; }
+.security-cloud { display: grid; gap: 14px; padding: 16px; border-radius: 18px; background: var(--wash); border: 1px solid rgba(31, 122, 224, .16); }
+.security-cloud-head { display: flex; align-items: center; gap: 12px; }
+.security-cloud-head .icon-tile { width: 46px; height: 46px; border-radius: 14px; flex: none; }
+.security-cloud-head .icon-tile .icon { width: 24px; height: 24px; }
+.security-cloud-head strong { display: block; font-size: 1.05rem; font-weight: 680; letter-spacing: -0.015em; color: var(--ink); }
+.security-cloud-head small { display: block; font-size: .88rem; color: var(--ink-3); }
+.security-cloud-pills { list-style: none; margin: 0; padding: 0; gap: 6px; }
+.security-cloud-pills .provider-pill { min-height: 32px; padding: 4px 11px; font-size: .84rem; }
+@media (max-width: 599.98px) {
+  .security-devices { gap: 6px; }
+  .security-sync { gap: 6px; height: 44px; }
+  .security-device { padding: 12px 4px 10px; border-radius: 14px; }
+  .security-device-ico { width: 40px; height: 40px; border-radius: 12px; }
+  .security-device strong { font-size: .86rem; }
+  .security-device small { font-size: .72rem; }
+  .security-device small .icon { display: none; }
+  .security-cloud { padding: 14px 12px; }
+}
+
+/* ---------- Sign-in: password + six code dots, a shield check ---------- */
+.security-apps { list-style: none; margin: 0; padding: 0; }
+.security-apps .provider-pill { min-height: 34px; font-size: .86rem; }
+.security-2fa { margin: 0; display: grid; justify-items: center; }
+.security-2fa-card {
+  position: relative; display: grid; gap: 12px; width: min(100%, 440px); padding: clamp(18px, 1rem + 1vw, 26px);
+  border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-3);
+}
+.security-2fa-head { display: flex; align-items: center; gap: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.security-2fa-shield { flex: none; width: 52px; height: auto; overflow: visible; }
+.security-2fa-tick { transform-box: fill-box; transform-origin: center; }
+.security-2fa-head b { display: block; font-size: 1.05rem; font-weight: 680; letter-spacing: -0.015em; color: var(--ink); }
+.security-2fa-head small { display: block; margin-top: 2px; font-size: .88rem; line-height: 1.4; color: var(--ink-3); }
+.security-2fa-row {
+  display: grid; grid-template-columns: 96px minmax(0, 1fr) 28px; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 14px; background: var(--mist-50); border: 1px solid var(--line);
+}
+.security-2fa-label { font-size: .84rem; font-weight: 650; color: var(--ink-2); }
+.security-2fa-pw { display: flex; gap: 5px; overflow: hidden; }
+.security-2fa-pw i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ink-3); }
+.security-2fa-boxes { display: grid; }
+.security-2fa-boxes > span { grid-area: 1 / 1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; }
+.security-2fa-slots i { display: grid; place-items: center; height: 34px; border-radius: 9px; background: var(--paper); box-shadow: inset 0 0 0 1.5px var(--mist-200); }
+.security-2fa-slots.is-fill i { background: transparent; box-shadow: none; }
+.security-2fa-slots.is-fill i::after { content: ""; width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+.security-2fa-slots.is-fill > * { transform-origin: center; }
+.security-2fa-ok { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--green-100); color: var(--green-ink); }
+.security-2fa-ok .icon { width: 15px; height: 15px; stroke-width: 2.8; }
+.security-2fa-foot { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 14px; background: var(--wash); border: 1px solid rgba(31, 122, 224, .14); }
+.security-2fa-foot-ico { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 11px; background: var(--paper); color: var(--accent); box-shadow: inset 0 0 0 1px var(--blue-100); }
+.security-2fa-foot-ico .icon { width: 19px; height: 19px; }
+.security-2fa-foot b { display: block; font-size: .95rem; font-weight: 650; color: var(--ink); }
+.security-2fa-foot small { display: block; font-size: .84rem; color: var(--ink-3); }
+@media (max-width: 479.98px) {
+  .security-2fa-row { grid-template-columns: minmax(0, 1fr) 28px; row-gap: 8px; }
+  .security-2fa-label { grid-column: 1 / -1; }
+  .security-2fa-slots i { height: 30px; }
+}
+
+/* ---------- Roles ---------- */
+.security-role h3 { margin-top: 16px; }
+.security-role p { font-size: .98rem; }
+@media (max-width: 559.98px) {
+  .security-role { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: center; padding: 18px; border-radius: var(--r); }
+  .security-role > .icon-tile { width: 44px; height: 44px; border-radius: 13px; }
+  .security-role > .icon-tile .icon { width: 23px; height: 23px; }
+  .security-role h3 { margin-top: 0; font-size: 1.1rem; }
+  .security-role p { grid-column: 1 / -1; margin-top: 10px; font-size: .95rem; }
+}
+.security-roles-split { margin-top: clamp(40px, 2rem + 3vw, 72px); }
+.security-roles-split .section-copy h3 { font-size: clamp(1.3rem, 1.1rem + .7vw, 1.6rem); }
+.security-server-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.security-server-checks li {
+  display: grid; justify-items: start; gap: 6px; padding: 12px 14px; border-radius: 14px;
+  background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); color: var(--ink-2);
+}
+.security-server-checks .badge { flex: none; }
+.security-pin-fig { width: 100%; max-width: 300px; margin-inline: auto; }
+.security-pin-phone { width: min(100%, 264px); }
+.security-pin-phone > .mock-screen { gap: 12px; padding-bottom: 16px; }
+.security-pin-title { font-size: 15px; font-weight: 700; letter-spacing: -0.015em; text-align: center; }
+.security-pin-who { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 12px; background: var(--blue-50); box-shadow: inset 0 0 0 1px var(--blue-100); perspective: 400px; }
+.security-pin-avatar, .security-pin-name { display: grid; }
+.security-pin-avatar > *, .security-pin-name > * { grid-area: 1 / 1; }
+.security-pin-avatar .mock-avatar { width: 34px; height: 34px; font-size: 12.5px; }
+.security-pin-name > span { display: grid; line-height: 1.25; }
+.security-pin-name b { font-size: 13px; font-weight: 680; }
+.security-pin-name small { font-size: 12px; color: var(--ink-3); }
+.security-pin-label { font-size: 12px; font-weight: 600; color: var(--ink-3); text-align: center; }
+.security-pin-dots { display: grid; justify-content: center; }
+.security-pin-dots > span { grid-area: 1 / 1; display: flex; gap: 14px; }
+.security-pin-dots i { display: block; width: 14px; height: 14px; border-radius: 50%; }
+.security-pin-track i { box-shadow: inset 0 0 0 2px var(--ink-4); }
+.security-pin-fill i { background: var(--accent); box-shadow: inset 0 0 0 2px var(--accent); transform-origin: center; }
+.security-pin-pad { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.security-pin-pad span { display: grid; place-items: center; height: 34px; border-radius: 10px; background: var(--paper); border: 1px solid var(--line-strong); font-size: 15px; font-weight: 600; color: var(--ink); }
+.security-pin-pad span.is-plain { border-color: transparent; background: transparent; font-size: 12px; color: var(--ink-3); }
+.security-pin-done { justify-self: center; }
+
+/* ---------- Integration keys: a vault that shuts, a masked readout ---------- */
+.security-vault-fig { width: 100%; max-width: 420px; margin-inline: auto; }
+.security-vault-stage { gap: 14px; width: min(100%, 420px); }
+.security-vault { display: grid; justify-items: center; width: 100%; padding: 6px 0 2px; }
+.security-vault-box {
+  position: relative; width: min(100%, 300px); aspect-ratio: 300 / 180; border-radius: 22px;
+  background: linear-gradient(160deg, #fff, var(--mist-100)); border: 1.5px solid var(--ink); box-shadow: var(--shadow-3), inset 0 -6px 0 rgba(15, 43, 76, .05);
+  perspective: 700px;
+}
+.security-vault-label {
+  position: absolute; left: 14px; top: 10px; z-index: 3; display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3);
+}
+.security-vault-label .icon { width: 13px; height: 13px; color: var(--accent); }
+.security-vault-slot {
+  position: absolute; inset: 36px 18px 18px; display: grid; place-items: center; border-radius: 14px;
+  background: linear-gradient(180deg, var(--mist-200), var(--mist-100)); box-shadow: inset 0 3px 8px rgba(15, 43, 76, .14);
+}
+.security-keychip {
+  display: inline-flex; align-items: center; gap: 7px; padding: 7px 12px; border-radius: 11px;
+  background: var(--paper); border: 1.5px solid var(--ink); box-shadow: var(--shadow-2);
+  font-size: 13px; font-weight: 650; color: var(--ink); white-space: nowrap;
+}
+.security-keychip .icon { width: 16px; height: 16px; color: var(--accent); }
+@keyframes security-key-in { 0% { opacity: 0; translate: -150px 0; rotate: -8deg; } 30% { opacity: 1; } 75% { translate: 6px 0; rotate: 0deg; } 100% { translate: 0 0; } }
+.security-vault-door {
+  position: absolute; inset: 36px 18px 18px; z-index: 2; display: flex; align-items: center; justify-content: center; gap: 18px;
+  border-radius: 14px; background: linear-gradient(150deg, #fff 0%, var(--blue-50) 60%, var(--blue-100) 100%);
+  border: 1.5px solid var(--ink); box-shadow: var(--shadow-2);
+  transform-origin: 0 50%; backface-visibility: visible;
+}
+.security-vault-door::before { /* hinge pins */
+  content: ""; position: absolute; left: -5px; top: 18%; bottom: 18%; width: 6px; border-radius: 3px;
+  background: linear-gradient(var(--ink) 0 18%, transparent 18% 82%, var(--ink) 82%); opacity: .7;
+}
+.security-vault-dial { width: 56px; height: 56px; }
+.security-vault-lamp { width: 10px; height: 10px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 4px rgba(45, 179, 106, .2); }
+@keyframes security-door-shut { 0% { transform: rotateY(-108deg); } 72% { transform: rotateY(4deg); } 100% { transform: rotateY(0deg); } }
+.security-readout { display: grid; gap: 8px; width: 100%; padding: 12px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); text-align: left; }
+.security-readout-row { display: flex; align-items: center; gap: 9px; min-width: 0; padding-bottom: 10px; border-bottom: 1px solid var(--m-line); }
+.security-readout-name { display: grid; min-width: 0; line-height: 1.3; }
+.security-readout-name b { font-size: 13px; font-weight: 680; }
+.security-readout-name small { font-size: 12px; color: var(--ink-3); }
+.security-readout-status {
+  margin-left: auto; display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px 3px 8px; border-radius: var(--pill);
+  background: var(--green-100); color: var(--green-ink); font-size: 12.5px; font-weight: 650; white-space: nowrap;
+}
+.security-readout-status .icon { width: 13px; height: 13px; stroke-width: 2.6; }
+.security-readout-status .slot-roll { gap: 0; font-family: inherit; font-weight: inherit; }
+.security-readout-status .slot-cell { width: .6em; }
+.security-access { display: grid; gap: 6px; }
+.security-access-row { display: flex; align-items: center; gap: 9px; font-size: 12.5px; color: var(--ink-2); }
+.security-access-row b { margin-left: auto; font-weight: 650; color: var(--stop); }
+.security-access-row.is-yes b { color: var(--green-ink); }
+
+/* ---------- Customer pages: a published page that costs and margins bounce off ---------- */
+.security-cp-kinds { list-style: none; margin: 0; padding: 0; gap: 6px; }
+.security-cp-kinds .chip { padding: 6px 12px; font-size: .86rem; }
+.security-cp-fig { width: 100%; max-width: 470px; margin-inline: auto; }
+.security-cp-stage {
+  --bx: 30px; --by: 0px;
+  grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 4px; width: min(100%, 470px); justify-items: stretch;
+}
+.security-cp-out { display: grid; gap: 12px; justify-items: end; padding-right: 4px; }
+.security-cp-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 6px 11px 6px 8px; border-radius: 11px;
+  background: var(--paper); border: 1px dashed var(--line-strong); box-shadow: var(--shadow-1);
+  font-size: 12.5px; font-weight: 650; color: var(--ink-2); white-space: nowrap;
+}
+.security-cp-chip .icon { width: 14px; height: 14px; padding: 2px; box-sizing: content-box; border-radius: 50%; background: var(--stop-soft); color: var(--stop); stroke-width: 2.6; }
+@keyframes security-bounce {
+  0% { opacity: 0; translate: calc(var(--bx) * -1) calc(var(--by) * -1); }
+  20% { opacity: 1; }
+  50% { translate: var(--bx) var(--by); }
+  72% { translate: calc(var(--bx) * -.22) calc(var(--by) * -.22); }
+  100% { translate: 0 0; }
+}
+.security-cp-zone { position: relative; display: grid; justify-items: center; padding: 30px 16px 16px; border-radius: 26px; border: 2px dashed color-mix(in srgb, var(--blue) 45%, transparent); background: rgba(255, 255, 255, .55); }
+.security-cp-zone-label {
+  position: absolute; top: -13px; left: 50%; translate: -50% 0; display: inline-flex; align-items: center; gap: 6px;
+  padding: 3px 11px 3px 9px; border-radius: var(--pill); background: var(--paper); border: 1px solid var(--blue-100); box-shadow: var(--shadow-1);
+  font-size: 12px; font-weight: 650; color: var(--accent-ink); white-space: nowrap;
+}
+.security-cp-zone-label .icon { width: 14px; height: 14px; }
+.security-cp-phone { width: min(100%, 248px); }
+.security-cp-phone > .mock-screen { gap: 11px; padding-bottom: 16px; }
+.security-cp-car { white-space: nowrap; }
+.security-cp-shop { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; color: var(--ink); }
+.security-cp-shop::before { content: ""; width: 16px; height: 16px; border-radius: 5px; background: var(--bar); flex: none; }
+.security-cp-phone .mock-timeline { gap: 10px; }
+.security-cp-phone .mock-timeline li { font-size: 12px; }
+.security-cp-work { display: grid; gap: 5px; padding: 10px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.security-cp-work > span:not(.mock-label) { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink); }
+.security-cp-work > span:not(.mock-label)::before { content: ""; flex: none; width: 12px; height: 12px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px var(--ink-4); }
+.security-cp-work > span.is-done { color: var(--ink-2); }
+.security-cp-work > span.is-done::before { background: var(--green); box-shadow: none; }
+@media (max-width: 599.98px) {
+  .security-cp-stage { --bx: 0px; --by: 22px; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+  .security-cp-out { grid-auto-flow: column; justify-content: center; justify-items: center; gap: 6px; padding: 0; }
+  .security-cp-chip { padding: 5px 8px 5px 6px; font-size: 12px; }
+  .security-cp-zone { padding: 28px 12px 14px; }
+}
+@media (max-width: 379.98px) { .security-cp-out { grid-auto-flow: row; } }
+
+/* ---------- Payments and webhooks: three signature gates ---------- */
+.security-hooks { margin: 0; display: grid; justify-items: center; }
+.security-hooks-card {
+  display: grid; gap: 10px; width: min(100%, 480px); padding: clamp(16px, 1rem + .8vw, 24px);
+  border-radius: var(--r-xl); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-3);
+}
+.security-hooks-head { display: flex; justify-content: space-between; padding: 0 4px 4px; font-size: .74rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.security-hook {
+  display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(40px, 1fr) auto; align-items: center; gap: 10px;
+  padding: 11px 12px; border-radius: 14px; background: var(--mist-50); border: 1px solid var(--line);
+}
+.security-hook-src { display: grid; min-width: 0; line-height: 1.3; }
+.security-hook-src b { font-size: .95rem; font-weight: 650; color: var(--ink); }
+.security-hook-src small { font-size: .8rem; color: var(--ink-3); }
+.security-hook-line { width: 100%; height: 12px; overflow: visible; }
+.security-hook-line .flow-dot { --flow-from: 130; }
+.security-gate {
+  display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px 5px 6px; border-radius: var(--pill);
+  background: var(--paper); border: 1px solid var(--line-strong); font-size: .84rem; font-weight: 650; color: var(--ink); white-space: nowrap;
+}
+.security-gate-ok { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--green); color: #fff; }
+.security-gate-ok .icon { width: 13px; height: 13px; stroke-width: 3; }
+.security-hooks-foot { display: flex; align-items: center; gap: 10px; margin-top: 4px; padding: 11px 13px; border-radius: 14px; background: var(--wash); border: 1px solid rgba(31, 122, 224, .14); font-size: .9rem; font-weight: 600; color: var(--ink-2); }
+@media (max-width: 479.98px) {
+  .security-hook { grid-template-columns: minmax(0, 1fr) auto; row-gap: 8px; }
+  .security-hook-line { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* ---------- History: rows slide in, restore spins, fourteen backups stack in ---------- */
+.security-history-fig { width: 100%; }
+.security-history-stage { gap: 14px; width: min(100%, 560px); justify-items: stretch; }
+.security-hist-window { width: 100%; }
+.security-hist-window > .mock-screen { gap: 12px; padding-bottom: 16px; }
+.security-hist-head { display: grid; gap: 1px; padding-bottom: 10px; border-bottom: 1px solid var(--m-line); }
+.security-hist { position: relative; list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.security-hist::before { content: ""; position: absolute; left: 11px; top: 14px; bottom: 14px; width: 1px; background: var(--m-line); }
+.security-hist li { position: relative; display: flex; align-items: flex-start; gap: 10px; padding: 7px 4px 7px 0; }
+.security-hist-v {
+  position: relative; z-index: 1; display: grid; place-items: center; flex: none; width: 23px; height: 23px; margin-top: 1px; border-radius: 50%;
+  background: var(--mist-100); border: 2px solid var(--paper); font-size: 12px; font-weight: 700; color: var(--ink-2);
+}
+.security-hist-v.is-now { background: var(--accent); color: #fff; }
+.security-hist-body { display: grid; gap: 2px; flex: 1 1 auto; min-width: 0; }
+.security-hist-meta { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; font-size: 12px; color: var(--ink-3); }
+.security-hist-meta b { font-size: 13px; font-weight: 650; color: var(--ink); }
+.security-hist-dev { display: inline-flex; align-items: center; gap: 4px; color: var(--ink-3); }
+.security-hist-dev .icon { width: 12px; height: 12px; }
+.security-hist-change { font-size: 12.5px; color: var(--ink-2); }
+.security-restore {
+  flex: none; align-self: center; display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px 4px 8px; border-radius: var(--pill);
+  background: var(--paper); border: 1px solid var(--line-strong); font-size: 12px; font-weight: 650; color: var(--accent-ink); white-space: nowrap;
+}
+.security-restore .icon { width: 13px; height: 13px; stroke-width: 2.2; transform-box: fill-box; transform-origin: center; }
+.security-restore[data-at] { background: var(--blue-50); border-color: var(--blue-100); }
+.security-hist-window .mock-toast { bottom: 14px; }
+.security-bk { display: grid; gap: 12px; padding: 13px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); text-align: left; }
+.security-bk-head { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.security-bk-head .mock-btn { margin-left: auto; }
+.security-bk-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+.security-bk-grid > span {
+  display: grid; justify-items: center; gap: 0; padding: 5px 2px; border-radius: 9px; background: var(--green-50);
+  box-shadow: inset 0 0 0 1px var(--green-100); font-size: 12px; font-weight: 650; line-height: 1.2; color: var(--ink); white-space: nowrap;
+}
+.security-bk-grid > span small { font-size: 12px; font-weight: 500; color: var(--ink-3); }
+.security-bk-grid > span.is-new { background: var(--blue-50); box-shadow: inset 0 0 0 1.5px var(--blue); }
+.security-facts { display: flex; flex-wrap: wrap; gap: 14px 34px; margin-top: 6px; }
+.security-facts .fact { flex: 0 0 auto; grid-template-columns: auto auto; align-items: center; gap: 12px; }
+.security-facts .fact-caption { max-width: 8.5em; }
+@media (max-width: 599.98px) {
+  .security-hist li { flex-wrap: wrap; }
+  .security-restore { margin-left: 33px; }
+  .security-bk-grid { gap: 4px; }
+  .security-bk-grid > span { padding: 4px 1px; font-size: 12px; letter-spacing: -0.02em; }
+  .security-bk-grid > span small { display: none; }
+  .security-facts .fact-caption { max-width: none; }
+}
+@media (max-width: 379.98px) {
+  .security-bk-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .security-bk-head .security-card-name small { white-space: normal; }
+}
+</style>
 </head>
 <body data-page="security" id="top">
 <!-- @partial icons -->
@@ -162,7 +569,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -189,10 +596,526 @@
 </header>
 <!-- @end header -->
 
-<main id="main">
-  <section class="page-hero" id="hero">
+<main id="main" class="has-subnav">
+  <section class="page-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <p class="eyebrow"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>Security &amp; your data</p>
+        <h1 id="hero-title">Your shop's data, <span class="accent-text">behind sign-in and backed up.</span></h1>
+        <p class="lead">With <a href="works-with.html#shop-cloud">Shop Cloud</a>: two-step sign-in enforced on the server, integration keys encrypted where browsers can't read them, customer pages that never load your books, change history and nightly backups.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="demo.html">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="app/" data-no-prerender>Try the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Two-step sign-in</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Keys in an encrypted vault</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Nightly backups</span>
+        </div>
+      </div>
+
+      <figure class="page-hero-art mock-figure security-hero" data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="1500" aria-label="Example: in the sample shop, a 6-digit two-step code is accepted and the padlock clicks shut. The Twilio auth token shows only as set, ending in 4f2a, and the last 14 nightly cloud backups are saved.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage security-stage" aria-hidden="true">
+          <div class="security-shield">
+            <svg viewBox="0 0 220 250" focusable="false">
+              <ellipse cx="110" cy="240" rx="80" ry="7" fill="rgba(15, 43, 76, .06)"/>
+              <path class="art-ink art-tint" d="M110 12C141 29 173 36 204 36V118C204 178 164 221 110 245C56 221 16 178 16 118V36C47 36 79 29 110 12Z"/>
+              <path class="art-ink art-thin" d="M110 32C135 45 161 51 186 52V118C186 168 153 203 110 225C67 203 34 168 34 118V52C59 51 85 45 110 32Z" stroke-opacity=".28"/>
+              <g class="security-spark" fill="none" stroke-linecap="round">
+                <path d="M46 70v10M41 75h10" stroke="var(--blue)" stroke-width="2.2"/>
+                <path d="M178 182v8M174 186h8" stroke="var(--green)" stroke-width="2.2"/>
+                <circle cx="176" cy="74" r="3" fill="var(--green)" stroke="none"/>
+              </g>
+              <g transform="translate(110 132) scale(1.55)">
+                <g class="security-lock">
+                  <g class="security-shackle" data-at="1" style="--fx: security-pk-click; --fx-dur: .8s; --fx-pre: 1">
+                    <path class="art-ink" d="M-17 -6V-22A17 17 0 0 1 17 -22V-6" style="stroke-width: 6.5"/>
+                    <path d="M-17 -6V-22A17 17 0 0 1 17 -22V-6" fill="none" stroke="var(--paper)" stroke-width="2.2" stroke-linecap="round"/>
+                  </g>
+                  <rect class="art-ink art-paper" x="-30" y="-8" width="60" height="50" rx="12"/>
+                  <rect class="art-ink art-thin art-soft" x="-22" y="0" width="44" height="34" rx="8"/>
+                  <circle cx="0" cy="13" r="5" fill="var(--ink)"/>
+                  <path d="M0 15V24" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+                </g>
+              </g>
+              <g class="security-shield-ok" data-at="1" data-fx="pop" style="--fx-delay: .45s">
+                <circle cx="160" cy="186" r="17" fill="var(--green-100)" stroke="var(--green)" stroke-width="2.5"/>
+                <path d="M152 186.5l5.5 5.5 10.5-11" fill="none" stroke="var(--green-ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="security-card security-code" data-at="0">
+            <div class="security-card-head">
+              <span class="security-ico"><svg class="icon"><use href="#i-lock"/></svg></span>
+              <span class="security-card-name"><b>Two-step sign-in</b><small>Authenticator code</small></span>
+            </div>
+            <div class="security-code-row">
+              <span class="slot-roll is-boxed security-code-digits" data-slots="482 913" data-charset="digits">482 913</span>
+              <svg class="security-ring" viewBox="0 0 36 36" focusable="false">
+                <circle class="security-ring-track" cx="18" cy="18" r="14.5"/>
+                <circle class="security-ring-arc" cx="18" cy="18" r="14.5" pathLength="1" data-at="0" style="--fx-dur: 1.4s"/>
+              </svg>
+            </div>
+            <span class="security-verified" data-at="1" data-fx="pop"><svg class="icon"><use href="#i-check"/></svg>Checked by the server</span>
+          </div>
+
+          <div class="security-card security-key" data-at="2">
+            <div class="security-card-head">
+              <span class="security-ico"><svg class="icon"><use href="#i-key"/></svg></span>
+              <span class="security-card-name"><b>Twilio</b><small>Auth token</small></span>
+            </div>
+            <span class="security-key-field"><span class="security-key-blur">9f3c71ad0b28e4f6c5d1a7e04f2a</span><svg class="icon"><use href="#i-lock"/></svg></span>
+            <span class="security-key-status"><svg class="icon"><use href="#i-check"/></svg>Set · ••••4f2a<small> · just now</small></span>
+          </div>
+
+          <div class="security-card security-backups">
+            <div class="security-card-head">
+              <span class="security-ico is-green"><svg class="icon"><use href="#i-cloud"/></svg></span>
+              <span class="security-card-name"><b>Cloud backups</b><small>Every night · last 14 kept</small></span>
+              <span class="mock-chip is-ok security-backups-chip" data-at="3" data-fx="pop" style="--fx-delay: 1.3s">14 saved</span>
+            </div>
+            <div class="security-nights">
+              <span class="security-nights-track"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="security-nights-fill" data-at="3" data-fx="stagger" style="--fx: tick-pop; --fx-dur: .4s; --fx-stagger: 85ms"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Two-step on</strong><small>Code accepted</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm icon-tile-green"><svg class="icon"><use href="#i-cloud"/></svg></span>
+          <span><strong>Nightly backup saved</strong><small>Last 14 kept</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <nav class="subnav" aria-label="On this page" data-spy>
+    <div class="container"><ul class="subnav-list">
+      <li><a class="subnav-link" href="#where"><svg class="icon" aria-hidden="true"><use href="#i-cloud"/></svg>Where it lives</a></li>
+      <li><a class="subnav-link" href="#signin"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Sign-in</a></li>
+      <li><a class="subnav-link" href="#roles"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Roles</a></li>
+      <li><a class="subnav-link" href="#keys"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg>Keys</a></li>
+      <li><a class="subnav-link" href="#customer-pages"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg>Customer pages</a></li>
+      <li><a class="subnav-link" href="#payments-webhooks"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Payments &amp; webhooks</a></li>
+      <li><a class="subnav-link" href="#history"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>History</a></li>
+    </ul></div>
+  </nav>
+
+  <!-- ===== Where it lives ===== -->
+  <section class="section" id="where" aria-labelledby="where-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Storage</p>
+        <h2 id="where-title">Where your <span class="accent-text">data lives</span></h2>
+        <p>WPI Driveline Shop Management System keeps the shop's records on each device, in its own browser storage, and works offline.</p>
+        <p>With <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, the shop's data also lives in a private Supabase project for that one shop (Postgres, Realtime, Storage, Edge Functions, Vault). Devices sync live, and offline edits sync later.</p>
+        <div class="callout callout-warn security-where-warn">
+          <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+          <div><p class="callout-title">Without Shop Cloud</p><p>Data lives only in that browser. Clearing browser data erases it, so export backups. Photos and video aren't in the backup file.</p></div>
+        </div>
+        <a class="link-arrow" href="works-with.html#shop-cloud">How Shop Cloud works <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+
+      <div class="security-where" data-reveal="right">
+        <ul class="security-devices">
+          <li class="security-device">
+            <span class="security-device-ico"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M9 20.5h6M12 16.5v4"/></svg></span>
+            <strong>Counter PC</strong>
+            <small><svg class="icon" aria-hidden="true"><use href="#i-wifi-off"/></svg>Works offline</small>
+          </li>
+          <li class="security-device">
+            <span class="security-device-ico"><svg class="icon" aria-hidden="true"><use href="#i-device-tablet"/></svg></span>
+            <strong>Bay iPad</strong>
+            <small><svg class="icon" aria-hidden="true"><use href="#i-wifi-off"/></svg>Works offline</small>
+          </li>
+          <li class="security-device">
+            <span class="security-device-ico"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg></span>
+            <strong>Owner's phone</strong>
+            <small><svg class="icon" aria-hidden="true"><use href="#i-wifi-off"/></svg>Works offline</small>
+          </li>
+        </ul>
+        <div class="security-sync" aria-hidden="true"><i></i><i></i><i></i><span class="security-sync-chip"><svg class="icon"><use href="#i-sync"/></svg>Syncs live</span></div>
+        <div class="security-cloud">
+          <div class="security-cloud-head">
+            <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-cloud"/></svg></span>
+            <div><strong>Shop Cloud</strong><small>A private Supabase project for one shop</small></div>
+          </div>
+          <ul class="pill-cloud security-cloud-pills" aria-label="What the Shop Cloud project includes">
+            <li class="provider-pill"><span class="provider-dot is-on"></span>Postgres</li>
+            <li class="provider-pill"><span class="provider-dot is-on"></span>Realtime</li>
+            <li class="provider-pill"><span class="provider-dot is-on"></span>Storage</li>
+            <li class="provider-pill"><span class="provider-dot is-on"></span>Edge Functions</li>
+            <li class="provider-pill"><span class="provider-dot is-on"></span>Vault</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Sign-in and two-step ===== -->
+  <section class="section section-tint" id="signin" aria-labelledby="signin-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Logins</p>
+        <h2 id="signin-title">Sign-in and <span class="accent-text">two-step</span></h2>
+        <p>Each person can have their own login. The owner hands out a temporary password (they choose their own at first sign-in), resets passwords and removes access.</p>
+        <p>Two-step sign-in works with authenticator apps:</p>
+        <ul class="pill-cloud security-apps" data-reveal-stagger="fade" aria-label="Authenticator apps that work">
+          <li class="provider-pill"><span class="provider-dot"></span>Google Authenticator</li>
+          <li class="provider-pill"><span class="provider-dot"></span>Microsoft Authenticator</li>
+          <li class="provider-pill"><span class="provider-dot"></span>1Password</li>
+          <li class="provider-pill"><span class="provider-dot"></span>Authy</li>
+          <li class="provider-pill"><span class="provider-dot"></span>The phone's built-in password app</li>
+        </ul>
+        <p>For anyone who has it on, or whose role the owner requires it for, it's enforced on the server, so a stolen password alone can't reach data, files or server functions.</p>
+        <p>The owner can require it for chosen roles and reset it for someone who lost their phone.</p>
+      </div>
+
+      <figure class="security-2fa" data-reveal="right" data-reveal-seq aria-label="Illustration: a password and the current 6-digit code from an authenticator app are both checked on the server before sign-in finishes.">
+        <div class="security-2fa-card" aria-hidden="true">
+          <div class="security-2fa-head">
+            <svg class="security-2fa-shield" viewBox="0 0 48 54" focusable="false">
+              <path d="M24 3c7 3.8 14 5.4 21 5.4v17.4C45 39 36 47.6 24 51 12 47.6 3 39 3 25.8V8.4C10 8.4 17 6.8 24 3z" fill="url(#art-tint)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
+              <g class="security-2fa-tick" data-seq-i="2" data-fx="tick">
+                <circle cx="24" cy="26" r="11" fill="var(--green)"/>
+                <path d="M18.6 26.4l3.8 3.8 7.2-7.6" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </svg>
+            <div><b>Two-step sign-in</b><small>Open your authenticator app and enter the current 6-digit code.</small></div>
+          </div>
+          <div class="security-2fa-row">
+            <span class="security-2fa-label">Password</span>
+            <span class="security-2fa-pw"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            <span class="security-2fa-ok"><svg class="icon"><use href="#i-check"/></svg></span>
+          </div>
+          <div class="security-2fa-row">
+            <span class="security-2fa-label">6-digit code</span>
+            <span class="security-2fa-boxes">
+              <span class="security-2fa-slots"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+              <span class="security-2fa-slots is-fill" data-seq-i="0" data-fx="stagger" style="--fx: tick-pop; --fx-stagger: 120ms"><i></i><i></i><i></i><i></i><i></i><i></i></span>
+            </span>
+            <span class="security-2fa-ok" data-seq-i="2" data-fx="tick"><svg class="icon"><use href="#i-check"/></svg></span>
+          </div>
+          <div class="security-2fa-foot" data-seq-i="3" data-fx="rise">
+            <span class="security-2fa-foot-ico"><svg class="icon"><use href="#i-shield"/></svg></span>
+            <span><b>Checked on the server</b><small>Before any data, files or server functions open</small></span>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Roles ===== -->
+  <section class="section" id="roles" aria-labelledby="roles-title">
     <div class="container">
-      <h1>Your shop's data, <span class="accent-text">locked down and backed up.</span></h1>
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Roles</p>
+        <h2 id="roles-title">What roles do, <span class="accent-text">plainly</span></h2>
+        <p class="lead">Each person gets one of four roles. Here's what each one opens.</p>
+      </div>
+      <div class="grid grid-4 security-roles" data-reveal-stagger>
+        <article class="card value-card security-role">
+          <span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg></span>
+          <h3>Owner</h3>
+          <p>Everything, including accounting, pay, settings and data.</p>
+        </article>
+        <article class="card value-card security-role">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-briefcase"/></svg></span>
+          <h3>Shop manager</h3>
+          <p>Runs the shop day to day; no accounting or payroll.</p>
+        </article>
+        <article class="card value-card security-role">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+          <h3>Service advisor</h3>
+          <p>Front counter: repair orders, customers, messages, scheduling and parts.</p>
+        </article>
+        <article class="card value-card security-role">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+          <h3>Technician</h3>
+          <p>Tech clock, workflow, repair orders and technical info.</p>
+        </article>
+      </div>
+
+      <div class="split security-roles-split">
+        <div class="section-copy" data-reveal="left">
+          <h3>Shared tablets and bay phones</h3>
+          <p>On a shared counter tablet or bay phone, <strong>Who's working?</strong> switches people with an optional 4-digit PIN.</p>
+          <p>Roles and PINs decide which pages each person sees in the app; a PIN is for switching people, not a lock. Every staff login can read the shop's records.</p>
+          <p>The server itself checks owner-only actions and owner-or-manager actions:</p>
+          <ul class="security-server-checks">
+            <li><span class="badge">Owner only</span><span>Making or restoring a cloud backup, changing integration keys, connecting Stripe</span></li>
+            <li><span class="badge badge-green">Owner or manager</span><span>Refunds, QuickBooks</span></li>
+          </ul>
+        </div>
+
+        <figure class="mock-figure security-pin-fig" data-reveal="right" data-reveal-seq aria-label="Example: on a shared bay phone in the sample shop, a 4-digit PIN is entered in Who's working? and the phone switches from Marcus R. to Dana W., both technicians.">
+          <span class="mock-tag">Example · sample shop</span>
+          <div class="mock-stage" aria-hidden="true">
+            <div class="mock-phone is-auto security-pin-phone"><div class="mock-screen">
+              <div class="security-pin-title">Who's working?</div>
+              <div class="security-pin-who">
+                <span class="security-pin-avatar">
+                  <span class="mock-avatar" data-seq-out="4">MR</span>
+                  <span class="mock-avatar is-green" data-seq-i="4" data-fx="flip">DW</span>
+                </span>
+                <span class="security-pin-name">
+                  <span data-seq-out="4"><b>Marcus R.</b><small>Technician</small></span>
+                  <span data-seq-i="4" data-fx="fade"><b>Dana W.</b><small>Technician</small></span>
+                </span>
+              </div>
+              <div class="security-pin-label">Enter PIN for Dana W.</div>
+              <div class="security-pin-dots">
+                <span class="security-pin-track"><i></i><i></i><i></i><i></i></span>
+                <span class="security-pin-fill"><i data-seq-i="0" data-fx="tick"></i><i data-seq-i="1" data-fx="tick"></i><i data-seq-i="2" data-fx="tick"></i><i data-seq-i="3" data-fx="tick"></i></span>
+              </div>
+              <div class="security-pin-pad"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span class="is-plain">Back</span><span>0</span><span class="is-plain">⌫</span></div>
+              <span class="mock-chip is-ok security-pin-done" data-seq-i="5" data-fx="pop">Signed in as Dana W.</span>
+            </div></div>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Integration keys ===== -->
+  <section class="section section-paper" id="keys" aria-labelledby="keys-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Keys</p>
+        <h2 id="keys-title">Integration keys <span class="accent-text">stay on the server</span></h2>
+        <p>Keys for Anthropic, Twilio, Stripe, Resend, Intuit and Smartcar are stored encrypted in Supabase Vault on your <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> server.</p>
+        <ul class="pill-cloud" data-reveal-stagger="fade" aria-label="Services whose keys are stored in the vault">
+          <li class="provider-pill"><span class="provider-dot"></span>Anthropic</li>
+          <li class="provider-pill"><span class="provider-dot"></span>Twilio</li>
+          <li class="provider-pill"><span class="provider-dot"></span>Stripe</li>
+          <li class="provider-pill"><span class="provider-dot"></span>Resend</li>
+          <li class="provider-pill"><span class="provider-dot"></span>Intuit</li>
+          <li class="provider-pill"><span class="provider-dot"></span>Smartcar</li>
+        </ul>
+        <p>After saving, a key is never sent back to any device. The screen shows only that it's set, its last four characters and when it changed.</p>
+        <p>Only your shop's server functions can read keys; the browser can't, even with a staff login.</p>
+      </div>
+
+      <figure class="mock-figure security-vault-fig" data-reveal="right" data-reveal-seq aria-label="Example: in the sample shop, the Twilio auth token goes into the vault and the door shuts. The settings screen shows only Set, ending in 4f2a. Server functions can read it; browsers and staff logins can't.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage security-vault-stage" aria-hidden="true">
+          <div class="security-vault">
+            <div class="security-vault-box">
+              <span class="security-vault-label"><svg class="icon"><use href="#i-lock"/></svg>Vault</span>
+              <div class="security-vault-slot">
+                <span class="security-keychip" data-seq-i="0" style="--fx: security-key-in; --fx-dur: 1s"><svg class="icon"><use href="#i-key"/></svg>Auth token</span>
+              </div>
+              <div class="security-vault-door" data-seq-i="3" style="--fx: security-door-shut; --fx-dur: .8s; --fx-pre: 1">
+                <svg class="security-vault-dial" viewBox="0 0 60 60" focusable="false">
+                  <circle cx="30" cy="30" r="25" fill="var(--paper)" stroke="var(--ink)" stroke-width="2.2"/>
+                  <circle cx="30" cy="30" r="17" fill="url(#art-tint)" stroke="var(--ink)" stroke-width="1.4" stroke-opacity=".5"/>
+                  <path d="M30 8v5M30 47v5M8 30h5M47 30h5" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-opacity=".55"/>
+                  <path d="M30 30L30 17" stroke="var(--accent)" stroke-width="3" stroke-linecap="round"/>
+                  <circle cx="30" cy="30" r="3.6" fill="var(--ink)"/>
+                </svg>
+                <span class="security-vault-lamp"></span>
+              </div>
+            </div>
+          </div>
+          <div class="security-readout">
+            <div class="security-readout-row">
+              <span class="security-ico"><svg class="icon"><use href="#i-key"/></svg></span>
+              <span class="security-readout-name"><b>Twilio</b><small>Auth token</small></span>
+              <span class="security-readout-status" data-seq-i="5" data-fx="fade"><svg class="icon"><use href="#i-check"/></svg>Set · ••••<span class="slot-roll" data-slots="4f2a" data-charset="hex">4f2a</span></span>
+            </div>
+            <div class="security-access" data-seq-i="6" data-fx="stagger">
+              <span class="security-access-row is-yes"><span class="mock-dot is-ok"></span>Your server functions<b>Can read</b></span>
+              <span class="security-access-row"><span class="mock-dot is-stop"></span>Browsers and staff logins<b>Can't read</b></span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Customer pages ===== -->
+  <section class="section section-tint" id="customer-pages" aria-labelledby="cp-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Customers</p>
+        <h2 id="cp-title">Customer pages <span class="accent-text">can't see your books</span></h2>
+        <ul class="pill-cloud security-cp-kinds" data-reveal-stagger="fade" aria-label="Customer pages">
+          <li class="chip">Report</li><li class="chip">Live status</li><li class="chip">Booking</li><li class="chip">Check-in</li><li class="chip">Pay</li><li class="chip">Fleet portal</li>
+        </ul>
+        <ul class="checklist pop-list" data-reveal>
+          <li>None of these pages load shop data. Report, live status and fleet-portal pages read small published files with no costs, margins or internal notes.</li>
+          <li>Report, live status, pay and fleet-portal links use random ids, and share links can be turned off. Booking and check-in read only the shop's public details, such as hours and services.</li>
+          <li>Customers can only add to the inbox (bookings, approvals, messages, check-ins).</li>
+          <li>Photos the browser can open are re-encoded, which removes their GPS location and device data. Files it can't open (such as HEIC outside Safari) and videos are stored as recorded.</li>
+        </ul>
+        <p>Customer pages need <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>.</p>
+      </div>
+
+      <figure class="mock-figure security-cp-fig" data-reveal="right" data-reveal-seq aria-label="Example: the sample shop's live status page for Priya R.'s 2021 Toyota Camry shows where the car is and the approved work. The part cost, margin and internal note bounce off and stay outside the published page.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage security-cp-stage" aria-hidden="true">
+          <div class="security-cp-out">
+            <span class="security-cp-chip" data-seq-i="0" style="--fx: security-bounce; --fx-dur: 1.15s; --fx-ease: var(--ease-in-out)"><svg class="icon"><use href="#i-close"/></svg>Cost $41.10</span>
+            <span class="security-cp-chip" data-seq-i="1" style="--fx: security-bounce; --fx-dur: 1.15s; --fx-ease: var(--ease-in-out)"><svg class="icon"><use href="#i-close"/></svg>Margin 58%</span>
+            <span class="security-cp-chip" data-seq-i="2" style="--fx: security-bounce; --fx-dur: 1.15s; --fx-ease: var(--ease-in-out)"><svg class="icon"><use href="#i-close"/></svg>Internal note</span>
+          </div>
+          <div class="security-cp-zone">
+            <span class="security-cp-zone-label"><svg class="icon"><use href="#i-eye"/></svg>Published page</span>
+            <div class="mock-phone is-auto security-cp-phone"><div class="mock-screen">
+              <div class="security-cp-shop">Main Street Auto Service</div>
+              <div><div class="mock-sub">Hi Priya, here's your <span class="security-cp-car">2021 Toyota Camry</span></div><div class="mock-title">Being worked on</div></div>
+              <ol class="mock-timeline">
+                <li><span class="mock-tl-dot is-done"></span><span>Checked in &amp; inspected</span><span class="mock-time">7:30 AM</span></li>
+                <li><span class="mock-tl-dot is-done"></span><span>Work approved</span><span class="mock-time">7:35 AM</span></li>
+                <li><span class="mock-tl-dot is-late"></span><span>Being worked on</span><span class="mock-time">9:58 AM</span></li>
+                <li><span class="mock-tl-dot"></span><span>Ready for pickup</span><span class="mock-time"></span></li>
+              </ol>
+              <div class="security-cp-work"><span class="mock-label">Work on your vehicle</span>
+                <span class="is-done">Full synthetic oil &amp; filter</span>
+                <span class="is-done">Tire rotation &amp; pressure check</span>
+                <span>Engine &amp; cabin air filters</span>
+                <span>Brake fluid exchange</span>
+              </div>
+            </div></div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Payments and webhooks ===== -->
+  <section class="section" id="payments-webhooks" aria-labelledby="hooks-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Payments</p>
+        <h2 id="hooks-title">Card numbers skip the app; <span class="accent-text">every webhook is checked</span></h2>
+        <p>Card numbers go to Stripe (Checkout or the reader), never through the app.</p>
+        <p>Card payments, texts and email run through <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a> on your own Stripe, Twilio and Resend accounts.</p>
+        <p>Webhooks are the messages Twilio, Stripe and Resend send your Shop Cloud about texts, calls, payments and email. Every webhook is verified: Twilio signatures, Stripe signatures with a 5-minute replay window, and Resend/Svix signatures with a 5-minute window.</p>
+        <a class="link-arrow" href="features/payments.html">Payments &amp; card readers <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+
+      <figure class="security-hooks" data-reveal="right" data-reveal-seq aria-label="Illustration: webhooks from Twilio, Stripe and Resend each pass a signature check before your shop's server functions record them.">
+        <div class="security-hooks-card" aria-hidden="true">
+          <div class="security-hooks-head"><span>Incoming webhook</span><span>Gate</span></div>
+          <div class="security-hook">
+            <span class="security-hook-src"><b>Twilio</b><small>Texts and calls</small></span>
+            <svg class="security-hook-line" viewBox="0 0 100 12" preserveAspectRatio="none" focusable="false"><path class="flow-line is-blue" d="M2 6H98"/><path class="flow-dot" pathLength="100" d="M2 6H98" data-seq-i="0" data-fx="flow"/></svg>
+            <span class="security-gate"><span class="security-gate-ok" data-seq-i="2" data-fx="tick"><svg class="icon"><use href="#i-check"/></svg></span>Signature</span>
+          </div>
+          <div class="security-hook">
+            <span class="security-hook-src"><b>Stripe</b><small>5-minute replay window</small></span>
+            <svg class="security-hook-line" viewBox="0 0 100 12" preserveAspectRatio="none" focusable="false"><path class="flow-line is-blue" d="M2 6H98"/><path class="flow-dot" pathLength="100" d="M2 6H98" data-seq-i="3" data-fx="flow"/></svg>
+            <span class="security-gate"><span class="security-gate-ok" data-seq-i="5" data-fx="tick"><svg class="icon"><use href="#i-check"/></svg></span>Signature</span>
+          </div>
+          <div class="security-hook">
+            <span class="security-hook-src"><b>Resend/Svix</b><small>5-minute window</small></span>
+            <svg class="security-hook-line" viewBox="0 0 100 12" preserveAspectRatio="none" focusable="false"><path class="flow-line is-blue" d="M2 6H98"/><path class="flow-dot" pathLength="100" d="M2 6H98" data-seq-i="6" data-fx="flow"/></svg>
+            <span class="security-gate"><span class="security-gate-ok" data-seq-i="8" data-fx="tick"><svg class="icon"><use href="#i-check"/></svg></span>Signature</span>
+          </div>
+          <div class="security-hooks-foot" data-seq-i="9" data-fx="rise"><span class="security-ico is-green"><svg class="icon"><use href="#i-shield"/></svg></span>Unsigned or late webhook requests are turned away.</div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== History and backups ===== -->
+  <section class="section section-wash" id="history" aria-labelledby="history-title">
+    <div class="container split split-wide-right">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">History &amp; backups</p>
+        <h2 id="history-title">Undo changes from <span class="accent-text">the last six months</span></h2>
+        <p>With <a class="text-link" href="works-with.html#shop-cloud">Shop Cloud</a>, every RO, customer and vehicle keeps six months of change history: who changed what, when and from which device. The owner, a manager or an advisor can restore an earlier version in one click.</p>
+        <p>Cloud backups run every night, the last 14 are kept, and you can download any of them. The owner can restore the whole shop to one, and the current state is backed up first.</p>
+        <p>Export a backup file any time.</p>
+        <div class="security-facts">
+          <div class="fact"><span class="odometer" data-odometer="6" data-label="6 months of change history">6</span><p class="fact-caption"><strong>months</strong> of change history</p></div>
+          <div class="fact"><span class="odometer" data-odometer="14" data-label="14 nightly backups kept">14</span><p class="fact-caption"><strong>nightly backups</strong> kept</p></div>
+        </div>
+      </div>
+
+      <figure class="mock-figure security-history-fig" data-reveal="right" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="1600" aria-label="Example: the change history of Priya R.'s 2021 Toyota Camry in the sample shop lists who changed what, when and on which device, and an earlier version is restored. Below it, 14 nightly cloud backups are listed, each ready to download.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage security-history-stage" aria-hidden="true">
+          <div class="mock-window security-hist-window"><div class="mock-screen">
+            <div class="security-hist-head"><span class="mock-title">Change history</span><span class="mock-sub">2021 Toyota Camry · Priya R.</span></div>
+            <ol class="security-hist" data-at="0" data-fx="stagger" style="--fx: fx-left; --fx-stagger: 120ms">
+              <li>
+                <span class="security-hist-v is-now">4</span>
+                <span class="security-hist-body"><span class="security-hist-meta"><b>Jordan B.</b><span>10:42 AM</span><span class="security-hist-dev"><svg class="icon"><use href="#i-device-tablet"/></svg>Counter iPad</span></span><span class="security-hist-change">Promised time changed</span></span>
+              </li>
+              <li>
+                <span class="security-hist-v">3</span>
+                <span class="security-hist-body"><span class="security-hist-meta"><b>Kim P.</b><span>9:58 AM</span><span class="security-hist-dev"><svg class="icon"><use href="#i-device-tablet"/></svg>Bay 2 iPad</span></span><span class="security-hist-change">Status: Approved → In Progress</span></span>
+                <span class="security-restore" data-at="1" data-fx="press"><svg class="icon" data-at="1" data-fx="spin"><use href="#i-replay"/></svg>Restore</span>
+              </li>
+              <li>
+                <span class="security-hist-v">2</span>
+                <span class="security-hist-body"><span class="security-hist-meta"><b>Jordan B.</b><span>7:35 AM</span><span class="security-hist-dev"><svg class="icon" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M9 20.5h6M12 16.5v4"/></svg>Counter PC</span></span><span class="security-hist-change">Customer authorization recorded</span></span>
+                <span class="security-restore"><svg class="icon"><use href="#i-replay"/></svg>Restore</span>
+              </li>
+            </ol>
+            <div class="mock-toast" data-at="1" data-fx="toast" style="--fx-delay: .7s">Restored version 3</div>
+          </div></div>
+
+          <div class="security-bk">
+            <div class="security-bk-head">
+              <span class="security-ico is-green"><svg class="icon"><use href="#i-cloud"/></svg></span>
+              <span class="security-card-name"><b>Cloud backups</b><small>Every night · last 14 kept</small></span>
+              <span class="mock-btn is-soft">Download</span>
+            </div>
+            <div class="security-bk-grid" data-at="2" data-fx="stagger" style="--fx: fx-drop; --fx-stagger: 55ms">
+              <span class="is-new"><small>Sat</small>Oct 3</span><span><small>Fri</small>Oct 2</span><span><small>Thu</small>Oct 1</span><span><small>Wed</small>Sep 30</span><span><small>Tue</small>Sep 29</span><span><small>Mon</small>Sep 28</span><span><small>Sun</small>Sep 27</span>
+              <span><small>Sat</small>Sep 26</span><span><small>Fri</small>Sep 25</span><span><small>Thu</small>Sep 24</span><span><small>Wed</small>Sep 23</span><span><small>Tue</small>Sep 22</span><span><small>Mon</small>Sep 21</span><span><small>Sun</small>Sep 20</span>
+            </div>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Certifications:</strong> we don't claim compliance certifications. Card numbers are handled by Stripe Checkout and Stripe readers and never pass through the app.</li>
+            <li><strong>Needs:</strong> shared data, logins and two-step, integration keys, customer pages, webhooks, history and cloud backups need <a href="works-with.html#shop-cloud">Shop Cloud</a>. Roles and PINs work on each device without it.</li>
+            <li><strong>Leaked passwords:</strong> Supabase's leaked-password check needs a paid Supabase plan.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head-row" data-reveal>
+        <div class="section-head">
+          <p class="eyebrow">FAQ</p>
+          <h2 id="faq-title">Security questions</h2>
+        </div>
+        <a class="link-arrow" href="faq.html">All questions <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="security-faq"><summary>Can we get our data out?</summary><div class="faq-body"><p>Yes. Export a backup file any time (records only; photos and video aren't in it), plus CSV exports such as the CARFAX service history and payroll.</p></div></details>
+        <details class="faq" name="security-faq"><summary>What if a phone is lost?</summary><div class="faq-body"><p>The owner removes that login's access and can reset two-step. Once its current session runs out, that phone can't sign in or sync. The copy already stored on the phone isn't erased remotely, so keep shop phones locked with a passcode.</p></div></details>
+        <details class="faq" name="security-faq"><summary>Can staff see the keys?</summary><div class="faq-body"><p>No. After a key is saved, the screen shows only that it's set, its last four characters and when it changed.</p></div></details>
+        <details class="faq" name="security-faq"><summary>Can customers see my costs?</summary><div class="faq-body"><p>No. Customer pages read small published files with no costs, margins or internal notes.</p></div></details>
+      </div>
     </div>
   </section>
 </main>
@@ -203,7 +1126,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -218,7 +1141,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="index.html" aria-label="WPI Driveline Shop Management System home">
@@ -285,6 +1208,7 @@
   <a class="tab tab-book" href="demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

@@ -35,6 +35,168 @@
 <!-- @partial jsonld -->
 <script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
 <!-- @end jsonld -->
+<style>
+/* ===== privacy.html (page-local; classes prefixed privacy-) ===== */
+
+/* ---------- Hero: a shop key ring with an RO tag swings in front of a shield; a padlock clicks shut ---------- */
+.privacy-hero-art { min-height: 300px; }
+#hero-title .accent-text { white-space: nowrap; }
+.privacy-art .privacy-swing { transform-box: view-box; transform-origin: 118px 88px; animation: privacy-pk-swing 3.8s var(--ease-in-out) infinite alternate; }
+@keyframes privacy-pk-swing { from { transform: rotate(-7deg); } to { transform: rotate(6deg); } }
+.privacy-art .privacy-check { --len: 130; stroke: var(--accent); stroke-width: 9; animation-delay: .7s; }
+/* The shackle lifts and clicks shut three times, then rests shut (its own style is the end state) */
+.privacy-art .privacy-shackle { animation: privacy-pk-click 4.8s var(--ease) 1.2s 3; }
+@keyframes privacy-pk-click { 0% { transform: none; } 8%, 24% { transform: translateY(-9px); } 33% { transform: translateY(1.5px); } 38%, 100% { transform: none; } }
+.privacy-art .privacy-lock { transform-box: fill-box; transform-origin: center; animation: privacy-pk-nudge 4.8s var(--ease) 1.2s 3; }
+@keyframes privacy-pk-nudge { 0%, 30%, 42%, 100% { transform: none; } 34% { transform: scale(.95); } }
+.privacy-art .privacy-tag-text { font-family: var(--font-mono); font-size: 15px; font-weight: 700; letter-spacing: .14em; fill: var(--ink); }
+.privacy-hero-art .note-a { top: 2%; left: -2%; }
+.privacy-hero-art .note-b { top: auto; bottom: -2%; right: 0; }
+@media (min-width: 960px) and (max-width: 1139.98px) { .privacy-hero-art .float-note { display: none; } }
+@media (max-width: 959.98px) { .privacy-hero-art > svg { width: min(100%, 380px); } }
+@media (max-width: 599.98px) { .privacy-hero-art { min-height: 0; } .privacy-hero-art > svg { width: min(100%, 300px); } }
+
+/* ---------- Contents + body ---------- */
+.privacy-layout { display: grid; gap: 8px; }
+.privacy-layout > * { min-width: 0; }
+.privacy-toc-label { font-size: .78rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin-bottom: 10px; }
+.privacy-toc ol { list-style: none; padding: 0; margin: 0; counter-reset: privacy-toc; }
+.privacy-toc li:not(.spy-pill) { counter-increment: privacy-toc; }
+.privacy-toc a {
+  display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 12px; border-radius: 12px;
+  color: var(--ink-3); font-weight: 600; font-size: .94rem; line-height: 1.3; text-decoration: none;
+  transition: color var(--dur-2) var(--ease), background-color var(--dur-2) var(--ease), border-color var(--dur-2) var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.privacy-toc a::before { content: counter(privacy-toc, decimal-leading-zero); flex: none; font-family: var(--font-mono); font-size: .76rem; letter-spacing: 0; color: var(--ink-3); transition: color var(--dur-2) var(--ease); }
+@media (hover: hover) { .privacy-toc a:hover { color: var(--ink); } }
+.privacy-toc a[aria-current] { color: var(--ink); }
+.privacy-toc a[aria-current]::before { color: var(--accent); }
+.privacy-toc-foot { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); font-size: .86rem; color: var(--ink-3); }
+@media (min-width: 1080px) {
+  .privacy-layout { grid-template-columns: 268px minmax(0, 1fr); gap: 64px; align-items: start; }
+  .privacy-toc { position: sticky; top: calc(var(--header-offset) + 28px); padding: 20px 14px 18px; border-radius: var(--r-lg); background: rgba(255, 255, 255, .6); border: 1px solid var(--line); }
+  .privacy-toc-label, .privacy-toc-foot { padding-inline: 12px; }
+  .privacy-toc ol { display: grid; gap: 2px; }
+}
+@media (max-width: 1079.98px) {
+  /* Tablet and phone: a sticky, swipeable chip bar under the header */
+  .privacy-toc {
+    position: sticky; top: var(--header-offset); z-index: 6;
+    margin-inline: calc(var(--edge-left) * -1) calc(var(--edge-right) * -1); padding-block: 10px;
+    background: rgba(245, 249, 254, .96);
+    -webkit-backdrop-filter: saturate(180%) blur(18px); backdrop-filter: saturate(180%) blur(18px);
+    transition: box-shadow var(--dur-2) var(--ease);
+  }
+  .privacy-toc.is-stuck { box-shadow: 0 1px 0 var(--line); }
+  .privacy-toc-label, .privacy-toc-foot, .privacy-toc .spy-pill { display: none; }
+  .privacy-toc ol {
+    display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; overscroll-behavior-x: contain;
+    padding: 2px var(--edge-right) 2px var(--edge-left); scroll-padding-inline: var(--edge-left) var(--edge-right);
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 var(--gutter), #000 calc(100% - var(--gutter)), transparent);
+  }
+  .privacy-toc ol::-webkit-scrollbar { display: none; }
+  .privacy-toc li { flex: none; }
+  .privacy-toc a { border-radius: var(--pill); background: var(--paper); border: 1px solid var(--line); white-space: nowrap; padding: 8px 15px; font-size: .9rem; }
+  .privacy-toc a::before { display: none; }
+  .privacy-toc a[aria-current] { border-color: rgba(31, 122, 224, .3); background: var(--accent-soft); }
+  .privacy-part { scroll-margin-top: 64px; } /* the chip bar; html scroll-padding-top already clears the header */
+}
+
+.privacy-body { max-width: 780px; }
+@media (max-width: 1079.98px) { .privacy-body { margin-inline: auto; width: 100%; } }
+.privacy-part { padding-block: clamp(32px, 1.4rem + 1.6vw, 48px); border-top: 1px solid var(--line); }
+.privacy-part:first-child { border-top: 0; }
+.privacy-part:last-child { padding-bottom: 0; }
+@media (min-width: 1080px) { .privacy-part:first-child { padding-top: 6px; } }
+.privacy-part-head { display: flex; align-items: center; gap: 14px; }
+.privacy-part-head h2 { font-size: clamp(1.4rem, 1.12rem + .9vw, 1.85rem); letter-spacing: -0.025em; line-height: 1.2; }
+.privacy-part > p, .privacy-part > ul:not([class]) { margin-top: 14px; max-width: 64ch; color: var(--ink-2); text-wrap: pretty; }
+.privacy-part > .privacy-part-head + p { margin-top: 18px; }
+.privacy-part a:not(.btn, .link-arrow, .contact-email) { color: var(--link, var(--accent)); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent); text-underline-offset: .16em; }
+@media (hover: hover) { .privacy-part a:not(.btn, .link-arrow, .contact-email):hover { text-decoration-color: currentColor; } }
+.privacy-part .link-arrow { margin-top: 18px; min-height: 44px; }
+.privacy-key { font-family: var(--font-mono); font-size: .86em; letter-spacing: 0; padding: 2px 7px; border-radius: 7px; background: var(--mist-100); border: 1px solid var(--line); color: var(--ink); white-space: nowrap; }
+
+/* What the demo form collects: one card per gear of the form */
+.privacy-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; margin-top: 22px; }
+.privacy-step { position: relative; padding: 18px 18px 16px; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); overflow: hidden; }
+.privacy-step::before { content: ""; position: absolute; left: 0; top: 0; right: 0; height: 3px; background: var(--bar); }
+.privacy-step h3 { display: flex; align-items: center; gap: 10px; font-size: 1.02rem; letter-spacing: -0.015em; }
+.privacy-step-num { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--accent-soft); box-shadow: inset 0 0 0 1px rgba(31, 122, 224, .22); font-family: var(--font-mono); font-size: .8rem; font-weight: 700; color: var(--accent-ink); }
+.privacy-step-sub { margin-top: 4px; padding-left: 38px; font-size: .84rem; color: var(--ink-3); }
+.privacy-fields { list-style: none; padding: 0; margin: 12px 0 0; display: grid; }
+.privacy-fields li { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 10px; padding: 8px 0; border-top: 1px dashed var(--line-strong); font-size: .94rem; font-weight: 600; color: var(--ink); }
+/* A note that doesn't fit beside its field drops to its own line, still right-aligned */
+.privacy-fields small { flex: 0 1 auto; margin-left: auto; font-size: .78rem; font-weight: 550; color: var(--ink-3); text-align: right; }
+.privacy-fields .is-req small { color: var(--accent-ink); }
+
+/* Where it goes: the route a request takes, first stop that works */
+.privacy-route { position: relative; list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 14px; }
+.privacy-stop { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 16px; align-items: start; }
+.privacy-stop:not(:last-child)::before { content: ""; position: absolute; left: 20.5px; top: 44px; bottom: -14px; width: 3px; border-radius: 2px; background: var(--blue); opacity: .5; }
+.privacy-stop:nth-child(2)::before { background: var(--green); }
+.privacy-stop-mark { position: relative; z-index: 1; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--paper); border: 1.5px solid var(--line-strong); box-shadow: 0 0 0 5px var(--canvas), var(--shadow-1); color: var(--accent); }
+.privacy-stop-mark .icon { width: 20px; height: 20px; }
+.privacy-stop:first-child .privacy-stop-mark { background: var(--accent-soft); border-color: rgba(31, 122, 224, .4); }
+.privacy-stop:nth-child(2) .privacy-stop-mark { background: var(--green-50); border-color: rgba(45, 179, 106, .45); color: var(--green-ink); }
+.privacy-stop:last-child .privacy-stop-mark { background: var(--mist-100); color: var(--ink-3); }
+.privacy-stop-card { padding: 14px 18px 16px; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); }
+.privacy-stop-card h3 { font-size: 1.04rem; letter-spacing: -0.015em; }
+.privacy-stop-when { display: block; margin-bottom: 3px; font-family: var(--font-mono); font-size: .74rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.privacy-stop-card p { margin-top: 6px; color: var(--ink-2); font-size: .97rem; text-wrap: pretty; }
+@media (max-width: 599.98px) {
+  .privacy-route { gap: 12px; }
+  .privacy-stop { grid-template-columns: 36px minmax(0, 1fr); gap: 12px; }
+  .privacy-stop:not(:last-child)::before { left: 16.5px; top: 36px; bottom: -12px; }
+  .privacy-stop-mark { width: 36px; height: 36px; box-shadow: 0 0 0 4px var(--canvas), var(--shadow-1); }
+  .privacy-stop-mark .icon { width: 17px; height: 17px; }
+  .privacy-stop-card { padding: 13px 15px 15px; }
+}
+
+/* No analytics: what isn't here, and the one thing that is remembered */
+.privacy-nots { list-style: none; padding: 0; margin: 20px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.privacy-nots li { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px 7px 9px; border-radius: var(--pill); background: var(--paper); border: 1px solid var(--line); font-size: .92rem; font-weight: 600; color: var(--ink-2); }
+.privacy-nots .privacy-x { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--mist-100); color: var(--ink-3); }
+.privacy-nots .privacy-x .icon { width: 13px; height: 13px; stroke-width: 2.4; }
+.privacy-card { margin-top: 20px; padding: 16px 20px 18px; border-radius: var(--r-lg); background: var(--wash); border: 1px solid rgba(31, 122, 224, .14); }
+.privacy-card-title { display: flex; align-items: center; gap: 12px; font-weight: 650; color: var(--ink); letter-spacing: -0.01em; }
+.privacy-card-title .icon-tile { flex: none; background: var(--paper); }
+.privacy-card-title + div { margin-top: 8px; }
+.privacy-card p:not(.privacy-card-title) { color: var(--ink-2); font-size: .97rem; text-wrap: pretty; }
+@media (min-width: 600px) { .privacy-card-title + div { margin-top: 2px; padding-left: 50px; } }
+
+/* Faster pages: what may load early, and what never does */
+.privacy-compare { list-style: none; padding: 0; margin: 20px 0 0; display: grid; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); overflow: hidden; }
+.privacy-compare li { display: flex; align-items: center; gap: 14px; padding: 14px 18px; }
+.privacy-compare li + li { border-top: 1px solid var(--line); }
+.privacy-compare li + li .icon-tile { background: var(--mist-100); color: var(--ink-3); box-shadow: inset 0 0 0 1px var(--line); }
+.privacy-compare-text { flex: 1 1 auto; min-width: 0; display: grid; line-height: 1.3; }
+.privacy-compare-text strong { font-weight: 650; color: var(--ink); }
+.privacy-compare-text small { font-size: .88rem; color: var(--ink-3); }
+.privacy-compare .badge { flex: none; }
+
+/* The sample shop: three facts */
+.privacy-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 0; margin: 22px 0 0; border-radius: var(--r-lg); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); overflow: hidden; }
+.privacy-facts > div { display: grid; gap: 4px; align-content: start; padding: 16px 18px; border-left: 1px solid var(--line); margin-left: -1px; border-top: 1px solid var(--line); margin-top: -1px; }
+.privacy-facts dt { display: flex; align-items: center; gap: 8px; font-size: .8rem; font-weight: 650; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.privacy-facts dt .icon { width: 16px; height: 16px; color: var(--accent); }
+.privacy-facts dd { margin: 0; font-weight: 600; color: var(--ink); line-height: 1.4; }
+.privacy-facts dd small { display: block; margin-top: 2px; font-size: .86rem; font-weight: 500; color: var(--ink-3); }
+
+/* Contact */
+.privacy-contact { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-top: 20px; }
+.privacy-contact:empty { display: none; }
+.privacy-part > .privacy-updated { max-width: none; }
+.privacy-updated { margin-top: clamp(28px, 1.2rem + 1vw, 40px); padding-top: 18px; border-top: 1px solid var(--line); font-size: .9rem; color: var(--ink-3); }
+@media (max-width: 479.98px) { .privacy-contact .btn { flex: 1 1 100%; } }
+
+@media print {
+  .privacy-toc { display: none; }
+  .privacy-layout { display: block; }
+}
+</style>
 </head>
 <body data-page="privacy" id="top">
 <!-- @partial icons -->
@@ -162,7 +324,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -190,15 +352,305 @@
 <!-- @end header -->
 
 <main id="main">
-  <section class="page-hero" id="hero">
+<!--
+  NOTE FOR THE OWNER: this is a plain-language notice, not legal advice. Review it (ideally with a lawyer)
+  before launch. The [data-owner-review] sections ("Where it goes", "How long we keep it") must be confirmed:
+  check.mjs warns on them and fails with --release. Update the "Last updated" date whenever anything here
+  changes, and revisit this page if analytics are added, the inbox routing changes or the motion-preference
+  storage changes.
+  Before release: demo requests post to the same Shop Cloud project every copy of the app ships pointed at
+  (src/lib/cloudDefaults.js), so "Where it goes" stays under review until the owner confirms a dedicated
+  vendor project (or sets business.json formEndpoint and drops "demo" from INBOX_FORMS in site.js). If
+  formEndpoint is set, describe the second stop as that backup form service again. If the app stops the
+  sample shop's customer pages (booking, check-in, report) from posting to Shop Cloud, drop that sentence
+  from "The sample shop".
+-->
+  <section class="page-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <p class="eyebrow"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>Privacy notice</p>
+        <h1 id="hero-title">Privacy, <span class="accent-text">in plain language.</span></h1>
+        <p class="lead">What this site collects, where it goes, and what the sample shop keeps on your device.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>No analytics or ad trackers</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Sample shop stays in your browser</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg><span>Updated <time datetime="2026-10-03">October 3, 2026</time></span></span>
+        </div>
+      </div>
+
+      <figure class="page-hero-art privacy-hero-art" data-play aria-label="Illustration: a shop key ring with an RO key tag and a car key swings in front of a shield with a check mark, while a padlock clicks shut.">
+        <svg class="privacy-art" viewBox="0 0 440 380" aria-hidden="true" focusable="false">
+          <ellipse cx="236" cy="346" rx="128" ry="9" fill="rgba(15, 43, 76, .06)"/>
+
+          <!-- Tinted shield; its check draws in -->
+          <path class="art-ink art-tint" d="M252 54C285 71 321 79 354 79V172C354 242 309 292 252 320C195 292 150 242 150 172V79C183 79 219 71 252 54Z"/>
+          <path class="art-ink art-thin" d="M252 76C280 90 309 97 336 98V172C336 230 299 273 252 298C205 273 168 230 168 172V98C195 97 224 90 252 76Z" stroke-opacity=".3"/>
+          <path class="art-ink art-draw privacy-check" d="M214 184L240 210L294 154"/>
+
+          <!-- Padlock: the shackle lifts and clicks shut -->
+          <g transform="translate(330 262)"><g class="privacy-lock">
+            <g class="privacy-shackle">
+              <path class="art-ink" d="M-17 -6V-22A17 17 0 0 1 17 -22V-6" style="stroke-width: 7"/>
+              <path d="M-17 -6V-22A17 17 0 0 1 17 -22V-6" fill="none" stroke="var(--paper)" stroke-width="2.6" stroke-linecap="round"/>
+            </g>
+            <rect class="art-ink art-paper" x="-30" y="-8" width="60" height="50" rx="12"/>
+            <rect class="art-ink art-thin art-lilac" x="-22" y="0" width="44" height="34" rx="8"/>
+            <circle cx="0" cy="13" r="5" fill="var(--ink)"/>
+            <path d="M0 15V24" stroke="var(--ink)" stroke-width="4" stroke-linecap="round"/>
+          </g></g>
+
+          <!-- Peg, key ring, the shop's RO key tag and a car key, swinging gently -->
+          <circle cx="118" cy="88" r="5" fill="var(--ink)"/>
+          <g class="privacy-swing"><g transform="translate(0 28)">
+            <circle class="art-ink" cx="118" cy="85" r="22" style="stroke-width: 3.2"/>
+            <path class="art-ink art-thin" d="M104 102C98 116 92 128 90 142"/>
+            <path class="art-ink art-paper" d="M62 158L78 142H102L118 158V252A9 9 0 0 1 109 261H71A9 9 0 0 1 62 252Z"/>
+            <circle class="art-ink art-thin" cx="90" cy="153" r="5"/>
+            <rect class="art-tint" x="68" y="170" width="44" height="26" rx="5"/>
+            <text class="privacy-tag-text" x="91" y="188.5" text-anchor="middle">RO</text>
+            <path class="art-ink art-thin" d="M73 212H107M73 226H101M73 240H105" stroke-opacity=".45"/>
+            <g transform="translate(130 104) rotate(-18)">
+              <rect class="art-ink art-paper" x="-6" y="-4" width="12" height="22" rx="5"/>
+              <rect class="art-ink art-paper" x="-19" y="14" width="38" height="64" rx="16"/>
+              <circle class="art-ink art-thin art-soft" cx="0" cy="34" r="6"/>
+              <circle class="art-ink art-thin art-lilac" cx="0" cy="54" r="6"/>
+              <path class="art-ink art-paper" d="M-5 78V122L0 128L5 122V114L1 111L5 107V102L1 99L5 95V78"/>
+            </g>
+          </g></g>
+
+          <!-- Sparkles -->
+          <g transform="translate(372 98)"><path class="art-pulse" d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z" fill="var(--blue)"/></g>
+          <g transform="translate(176 316) scale(.6)"><path class="art-pulse" style="animation-delay: 1.1s" d="M12 0c1 7 5 11 12 12-7 1-11 5-12 12-1-7-5-11-12-12 7-1 11-5 12-12z" fill="var(--green)"/></g>
+        </svg>
+        <div class="float-note note-a" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-shield"/></svg></span>
+          <span><strong>No analytics</strong><small>No ad trackers either</small></span>
+        </div>
+        <div class="float-note note-b" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Sample shop</strong><small>Saved in this browser only</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" id="content" aria-label="Privacy notice">
+    <div class="container privacy-layout">
+      <nav class="privacy-toc" aria-labelledby="toc-title" data-spy="true" data-spy-scope="#content">
+        <h2 class="privacy-toc-label" id="toc-title">On this page</h2>
+        <ol>
+          <li><a href="#collect">What the demo form collects</a></li>
+          <li><a href="#where">Where it goes</a></li>
+          <li><a href="#retention">How long we keep it</a></li>
+          <li><a href="#analytics">No analytics or ad trackers</a></li>
+          <li><a href="#faster">Faster pages</a></li>
+          <li><a href="#sample-shop">The sample shop</a></li>
+          <li><a href="#shops">Shops using the system</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li class="spy-pill" aria-hidden="true"></li>
+        </ol>
+        <p class="privacy-toc-foot">Updated <time datetime="2026-10-03">October 3, 2026</time></p>
+      </nav>
+
+      <div class="privacy-body">
+
+        <section class="privacy-part" id="collect" aria-labelledby="collect-title">
+          <div class="privacy-part-head">
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+            <h2 id="collect-title">What the demo form collects</h2>
+          </div>
+          <p>This site has one form: the <a href="demo.html">demo request</a>. It only collects what you type or pick, in three short steps.</p>
+          <div class="privacy-steps" data-reveal-stagger>
+            <div class="privacy-step">
+              <h3><span class="privacy-step-num" aria-hidden="true">1</span>Your shop</h3>
+              <ul class="privacy-fields">
+                <li>Topic <small>what you&rsquo;re asking</small></li>
+                <li class="is-req">Shop name <small>for a demo request</small></li>
+                <li>Your role <small>optional</small></li>
+                <li>Locations and bays <small>optional</small></li>
+                <li>System you use now <small>optional</small></li>
+              </ul>
+            </div>
+            <div class="privacy-step">
+              <h3><span class="privacy-step-num" aria-hidden="true">2</span>What to see</h3>
+              <p class="privacy-step-sub">Features: demo requests only</p>
+              <ul class="privacy-fields">
+                <li>Features you tick <small>optional</small></li>
+                <li>Your message <small>optional; in step 1 for other topics</small></li>
+              </ul>
+            </div>
+            <div class="privacy-step">
+              <h3><span class="privacy-step-num" aria-hidden="true">3</span>Contact</h3>
+              <ul class="privacy-fields">
+                <li class="is-req">Your name <small>required</small></li>
+                <li class="is-req">Email <small>required</small></li>
+                <li>Phone <small>if you pick a call or text</small></li>
+                <li>How and when to reach you <small>optional</small></li>
+              </ul>
+            </div>
+          </div>
+          <p>Nothing else about you is added to the request. The services that receive it may also log your IP address and browser, as web services do. Please keep card numbers, passwords and your customers&rsquo; details out of the message box.</p>
+        </section>
+
+        <section class="privacy-part" id="where" aria-labelledby="where-title" data-owner-review>
+          <div class="privacy-part-head">
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sync"/></svg></span>
+            <h2 id="where-title">Where it goes</h2>
+          </div>
+          <p>When you press Send request, your request takes the first route below that works.</p>
+          <ol class="privacy-route" data-reveal-stagger>
+            <li class="privacy-stop">
+              <span class="privacy-stop-mark" aria-hidden="true"><svg class="icon"><use href="#i-cloud"/></svg></span>
+              <div class="privacy-stop-card">
+                <span class="privacy-stop-when">First</span>
+                <h3>To WPI Driveline&rsquo;s own copy of the system</h3>
+                <p>It goes to the <a href="works-with.html#shop-cloud">Shop Cloud</a> inbox of the copy of the WPI Driveline Shop Management System that WPI Driveline runs for itself. When one of our signed-in devices picks it up (a device checks about every minute while it&rsquo;s open), your name, email, phone and shop name are saved as a contact with an unread message, and the inbox copy is deleted.</p>
+              </div>
+            </li>
+            <li class="privacy-stop">
+              <span class="privacy-stop-mark" aria-hidden="true"><svg class="icon"><use href="#i-import"/></svg></span>
+              <div class="privacy-stop-card">
+                <span class="privacy-stop-when">If that fails</span>
+                <h3>To Netlify Forms, where available</h3>
+                <p>If the inbox can&rsquo;t be reached and this site is being served from Netlify, the request goes to Netlify Forms instead. On other hosts this step is skipped.</p>
+              </div>
+            </li>
+            <li class="privacy-stop">
+              <span class="privacy-stop-mark" aria-hidden="true"><svg class="icon"><use href="#i-mail"/></svg></span>
+              <div class="privacy-stop-card">
+                <span class="privacy-stop-when">If that fails too</span>
+                <h3>Nothing is sent</h3>
+                <p>Your answers stay in the form so you can try again. When an email address is listed on the demo page, you&rsquo;re offered an email instead, with your answers filled in.</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <section class="privacy-part" id="retention" aria-labelledby="retention-title" data-owner-review>
+          <div class="privacy-part-head">
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span>
+            <h2 id="retention-title">How long we keep it</h2>
+          </div>
+          <p>We keep your request, saved as a contact and a message in our copy of the system, for as long as we need it to follow up with you. Ask us through the <a href="#contact">contact options below</a> and we&rsquo;ll delete it. Copies in the system&rsquo;s change history and nightly backups clear on their own within six months.</p>
+        </section>
+
+        <section class="privacy-part" id="analytics" aria-labelledby="analytics-title">
+          <div class="privacy-part-head">
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-eye"/></svg></span>
+            <h2 id="analytics-title">No analytics or ad trackers</h2>
+          </div>
+          <p>This site doesn&rsquo;t use analytics or ad trackers. Pages, fonts and images all load from this site, and no outside scripts load with them.</p>
+          <ul class="privacy-nots" aria-label="Not on this site">
+            <li><span class="privacy-x" aria-hidden="true"><svg class="icon"><use href="#i-close"/></svg></span>No analytics</li>
+            <li><span class="privacy-x" aria-hidden="true"><svg class="icon"><use href="#i-close"/></svg></span>No ad trackers</li>
+            <li><span class="privacy-x" aria-hidden="true"><svg class="icon"><use href="#i-close"/></svg></span>No third-party scripts</li>
+            <li><span class="privacy-x" aria-hidden="true"><svg class="icon"><use href="#i-close"/></svg></span>No cookies set by this site</li>
+          </ul>
+          <div class="privacy-card">
+            <p class="privacy-card-title"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-pause"/></svg></span>The one thing these pages remember</p>
+            <div>
+              <p>Press <strong>Pause animations</strong> and your browser keeps that choice in its local storage, under <code class="privacy-key">wpi-site:motion</code>, so the next page stays still too. Press <strong>Play animations</strong> and it&rsquo;s cleared. (If you open the sample shop, it keeps its own data in this browser. See <a href="#sample-shop">The sample shop</a>.)</p>
+            </div>
+          </div>
+          <p>The service that hosts these pages may keep standard request logs, such as your IP address, browser type and the page asked for, to keep the site running.</p>
+        </section>
+
+        <section class="privacy-part" id="faster" aria-labelledby="faster-title">
+          <div class="privacy-part-head">
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg></span>
+            <h2 id="faster-title">Faster pages</h2>
+          </div>
+          <p>So pages open at once, your browser may start loading a page from this site before you click: usually when you point at or press a link, and in some browsers when you move to it with the keyboard or scroll past it.</p>
+          <ul class="privacy-compare" data-reveal-stagger>
+            <li>
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg></span>
+              <span class="privacy-compare-text"><strong>Pages on this site</strong><small>May load a moment early</small></span>
+              <span class="badge badge-green">Early</span>
+            </li>
+            <li>
+              <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></span>
+              <span class="privacy-compare-text"><strong>The app and the sample shop</strong><small>Never loaded early</small></span>
+              <span class="badge">On open</span>
+            </li>
+          </ul>
+          <p>Nothing from the app is set up on your device until you choose to open it.</p>
+        </section>
+
+        <section class="privacy-part" id="sample-shop" aria-labelledby="sample-shop-title">
+          <div class="privacy-part-head">
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span>
+            <h2 id="sample-shop-title">The sample shop</h2>
+          </div>
+          <p><strong>Try the sample shop</strong> opens Main Street Auto Service, a made-up shop with made-up customers, right in your browser. There&rsquo;s no sign-up and no sign-in.</p>
+          <dl class="privacy-facts" data-reveal>
+            <div>
+              <dt><svg class="icon" aria-hidden="true"><use href="#i-device-tablet"/></svg>Saved in</dt>
+              <dd>This browser, on this device<small>In its storage (IndexedDB and local storage), with the app&rsquo;s files so it opens offline.</small></dd>
+            </div>
+            <div>
+              <dt><svg class="icon" aria-hidden="true"><use href="#i-sync"/></svg>Synced to</dt>
+              <dd>Nowhere<small>The sample shop isn&rsquo;t signed in to Shop Cloud.</small></dd>
+            </div>
+            <div>
+              <dt><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg>To remove it</dt>
+              <dd>Clear this site&rsquo;s data<small>In your browser&rsquo;s settings, under site or website data.</small></dd>
+            </div>
+          </dl>
+          <p>Your edits stay in that browser between visits. On a device that already has a shop saved, the same link opens that shop instead. Customer pages you open from it, such as the booking link, are live pages: what you type there is sent to WPI Driveline&rsquo;s Shop Cloud.</p>
+          <p>A few tools look things up online. Auto Diagnosis, for example, asks NHTSA, the U.S. vehicle-safety agency, about recalls and complaints for a vehicle&rsquo;s year, make and model.</p>
+          <a class="link-arrow" href="app/" data-no-prerender>Try the sample shop <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </section>
+
+        <section class="privacy-part" id="shops" aria-labelledby="shops-title">
+          <div class="privacy-part-head">
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
+            <h2 id="shops-title">Shops using the system</h2>
+          </div>
+          <p>If your shop runs the WPI Driveline Shop Management System, your customers&rsquo; records belong to your shop. They live on your shop&rsquo;s devices and, with <a href="works-with.html#shop-cloud">Shop Cloud</a>, in your shop&rsquo;s private Shop Cloud project, and in the outside services your shop connects through it (texting, card payments, email, QuickBooks, connected cars and AI).</p>
+          <p>This notice covers this website, the demo form and the sample shop. It doesn&rsquo;t cover those records. If you reached this page from a repair shop&rsquo;s text or link, ask that shop about your information.</p>
+          <a class="link-arrow" href="security.html#where">Where shop data lives <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </section>
+
+        <section class="privacy-part" id="contact" aria-labelledby="contact-title">
+          <div class="privacy-part-head">
+            <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+            <h2 id="contact-title">Contact</h2>
+          </div>
+          <p>Questions about this notice, or about a request you sent? Use the demo form and choose Question as the topic.</p>
+          <div class="privacy-contact">
+            <a class="btn btn-secondary" href="demo.html?topic=question"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Ask a question</a>
+            <!-- @partial contact-email -->
+
+<!-- @end contact-email -->
+          </div>
+          <p class="privacy-updated">Last updated <time datetime="2026-10-03">October 3, 2026</time>. This notice describes the site as it works today.</p>
+        </section>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
     <div class="container">
-      <h1>Privacy, <span class="accent-text">in plain language.</span></h1>
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Covers:</strong> this website, the demo form and the sample shop. It doesn&rsquo;t cover the records a shop keeps about its own customers.</li>
+            <li><strong>Sample shop:</strong> it lives in one browser on one device. Clearing site data erases it, and it doesn&rsquo;t follow you to another device.</li>
+            <li><strong>Animation setting:</strong> remembered per browser. A private window forgets it when you close it.</li>
+            <li><strong>Demo form:</strong> needs your name and email, plus your shop&rsquo;s name for a demo request. Your phone number is needed only if you ask for a call or a text.</li>
+          </ul>
+        </div>
+      </aside>
     </div>
   </section>
 </main>
 
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="index.html" aria-label="WPI Driveline Shop Management System home">
@@ -265,6 +717,7 @@
   <a class="tab tab-book" href="demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

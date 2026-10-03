@@ -74,7 +74,7 @@
 /* Open slots shimmer in a diagonal wave when step 1 plays (--w = column + row) */
 .booking-slot[data-at] { --fx: booking-shimmer; --fx-dur: 1s; --fx-pre: 1; --fx-ease: var(--ease-in-out); --fx-delay: calc(var(--w, 0) * 70ms); }
 @keyframes booking-shimmer { 0% { opacity: .35; } 50% { opacity: 1; background-color: var(--blue-100); border-color: rgba(31, 122, 224, .5); } 100% { opacity: 1; } }
-.booking-slot-on { position: absolute; inset: -1.5px; display: grid; place-items: center; border-radius: 8px; background: var(--blue); color: #fff; box-shadow: 0 0 0 3px var(--accent-ring); }
+.booking-slot-on { position: absolute; inset: -1.5px; display: grid; place-items: center; border-radius: 8px; background: var(--accent); color: #fff; box-shadow: 0 0 0 3px var(--accent-ring); }
 .booking-slot-on .icon { width: 15px; height: 15px; stroke-width: 3; }
 .booking-ripple { position: absolute; left: 50%; top: 50%; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; border: 2px solid var(--blue); pointer-events: none; }
 /* The Requests tray (the shop's Calendar) */
@@ -107,10 +107,14 @@
 .booking-sign .tag-text { font-size: 14px; letter-spacing: .12em; fill: var(--ink); }
 .booking-ro-chip { grid-area: chip; justify-self: start; align-self: start; gap: 6px; padding: 6px 13px 6px 10px; font-size: 13px; border: 1px solid rgba(45, 179, 106, .4); box-shadow: var(--shadow-2); }
 .booking-ro-chip .icon { width: 15px; height: 15px; }
+@media (min-width: 960px) and (max-width: 999.98px) { .booking-ro-chip { position: relative; z-index: 3; margin-right: 6px; padding-right: 11px; font-size: 12.5px; } }
 /* App chips: each one shows up with the step it describes */
-.booking-hero-fig .float-note.note-1 { top: 34px; right: -18px; left: auto; }
+.booking-hero-fig .float-note.note-1 { top: -14px; right: -18px; left: auto; } /* above the calendar header, clear of its title and day row */
 .booking-hero-fig .float-note.note-2 { top: auto; bottom: -30px; left: -22px; right: auto; }
-@media (min-width: 960px) and (max-width: 1099.98px) { .booking-hero-fig .float-note { display: none; } }
+@media (min-width: 960px) and (max-width: 1099.98px) {
+  .booking-hero-fig .float-note { display: none; }
+  .booking-req .mock-chip { display: none; } /* the tray's badge already says it's new */
+}
 .booking-hero-fig .float-note { transition: filter .45s var(--ease); }
 .booking-hero-fig:not([data-reached~="0"]) .float-note.note-1,
 .booking-hero-fig:not([data-reached~="2"]) .float-note.note-2 { filter: opacity(0); }
@@ -176,15 +180,15 @@
 .booking-days > span { display: grid; justify-items: center; padding: 4px 0 5px; border-radius: 10px; border: 1px solid var(--m-line); line-height: 1.2; }
 .booking-days small { font-size: 12px; color: var(--ink-3); }
 .booking-days b { font-size: 15px; font-weight: 700; color: var(--ink); }
-.booking-days > .is-on { background: var(--blue); border-color: var(--blue); }
+.booking-days > .is-on { background: var(--accent); border-color: var(--accent); }
 .booking-days > .is-on :is(small, b) { color: #fff; }
 .booking-times { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
 .booking-time { position: relative; display: grid; place-items: center; height: 30px; border-radius: 9px; border: 1px solid var(--line-strong); background: var(--paper); font-size: 12px; font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.booking-time.is-taken { background: var(--mist-100); border-color: var(--mist-200); color: var(--ink-4); }
+.booking-time.is-taken { background: var(--mist-100); border-color: var(--mist-200); color: var(--ink-3); } /* the strike carries the meaning, not faint text */
 .booking-time.is-taken[data-at] { --fx: booking-greyout; --fx-dur: .6s; --fx-pre: 1; }
 @keyframes booking-greyout { from { background-color: var(--paper); border-color: var(--line-strong); color: var(--ink); } }
 .booking-strike { position: absolute; left: 16%; right: 16%; top: 50%; height: 1.5px; margin-top: -.75px; border-radius: 1px; background: var(--ink-4); }
-.booking-time-on { position: absolute; inset: -1px; display: grid; place-items: center; border-radius: 9px; background: var(--blue); color: #fff; box-shadow: 0 0 0 3px var(--accent-ring); }
+.booking-time-on { position: absolute; inset: -1px; display: grid; place-items: center; border-radius: 9px; background: var(--accent); color: #fff; box-shadow: 0 0 0 3px var(--accent-ring); }
 .booking-continue { width: 100%; min-height: 32px; transition: opacity .4s var(--ease); }
 .booking-book-fig:not([data-reached~="1"]) .booking-continue { opacity: .45; }
 .booking-set { position: absolute; right: 6%; bottom: 64px; z-index: 2; width: 216px; display: grid; gap: 9px; padding: 12px; border-radius: 16px; background: rgba(255, 255, 255, .96); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3); text-align: left; }
@@ -195,12 +199,14 @@
 .booking-set-head small { display: block; font-size: 12px; color: var(--ink-3); }
 .booking-set-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--ink-3); }
 .booking-set-row b { font-weight: 650; color: var(--ink); }
-.booking-seg { --segs: 4; --seg: 3; }
+.booking-seg { --segs: 4; --seg: 0; }
 .booking-book-fig[data-reached~="2"] .booking-seg { --seg: 1; }
 .booking-seg > span { transition: color .3s var(--ease); }
+.booking-book-fig:not([data-reached~="2"]) .booking-seg > span:first-child,
 .booking-book-fig[data-reached~="2"] .booking-seg > span:nth-child(2) { color: var(--ink); }
-@media (max-width: 599.98px) {
-  .booking-book-stage { justify-items: center; }
+@media (max-width: 599.98px) { .booking-book-stage { justify-items: center; } }
+/* Settings card: beside the phone where there's room, stacked under it where the split column is narrow */
+@media (max-width: 599.98px), (min-width: 900px) and (max-width: 1179.98px) {
   .booking-set { position: relative; right: auto; bottom: auto; justify-self: end; margin-top: -18px; margin-right: -4px; width: 208px; }
 }
 
@@ -208,7 +214,7 @@
 .booking-desk > .card { display: flex; flex-direction: column; gap: 8px; padding: 18px; }
 .booking-desk h3 { font-size: 1.1rem; line-height: 1.3; }
 .booking-desk p { font-size: .95rem; line-height: 1.5; color: var(--ink-3); text-wrap: pretty; }
-.booking-desk-art { position: relative; display: grid; place-items: center; height: 112px; margin-bottom: 8px; padding: 12px; border-radius: 16px; background: var(--mist-50); border: 1px solid var(--line); overflow: hidden; }
+.booking-desk-art { position: relative; display: grid; place-items: center; height: 112px; margin-bottom: 8px; padding: 12px; border-radius: 16px; background: var(--mist-50); border: 1px solid var(--line); overflow: hidden; container-type: inline-size; }
 .booking-mini { display: grid; gap: 8px; width: 100%; }
 .booking-mini-row { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 9px; border-radius: 10px; background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-1); }
 .booking-mini-ico { display: grid; place-items: center; flex: none; width: 22px; height: 22px; border-radius: 7px; background: var(--accent-soft); color: var(--accent); }
@@ -223,20 +229,28 @@
 .booking-mini-map { flex: none; padding: 1px 7px; border-radius: var(--pill); background: var(--accent-soft); color: var(--accent-ink); font-size: 12px; font-weight: 650; }
 .booking-mini-row .mock-tickbox { flex: none; }
 @media (max-width: 559.98px) { .booking-desk-art { height: 100px; } }
-/* Loaner: fuel gauge and the Low fuel flag */
-.booking-fuel { display: grid; grid-template-columns: 112px auto; align-items: center; gap: 12px; }
-.booking-fuel svg { width: 112px; height: auto; overflow: visible; }
+/* Loaner: fuel gauge (out at 3/4, back at 1/4) and the "fuel lower" flag */
+.booking-fuel { display: grid; grid-template-columns: 104px auto; align-items: center; gap: 10px; }
+.booking-fuel svg { width: 104px; height: auto; overflow: visible; }
 .booking-fuel .g-track { fill: none; stroke: var(--mist-200); stroke-width: 9; stroke-linecap: round; }
-.booking-fuel .g-low { fill: none; stroke: var(--dot-warn); stroke-width: 9; stroke-linecap: round; }
+.booking-fuel .g-drop { fill: none; stroke: var(--dot-warn); stroke-width: 9; stroke-linecap: butt; stroke-opacity: .55; }
 .booking-fuel .g-tick { stroke: var(--ink-4); stroke-width: 1.6; stroke-linecap: round; }
 .booking-fuel .needle { stroke: var(--ink); stroke-width: 3; stroke-linecap: round; }
 .booking-fuel .g-hub { fill: var(--ink); }
 .booking-fuel text { font: 700 12px/1 var(--font); fill: var(--ink-3); }
 .booking-fuel-side { display: grid; gap: 6px; justify-items: start; }
 .booking-fuel-side .mock-label { font-size: 12px; }
-.booking-lowfuel { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: var(--pill); background: var(--warn-soft); color: var(--warn); font-size: 12px; font-weight: 700; white-space: nowrap; box-shadow: inset 0 0 0 1px rgba(227, 161, 59, .45); }
-.booking-lowfuel .icon { width: 13px; height: 13px; }
-@keyframes booking-lowfuel { 0% { opacity: 0; scale: .7; } 18% { opacity: 1; scale: 1.06; } 26% { scale: 1; } 38% { opacity: .25; } 52% { opacity: 1; } 66% { opacity: .25; } 80%, 100% { opacity: 1; } }
+.booking-fuel-flag { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 7px; border-radius: var(--pill); background: var(--warn-soft); color: var(--warn); font-size: 12px; font-weight: 700; white-space: nowrap; box-shadow: inset 0 0 0 1px rgba(227, 161, 59, .45); }
+.booking-fuel-flag .icon { width: 13px; height: 13px; }
+/* Narrow cards (4 across from 960px, 2 across at 560px): gauge on top, a short label and the flag under it */
+@container (max-width: 213.98px) {
+  .booking-fuel { grid-template-columns: auto; justify-items: center; gap: 4px; }
+  .booking-fuel svg { width: 96px; }
+  .booking-fuel-side { display: flex; align-items: center; gap: 6px; }
+  .booking-fuel-word, .booking-fuel-flag .icon { display: none; }
+  .booking-fuel-flag { padding: 3px 8px; }
+}
+@keyframes booking-fuel-flag { 0% { opacity: 0; scale: .7; } 18% { opacity: 1; scale: 1.06; } 26% { scale: 1; } 38% { opacity: .25; } 52% { opacity: 1; } 66% { opacity: .25; } 80%, 100% { opacity: 1; } }
 
 /* ---------- Lobby screen ---------- */
 .booking-lobby { align-items: center; }
@@ -249,8 +263,9 @@
 .booking-tv-shop b { font-size: 14px; font-weight: 750; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .booking-tv-shop span { flex: none; padding-left: 10px; border-left: 1px solid var(--line-strong); font-size: 13px; font-weight: 600; color: var(--ink-2); white-space: nowrap; }
 .booking-tv-clock { flex: none; font-size: 15px; font-weight: 650; color: var(--ink); font-variant-numeric: tabular-nums; }
-.booking-tv-body { display: grid; grid-template-columns: minmax(0, 1fr) 148px; gap: 10px; padding: 10px; flex: 1 1 auto; min-height: 0; }
+.booking-tv-body { display: grid; grid-template-columns: minmax(0, 1fr) 168px; gap: 10px; padding: 10px; flex: 1 1 auto; min-height: 0; }
 .booking-tv-list { display: grid; align-content: start; gap: 7px; min-width: 0; }
+.booking-tv-list > *, .booking-tv-row > .booking-tv-who { min-width: 0; }
 .booking-tv-view { --row: 39px; --gap: 5px; height: calc(var(--row) * 5 + var(--gap) * 4); overflow: hidden; }
 .booking-tv-track { transition: translate .8s var(--ease-in-out); }
 .booking-lobby-fig[data-reached~="1"] .booking-tv-track { translate: 0 -33.3333%; }
@@ -274,6 +289,11 @@
 .booking-tv-msg { display: grid; min-height: 88px; align-content: start; font-size: 13px; font-weight: 560; line-height: 1.35; color: var(--ink); }
 .booking-tv-qr { grid-template-columns: 44px minmax(0, 1fr); gap: 8px; align-items: center; }
 .booking-tv-qr svg { width: 44px; height: 44px; fill: var(--ink); }
+@media (min-width: 900px) and (max-width: 1099.98px) {
+  .booking-tv-est { display: none; }
+  .booking-tv-ready { white-space: normal; }
+}
+@media (max-width: 399.98px), (min-width: 900px) and (max-width: 1099.98px) { .booking-tv-more { display: none; } }
 @media (max-width: 559.98px) {
   .booking-tv-body { grid-template-columns: minmax(0, 1fr); }
   .booking-tv-wifi, .booking-tv-qr, .booking-tv-est, .booking-tv-clock { display: none; }
@@ -285,6 +305,8 @@
 
 /* ---------- FAQ ---------- */
 .booking-faq .faq-body a { font-weight: 600; }
+
+/* ---------- Related ---------- */
 </style>
 </head>
 <body data-page="features" data-tab="features" id="top">
@@ -413,7 +435,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -481,12 +503,11 @@
           <div class="booking-card booking-cal">
             <div class="booking-cal-head">
               <span class="booking-ico"><svg class="icon"><use href="#i-calendar"/></svg></span>
-              <span class="booking-cal-title"><b>Open times this week</b><small>Main Street Auto Service · online booking</small></span>
-              <span class="mock-chip is-idle">30 min</span>
+              <span class="booking-cal-title"><b>Open times this week</b><small>Online booking · 30-minute slots</small></span>
             </div>
             <div class="booking-week">
               <span></span><span class="booking-wd">Mon</span><span class="booking-wd">Tue</span><span class="booking-wd">Wed</span><span class="booking-wd is-pick">Thu</span><span class="booking-wd">Fri</span>
-              <span class="booking-tm">8:00</span>
+              <span class="booking-tm">9:00</span>
               <span class="booking-slot is-taken"></span>
               <span class="booking-slot" data-at="0" style="--w: 1"></span>
               <span class="booking-slot is-taken"></span>
@@ -501,13 +522,13 @@
                 <span class="booking-slot-on" data-at="0" data-fx="pop" style="--fx-delay: 1s"><svg class="icon"><use href="#i-check"/></svg></span>
               </span>
               <span class="booking-slot is-taken"></span>
-              <span class="booking-tm">11:00</span>
+              <span class="booking-tm">10:00</span>
               <span class="booking-slot is-taken"></span>
               <span class="booking-slot" data-at="0" style="--w: 3"></span>
               <span class="booking-slot" data-at="0" style="--w: 4"></span>
               <span class="booking-slot is-taken"></span>
               <span class="booking-slot" data-at="0" style="--w: 6"></span>
-              <span class="booking-tm">1:30</span>
+              <span class="booking-tm">10:30</span>
               <span class="booking-slot" data-at="0" style="--w: 3"></span>
               <span class="booking-slot" data-at="0" style="--w: 4"></span>
               <span class="booking-slot is-taken"></span>
@@ -520,7 +541,7 @@
             <div class="booking-tray-slot">
               <div class="booking-req" data-at="0" style="--fx-delay: 1.3s">
                 <span class="mock-avatar">RK</span>
-                <span class="booking-req-txt"><b>Rachel K.</b><small>Thu 9:30 AM · Oil &amp; filter</small></span>
+                <span class="booking-req-txt"><b>Rachel K.</b><small>Thu 9:30 · Oil &amp; filter</small></span>
                 <span class="mock-chip">New</span>
               </div>
             </div>
@@ -581,7 +602,7 @@
           <!-- 4: the repair order opens -->
           <span class="mock-chip is-ok booking-ro-chip" data-at="3"><svg class="icon"><use href="#i-document"/></svg>Repair order opened · key tag 14</span>
         </div>
-        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <button class="mock-replay" type="button" aria-label="Replay the booking and key-drop example"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
         <div class="float-note note-1" aria-hidden="true">
           <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-calendar"/></svg></span>
           <span><strong>Booking request · Thursday morning</strong><small>Rachel K. · 2018 Subaru Forester</small></span>
@@ -685,8 +706,8 @@
         <div class="callout" data-reveal="right">
           <svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg>
           <div>
-            <p class="callout-title">The paperwork is already started</p>
-            <p>Customers request a real open time or check themselves in, and the repair order is waiting on your signed-in devices.</p>
+            <p class="callout-title">The front desk work is already started</p>
+            <p>Customers request a real open time for you to accept, or check themselves in so the repair order is waiting on your signed-in devices.</p>
           </div>
         </div>
       </div>
@@ -699,7 +720,7 @@
       <div class="section-copy" data-reveal="right">
         <p class="eyebrow">Online booking</p>
         <h2 id="booking-page-title">A booking page that <span class="accent-text">knows your schedule</span></h2>
-        <p>Customers pick the work and a time from your own booking page. It works on any phone, with no app or login.</p>
+        <p>Customers pick the work and a time from your own booking page. It opens in any phone&rsquo;s web browser, with no app or login.</p>
         <ul class="booking-facts">
           <li>
             <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>
@@ -719,7 +740,7 @@
           </li>
           <li>
             <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg></span>
-            <div><h3>Day and week views</h3><p>Day and week calendar views, and an .ics download for Google, Apple or Outlook calendars.</p></div>
+            <div><h3>Calendar views</h3><p>Switch between day and week on the Calendar, and download appointments from Integrations as an .ics file for Google, Apple or Outlook.</p></div>
           </li>
           <li>
             <span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg></span>
@@ -727,7 +748,7 @@
           </li>
         </ul>
       </div>
-      <figure class="mock-figure booking-book-fig" data-reveal="left" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="1600" aria-label="Example: the sample shop's booking page on a phone. Full synthetic oil and filter service and a tire rotation are picked for Thursday the 8th. The booked times are greyed out and struck through, and 9:30 AM is selected. Beside it, the shop's online booking settings show 30-minute slots, 2 bookings at once and booking up to 21 days ahead.">
+      <figure class="mock-figure booking-book-fig" data-reveal="left" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="1600" aria-label="Example: the sample shop's booking page on a phone. Full synthetic oil and filter service and a tire rotation are picked for Thursday the 8th. Booked times are shown greyed out and struck through here (the real page leaves them out), and 9:30 AM is selected. Beside it, the shop's online booking settings show the slot length moving from 15 to 30 minutes, 2 bookings at once and booking up to 21 days ahead.">
         <span class="mock-tag">Example · sample shop</span>
         <div class="mock-stage booking-book-stage" aria-hidden="true">
           <div class="mock-phone is-auto booking-book-phone"><div class="mock-screen">
@@ -768,8 +789,8 @@
             <span class="booking-set-row"><span>Book up to</span><b>21 days</b></span>
           </div>
         </div>
-        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
-        <p class="mock-caption">Times that are already booked aren&rsquo;t offered.</p>
+        <button class="mock-replay" type="button" aria-label="Replay the booking page example"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <p class="mock-caption">Shown greyed out here; on the real page, booked times simply don&rsquo;t appear.</p>
       </figure>
     </div>
   </section>
@@ -780,7 +801,7 @@
       <div class="section-head" data-reveal>
         <p class="eyebrow">Self check-in</p>
         <h2 id="check-in-title">Self check-in <span class="accent-text">and key drop</span></h2>
-        <p class="lead">Print the key-drop sign or set a tablet in the lobby. Customers check themselves in, day or night, and the details land on a repair order.</p>
+        <p class="lead">Print the key-drop sign or set a tablet in the lobby. Customers check themselves in, day or night, and a repair order opens on your signed-in shop devices.</p>
       </div>
       <div class="roadmap" style="--steps:4" data-reveal>
         <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
@@ -849,20 +870,20 @@
             <div class="booking-fuel">
               <svg viewBox="0 0 120 76">
                 <path class="g-track" d="M15 60a45 45 0 0 1 90 0"/>
-                <path class="g-low" d="M15 60a45 45 0 0 1 13.18-31.82"/>
+                <path class="g-drop" d="M28.18 28.18A45 45 0 0 1 91.82 28.18"/>
                 <path class="g-tick" d="M60 21v6M32.4 32.4l4.3 4.3M87.6 32.4l-4.3 4.3"/>
                 <line class="needle" data-seq-i="1" data-fx="sweep" x1="60" y1="60" x2="60" y2="24" style="--from: 45deg; --to: -45deg; transform-origin: 60px 60px"/>
                 <circle class="g-hub" cx="60" cy="60" r="4.5"/>
                 <text x="15" y="75" text-anchor="middle">E</text><text x="105" y="75" text-anchor="middle">F</text>
               </svg>
               <span class="booking-fuel-side">
-                <span class="mock-label">Back in</span>
-                <span class="booking-lowfuel" data-seq-i="4" style="--fx: booking-lowfuel; --fx-dur: 1.6s"><svg class="icon"><use href="#i-alert"/></svg>Low fuel</span>
+                <span class="mock-label"><span class="booking-fuel-word">Out </span>3/4 &rarr; <span class="booking-fuel-word">in </span>1/4</span>
+                <span class="booking-fuel-flag" data-seq-i="4" style="--fx: booking-fuel-flag; --fx-dur: 1.6s"><svg class="icon"><use href="#i-alert"/></svg>Fuel lower</span>
               </span>
             </div>
           </div>
-          <h3>Loaner board</h3>
-          <p>Out with the odometer, fuel and a signed loaner agreement. Back in with the new readings, and low fuel is flagged.</p>
+          <h3>Loaners</h3>
+          <p>Check one out from the repair order with the odometer, fuel and a signed loaner agreement, and back in with the new readings. Fuel that comes back lower than it went out is flagged. Front Desk shows which loaners are out and with whom.</p>
         </article>
         <article class="card value-card" data-reveal-seq>
           <div class="booking-desk-art" aria-hidden="true">
@@ -884,7 +905,7 @@
       <div class="section-copy" data-reveal="left">
         <p class="eyebrow">Lobby screen</p>
         <h2 id="lobby-title">A <span class="accent-text"><span class="nowrap">waiting-room</span> screen</span></h2>
-        <p>Run it on a TV from a shop device. It lists every vehicle&rsquo;s status by first name and last initial, ready cars first, with rotating messages, your Wi-Fi details and the check-in QR code, and pages through long lists on its own.</p>
+        <p>Run the WPI Driveline Shop Management System lobby screen on a TV from a shop device. It lists every vehicle&rsquo;s status by first name and last initial, ready cars first, with rotating messages, your Wi-Fi details and the check-in QR code, and pages through long lists on its own.</p>
         <ul class="checklist">
           <li>First name and last initial only. No prices, no phone numbers.</li>
           <li>Ready cars first, then the cars of customers who are waiting.</li>
@@ -897,30 +918,30 @@
           <div class="mock-tv booking-tv"><div class="mock-screen">
             <div class="booking-tv-head">
               <span class="booking-tv-shop"><b>Main Street Auto Service</b><span>Vehicle status</span></span>
-              <span class="booking-tv-clock">9:41 AM</span>
+              <span class="booking-tv-clock">9:00 AM</span>
             </div>
             <div class="booking-tv-body">
               <div class="booking-tv-list">
                 <div class="booking-tv-view"><div class="booking-tv-track">
                   <div class="booking-tv-page">
-                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Avery T.</b><small>2020 Honda Accord</small></span><span class="live-pill"><span class="live-dot"></span>Ready for pickup</span></div>
-                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Elijah B.</b><small>2019 Honda CR-V</small></span><span class="live-pill"><span class="live-dot"></span>Ready for pickup</span></div>
+                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Avery T.</b><small>2020 Honda Accord</small></span><span class="live-pill"><span class="live-dot"></span><span>Ready<span class="booking-tv-more"> for pickup</span></span></span></div>
+                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Elijah B.</b><small>2019 Honda CR-V</small></span><span class="live-pill"><span class="live-dot"></span><span>Ready<span class="booking-tv-more"> for pickup</span></span></span></div>
                     <div class="booking-tv-row"><span class="booking-tv-who"><b>Jordan M.</b><small>2018 Ford F-150</small></span><span class="booking-tv-est">Est. 11:30 AM</span><span class="mock-chip">Being worked on</span></div>
                     <div class="booking-tv-row"><span class="booking-tv-who"><b>Priya R.</b><small>2021 Toyota Camry</small></span><span class="booking-tv-est">Est. 10:30 AM</span><span class="mock-chip is-idle">Up next</span></div>
-                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2020 Ram 1500</small></span><span class="booking-tv-est">Est. 1:00 PM</span><span class="mock-chip">Being worked on</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2020 Ram 1500</small></span><span class="booking-tv-est">Est. 12:00 PM</span><span class="mock-chip">Being worked on</span></div>
                   </div>
                   <div class="booking-tv-page">
-                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2016 Nissan Altima</small></span><span class="booking-tv-est">Est. 2:00 PM</span><span class="mock-chip is-idle">Up next</span></div>
-                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Jordan M.</b><small>2020 Chevrolet Silverado 1500</small></span><span class="booking-tv-est">Est. 4:00 PM</span><span class="mock-chip is-warn">Waiting on parts</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2016 Nissan Altima</small></span><span class="booking-tv-est">Est. 1:00 PM</span><span class="mock-chip is-idle">Up next</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Jordan M.</b><small>2020 Chevrolet Silverado 1500</small></span><span class="booking-tv-est">Est. 3:00 PM</span><span class="mock-chip is-warn">Waiting on parts</span></div>
                     <div class="booking-tv-row"><span class="booking-tv-who"><b>Harper N.</b><small>2019 Tesla Model 3</small></span><span class="mock-chip is-idle">Inspecting</span></div>
                     <div class="booking-tv-row"><span class="booking-tv-who"><b>Lena K.</b><small>2019 BMW 330i</small></span><span class="mock-chip is-idle">Inspecting</span></div>
                   </div>
                   <div class="booking-tv-page">
-                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Avery T.</b><small>2020 Honda Accord</small></span><span class="live-pill"><span class="live-dot"></span>Ready for pickup</span></div>
-                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Elijah B.</b><small>2019 Honda CR-V</small></span><span class="live-pill"><span class="live-dot"></span>Ready for pickup</span></div>
+                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Avery T.</b><small>2020 Honda Accord</small></span><span class="live-pill"><span class="live-dot"></span><span>Ready<span class="booking-tv-more"> for pickup</span></span></span></div>
+                    <div class="booking-tv-row is-ready"><span class="booking-tv-who"><b>Elijah B.</b><small>2019 Honda CR-V</small></span><span class="live-pill"><span class="live-dot"></span><span>Ready<span class="booking-tv-more"> for pickup</span></span></span></div>
                     <div class="booking-tv-row"><span class="booking-tv-who"><b>Jordan M.</b><small>2018 Ford F-150</small></span><span class="booking-tv-est">Est. 11:30 AM</span><span class="mock-chip">Being worked on</span></div>
                     <div class="booking-tv-row"><span class="booking-tv-who"><b>Priya R.</b><small>2021 Toyota Camry</small></span><span class="booking-tv-est">Est. 10:30 AM</span><span class="mock-chip is-idle">Up next</span></div>
-                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2020 Ram 1500</small></span><span class="booking-tv-est">Est. 1:00 PM</span><span class="mock-chip">Being worked on</span></div>
+                    <div class="booking-tv-row"><span class="booking-tv-who"><b>Carlos M.</b><small>2020 Ram 1500</small></span><span class="booking-tv-est">Est. 12:00 PM</span><span class="mock-chip">Being worked on</span></div>
                   </div>
                 </div></div>
                 <div class="booking-tv-foot">
@@ -940,7 +961,7 @@
             </div>
           </div></div>
         </div>
-        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <button class="mock-replay" type="button" aria-label="Replay the lobby screen example"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
       </figure>
     </div>
   </section>
@@ -953,11 +974,12 @@
         <div>
           <h2 class="callout-title" id="needs-title">Good to know</h2>
           <ul class="callout-list">
-            <li><strong>Needs:</strong> <a href="../works-with.html#shop-cloud">Shop Cloud</a> for real open times, the booking inbox and self check-in, whether on the lobby tablet or a customer&rsquo;s own phone.</li>
-            <li><strong>Requests and check-ins</strong> appear on your devices once one is signed in and open. A device checks about every minute while it&rsquo;s open.</li>
-            <li><strong>Without Shop Cloud,</strong> the booking page sends the request by text or email instead, and shows your business hours rather than live open times.</li>
-            <li><strong>Server-sent texts:</strong> confirmation and day-before reminder texts need Shop Cloud and your Twilio number, and are off until you switch them on.</li>
-            <li><strong>The lobby screen</strong> is a staff page, so run it from a shop device. Changes made on other devices show once they sync through Shop Cloud, and the check-in QR code shows when self check-in is on.</li>
+            <li><strong>Needs:</strong> <a href="../works-with.html#shop-cloud">Shop Cloud</a> for real open times, the booking inbox and self check-in, on the lobby tablet or a customer&rsquo;s own phone.</li>
+            <li>Requests and check-ins land on your shop devices once one is signed in and open. A device checks about every minute while it&rsquo;s open.</li>
+            <li>Open times on the booking page refresh while a signed-in shop device has the app open, and whenever you publish from Settings &rarr; Online booking.</li>
+            <li>Without Shop Cloud, the booking page shows your business hours and sends the request by text or email instead.</li>
+            <li>Confirmation and day-before reminder texts are sent by Shop Cloud from your Twilio number. They&rsquo;re off until you switch them on.</li>
+            <li>The lobby screen runs on a shop device, not a public link. It shows the check-in QR code when self check-in is on.</li>
           </ul>
         </div>
       </aside>
@@ -972,16 +994,16 @@
         <h2 id="faq-title">Booking questions</h2>
       </div>
       <div class="faq-list" data-reveal>
-        <details class="faq" name="booking-faq"><summary>Will it double-book us?</summary><div class="faq-body"><p>It offers only open times, up to your bookings-at-once capacity, and you accept each request.</p></div></details>
+        <details class="faq" name="booking-faq"><summary>Will it double-book us?</summary><div class="faq-body"><p>With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, the booking page offers only open times, up to your bookings-at-once capacity. You accept each request, and one that overlaps another appointment is flagged before you book it.</p></div></details>
         <details class="faq" name="booking-faq"><summary>Can customers check in after hours?</summary><div class="faq-body"><p>Yes, at the key drop from their own phone, with <a href="../works-with.html#shop-cloud">Shop Cloud</a>. The repair order is there the next time a shop device is signed in and open.</p></div></details>
-        <details class="faq" name="booking-faq"><summary>Can I put a Book online button on my own website?</summary><div class="faq-body"><p>Yes. In Settings &rarr; Website, copy your booking link or the ready-to-paste Book online button.</p></div></details>
-        <details class="faq" name="booking-faq"><summary>Do appointments go to Google Calendar?</summary><div class="faq-body"><p>Download upcoming appointments as an .ics file and open it in Google, Apple or Outlook calendars.</p></div></details>
+        <details class="faq" name="booking-faq"><summary>Can I put a Book online button on my own website?</summary><div class="faq-body"><p>Yes. Copy your booking link, or the ready-to-paste Book online button, from Settings &rarr; Website. You can also share the link from your Google profile or in a text.</p></div></details>
+        <details class="faq" name="booking-faq"><summary>Do appointments go to Google Calendar?</summary><div class="faq-body"><p>Not automatically. From Integrations, download your appointments as an .ics file and open it in Google, Apple or Outlook calendars. Download again to pick up changes.</p></div></details>
       </div>
     </div>
   </section>
 
   <!-- ===== Related ===== -->
-  <section class="section section-sm" id="related" aria-labelledby="related-title">
+  <section class="section section-sm booking-related" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>
       <!-- @partial related -->
@@ -995,7 +1017,7 @@
   <a class="card card-link feature-card" href="../features/workflow.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span>
     <h3>Workflow board, Today &amp; tech clock</h3>
-    <p>Every car by stage. One-tap job timers.</p>
+    <p>Every car by stage. <span class="nowrap">One-tap</span> job timers.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
   <a class="card card-link feature-card" href="../features/fleet.html">
@@ -1016,7 +1038,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -1031,7 +1053,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
@@ -1098,6 +1120,7 @@
   <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

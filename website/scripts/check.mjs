@@ -21,10 +21,13 @@ const REQUIRED_PARTIALS = ["head", "jsonld", "icons", "header", "footer", "tabba
 // Folders that hold pages. A new website subfolder must be added here and in sync.mjs.
 const PAGE_DIRS = ["", "features"];
 
+// Leftover {{tokens}} are checked separately, over the whole page (scripts included).
 const BANNED = [
-  /\bRPM\b/i, /Irwindale/i, /rpmautocenter/i, /lorem ipsum/i, /\bTODO\b/, /\{\{\w+\}\}/,
+  /\bRPM\b/i, /Irwindale/i, /rpmautocenter/i, /lorem ipsum/i, /\bTODO\b/,
   // The old local-shop site
   /Auto (&amp;|&|and) Small Engine/i, /small[- ]engine/i, /Staff sign-in/, /AutoShop Pro/, /appointment\.html/, /services\//, /demo shop/i,
+  // Owner decisions that aren't made: no fee claims, no self-hosted Supabase path, no account-support topic
+  /\badds? no (extra )?fees\b/i, /your own Supabase project/i, /Help with my account/i,
   // No social proof, superlatives or results claims
   /[★⭐]/, /testimonial/i, /\b(trusted|loved|used) by (over |more than )?(\d|hundreds|thousands|shops|techs|teams|owners)/i,
   /(#1|\bnumber one|\bindustry[- ]leading|\bbest[- ]in[- ]class)\b/i,
@@ -42,7 +45,15 @@ const EXAMPLE_DATA = [
   [/\bRO\s?#?\s?\d{5}\b|#1\d{4}\b/, "an RO number"],
   [/\$\s?\d[\d,]*\.\d{2}\b/, "a dollar amount with cents"],
   [/\b(?=[A-HJ-NPR-Z0-9]{17}\b)(?=[A-HJ-NPR-Z0-9]*\d)(?=[A-HJ-NPR-Z0-9]*[A-HJ-NPR-Z])[A-HJ-NPR-Z0-9]{17}\b/, "a VIN"],
+  [/\(217\) 555-01\d\d/, "a sample-shop phone number"],
+  [/[\w.+-]+@[\w-]+(\.[\w-]+)*\.example\b/, "an example email address"],
 ];
+// Inside example figures: never an RO number (they shift with the load date), phone numbers only as
+// (217) 555-01xx, emails only on .example domains.
+const MOCK_RO = /\bRO\s?#?\s?\d{4,6}\b|#1\d{4}\b/;
+const PHONE = /\(?\b\d{3}\)?[ .-]\d{3}[ .-]\d{4}\b/g;
+const EMAIL = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
+const ROLES = new Set(["owner", "manager", "advisor", "tech"]);
 const THIRD_PARTIES = /\b(Stripe|Twilio|Resend|Intuit|QuickBooks|Smartcar|Anthropic|Claude|NHTSA|Supabase|Apple|Google|Microsoft|Shopmonkey|Tekmetric|Mitchell|ALLDATA|Shop-Ware|NAPA|RO Writer|CARFAX|Netlify|GitHub)\b/i;
 const CSS_ANIM_KEYWORDS = new Set([
   "none", "infinite", "linear", "ease", "ease-in", "ease-out", "ease-in-out", "step-start", "step-end", "both", "forwards", "backwards",
@@ -76,6 +87,8 @@ try {
   siteErrors.push("partials/features.json is missing or not valid JSON: " + e.message);
 }
 const SLUGS = new Set((ia.features || []).map((f) => f.slug));
+const bySlug = Object.fromEntries((ia.features || []).map((f) => [f.slug, f]));
+const appPathRe = (biz.appPath || "app/").replace(/^\//, "").replace(/\/?$/, "/").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const PLANNED = new Set([
   ...["index", "features", "mobile", "security", "works-with", "about", "faq", "demo", "privacy", "404"].map((p) => `${p}.html`),
   ...[...SLUGS].map((s) => `features/${s}.html`),
@@ -138,6 +151,14 @@ const animationNames = (css) => {
   }
   return names;
 };
+// site.css may only use keyframes that site.css (or, for page-scoped rules, some page) defines.
+{
+  const pageKeyframes = new Set();
+  for (const p of listPages())
+    for (const m of readFileSync(join(ROOT, p), "utf8").matchAll(/<style[^>]*>([\s\S]*?)<\/style>/g)) for (const k of keyframesIn(m[1])) pageKeyframes.add(k);
+  for (const name of new Set(animationNames(SITE_CSS.replace(/\/\*[\s\S]*?\*\//g, ""))))
+    if (!SHARED_KEYFRAMES.has(name) && !pageKeyframes.has(name)) siteErrors.push(`site.css uses animation "${name}" but no @keyframes defines it`);
+}
 
 /* ---------- helpers ---------- */
 // Cut every element whose opening tag matches `test` (nesting-aware for the same tag name).
@@ -251,7 +272,11 @@ for (const page of pages) {
 
   // Internal links + assets must resolve. Links into the app (app/ or basePath + app/) are fine.
   const base = dirname(file);
-  const refs = [...html.matchAll(/\s(?:href|src)="([^"]+)"/g)].map((m) => m[1]);
+  const refs = [
+    ...[...noComments.matchAll(/\s(?:href|src)="([^"]+)"/g)].map((m) => m[1]),
+    ...[...noComments.matchAll(/\ssrcset="([^"]+)"/g)].flatMap((m) => m[1].split(",").map((c) => c.trim().split(/\s+/)[0])),
+    ...[...noComments.replace(/<script[\s\S]*?<\/script>/g, "").matchAll(/url\((["']?)([^)"']+)\1\)/g)].map((m) => m[2].trim()).filter((u) => !u.startsWith("#")),
+  ];
   for (const ref of refs) {
     if (/^(https?:|mailto:|tel:|#|data:|javascript:|\/\/)/.test(ref)) continue;
     const clean = ref.split("#")[0].split("?")[0];
@@ -280,6 +305,22 @@ for (const page of pages) {
   // mailto links never point at example addresses
   for (const m of html.matchAll(/href="mailto:([^"?]*)/g))
     if (/@([\w-]+\.)*(example\.(com|org|net)|[\w-]+\.example)$/i.test(m[1])) errors.push(`mailto to an example address: ${m[1]}`);
+
+  // Deep links: demo.html?interest=<feature slug> | ?topic=question, features.html?role=owner|manager|advisor|tech
+  for (const m of noComments.matchAll(/\shref="([^"#]*?)(demo|features)\.html\?([^"#]*)/g)) {
+    const q = new URLSearchParams(m[3].replace(/&amp;/g, "&"));
+    if (m[2] === "demo" && q.has("interest") && !SLUGS.has(q.get("interest"))) errors.push(`demo.html?interest=${q.get("interest")} isn't a features.json slug`);
+    if (m[2] === "demo" && q.has("topic") && q.get("topic") !== "question") errors.push(`demo.html?topic=${q.get("topic")}: the only topic deep link is ?topic=question`);
+    if (m[2] === "features" && q.has("role") && !ROLES.has(q.get("role"))) errors.push(`features.html?role=${q.get("role")}: use owner, manager, advisor or tech`);
+  }
+
+  // The marketing site can't be saved as a lookalike app.
+  if (/<link\b[^>]*\srel="manifest"/i.test(noComments)) errors.push("no web app manifest on the marketing site (remove <link rel=\"manifest\">)");
+  if (/<meta\b[^>]*\sname="apple-mobile-web-app-title"/i.test(noComments)) errors.push("no apple-mobile-web-app-title on the marketing site");
+
+  // Unknown or unfilled {{tokens}} anywhere, scripts included (sync fills every known token).
+  for (const tok of new Set([...noComments.matchAll(/\{\{\s*[\w-]+\s*\}\}/g)].map((m) => m[0])))
+    errors.push(`leftover token ${tok}: run node scripts/sync.mjs ${page}, or fix the name (unknown tokens are left in place)`);
 
   // In-page anchors
   for (const m of html.matchAll(/\shref="#([\w-]+)"/g)) if (m[1] !== "top" && !ids.includes(m[1])) errors.push("anchor to missing id: #" + m[1]);
@@ -311,6 +352,11 @@ for (const page of pages) {
     if (/<(h[1-6]|a|input|select|textarea)\b/i.test(inner)) errors.push(`mock-figure contains a heading, link or form control (use spans/divs): ${head}`);
     for (const b of inner.matchAll(/<button\b[^>]*>/gi)) if (!hasClass(b[0], "mock-replay")) errors.push(`mock-figure contains a button other than .mock-replay: ${head}`);
     if (/<figure\b/i.test(inner)) errors.push(`mock-figures never nest: ${head}`);
+    const figText = visibleText(fig);
+    const ro = figText.match(MOCK_RO);
+    if (ro) errors.push(`mock-figure prints an RO number ("${ro[0]}"); RO numbers shift with the load date, so identify jobs by vehicle and name`);
+    for (const p of figText.matchAll(PHONE)) if (!/^\(217\) 555-01\d\d$/.test(p[0])) errors.push(`mock-figure phone "${p[0]}": use (217) 555-01xx only`);
+    for (const e of figText.matchAll(EMAIL)) if (!/\.example$/i.test(e[0])) errors.push(`mock-figure email "${e[0]}": use a .example domain only`);
   }
   // Example data outside tagged figures and "Example" roadmaps
   const outside = cutBlocks(cutBlocks(text, isMockFigure), isExampleRoadmap);
@@ -340,6 +386,38 @@ for (const page of pages) {
   const styleAttrs = [...html.matchAll(/\sstyle="([^"]*)"/g)].map((m) => m[1]).join(";");
   const known = new Set([...SHARED_KEYFRAMES, ...keyframesIn(pageCss)]);
   for (const name of new Set(animationNames(pageCss + "\n" + styleAttrs))) if (!known.has(name)) errors.push(`animation "${name}" has no @keyframes in site.css or this page`);
+
+  // View-transition names: unique per page (a duplicate cancels the transition). The only static ft-* name is
+  // ft-<slug> on that feature page's hero icon tile; listing pages set theirs from site.js on pageswap.
+  const slug = (page.match(/^features\/([\w-]+)\.html$/) || [])[1];
+  {
+    const inline = [...noComments.matchAll(/\sstyle="[^"]*view-transition-name\s*:\s*([\w-]+)/g)].map((m) => m[1]).filter((n) => n !== "none");
+    const dupVt = inline.filter((n, i) => inline.indexOf(n) !== i);
+    if (dupVt.length) errors.push("duplicate view-transition-name: " + [...new Set(dupVt)].join(", "));
+    const ft = [...new Set([...inline, ...[...pageCss.matchAll(/view-transition-name\s*:\s*(ft-[\w-]+)/g)].map((m) => m[1])].filter((n) => n.startsWith("ft-")))];
+    for (const n of ft) if (n !== `ft-${slug}`) errors.push(`view-transition-name ${n} belongs only on features/${n.slice(3)}.html's hero icon tile`);
+  }
+
+  // The feature page template (README "The feature page template"); warnings while a page is being built.
+  if (slug && bySlug[slug]) {
+    const f = bySlug[slug];
+    const missing = [];
+    for (const id of ["hero", "needs", "faq", "related"]) if (!ids.includes(id)) missing.push(`#${id}`);
+    if (ids.includes("needs") && !/Good to know/.test(text)) missing.push(`the "Good to know" callout`);
+    if (!new RegExp(`\\shref="[^"]*demo\\.html\\?interest=${slug}"`).test(html)) missing.push(`"Request a demo" → ../demo.html?interest=${slug}`);
+    if (!new RegExp(`\\shref="(\\.\\./)+${appPathRe}${f.appRoute}"[^>]*data-no-prerender`).test(html)) missing.push(`"${f.demoLabel}" → {{appLink}}${f.appRoute}`);
+    if (!new RegExp(`view-transition-name\\s*:\\s*ft-${slug}\\b`).test(noComments)) missing.push(`the hero icon tile's view-transition-name: ft-${slug}`);
+    if (missing.length) warns.push("feature page template is missing: " + missing.join("; "));
+  }
+
+  // Inbox-driven features land on the shop's signed-in devices; never "by itself" / "before you open".
+  {
+    const m = visibleText(text).match(/\bby itself\b|\bbefore you (even )?open\b/i);
+    if (m) warns.push(`"${m[0]}": inbox-driven features are applied when a signed-in device is open (about every minute); say that instead`);
+  }
+  // Blue #1F7AE0 and green #2DB36A are for fills and strokes, never text (status text uses --accent / --green-ink).
+  if (/(^|[^-\w])color\s*:\s*(#1F7AE0|#2DB36A|var\(--(blue|green)\))/i.test(pageCss + ";" + styleAttrs))
+    warns.push("color: blue/green (#1F7AE0, #2DB36A) fails AA as text; use --accent or --green-ink (fine for an icon stroked with currentColor)");
 
   for (const re of BANNED) {
     const m = text.match(re);

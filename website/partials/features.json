@@ -112,7 +112,7 @@
       "title": "Booking, check-in & front desk",
       "short": "Booking & check-in",
       "line": "Real open times, key-drop check-in",
-      "blurb": "Only real open times. A key-drop check-in opens the RO.",
+      "blurb": "Customers pick only times you have open. A key-drop check-in arrives as a new RO on your signed-in devices.",
       "icon": "i-calendar-check",
       "group": "before",
       "appRoute": "calendar",
@@ -359,8 +359,8 @@
       "slug": "ai",
       "title": "AI assistant",
       "short": "AI assistant",
-      "line": "Drafts your team reviews first",
-      "blurb": "First drafts from Claude. Your team has the last word.",
+      "line": "Drafts to review and an AI receptionist",
+      "blurb": "First drafts from Claude for your team to review, plus an AI receptionist for calls.",
       "icon": "i-sparkle",
       "group": "desk",
       "appRoute": "orders",
@@ -371,7 +371,7 @@
         "advisor",
         "tech"
       ],
-      "needs": "Shop Cloud and your Anthropic API key",
+      "needs": "Shop Cloud and your Anthropic API key; your Twilio number for the receptionist",
       "related": [
         "messaging",
         "diagnosis",
@@ -455,7 +455,7 @@
     },
     {
       "slug": "no-return",
-      "label": "Customers don't come back",
+      "label": "Customers don’t come back",
       "features": [
         "customers"
       ]

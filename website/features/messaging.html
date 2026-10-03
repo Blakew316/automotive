@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Texting, Calls &amp; Email | WPI Driveline Shop Management System</title>
-<meta name="description" content="Two-way texting, calls that ring every phone, an AI receptionist and email from your own domain in WPI Driveline Shop Management System.">
+<meta name="description" content="Two-way texting, calls that ring up to five of your phones, an AI receptionist and email from your own domain in WPI Driveline Shop Management System.">
 <!-- @partial head -->
 <script>document.documentElement.classList.add("js");try{if(localStorage.getItem("wpi-site:motion")==="paused")document.documentElement.classList.add("motion-paused","motion-parked")}catch(e){}</script>
 <meta name="theme-color" content="#F5F9FE">
@@ -24,7 +24,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="WPI Driveline Shop Management System">
 <meta property="og:title" content="Texting, Calls &amp; Email | WPI Driveline Shop Management System">
-<meta property="og:description" content="Two-way texting, calls that ring every phone, an AI receptionist and email from your own domain in WPI Driveline Shop Management System.">
+<meta property="og:description" content="Two-way texting, calls that ring up to five of your phones, an AI receptionist and email from your own domain in WPI Driveline Shop Management System.">
 <meta property="og:url" content="https://blakew316.github.io/automotive/features/messaging.html">
 <meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -49,23 +49,31 @@
 .messaging-convo-head strong { display: block; font-size: 13px; font-weight: 680; }
 .messaging-convo-head small { display: block; font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .messaging-thread .mock-bubble { max-width: 90%; }
+.messaging-thread .mock-linkcard b { min-width: 0; }
 .messaging-receipt { align-self: flex-end; display: inline-flex; align-items: center; gap: 4px; margin-top: -3px; font-size: 12px; color: var(--ink-3); }
 .messaging-receipt svg { width: 14px; height: 14px; color: var(--green-ink); }
 .messaging-reply { display: grid; justify-items: start; align-items: start; }
 .messaging-reply > * { grid-area: 1 / 1; }
+/* The customer types, then "Thanks!" lands in the same spot. Paused mid-step, the reply shows instead of the dots. */
+@keyframes messaging-typing-life { 0% { opacity: 0; translate: 0 6px; } 18%, 80% { opacity: 1; translate: 0 0; } 100% { opacity: 0; } }
+.motion-paused .messaging-typing { visibility: hidden; }
 .messaging-composer { margin-top: auto; display: flex; align-items: center; gap: 6px; }
 .messaging-composer .mock-field { flex: 1; min-width: 0; border-radius: var(--pill); color: var(--ink-4); }
 .messaging-send { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; }
 .messaging-send svg { width: 15px; height: 15px; }
 
-/* The call card sits in flow and overlaps the phone's lower corner */
-.messaging-call {
-  position: relative; z-index: 2; width: min(60%, 252px); margin: -148px 0 0 auto;
-  border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-3);
-  overflow: hidden; text-align: left;
-}
+/* The call card sits in flow and overlaps the phone's lower corner. The card keeps one height for every step
+   (no layout shift), but only the top and the current step's panel are painted, each with its own frame, and
+   the drop shadow follows what is painted: the card visibly ends where the current step ends. */
+.messaging-call { position: relative; z-index: 2; display: grid; align-items: start; width: min(60%, 252px); margin: -148px 0 0 auto; text-align: left; }
+.messaging-call > * { grid-area: 1 / 1; min-width: 0; }
+.messaging-call-card { display: grid; align-content: start; filter: drop-shadow(0 22px 22px rgba(15, 43, 76, .14)) drop-shadow(0 4px 6px rgba(15, 43, 76, .07)); }
+/* Before the call (step 0): a quiet, dashed spot where the call will pop up */
+.messaging-call-slot { display: grid; place-items: center; height: 96px; margin: 0 0 0 26px; border-radius: 16px; border: 1.5px dashed var(--mist-300); color: var(--mist-300); }
+.messaging-call-slot .icon { width: 22px; height: 22px; }
+.messaging-call-top { border-radius: 16px 16px 0 0; background: var(--paper); border: 1px solid var(--line-strong); border-bottom: 0; overflow: hidden; }
 .messaging-call-head { display: grid; }
-.messaging-call-head > span { grid-area: 1 / 1; display: flex; align-items: center; gap: 6px; padding: 8px 12px; font-size: 12px; font-weight: 650; white-space: nowrap; }
+.messaging-call-head > span { grid-area: 1 / 1; display: flex; align-items: center; gap: 6px; min-width: 0; padding: 8px 12px; font-size: 12px; font-weight: 650; line-height: 1.35; }
 .messaging-call-head .icon { flex: none; width: 14px; height: 14px; }
 .messaging-call-in { background: var(--accent-soft); color: var(--accent-ink); }
 .messaging-call-missed { background: var(--warn-soft); color: var(--warn); }
@@ -75,14 +83,50 @@
 .messaging-call-body > span:last-child { min-width: 0; }
 .messaging-call-body strong { display: block; font-size: 13.5px; font-weight: 680; }
 .messaging-call-body small { display: block; font-size: 12px; line-height: 1.3; color: var(--ink-3); }
-.messaging-vm { display: grid; gap: 6px; padding: 9px 12px 12px; border-top: 1px solid var(--m-line); background: var(--mist-50); }
+/* Below the caller: ringing phones (step 1), the voicemail and its transcript (steps 2-3), then the missed-call text (step 4) */
+.messaging-call-more { display: grid; align-items: start; }
+.messaging-call-more > * { grid-area: 1 / 1; min-width: 0; border: 1px solid var(--line-strong); border-top-color: var(--m-line); border-radius: 0 0 16px 16px; background: var(--mist-50); }
+.messaging-more-label { display: block; font-size: 12px; font-weight: 650; color: var(--ink-2); }
+.messaging-ringing, .messaging-textback { display: grid; gap: 7px; padding: 9px 12px 12px; }
+.messaging-ringing-phones { display: flex; flex-wrap: wrap; gap: 5px; }
+.messaging-ringing-phones .mock-chip { gap: 4px; }
+.messaging-ringing-phones .icon { width: 12px; height: 12px; }
+.messaging-textback-bubble { justify-self: end; max-width: 100%; font-size: 12px; line-height: 1.4; }
+.messaging-vm { display: grid; gap: 6px; padding: 9px 12px 12px; }
 .messaging-vm-top { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; color: var(--ink-2); }
-.messaging-vm-top svg { width: 16px; height: 16px; color: var(--accent); }
+.messaging-vm-top svg { flex: none; width: 16px; height: 16px; color: var(--accent); }
 .messaging-vm-top span { margin-left: auto; font-weight: 500; color: var(--ink-3); font-variant-numeric: tabular-nums; }
 .messaging-wave { display: block; width: 100%; height: auto; overflow: visible; }
 .messaging-wave path { fill: none; stroke: var(--blue); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .messaging-transcript { display: grid; gap: 1px; font-size: 12px; line-height: 1.4; font-style: italic; color: var(--ink-2); }
-.messaging-transcript > span { display: block; width: fit-content; white-space: nowrap; }
+.messaging-transcript { position: relative; }
+.messaging-transcript > span { display: block; width: fit-content; max-width: 100%; }
+/* While the voicemail is transcribed (step 2), faint lines hold the transcript's place */
+.messaging-transcript > .messaging-transcribing { position: absolute; inset: 0; width: auto; display: grid; grid-template-rows: repeat(4, 1fr); align-items: center; }
+.messaging-transcribing i { display: block; height: 7px; border-radius: 4px; background: var(--mist-200); }
+.messaging-transcribing i:nth-child(1) { width: 46%; }
+.messaging-transcribing i:nth-child(2) { width: 68%; }
+.messaging-transcribing i:nth-child(3) { width: 54%; }
+.messaging-transcribing i:nth-child(4) { width: 60%; }
+@keyframes messaging-wait { to { opacity: .4; } }
+@media (prefers-reduced-motion: no-preference) {
+  .messaging-transcribing i { animation: messaging-wait .9s var(--ease-in-out) infinite alternate; }
+  .messaging-transcribing i:nth-child(even) { animation-delay: .3s; }
+}
+/* The missed-call note appears with the text-back (step 4), not before */
+.messaging-hero .float-note.note-2 { transition: opacity .5s var(--ease); }
+.messaging-hero:not([data-reached~="4"]) .float-note.note-2 { opacity: 0; }
+/* Phones: a wider card that overlaps only the composer row, so it never covers the thread */
+@media (max-width: 599.98px) {
+  .messaging-call { width: min(76%, 300px); margin-top: -50px; }
+  .messaging-call-slot { margin: 60px 0 0; }
+}
+/* Narrow phones: the phone grows to fit its thread instead of clipping it */
+@media (max-width: 399.98px) {
+  .messaging-phone { width: min(64%, 236px); aspect-ratio: auto; }
+  .messaging-phone > .mock-screen { min-height: 330px; }
+  .messaging-call { width: 80%; }
+}
 
 /* Pains: loose texts, a missed call and a sticky note flow into one record */
 .messaging-pains-side { display: grid; gap: 18px; min-width: 0; }
@@ -114,10 +158,10 @@
 .messaging-tpl-stage { display: grid; gap: 10px; justify-items: stretch; }
 .messaging-tpl-pick { display: flex; align-items: center; gap: 8px; }
 .messaging-tpl-bubble { justify-self: end; max-width: 100%; font-size: 13px; line-height: 1.45; }
-.messaging-token { display: inline-grid; justify-items: center; }
-.messaging-token > * { grid-area: 1 / 1; }
-.messaging-token-key { padding: 0 4px; border-radius: 5px; background: var(--accent-soft); color: var(--accent-ink); font-size: 12px; font-weight: 600; }
-.messaging-token-val { padding: 0 3px; border-radius: 5px; background: var(--green-100); font-weight: 650; }
+/* The token sits on top of the filled-in name, so the line keeps the name's width (no gap before the comma) */
+.messaging-token { position: relative; display: inline-block; }
+.messaging-token-key { position: absolute; left: 50%; top: 50%; translate: -50% -50%; white-space: nowrap; line-height: 1.5; padding: 0 4px; border-radius: 5px; background: var(--accent-soft); color: var(--accent-ink); font-size: 12px; font-weight: 600; }
+.messaging-token-val { padding: 0 2px; margin-right: -2px; border-radius: 5px; background: var(--green-100); font-weight: 650; }
 .messaging-tpl-list { list-style: none; padding: 0; margin: 18px 0 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .messaging-tpl-list li { padding: 4px 10px; border-radius: var(--pill); border: 1px solid var(--line); background: var(--paper); font-size: .8rem; font-weight: 550; line-height: 1.4; color: var(--ink-2); }
 
@@ -134,7 +178,6 @@
 .messaging-pop-body small { display: block; font-size: 12px; color: var(--ink-3); }
 .messaging-pop-car { display: block; margin-top: 3px; font-size: 13px; color: var(--ink); }
 .messaging-pop-foot { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 12px; }
-@media (max-width: 599.98px) { .messaging-call { margin-top: -128px; } }
 @media (max-width: 519.98px) {
   .messaging-calls-stage { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 4px; }
   .messaging-calls-art { width: min(100%, 290px); }
@@ -154,17 +197,25 @@
 .messaging-seg::before { display: none; }
 .messaging-seg > .messaging-seg-thumb { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / 4); padding: 0; border-radius: var(--pill); background: var(--paper); box-shadow: var(--shadow-1); translate: 200% 0; }
 .messaging-seg > span:not(.messaging-seg-thumb) { padding: 5px 2px; overflow: hidden; text-overflow: ellipsis; }
+.messaging-seg-sm { display: none; }
+/* Narrow phones: short mode labels, so none is cut off */
+@media (max-width: 359.98px) {
+  .messaging-seg > span:not(.messaging-seg-thumb) { padding-inline: 1px; }
+  .messaging-seg-lg { display: none; }
+  .messaging-seg-sm { display: inline; }
+}
 .messaging-seg > .is-on { color: var(--ink); }
 @keyframes messaging-seg-slide { from { translate: 100% 0; } }
 .messaging-callog { gap: 8px; }
 .messaging-callog-head { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; color: var(--accent-ink); }
 .messaging-callog-head .icon { width: 14px; height: 14px; }
 .messaging-callog-head span { margin-left: auto; font-weight: 500; color: var(--ink-3); }
-.messaging-turn { display: grid; gap: 2px; padding: 8px 10px; border-radius: 12px; background: var(--mist-50); min-width: 0; }
+/* Each turn types in short pieces that flow: two or three to a row on a wide panel, one or two on a phone */
+.messaging-turn { display: flex; flex-wrap: wrap; align-content: start; column-gap: .3em; row-gap: 0; padding: 8px 10px; border-radius: 12px; background: var(--mist-50); min-width: 0; }
 .messaging-turn.is-va { background: var(--blue-50); box-shadow: inset 3px 0 0 var(--blue-100); }
-.messaging-who { font-size: 12px; font-weight: 650; color: var(--ink-3); }
+.messaging-who { flex: 0 0 100%; margin-bottom: 2px; font-size: 12px; font-weight: 650; color: var(--ink-3); }
 .messaging-turn.is-va .messaging-who { color: var(--accent-ink); }
-.messaging-line { display: block; width: fit-content; max-width: 100%; overflow: hidden; white-space: nowrap; font-size: 12.5px; line-height: 1.4; color: var(--ink); }
+.messaging-line { display: block; flex: none; max-width: 100%; white-space: nowrap; font-size: 12.5px; line-height: 1.4; color: var(--ink); }
 .messaging-reqs { gap: 8px; }
 .messaging-reqs-head { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 650; color: var(--ink-2); }
 .messaging-reqs-head .icon { width: 15px; height: 15px; color: var(--accent); }
@@ -178,7 +229,8 @@
 .messaging-req .mock-chip svg { width: 12px; height: 12px; }
 
 /* Email: an envelope takes the PDF, the status steps to Opened, the DNS rows verify */
-.messaging-mail-stage { display: grid; gap: 12px; width: min(100%, 480px); justify-items: stretch; }
+.messaging-mail-stage { position: relative; isolation: isolate; display: grid; gap: 12px; width: min(100%, 500px); justify-items: stretch; }
+.messaging-mail-stage::before { content: ""; position: absolute; z-index: -1; inset: -8% -6% -10%; border-radius: 50%; background: radial-gradient(closest-side, rgba(31, 122, 224, .09), rgba(45, 179, 106, .05) 62%, transparent); pointer-events: none; }
 .messaging-mail-top { display: grid; grid-template-columns: 124px minmax(0, 1fr); align-items: center; gap: 14px; }
 .messaging-env { display: block; width: 100%; height: auto; overflow: visible; }
 .messaging-pdf { transform-box: view-box; }
@@ -207,6 +259,11 @@
 .messaging-quiet-band { fill: none; stroke: color-mix(in srgb, var(--blue) 26%, #fff); stroke-width: 22; }
 .messaging-clock-labels text { font-size: 13px; font-weight: 600; fill: var(--ink-3); }
 .messaging-clock-pill { font-size: 14px; font-weight: 650; fill: var(--ink-2); }
+/* Phones: the dial shrinks to about two thirds, so its words grow to stay readable */
+@media (max-width: 479.98px) {
+  .messaging-clock-labels text { font-size: 17px; }
+  .messaging-clock-pill { font-size: 15.5px; }
+}
 .messaging-hand { rotate: 120deg; transform-box: view-box; transform-origin: 170px 160px; }
 @keyframes messaging-hand-sweep { from { rotate: -30deg; } }
 .messaging-bubble { translate: 18px 0; }
@@ -215,6 +272,8 @@
 .messaging-clock-chip { font-size: 13px; font-weight: 650; }
 .messaging-clock-chip.is-warn { fill: var(--warn); }
 .messaging-clock-chip.is-ok { fill: var(--green-ink); }
+
+/* Related: room between the heading and the cards */
 </style>
 </head>
 <body data-page="features" data-tab="features" id="top">
@@ -343,7 +402,7 @@
               <div class="mega-col">
                 <p class="mega-label">Behind the desk</p>
                 <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
-                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts your team reviews first</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
               </div>
             </div>
             <div class="mega-foot">
@@ -388,7 +447,7 @@
 <!-- @end breadcrumbs -->
         <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-messaging"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>Texting, calls &amp; email</p>
         <h1 id="hero-title">Every text, call and email <span class="accent-text">on the customer&rsquo;s record.</span></h1>
-        <p class="lead">One inbox per customer for texts, emails and report replies. Connect <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your own Twilio number for business texting, calls that ring every phone, voicemail, missed-call texts and an optional AI receptionist.</p>
+        <p class="lead">One inbox per customer for texts, emails and report replies. Connect <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your own Twilio number for business texting, calls that ring up to five of your phones at once, voicemail, missed-call texts and an optional AI receptionist.</p>
         <div class="hero-actions">
           <a class="btn btn-primary btn-lg" href="../demo.html?interest=messaging">Request a demo</a>
           <a class="btn btn-secondary btn-lg" href="../app/messages" data-no-prerender>Open messages in the sample shop</a>
@@ -396,11 +455,11 @@
         <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
         <div class="hero-trust">
           <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>12 editable templates</span>
-          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Calls ring every phone</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Calls ring up to 5 phones</span>
           <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Email from your domain</span>
         </div>
       </div>
-      <figure class="page-hero-art mock-figure messaging-hero" data-play data-seq="5" data-loops="2" data-step="4" data-reached="0 1 2 3 4" data-seq-ms="1800" aria-label="Example: the sample shop's Messages on a phone. Priya R. got a checked-in text with her live status link and replied Thanks. Beside it, a call from Avery Thompson about the 2020 Honda Accord, which is ready for pickup, was missed, a text-back went out, and the voicemail was recorded and transcribed.">
+      <figure class="page-hero-art mock-figure messaging-hero" data-play data-seq="5" data-loops="2" data-step="4" data-reached="0 1 2 3 4" data-seq-ms="2200" aria-label="Example: the sample shop's Messages on a phone. Priya R. got a checked-in text with her live status link and replied Thanks. Beside it, a call from Avery Thompson about the 2020 Honda Accord, which is ready for pickup, rang three phones and was missed. The voicemail was recorded and transcribed, and when the call ended a missed-call text went out.">
         <span class="mock-tag">Example · sample shop</span>
         <div class="mock-stage messaging-hero-stage" aria-hidden="true">
           <div class="mock-phone messaging-phone">
@@ -411,11 +470,11 @@
               </div>
               <div class="mock-thread messaging-thread">
                 <div class="mock-thread-meta">Today 7:41 AM</div>
-                <div class="mock-bubble out" data-at="0" data-fx="bubble">Hi Priya, your Camry is checked in. Follow along live:<span class="mock-linkcard"><b>Main Street Auto Service</b><span>Live status</span></span></div>
+                <div class="mock-bubble out" data-at="0" data-fx="bubble">Hi Priya, your Camry is checked in. Live status:<span class="mock-linkcard"><b>Main Street Auto Service</b><span>Live status</span></span></div>
                 <div class="messaging-receipt" data-at="0" data-fx="fade" style="--fx-delay: .45s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12.5l4 4 9-9M11 15.5l1 1 9-9"/></svg>Delivered</div>
                 <div class="messaging-reply">
-                  <div class="mock-typing" data-at="0" data-until="1" data-fx="fade" style="--fx-delay: .8s"><i></i><i></i><i></i></div>
-                  <div class="mock-bubble in" data-at="1" data-fx="bubble">Thanks!</div>
+                  <div class="mock-typing messaging-typing" data-at="0" data-until="1" style="--fx: messaging-typing-life; --fx-dur: 1s; --fx-delay: .75s"><i></i><i></i><i></i></div>
+                  <div class="mock-bubble in" data-at="0" data-fx="bubble" style="--fx-delay: 1.65s">Thanks!</div>
                 </div>
               </div>
               <div class="messaging-composer">
@@ -424,23 +483,43 @@
               </div>
             </div>
           </div>
-          <div class="messaging-call" data-at="1" data-fx="drop" style="--fx-delay: .45s">
-            <div class="messaging-call-head">
-              <span class="messaging-call-in" data-until="2"><svg class="icon"><use href="#i-phone"/></svg>Incoming call · business line</span>
-              <span class="messaging-call-missed" data-at="2" data-fx="swap"><svg class="icon"><use href="#i-phone"/></svg>Missed call · text-back sent</span>
-            </div>
-            <div class="messaging-call-body">
-              <span class="mock-avatar">AT<span class="ring" data-at="1" data-fx="ring" style="--fx-delay: .7s"></span><span class="ring" data-at="1" data-fx="ring" style="--fx-delay: 1.1s"></span><span class="ring" data-at="1" data-fx="ring" style="--fx-delay: 1.5s"></span></span>
-              <span><strong>Avery Thompson</strong><small>2020 Honda Accord</small><small>RO open · Ready for Pickup</small></span>
-            </div>
-            <div class="messaging-vm" data-at="3" data-fx="fade">
-              <div class="messaging-vm-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="6.5" cy="12" r="4"/><circle cx="17.5" cy="12" r="4"/><path d="M6.5 16h11"/></svg>Voicemail<span>0:14</span></div>
-              <svg class="messaging-wave" viewBox="0 0 220 28"><path data-at="3" data-fx="draw" pathLength="1" style="--fx-dur: 1.3s" d="M4.0 14 L8.2 16 L12.3 9 L16.5 23 L20.6 10 L24.8 25 L28.9 7 L33.1 17 L37.3 13 L41.4 14 L45.6 11 L49.7 22 L53.9 2 L58.0 20 L62.2 4 L66.4 18 L70.5 12 L74.7 14 L78.8 14 L83.0 18 L87.1 7 L91.3 25 L95.5 1 L99.6 22 L103.8 9 L107.9 23 L112.1 11 L116.2 15 L120.4 14 L124.5 16 L128.7 8 L132.9 24 L137.0 7 L141.2 18 L145.3 6 L149.5 17 L153.6 13 L157.8 14 L162.0 14 L166.1 17 L170.3 9 L174.4 22 L178.6 10 L182.7 20 L186.9 12 L191.1 15 L195.2 14 L199.4 16 L203.5 10 L207.7 17 L211.8 13 L216.0 14"/></svg>
-              <div class="messaging-transcript">
-                <span data-at="4" data-fx="type" style="--chars: 26; --fx-dur: .7s">&ldquo;Hi, it&rsquo;s Avery. Got the</span>
-                <span data-at="4" data-fx="type" style="--chars: 25; --fx-dur: .7s; --fx-delay: .75s">text that the Accord is</span>
-                <span data-at="4" data-fx="type" style="--chars: 26; --fx-dur: .7s; --fx-delay: 1.5s">ready. I&rsquo;ll be there by 5.&rdquo;</span>
+          <!-- The call card: ringing (step 1), missed with the voicemail (2) and its transcript (3), then the missed-call text when the call ends (4). Each lower panel draws its own frame, so the card ends where the current step ends. -->
+          <div class="messaging-call">
+            <span class="messaging-call-slot" data-until="1"><svg class="icon"><use href="#i-phone"/></svg></span>
+            <div class="messaging-call-card" data-at="1" data-fx="drop" style="--fx-delay: .1s">
+            <div class="messaging-call-top">
+              <div class="messaging-call-head">
+                <span class="messaging-call-in" data-until="2"><svg class="icon"><use href="#i-phone"/></svg>Incoming call</span>
+                <span class="messaging-call-missed" data-at="2" data-until="4" data-fx="swap"><svg class="icon"><use href="#i-phone"/></svg>Missed call · voicemail</span>
+                <span class="messaging-call-missed" data-at="4" data-fx="swap"><svg class="icon"><use href="#i-phone"/></svg>Missed call · text-back sent</span>
               </div>
+              <div class="messaging-call-body">
+                <span class="mock-avatar">AT<span class="ring" data-at="1" data-fx="ring" style="--fx-n: 1; --fx-dur: 1.1s; --fx-delay: .4s"></span><span class="ring" data-at="1" data-fx="ring" style="--fx-n: 1; --fx-dur: 1.1s; --fx-delay: .75s"></span><span class="ring" data-at="1" data-fx="ring" style="--fx-n: 1; --fx-dur: 1.1s; --fx-delay: 1.1s"></span></span>
+                <span><strong>Avery Thompson</strong><small>2020 Honda Accord</small><small>RO open · Ready for Pickup</small></span>
+              </div>
+            </div>
+            <div class="messaging-call-more">
+              <div class="messaging-ringing" data-at="1" data-until="2" data-fx="fade" style="--fx-delay: .35s">
+                <span class="messaging-more-label">Ringing 3 phones at once</span>
+                <span class="messaging-ringing-phones"><span class="mock-chip"><svg class="icon"><use href="#i-phone"/></svg>Counter</span><span class="mock-chip"><svg class="icon"><use href="#i-phone"/></svg>Bay 2</span><span class="mock-chip"><svg class="icon"><use href="#i-phone"/></svg>Owner</span></span>
+              </div>
+              <div class="messaging-vm" data-at="2" data-until="4" data-fx="fade">
+                <div class="messaging-vm-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="6.5" cy="12" r="4"/><circle cx="17.5" cy="12" r="4"/><path d="M6.5 16h11"/></svg>Voicemail<span>0:14</span></div>
+                <svg class="messaging-wave" viewBox="0 0 220 28"><path data-at="2" data-fx="draw" pathLength="1" style="--fx-dur: 1.3s" d="M4.0 14 L8.2 16 L12.3 9 L16.5 23 L20.6 10 L24.8 25 L28.9 7 L33.1 17 L37.3 13 L41.4 14 L45.6 11 L49.7 22 L53.9 2 L58.0 20 L62.2 4 L66.4 18 L70.5 12 L74.7 14 L78.8 14 L83.0 18 L87.1 7 L91.3 25 L95.5 1 L99.6 22 L103.8 9 L107.9 23 L112.1 11 L116.2 15 L120.4 14 L124.5 16 L128.7 8 L132.9 24 L137.0 7 L141.2 18 L145.3 6 L149.5 17 L153.6 13 L157.8 14 L162.0 14 L166.1 17 L170.3 9 L174.4 22 L178.6 10 L182.7 20 L186.9 12 L191.1 15 L195.2 14 L199.4 16 L203.5 10 L207.7 17 L211.8 13 L216.0 14"/></svg>
+                <div class="messaging-transcript">
+                  <span class="messaging-transcribing" data-at="2" data-until="3" data-fx="fade" style="--fx-delay: 1s"><i></i><i></i><i></i><i></i></span>
+                  <span data-at="3" data-fx="type" style="--chars: 15; --fx-dur: .5s">&ldquo;Hi, it&rsquo;s Avery.</span>
+                  <span data-at="3" data-fx="type" style="--chars: 21; --fx-dur: .6s; --fx-delay: .55s">Got the text that the</span>
+                  <span data-at="3" data-fx="type" style="--chars: 16; --fx-dur: .5s; --fx-delay: 1.2s">Accord is ready.</span>
+                  <span data-at="3" data-fx="type" style="--chars: 20; --fx-dur: .55s; --fx-delay: 1.75s">I&rsquo;ll be there by 5.&rdquo;</span>
+                </div>
+              </div>
+              <div class="messaging-textback" data-at="4" data-fx="fade">
+                <div class="messaging-vm-top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="6.5" cy="12" r="4"/><circle cx="17.5" cy="12" r="4"/><path d="M6.5 16h11"/></svg>Voicemail · transcribed<span>0:14</span></div>
+                <span class="messaging-more-label">Missed-call text to Avery</span>
+                <span class="mock-bubble out messaging-textback-bubble" data-at="4" data-fx="bubble" style="--fx-delay: .2s">Sorry we missed your call! This is Main Street Auto Service &mdash; reply here and we&rsquo;ll get right back to you.</span>
+              </div>
+            </div>
             </div>
           </div>
         </div>
@@ -566,7 +645,7 @@
       <div class="section-head" data-reveal>
         <p class="eyebrow">Messages</p>
         <h2 id="inbox-title">One inbox, <span class="accent-text">twelve ready templates</span></h2>
-        <p class="lead">Each customer has one conversation. Texts, emails, calls and replies from their inspection report all land in it, so whoever is at the counter can pick it up.</p>
+        <p class="lead">In WPI Driveline Shop Management System, each customer has one conversation. Texts, emails, calls and replies from their inspection report all land in it, so whoever is at the counter can pick it up.</p>
       </div>
       <div class="messaging-inbox" data-reveal-stagger>
         <div class="card value-card messaging-tpl">
@@ -577,11 +656,11 @@
             <span class="mock-tag">Example · sample shop</span>
             <div class="mock-stage messaging-tpl-stage" aria-hidden="true">
               <div class="messaging-tpl-pick"><span class="mock-label">Template</span><span class="mock-chip">Checked in</span></div>
-              <div class="mock-bubble out is-draft messaging-tpl-bubble">Hi <span class="messaging-token"><span class="messaging-token-key" data-seq-out="3">{first}</span><span class="messaging-token-val" data-seq-i="3" data-fx="swap" style="--fx-dur: .6s">Priya</span></span>, thanks for checking in your Camry at Main Street Auto Service. We&rsquo;ll text you as soon as we&rsquo;ve had a look.</div>
+              <div class="mock-bubble out is-draft messaging-tpl-bubble">Hi <span class="messaging-token"><span class="messaging-token-key" data-seq-out="3">{first}</span><span class="messaging-token-val" data-seq-i="3" data-fx="swap" style="--fx-dur: .6s">Priya</span></span>, thanks for checking in your 2021 Toyota Camry at Main Street Auto Service. We&rsquo;ll text you as soon as we&rsquo;ve had a look.</div>
             </div>
           </figure>
           <ul class="messaging-tpl-list" aria-label="The twelve templates">
-            <li>Estimate ready</li><li>Checked in</li><li>Status update</li><li>Live status link</li><li>Vehicle ready</li><li>Payment request</li><li>Payment receipt</li><li>Appointment reminder</li><li>Service reminder</li><li>Declined-work follow-up</li><li>Review request</li><li>We miss you</li>
+            <li>Estimate ready</li><li>Checked in</li><li>Status update</li><li>Live status link</li><li>Vehicle ready</li><li>Payment request</li><li>Payment receipt</li><li>Appointment reminder</li><li>Service reminder</li><li>Declined work follow-up</li><li>Review request</li><li>We miss you</li>
           </ul>
         </div>
         <div class="card value-card">
@@ -592,7 +671,7 @@
         <div class="card value-card">
           <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg></span>
           <h3 class="mt-2">Texts from your business number</h3>
-          <p>With Twilio, texts go both ways from your shop&rsquo;s number. Picture messages and delivery receipts arrive live. A first-time texter becomes a contact, and STOP and START are honored.</p>
+          <p>With <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your Twilio number, texts go both ways from your shop&rsquo;s number. Picture messages and delivery receipts arrive live. A first-time texter becomes a contact, and STOP and START are honored.</p>
         </div>
         <div class="card value-card">
           <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-mail"/></svg></span>
@@ -602,7 +681,7 @@
         <div class="card value-card">
           <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
           <h3 class="mt-2">Suggest reply</h3>
-          <p>The <a href="ai.html">AI assistant</a> drafts an answer in the composer. You edit it and decide whether it goes. It uses your own Anthropic API key.</p>
+          <p>The <a href="ai.html">AI assistant</a> drafts an answer in the composer. You edit it and decide whether it goes. It runs on <a href="../works-with.html#shop-cloud">Shop Cloud</a> with your own Anthropic API key.</p>
         </div>
       </div>
     </div>
@@ -614,12 +693,12 @@
       <div class="section-copy" data-reveal="left">
         <p class="eyebrow">Calls</p>
         <h2 id="calls-title">Calls that <span class="accent-text">reach someone</span></h2>
-        <p>Incoming calls ring every listed phone at once. A screen pop shows who&rsquo;s calling, their vehicle and the open repair order.</p>
+        <p>Incoming calls ring up to five listed phones at once. A screen pop shows who&rsquo;s calling, their vehicle and the open repair order.</p>
         <p>Voicemail is recorded and transcribed. When nobody picks up, a missed-call text lets the caller reply instead of calling back.</p>
         <p>Click-to-call rings the advisor&rsquo;s phone first, then connects the customer, who sees the shop&rsquo;s number.</p>
         <p class="fine-print">Calling runs on <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your Twilio number.</p>
       </div>
-      <figure class="mock-figure messaging-calls" data-reveal="right" data-reveal-seq aria-label="Example: an incoming call splits to three listed phones that ring together, and a screen pop shows Carlos Mendoza, his 2020 Ram 1500 and its open repair order">
+      <figure class="mock-figure messaging-calls" data-reveal="right" data-reveal-seq aria-label="Example: an incoming call splits to three listed phones that ring together, and a screen pop shows Carlos Mendoza, his 2016 Nissan Altima and its open repair order">
         <span class="mock-tag">Example · sample shop</span>
         <div class="mock-stage messaging-calls-stage" aria-hidden="true">
           <svg class="messaging-calls-art" viewBox="0 0 264 300">
@@ -662,8 +741,8 @@
               <span class="mock-avatar">CM</span>
               <span>
                 <strong>Carlos Mendoza</strong>
-                <span class="messaging-pop-car">2020 Ram 1500 Big Horn</span>
-                <small>RO open · In Progress</small>
+                <span class="messaging-pop-car">2016 Nissan Altima</span>
+                <small>RO open · Approved</small>
               </span>
             </div>
             <div class="messaging-pop-foot"><span class="mock-btn is-soft">Open RO</span><span class="mock-btn is-ghost">Customer</span></div>
@@ -681,7 +760,7 @@
         <h2 id="receptionist-title">An AI receptionist <span class="accent-text">that says it&rsquo;s one</span></h2>
         <p>Choose when it picks up: Off, After hours, When no one answers, or Answers every call. The receptionist:</p>
         <ul class="checklist pop-list messaging-rcpt-list" data-reveal>
-          <li>Greets callers as the shop&rsquo;s virtual assistant, by name when the caller ID matches a customer.</li>
+          <li>Greets callers as the shop&rsquo;s virtual assistant (the default greeting; you can edit it), by name when the caller ID matches a customer with an open repair order or an appointment in the next two weeks.</li>
           <li>Tells a matched caller where their vehicle stands.</li>
           <li>Answers from your hours and the notes you give it.</li>
           <li>Takes a message for your team.</li>
@@ -689,7 +768,7 @@
           <li>Texts the booking link or directions when the caller asks.</li>
           <li>Rings your phones when a caller asks for a person during business hours.</li>
         </ul>
-        <p>It&rsquo;s instructed never to make up prices, part availability or diagnoses, and to offer an advisor callback instead. Every call lands in Messages with a summary and its transcript.</p>
+        <p>It&rsquo;s instructed never to make up prices, part availability or diagnoses, and to offer an advisor callback instead. Every call lands in Messages with a summary and its transcript. Calls, texts and requests are filed into Messages and Calendar by your signed-in devices, each checking about once a minute while it&rsquo;s open.</p>
         <p class="fine-print">It needs <a href="../works-with.html#shop-cloud">Shop Cloud</a>, your Twilio number and your own Anthropic API key. Its model has its own setting and defaults to Claude Haiku 4.5 for quick replies.</p>
       </div>
       <figure class="mock-figure messaging-rcpt" data-reveal="right" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" data-seq-ms="3000" aria-label="Example: the receptionist is set to answer when no one answers. It greets Grace by name as the shop's virtual assistant, takes her request for Thursday morning for squeaking brakes on her 2019 Honda Civic, and files it in Calendar Requests.">
@@ -699,38 +778,42 @@
             <div class="messaging-panel-head"><span class="messaging-bot"><svg class="icon"><use href="#i-sparkle"/></svg></span><span><strong>AI receptionist</strong><small>Answers calls nobody picks up, and every call after hours</small></span></div>
             <div class="mock-seg messaging-seg">
               <span class="messaging-seg-thumb" data-at="0" style="--fx: messaging-seg-slide; --fx-dur: .8s; --fx-ease: var(--spring); --fx-delay: .35s; --fx-pre: 1"></span>
-              <span>Off</span><span>After hours</span><span class="is-on">No answer</span><span>Every call</span>
+              <span>Off</span><span><span class="messaging-seg-lg">After hours</span><span class="messaging-seg-sm">After hrs</span></span><span class="is-on">No answer</span><span><span class="messaging-seg-lg">Every call</span><span class="messaging-seg-sm">All</span></span>
             </div>
           </div>
           <div class="messaging-panel messaging-callog">
             <div class="messaging-callog-head" data-at="0" data-fx="fade" style="--fx-delay: 1s"><svg class="icon"><use href="#i-phone"/></svg>Receptionist took the call<span>2:14 PM</span></div>
             <div class="messaging-turn is-va" data-at="0" data-fx="fade" style="--fx-delay: 1.2s">
               <span class="messaging-who">Virtual assistant</span>
-              <span class="messaging-line" data-at="0" data-fx="type" style="--chars: 44; --fx-dur: .8s; --fx-delay: 1.3s">Thanks for calling Main Street Auto Service,</span>
-              <span class="messaging-line" data-at="0" data-fx="type" style="--chars: 44; --fx-dur: .8s; --fx-delay: 2.1s">Grace. This is the shop&rsquo;s virtual assistant.</span>
+              <span class="messaging-line" data-at="0" data-fx="type" style="--chars: 18; --fx-dur: .35s; --fx-delay: 1.3s">Thanks for calling</span>
+              <span class="messaging-line" data-at="0" data-fx="type" style="--chars: 32; --fx-dur: .6s; --fx-delay: 1.65s">Main Street Auto Service, Grace.</span>
+              <span class="messaging-line" data-at="0" data-fx="type" style="--chars: 18; --fx-dur: .35s; --fx-delay: 2.25s">This is the shop&rsquo;s</span>
+              <span class="messaging-line" data-at="0" data-fx="type" style="--chars: 18; --fx-dur: .35s; --fx-delay: 2.6s">virtual assistant.</span>
             </div>
             <div class="messaging-turn is-caller" data-at="1" data-fx="fade">
               <span class="messaging-who">Caller</span>
-              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 41; --fx-dur: .75s; --fx-delay: .1s">Can I bring my Civic in Thursday morning?</span>
-              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 25; --fx-dur: .5s; --fx-delay: .85s">The brakes are squeaking.</span>
+              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 23; --fx-dur: .4s; --fx-delay: .1s">Can I bring my Civic in</span>
+              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 17; --fx-dur: .3s; --fx-delay: .5s">Thursday morning?</span>
+              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 25; --fx-dur: .45s; --fx-delay: .85s">The brakes are squeaking.</span>
             </div>
             <div class="messaging-turn is-va" data-at="1" data-fx="fade" style="--fx-delay: 1.35s">
               <span class="messaging-who">Virtual assistant</span>
-              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 42; --fx-dur: .75s; --fx-delay: 1.45s">I&rsquo;ll put in a request for Thursday morning.</span>
-              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 41; --fx-dur: .75s; --fx-delay: 2.2s">The shop will text you to confirm a time.</span>
+              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 25; --fx-dur: .45s; --fx-delay: 1.45s">I&rsquo;ll put in a request for</span>
+              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 17; --fx-dur: .3s; --fx-delay: 1.9s">Thursday morning.</span>
+              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 22; --fx-dur: .4s; --fx-delay: 2.2s">The shop will text you</span>
+              <span class="messaging-line" data-at="1" data-fx="type" style="--chars: 18; --fx-dur: .35s; --fx-delay: 2.6s">to confirm a time.</span>
             </div>
           </div>
           <div class="messaging-panel messaging-reqs">
-            <div class="messaging-reqs-head"><svg class="icon"><use href="#i-calendar-check"/></svg>Calendar · Requests<span class="mock-count"><span class="odometer is-plain" data-odometer="2" data-from="1" data-duration=".5" data-at="2" data-fx="pop" style="--fx-pre: 1">2</span></span></div>
+            <div class="messaging-reqs-head"><svg class="icon"><use href="#i-calendar-check"/></svg>Calendar · Requests<span class="mock-count"><span class="odometer is-plain" data-odometer="3" data-from="2" data-duration=".5" data-at="2" data-fx="pop" style="--fx-pre: 1">3</span></span></div>
             <div class="messaging-req-slot">
             <div class="messaging-req is-new" data-at="2" data-fx="drop" style="--fx-dur: .7s">
               <span class="mock-chip is-ok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Appointment request filed</span>
-              <span class="messaging-req-text"><strong>Grace H. · 2019 Honda Civic</strong><small>Brakes squeaking · Thu, Morning</small></span>
+              <span class="messaging-req-text"><strong>Grace H. · 2019 Honda Civic</strong><small>Brakes squeaking · Thu, morning · by phone</small></span>
             </div>
             </div>
             <div class="messaging-req">
-              <span class="messaging-req-text"><strong>Naomi F. · 2020 Ford Explorer</strong><small>Oil change · Fri, Flexible</small></span>
-              <span class="mock-chip is-idle">Online</span>
+              <span class="messaging-req-text"><strong>Rachel K. · 2018 Subaru Forester</strong><small>Oil &amp; filter, tire rotation</small></span>
             </div>
           </div>
         </div>
@@ -745,7 +828,7 @@
       <div class="section-copy" data-reveal="right">
         <p class="eyebrow">Email</p>
         <h2 id="email-title">Email from <span class="accent-text">your own address</span></h2>
-        <p>Estimates, invoices, receipts, updates and campaigns go out from your domain with the PDF attached, in a branded layout with your text as written.</p>
+        <p>Estimates, invoices, receipts, updates and campaigns go out from your domain in a branded layout with your text as written. An email sent from a repair order can carry its estimate, invoice or receipt as a PDF.</p>
         <p>Domain setup lists the DNS records to add, then Check DNS records confirms them.</p>
         <p>Add the delivery webhook in Resend, and each email shows Delivered, Opened (when open tracking is on in Resend), Delayed, Bounced or Marked as spam. A bounce or spam complaint flags the address, and bulk sends skip it.</p>
         <p class="fine-print">Until the domain is verified, emails open in your Mail app. Sending from your address uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> and Resend.</p>
@@ -797,7 +880,7 @@
         <h2 id="quiet-hours-title">Reminders that <span class="accent-text">respect the clock</span></h2>
         <p>Turn on automatic appointment confirmations and day-before reminders. They&rsquo;re off until you do.</p>
         <p>A signed-in device queues them, and the server sends them from your Twilio number even when no device is open.</p>
-        <p>Nothing goes out before 8 AM or after 9 PM shop time. A reminder that comes due overnight waits until 8 AM, and a text more than 6 hours late is dropped.</p>
+        <p>No automatic confirmation or reminder goes out before 8 AM or after 9 PM shop time. One that comes due overnight waits until 8 AM, and a text more than 6 hours late is dropped.</p>
         <p class="fine-print">Server sending uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your Twilio number. Other follow-ups, like review requests, are lined up for staff to send in one pass.</p>
       </div>
       <figure class="page-hero-art messaging-clock" data-reveal="right" data-reveal-seq data-play aria-label="Illustration: a 24-hour shop clock with quiet hours shaded from 9 PM to 8 AM. A queued reminder waits at the edge of the shaded arc while the hand sweeps through the night, then goes out at 8:00 AM marked Sent.">
@@ -904,7 +987,8 @@
           <h2 class="callout-title" id="needs-title">Good to know</h2>
           <ul class="callout-list">
             <li><strong>Needs:</strong> business texting, calls and the receptionist use <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your own Twilio number. U.S. carriers block business texts until A2P 10DLC or toll-free verification is done, and Twilio bills per text and minute.</li>
-            <li>The AI receptionist also needs your Anthropic API key. Usage is billed to your Anthropic account.</li>
+            <li>Suggest reply runs on Shop Cloud too. It and the AI receptionist need your Anthropic API key, and usage is billed to your Anthropic account.</li>
+            <li>If you write your own receptionist greeting, keep the line that says it&rsquo;s a virtual assistant.</li>
             <li>Email from your address uses Shop Cloud, Resend (free tier and paid plans) and DNS records on your domain. Delivery and open tracking need the Resend webhook.</li>
             <li>Without these, messages go out from your device&rsquo;s own Messages and Mail apps and are still logged on the customer.</li>
             <li>Automatic confirmations and day-before reminders are off until you turn them on.</li>
@@ -923,15 +1007,15 @@
       </div>
       <div class="faq-list" data-reveal>
         <details class="faq" name="feat-faq"><summary>Do texts come from my number?</summary><div class="faq-body"><p>From the Twilio number you connect. Without one, texts open in your device&rsquo;s Messages app and come from that phone.</p></div></details>
-        <details class="faq" name="feat-faq"><summary>Will reminders go out at 2 AM?</summary><div class="faq-body"><p>No. Nothing is sent before 8 AM or after 9 PM shop time. A reminder that comes due overnight waits until 8 AM.</p></div></details>
-        <details class="faq" name="feat-faq"><summary>Will the receptionist quote prices?</summary><div class="faq-body"><p>It&rsquo;s set up not to. It offers to have an advisor call back with exact pricing and takes a message for your team.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Will reminders go out at 2 AM?</summary><div class="faq-body"><p>No. Automatic confirmations and reminders aren&rsquo;t sent before 8 AM or after 9 PM shop time; one that comes due overnight waits until 8 AM. Missed-call texts, after-hours replies and texts the AI receptionist sends during a call still go out right away.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Will the receptionist quote prices?</summary><div class="faq-body"><p>Only prices you write into its notes, like a diagnostic fee. It&rsquo;s instructed never to make up a price, and it offers to have an advisor call back with exact pricing and takes a message for your team.</p></div></details>
         <details class="faq" name="feat-faq"><summary>Can I see if an email was opened?</summary><div class="faq-body"><p>Yes, once the Resend delivery webhook and open tracking are set up. Each email then shows Delivered, Opened, Delayed, Bounced or Marked as spam.</p></div></details>
       </div>
     </div>
   </section>
 
   <!-- ===== Related ===== -->
-  <section class="section section-sm" id="related" aria-labelledby="related-title">
+  <section class="section section-sm messaging-related" id="related" aria-labelledby="related-title">
     <div class="container">
       <h2 id="related-title" class="h3">Works alongside</h2>
       <!-- @partial related -->
@@ -944,14 +1028,14 @@
   </a>
   <a class="card card-link feature-card" href="../features/booking.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>
-    <h3>Booking, check-in &amp; front desk</h3>
-    <p>Only real open times. A key-drop check-in opens the RO.</p>
+    <h3>Booking, <span class="nowrap">check-in</span> &amp; front desk</h3>
+    <p>Customers pick only times you have open. A <span class="nowrap">key-drop</span> <span class="nowrap">check-in</span> arrives as a new RO on your <span class="nowrap">signed-in</span> devices.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
   <a class="card card-link feature-card" href="../features/ai.html">
     <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
     <h3>AI assistant</h3>
-    <p>First drafts from Claude. Your team has the last word.</p>
+    <p>First drafts from Claude for your team to review, plus an AI receptionist for calls.</p>
     <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
   </a>
 </div>
@@ -966,7 +1050,7 @@
     <div class="cta-road-copy" data-reveal>
       <p class="eyebrow">Ready when you are</p>
       <h2 id="cta-road-title">See your own shop day in it.</h2>
-      <p class="lead">Request a demo and we&rsquo;ll get back to you, or try the sample shop right now.</p>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
     </div>
     <div class="cta-road-actions" data-reveal>
       <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
@@ -981,7 +1065,7 @@
 </section>
 <!-- @end cta -->
 <!-- @partial footer -->
-<footer class="site-footer">
+<footer class="site-footer" id="site-footer">
   <div class="container footer-grid">
     <div class="footer-brand">
       <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
@@ -1048,6 +1132,7 @@
   <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
   <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
   <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
 </nav>
 <dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
   <div class="sheet-panel">

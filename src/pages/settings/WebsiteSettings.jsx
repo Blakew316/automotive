@@ -43,7 +43,7 @@ export default function WebsiteSettings() {
   const urlId = useId();
 
   return (
-    <Section id="website" icon={Globe} title="Your website & booking button" subtitle="Link your shop’s own website and add a Book online button that opens your booking page">
+    <Section id="website" icon={Globe} title="Your website & booking button" subtitle="Your shop’s site and a Book online button for it">
       <div className="space-y-5">
         <div>
           <label htmlFor={urlId} className="field-label">
