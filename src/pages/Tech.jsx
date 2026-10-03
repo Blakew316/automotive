@@ -11,8 +11,9 @@ import { serviceHours } from '../lib/pricing';
 import { vehicleName, time, dateTime, fullName } from '../lib/format';
 import { catalogPath } from '../lib/catalog';
 import { STATUS } from '../lib/workflow';
+import { storageKey } from '../lib/edition';
 
-const TECH_KEY = 'autoshop-pro:tech';
+const TECH_KEY = storageKey('tech');
 const readTech = () => {
   try {
     return localStorage.getItem(TECH_KEY) || null;

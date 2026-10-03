@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { UIContext } from './context';
+import { storageKey } from '../lib/edition';
 
 // Appearance: light by default. (The old key saved "system" automatically, so only an explicit dark carries over.)
-const THEME_KEY = 'autoshop-pro:appearance';
-const OLD_THEME_KEY = 'autoshop-pro:theme';
-const USER_KEY = 'autoshop-pro:user';
-const SITE_KEY = 'autoshop-pro:location';
+const THEME_KEY = storageKey('appearance');
+const OLD_THEME_KEY = storageKey('theme');
+const USER_KEY = storageKey('user');
+const SITE_KEY = storageKey('location');
 
 function readUser() {
   try {

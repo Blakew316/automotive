@@ -6,8 +6,9 @@ import { useAccess, useUI } from '../store/hooks';
 import { Modal, Avatar } from './ui';
 import { ROLES, hashPin, homeFor } from '../lib/access';
 import { PRODUCT } from '../brand/artwork';
+import { storageKey } from '../lib/edition';
 
-const TECH_KEY = 'autoshop-pro:tech';
+const TECH_KEY = storageKey('tech');
 
 export default function SwitchUser({ onClose }) {
   const { staff, user, setUserId } = useAccess();

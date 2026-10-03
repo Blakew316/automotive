@@ -8,8 +8,9 @@ import { stateFromRows, recordsOf, keyOf, lookup } from './records';
 import { same } from './merge';
 import { cloudConfig, cloudSession, isStaffSession } from '../cloudShare';
 import { writeKey } from '../db';
+import { storageKey } from '../edition';
 
-const DEVICE_KEY = 'autoshop-pro:device';
+const DEVICE_KEY = storageKey('device');
 
 function guessDeviceName() {
   const ua = typeof navigator === 'undefined' ? '' : navigator.userAgent;
@@ -156,9 +157,9 @@ export function useShopSync({ stateRef, cloud, commit, update, applyRemote, sync
       mediaRef.current = startMediaSync({ cfg, getState: () => stateRef.current, update });
       // Once a day, trim change history older than six months.
       try {
-        const last = Number(localStorage.getItem('autoshop-pro:pruned') || 0);
+        const last = Number(localStorage.getItem(storageKey('pruned')) || 0);
         if (Date.now() - last > 86_400_000) {
-          localStorage.setItem('autoshop-pro:pruned', String(Date.now()));
+          localStorage.setItem(storageKey('pruned'), String(Date.now()));
           shopAdmin(cfg, 'prune').catch(() => {});
         }
       } catch {

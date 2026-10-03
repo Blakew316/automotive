@@ -1,7 +1,8 @@
 // Shop data on this device, in IndexedDB (no 5 MB limit like localStorage). Each top-level part of
 // the shop (orders, customers, shop settings …) is stored under its own key, so a save only writes
 // the parts that changed.
-const DB_NAME = 'autoshop-data';
+import { dbName } from './edition';
+const DB_NAME = dbName('data');
 const STORE = 'kv';
 
 let dbPromise = null;

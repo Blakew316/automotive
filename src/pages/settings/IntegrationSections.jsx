@@ -3,7 +3,7 @@ import { Cloud, LogIn, LogOut, PlugZap, Download, FileClock, Copy, Check, KeyRou
 import { useShop, useUI } from '../../store/hooks';
 import { Card, CardHeader, Field, InlineText, Spinner, ExternalLink } from '../../components/ui';
 import { cloudConfig, cloudSession, signIn, signOut, testConnection, isStaffSession, changePassword } from '../../lib/cloudShare';
-import { SHOP_CLOUD } from '../../lib/cloudDefaults';
+import { BUILT_IN_CLOUD, SHOP_CLOUD } from '../../lib/cloudDefaults';
 import { serviceHistory, toCsv, HISTORY_COLUMNS } from '../../lib/serviceHistory';
 import { isoDate, addDays, number } from '../../lib/format';
 import { PRODUCT } from '../../brand/artwork';
@@ -113,7 +113,7 @@ export function SharingSection() {
               {(id) => <InlineText id={id} className="input font-mono text-sm" placeholder={SHOP_CLOUD.bucket} value={cloud.bucket || ''} onCommit={(v) => updateShop({ cloud: { ...cloud, bucket: v.trim() || SHOP_CLOUD.bucket } })} />}
             </Field>
           </div>
-          {!builtIn && (
+          {!builtIn && BUILT_IN_CLOUD && (
             <button className="btn-plain btn-sm mt-2" onClick={() => updateShop({ cloud: { ...SHOP_CLOUD } })}>
               {`Use the ${PRODUCT} cloud`}
             </button>

@@ -3,11 +3,14 @@
  * Assembles the GitHub Pages site:
  *   <base>          the marketing website for WPI Driveline Shop Management System (website/)
  *   <base>app/      the WPI Driveline Shop Management System staff app (Vite build)
+ *   <base>small-engine/  the Small Engine Edition: the same app built for outdoor power equipment
+ *                   shops (VITE_EDITION=small-engine, src/lib/edition.js), with its own data
  *
  * The website is checked first (website/scripts/check.mjs); any page error stops the build.
  *
  * GitHub Pages serves one 404.html for every missing path. It is the app shell, so deep links into
- * the app (e.g. <base>app/orders/123) load directly; a small script in front of it forwards pages of
+ * the app (e.g. <base>app/orders/123) load directly; deep links into the Small Engine Edition go to its
+ * own shell as <base>small-engine/?go=<path> (src/main.jsx puts the path back); a small script in front of it forwards pages of
  * the old shop website (LEGACY), links from before the app moved under app/ (APP_ROUTES) and /site,
  * and sends anything else to the website's not-found page. netlify.toml mirrors LEGACY as real 301s.
  *
@@ -37,6 +40,9 @@ export const LEGACY = [
   ['^careers(\\.html)?$', 'about.html'],
 ];
 
+// The Small Engine Edition's folder. website/scripts/check.mjs keeps website pages from using the name.
+export const SMALL_ENGINE = 'small-engine';
+
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const BASE = (process.argv[2] || '/automotive/').replace(/\/?$/, '/');
 const DIST = join(ROOT, 'dist');
@@ -60,6 +66,13 @@ function build() {
 
   rmSync(DIST, { recursive: true, force: true });
   execFileSync('npx', ['vite', 'build', `--base=${BASE}app/`, '--outDir', 'dist/app'], { cwd: ROOT, stdio: 'inherit' });
+  execFileSync('npx', ['vite', 'build', `--base=${BASE}${SMALL_ENGINE}/`, '--outDir', `dist/${SMALL_ENGINE}`], {
+    cwd: ROOT,
+    stdio: 'inherit',
+    env: { ...process.env, VITE_EDITION: 'small-engine' },
+  });
+  // The car database and VIN files are for the auto edition only.
+  rmSync(join(DIST, SMALL_ENGINE, 'data'), { recursive: true, force: true });
 
   const biz = JSON.parse(readFileSync(join(SITE, 'business.json'), 'utf8'));
   if ((biz.basePath || '/').replace(/\/?$/, '/') !== BASE) {
@@ -75,6 +88,8 @@ function build() {
       (function () {
         var b = ${JSON.stringify(BASE)}, p = location.pathname, q = location.search + location.hash;
         if (p.indexOf(b + 'app/') === 0) return;
+        var se = b + ${JSON.stringify(SMALL_ENGINE)} + '/';
+        if (p.indexOf(se) === 0) return location.replace(se + '?go=' + encodeURIComponent(p.slice(se.length) + q));
         var r = p.indexOf(b) === 0 ? p.slice(b.length) : p.replace(/^\\//, '');
         var legacy = ${JSON.stringify(LEGACY)};
         for (var i = 0; i < legacy.length; i++) if (new RegExp(legacy[i][0]).test(r)) return location.replace(b + legacy[i][1]);
@@ -103,8 +118,8 @@ self.addEventListener('activate', (event) => {
 `,
   );
 
-  for (const f of ['index.html', 'app/index.html', 'app/sw.js', '404.html', 'not-found.html', 'sw.js']) {
+  for (const f of ['index.html', 'app/index.html', 'app/sw.js', `${SMALL_ENGINE}/index.html`, `${SMALL_ENGINE}/sw.js`, '404.html', 'not-found.html', 'sw.js']) {
     if (!existsSync(join(DIST, f))) throw new Error(`missing dist/${f}`);
   }
-  console.log(`pages: website at ${BASE}, app at ${BASE}app/`);
+  console.log(`pages: website at ${BASE}, app at ${BASE}app/, Small Engine Edition at ${BASE}${SMALL_ENGINE}/`);
 }

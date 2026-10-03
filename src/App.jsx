@@ -1,10 +1,11 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import ShopProvider from './store/ShopProvider';
 import UIProvider from './store/UIProvider';
 import Layout from './components/Layout';
 import { Spinner } from './components/ui';
 import NotFound from './pages/NotFound';
+import { SMALL_ENGINE } from './lib/edition';
 
 // Every page loads on demand, so the first screen appears quickly even on a shop tablet. The pages
 // used all day are fetched in the background right after, so moving between them stays instant.
@@ -72,6 +73,8 @@ const CheckinSign = lazy(() => import('./pages/CheckinSign'));
 const Timecards = lazy(() => import('./pages/Timecards'));
 const More = lazy(() => import('./pages/More'));
 const Diagnose = lazy(() => import('./pages/Diagnose'));
+const Troubleshoot = lazy(() => import('./pages/Troubleshoot'));
+const Brands = lazy(() => import('./pages/Brands'));
 
 const Loading = () => (
   <div className="flex h-64 items-center justify-center text-ink-3">
@@ -127,11 +130,24 @@ export default function App() {
                         <Route path="/frontdesk" element={<FrontDesk />} />
                         <Route path="/vehicles" element={<Vehicles />} />
                         <Route path="/vehicles/:id" element={<VehicleDetail />} />
-                        <Route path="/diagnose" element={<Diagnose />} />
-                        <Route path="/vin" element={<VinDecoder />} />
-                        <Route path="/catalog" element={<CatalogHome />} />
-                        <Route path="/catalog/:make" element={<CatalogMake />} />
-                        <Route path="/catalog/:make/:model" element={<CatalogModel />} />
+                        {SMALL_ENGINE ? (
+                          <>
+                            {/* Small Engine Edition: power-equipment tools in place of the car-only ones. */}
+                            <Route path="/troubleshoot" element={<Troubleshoot />} />
+                            <Route path="/brands" element={<Brands />} />
+                            <Route path="/diagnose" element={<Navigate to="/troubleshoot" replace />} />
+                            <Route path="/vin" element={<Navigate to="/vehicles" replace />} />
+                            <Route path="/catalog/*" element={<Navigate to="/brands" replace />} />
+                          </>
+                        ) : (
+                          <>
+                            <Route path="/diagnose" element={<Diagnose />} />
+                            <Route path="/vin" element={<VinDecoder />} />
+                            <Route path="/catalog" element={<CatalogHome />} />
+                            <Route path="/catalog/:make" element={<CatalogMake />} />
+                            <Route path="/catalog/:make/:model" element={<CatalogModel />} />
+                          </>
+                        )}
                         <Route path="/parts" element={<Parts />} />
                         <Route path="/library" element={<Library />} />
                         <Route path="/reports" element={<Reports />} />

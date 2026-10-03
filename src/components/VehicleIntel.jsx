@@ -7,6 +7,7 @@ import { SUPPLIERS, B2B_PLATFORMS, oemPartsFor } from '../lib/suppliers';
 import { oemPortals, freeDocuments } from '../data/serviceInfo';
 import { vehicleSpecs } from '../data/vehicleSpecs';
 import { date, number } from '../lib/format';
+import { storageKey } from '../lib/edition';
 
 /** Generic async loader keyed on its dependencies. Nothing is fetched until `enabled` is true. */
 function useAsync(fn, deps, enabled = true) {
@@ -35,7 +36,7 @@ function useAsync(fn, deps, enabled = true) {
 
 // Recalls, complaints and crash ratings change daily and are not stored with the app, so they are
 // fetched from NHTSA only when the user asks (or has opted in to always check).
-const ONLINE_KEY = 'autoshop-pro:online-lookups';
+const ONLINE_KEY = storageKey('online-lookups');
 const readOnline = () => {
   try {
     return localStorage.getItem(ONLINE_KEY) === '1';
