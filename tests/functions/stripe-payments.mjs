@@ -167,6 +167,7 @@ r = await callPay('connect');
 ok(r.body.ok && world.secrets.get('stripe_webhook_secret') === 'whsec_test_secret' && world.secrets.get('stripe_webhook_id') === 'we_new', 'connect registers the webhook and saves its signing secret');
 const created = world.stripe.find((x) => x.path === '/v1/webhook_endpoints' && x.method === 'POST');
 ok(created.form.url === `${URL_BASE}/functions/v1/stripe-webhook` && created.form['enabled_events[0]'] === 'checkout.session.completed', 'endpoint points at stripe-webhook with the payment events');
+ok(created.form.description === 'WPI Driveline Shop Management System — online payments', 'endpoint described with the software’s full name');
 ok(!world.endpoints.some((e) => e.id === 'we_old') && world.endpoints.some((e) => e.id === 'we_other'), 'an earlier endpoint for this shop is replaced; others are left alone');
 r = await callPay('status');
 ok(r.body.connected, 'status: connected');

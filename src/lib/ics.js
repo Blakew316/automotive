@@ -1,5 +1,6 @@
 // iCalendar (.ics) export of appointments for Google Calendar, Apple Calendar and Outlook.
 import { fullName, vehicleName } from './format';
+import { PRODUCT } from '../brand/artwork';
 
 const stamp = (d) => new Date(d).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
 const esc = (s = '') => String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
@@ -22,7 +23,7 @@ export function appointmentsIcs(state, { daysBack = 30, daysAhead = 120 } = {}) 
   const now = Date.now();
   const shop = state.shop;
   const location = [shop.address, shop.city, shop.state, shop.zip].filter(Boolean).join(', ');
-  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//WPI Driveline//Appointments//EN', 'CALSCALE:GREGORIAN', `X-WR-CALNAME:${esc(`${shop.name} appointments`)}`];
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', `PRODID:-//${PRODUCT}//Appointments//EN`, 'CALSCALE:GREGORIAN', `X-WR-CALNAME:${esc(`${shop.name} appointments`)}`];
   for (const a of state.appointments) {
     const start = new Date(a.start).getTime();
     if (start < now - daysBack * 86400000 || start > now + daysAhead * 86400000 || a.status === 'cancelled') continue;

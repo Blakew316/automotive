@@ -38,7 +38,7 @@ h1{font-size:20px;margin:0 0 6px}p{margin:0;color:#3d506b}</style></head>
 }
 const redirect = (url: string) => new Response(null, { status: 302, headers: { Location: url } });
 const back = (url: string | null, params: Record<string, string>) => {
-  if (!url || !/^https?:\/\//.test(url)) return page(params.qbo === "connected" ? "QuickBooks connected" : "Something went wrong", params.message || "You can close this window and go back to WPI Driveline.", params.qbo === "connected");
+  if (!url || !/^https?:\/\//.test(url)) return page(params.qbo === "connected" ? "QuickBooks connected" : "Something went wrong", params.message || "You can close this window and go back to WPI Driveline Shop Management System.", params.qbo === "connected");
   const u = new URL(url);
   for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
   return redirect(u.toString());

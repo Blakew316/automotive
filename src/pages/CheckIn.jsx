@@ -4,7 +4,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CircleCheck, KeyRound, Wrench, Phone, ClipboardX, Car, MessageSquare } from 'lucide-react';
-import { ShopBrand } from '../brand/Logo';
+import { PoweredBy, ShopBrand } from '../brand/Logo';
+import { titleName, usePageTitle } from '../brand/title';
 import { EmptyState, Spinner, Field } from '../components/ui';
 import SignaturePad from '../components/SignaturePad';
 import { ScanButton } from '../components/Scanner';
@@ -226,6 +227,7 @@ function Form({ config, kiosk, locationId }) {
 }
 
 function Shell({ shop, children }) {
+  usePageTitle(`Check in — ${titleName(shop.name)}`);
   return (
     <div className="min-h-[100dvh] bg-canvas">
       <header className="customer-header">
@@ -248,6 +250,7 @@ function Shell({ shop, children }) {
             <MessageSquare size={11} /> Questions? Ask at the counter
           </span>
         </p>
+        <PoweredBy name={shop.name} className="mt-4" />
       </main>
     </div>
   );

@@ -208,7 +208,9 @@ export function useShopSync({ stateRef, cloud, commit, update, applyRemote, sync
     for (const [c, id] of recordsOf(stateRef.current)) pending[keyOf(c, id)] = true;
     metaRef.current = { ...EMPTY, pending };
     setConfig({ enabled: true, url: cfg.url, joinedAt: new Date().toISOString() });
-  }, [cfg, stateRef, setConfig]);
+    // The sample shop's data is now this shop's own: no more sample-shop banner on this device.
+    if (stateRef.current.sample) update((s) => void delete s.sample);
+  }, [cfg, stateRef, setConfig, update]);
 
   /** Other devices: replace this device's data with the shop's shared data. */
   const join = useCallback(
@@ -216,6 +218,7 @@ export function useShopSync({ stateRef, cloud, commit, update, applyRemote, sync
       const { rows, versions, cursor } = await downloadAll(syncApi(cfg), onProgress);
       const live = rows.filter((r) => !r.deleted);
       if (!live.length) throw new Error('The cloud doesn’t have any shop data yet.');
+      // A fresh state (never this device's sample flag): the shop's data replaces whatever was here.
       const skeleton = { version: 2, seededAt: new Date().toISOString(), shop: {}, counters: {} };
       for (const c of new Set(rows.map((r) => r.collection))) if (c !== 'meta') skeleton[c] = [];
       for (const c of Object.keys(stateRef.current)) if (Array.isArray(stateRef.current[c])) skeleton[c] = [];

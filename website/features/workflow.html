@@ -1,0 +1,985 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Workflow Board &amp; Tech Clock | WPI Driveline Shop Management System</title>
+<meta name="description" content="The workflow board, Today screen and tech time clock in WPI Driveline Shop Management System: every car by stage, one-tap job timers.">
+<!-- @partial head -->
+<script>document.documentElement.classList.add("js");try{if(localStorage.getItem("wpi-site:motion")==="paused")document.documentElement.classList.add("motion-paused","motion-parked")}catch(e){}</script>
+<meta name="theme-color" content="#F5F9FE">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="application-name" content="WPI Driveline Shop Management System">
+<meta name="form-endpoint" content="">
+<meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
+<meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script src="../assets/js/site.js" defer></script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"href_matches":"/automotive/app/*"}},{"not":{"selector_matches":"[target=_blank], [data-no-prerender]"}}]},"eagerness":"moderate"}]}</script>
+<link rel="canonical" href="https://blakew316.github.io/automotive/features/workflow.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WPI Driveline Shop Management System">
+<meta property="og:title" content="Workflow Board &amp; Tech Clock | WPI Driveline Shop Management System">
+<meta property="og:description" content="The workflow board, Today screen and tech time clock in WPI Driveline Shop Management System: every car by stage, one-tap job timers.">
+<meta property="og:url" content="https://blakew316.github.io/automotive/features/workflow.html">
+<meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WPI Driveline Shop Management System logo">
+<meta name="twitter:card" content="summary_large_image">
+<!-- @end head -->
+<!-- @partial jsonld -->
+<script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
+<!-- @end jsonld -->
+<style>
+/* features/workflow.html: page-local styles (slug-prefixed) */
+
+/* ---------- Hero: copy on top, the full-size board below ---------- */
+.workflow-hero-grid { display: grid; gap: clamp(30px, 1.25rem + 2.6vw, 60px); }
+.workflow-hero-copy > h1 { max-width: 15ch; }
+@media (min-width: 1080px) {
+  .workflow-hero-copy {
+    display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); column-gap: clamp(40px, 5vw, 88px);
+    grid-template-areas: "crumb crumb" "eyebrow eyebrow" "title actions" "lead trust";
+  }
+  .workflow-hero-copy > .breadcrumb { grid-area: crumb; }
+  .workflow-hero-copy > .eyebrow { grid-area: eyebrow; }
+  .workflow-hero-copy > h1 { grid-area: title; max-width: none; }
+  .workflow-hero-copy > .lead { grid-area: lead; }
+  .workflow-hero-copy > .hero-actions { grid-area: actions; align-self: end; flex-direction: column; align-items: stretch; width: 100%; max-width: 400px; margin-top: 0; }
+  .workflow-hero-copy > .hero-trust { grid-area: trust; align-self: start; flex-direction: column; align-items: flex-start; margin-top: 18px; }
+}
+
+/* The board slide */
+.workflow-hero-fig { width: 100%; }
+.workflow-hero-fig .board-frame { max-width: 1140px; }
+.workflow-hero-fig .board-frame > .mock-screen { gap: 12px; }
+/* Room for three cards in a column, so the page doesn't shift as the Camry moves */
+.workflow-hero-fig .mock-board { min-height: 318px; }
+.workflow-board-bar { display: flex; align-items: center; gap: 10px; min-width: 0; padding: 0 2px; }
+.workflow-board-bar .mock-title { flex: none; }
+.workflow-board-bar .mock-field { flex: 0 1 270px; min-width: 0; color: var(--ink-3); }
+.workflow-board-bar .mock-field .icon { width: 14px; height: 14px; }
+.workflow-board-bar .mock-seg { flex: none; margin-left: auto; }
+@media (max-width: 699.98px) { .workflow-board-bar { display: none; } }
+@media (min-width: 700px) and (max-width: 1023.98px) { .workflow-board-bar .mock-field { display: none; } }
+.workflow-prog { height: 4px; border-radius: 2px; background: var(--mist-100); overflow: hidden; }
+.workflow-prog > i { display: block; width: calc(var(--p, 0) * 100%); height: 100%; border-radius: inherit; background: var(--blue); transition: width .6s var(--ease), background-color .4s var(--ease); }
+.workflow-prog.is-done > i { background: var(--dot-ok); }
+.workflow-swap { display: inline-grid; }
+.workflow-swap > * { grid-area: 1 / 1; justify-self: start; }
+.workflow-swap.is-end > * { justify-self: end; }
+/* The Camry's progress: none in Approved, half while it's worked, full and green at Ready */
+.workflow-camry .workflow-prog > i { width: 100%; background: var(--dot-ok); }
+.workflow-hero-fig:not([data-reached~="4"]) .workflow-camry .workflow-prog > i { width: 50%; background: var(--blue); }
+.workflow-hero-fig:not([data-reached~="2"]) .workflow-camry .workflow-prog > i { width: 0%; }
+/* The F-150's promised time turns red once it has passed */
+.workflow-late { transition: background-color .4s var(--ease), color .4s var(--ease); }
+.workflow-hero-fig:not([data-reached~="3"]) .workflow-late { background: var(--accent-soft); color: var(--accent-ink); }
+.workflow-undo { padding: 2px 9px; border-radius: 8px; background: var(--accent-soft); color: var(--accent-ink); font-weight: 700; }
+/* The two app chips hang off the board's lower edge, clear of the cards */
+.workflow-hero-fig { padding-bottom: 30px; }
+.workflow-hero-fig .float-note.note-2 { top: auto; bottom: 0; left: 7%; right: auto; }
+.workflow-hero-fig .float-note.note-1 { top: auto; bottom: 0; left: auto; right: 24%; }
+@media (max-width: 699.98px) {
+  .workflow-hero-fig { padding-bottom: 0; }
+  .workflow-hero-fig .float-note { display: none; }
+  .workflow-hero-fig .mock-done-dot { right: 4px; } /* the paged board clips anything past the card edge */
+  /* Room under the cards, so the Undo toast never covers the last card in a column */
+  .workflow-hero-fig .mock-board { padding-bottom: 34px; }
+  /* The pager follows the story: Waiting on Parts while the Silverado's part arrives, then back to In Progress.
+     The badge flips once the page has slid in, so "Parts on order" is seen first. */
+  .workflow-hero-fig[data-step="2"] .mock-board { --page: 3 !important; }
+  .workflow-hero-fig .workflow-parts-in { --fx-delay: .6s; }
+  .workflow-hero-fig[data-step="2"] .workflow-parts-out { transition: opacity 0s .6s, visibility 0s .6s; }
+}
+/* Each chip shows up with the step it describes (the shipped final frame shows both) */
+.workflow-hero-fig .float-note { transition: filter .45s var(--ease); }
+.workflow-hero-fig:not([data-reached~="3"]) .float-note.note-2,
+.workflow-hero-fig:not([data-reached~="4"]) .float-note.note-1 { filter: opacity(0); }
+/* The green chip waits for the Undo toast to leave, so the same message isn't on screen twice */
+.workflow-hero-fig[data-reached~="4"] .float-note.note-1 { transition-delay: 1.3s; }
+/* The Undo toast pops in an empty part of the board instead of over a card */
+@media (min-width: 1180px) { .workflow-hero-fig .mock-toast { left: 68.5%; bottom: 96px; } }
+@media (min-width: 700px) and (max-width: 799.98px) { .workflow-hero-fig .mock-toast { left: 17%; bottom: 96px; } }
+/* Four columns (800-1179px): the toast sits in the clear band under the columns, between the two chips */
+@media (min-width: 800px) and (max-width: 1179.98px) { .workflow-hero-fig .mock-toast { left: 55%; bottom: 18px; } }
+/* Five columns need 1180px. From 800px only Estimate drops off, so Waiting on Parts stays and the Silverado's
+   part can be seen arriving. Small tablets (700-799px) keep Approved, In Progress and Ready. */
+@media (min-width: 700px) and (max-width: 799.98px) { .workflow-hero-fig .mock-col.is-optional { display: none; } }
+@media (min-width: 800px) and (max-width: 1179.98px) {
+  .workflow-hero-fig .mock-col[data-col="estimate"] { display: none; }
+  .workflow-hero-fig .mock-col[data-col="parts"] { display: grid; }
+}
+/* Three or four columns (700-1179px): a taller board leaves the Ready column clear space at the bottom, so the
+   chips can sit at the outer edges without covering a card or each other */
+@media (min-width: 700px) and (max-width: 1179.98px) {
+  .workflow-hero-fig .mock-board { min-height: 372px; }
+  .workflow-hero-fig .float-note.note-2 { left: 3%; }
+  .workflow-hero-fig .float-note.note-1 { right: 3%; }
+}
+
+/* ---------- Pains ---------- */
+.workflow-pains { align-items: center; }
+.workflow-pains-side { display: grid; gap: 18px; }
+.workflow-art { min-height: 0; padding: 4px 0; }
+.workflow-art > svg { width: min(100%, 520px); }
+.workflow-art [data-fx="pop"], .workflow-art-mover { transform-box: fill-box; transform-origin: center; }
+@keyframes workflow-art-hop {
+  0% { opacity: 0; translate: -84px 26px; }
+  16%, 38% { opacity: 1; translate: -84px 26px; rotate: 0deg; }
+  68% { translate: -42px -2px; rotate: 5deg; }
+  100% { opacity: 1; translate: 0 0; rotate: 0deg; }
+}
+
+/* ---------- Board facts ---------- */
+.workflow-facts .card p { color: var(--ink-3); }
+.workflow-facts .card a { color: var(--accent-ink); }
+
+/* ---------- Today ---------- */
+.workflow-today-fig { width: 100%; }
+.workflow-today-fig .mock-window { width: min(100%, 600px); container: workflow-today / inline-size; }
+.workflow-today .mock-appbar { padding-bottom: 8px; border-bottom: 1px solid var(--m-line); }
+.workflow-today .mock-section-title .mock-chip { padding: 0 7px; line-height: 1.5; }
+.workflow-today .mock-section-title small { font-size: 12px; font-weight: 550; color: var(--ink-3); }
+.workflow-today .mock-row { min-height: 32px; padding-block: 6px; }
+.workflow-today .mock-bars { height: 50px; }
+.workflow-today .mock-row > .workflow-ava { position: relative; flex: none; display: inline-grid; overflow: visible; }
+.workflow-today .workflow-ava > .mock-avatar { width: 24px; height: 24px; }
+.workflow-ava .live-dot { position: absolute; right: -4px; bottom: -4px; width: 8px; height: 8px; outline: 2px solid var(--paper); }
+.workflow-ava .live-dot.is-warn { background: var(--dot-warn); box-shadow: 0 0 0 3px rgba(227, 161, 59, .22); animation: none; }
+.workflow-today .mock-row > .workflow-ava { margin-right: 4px; }
+/* Narrow phones: a row's text gets a third line instead of losing the vehicle or the end of the sentence */
+.workflow-today .mock-row > span:nth-child(2) { -webkit-line-clamp: 3; }
+.workflow-today .workflow-since { font-size: 12px; font-weight: 550; color: var(--ink-3); white-space: nowrap; }
+.workflow-today .mock-row b { font-weight: 650; color: var(--ink); }
+.workflow-timer-chip .icon { width: 12px; height: 12px; }
+/* Five tiles in a row need about 540px: narrower windows (phones, and the split column from 900 to ~1200px) get 3 + 2 */
+@container workflow-today (max-width: 540px) {
+  .workflow-tiles.mock-tiles { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .workflow-tiles > :nth-child(-n+3) { grid-column: span 2; }
+  .workflow-tiles > :nth-child(n+4) { grid-column: span 3; }
+  .workflow-today .mock-tile strong { font-size: 17px; }
+}
+.workflow-watch { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px 22px; }
+@media (min-width: 600px) { .workflow-watch { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.workflow-watch li { display: flex; align-items: baseline; gap: 10px; padding: 9px 12px; border-radius: 12px; background: var(--paper); border: 1px solid var(--line); color: var(--ink-2); font-size: .97rem; line-height: 1.35; text-wrap: pretty; }
+.workflow-watch .status-dot { translate: 0 -1px; }
+@media (max-width: 599.98px) { .workflow-watch { gap: 6px; } .workflow-watch li { padding: 7px 12px; font-size: .95rem; } }
+.workflow-watch-label { font-weight: 650; color: var(--ink); }
+
+/* ---------- Tech time clock ---------- */
+.workflow-tech-fig { width: 100%; }
+/* Height comes from the content (.is-auto), so nothing is clipped on narrow screens; at 300px wide it is a 9:19.5 phone */
+.workflow-phone { width: min(100%, 300px); }
+.workflow-phone > .mock-screen { gap: 9px; padding: 36px 11px 10px; }
+.workflow-phone > .mock-screen > * { flex: none; }
+.workflow-tech-head { display: flex; align-items: center; gap: 9px; }
+.workflow-tech-head .mock-avatar { width: 32px; height: 32px; }
+.workflow-tech-head b, .workflow-job-head b, .workflow-svc b, .workflow-shift b { display: block; font-weight: 680; letter-spacing: -0.01em; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.workflow-tech-head b { font-size: 14px; }
+.workflow-tech-head small, .workflow-job-head small, .workflow-svc small, .workflow-shift small { display: block; font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.workflow-tech-head > span:last-child, .workflow-shift > span:nth-child(2), .workflow-svc > span:nth-child(2) { min-width: 0; flex: 1 1 auto; }
+.workflow-shift, .workflow-job { border: 1px solid var(--m-line); border-radius: 13px; background: var(--paper); box-shadow: var(--shadow-1); }
+.workflow-shift { display: flex; align-items: center; gap: 9px; padding: 8px 9px; }
+.workflow-shift-icon { display: grid; place-items: center; flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--green-100); color: var(--green-ink); }
+.workflow-shift-icon .icon { width: 16px; height: 16px; }
+.workflow-shift .mock-btn { min-height: 26px; padding: 3px 9px; }
+.workflow-job { overflow: hidden; }
+.workflow-job-head { display: grid; gap: 7px; padding: 9px; border-bottom: 1px solid var(--m-line); }
+.workflow-job-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.workflow-tools { display: flex; gap: 5px; }
+.workflow-tool { display: grid; place-items: center; width: 27px; height: 27px; border-radius: 8px; border: 1px solid var(--line-strong); background: var(--paper); color: var(--ink-2); transform-origin: center; }
+.workflow-tool .icon { width: 15px; height: 15px; }
+.workflow-tool.is-cam { position: relative; }
+.workflow-svc { display: flex; align-items: center; gap: 8px; padding: 8px 9px; }
+.workflow-svc + .workflow-svc { border-top: 1px solid var(--m-line); }
+.workflow-svc b { font-size: 12.5px; font-weight: 650; line-height: 1.25; white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.workflow-open .workflow-svc > span:first-child { min-width: 0; flex: 1 1 auto; }
+.workflow-tick { flex: none; width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--mist-300); }
+.workflow-svc .mock-btn { min-height: 26px; padding: 3px 10px; gap: 4px; }
+.workflow-svc .mock-btn .icon { width: 12px; height: 12px; }
+.workflow-svc .mock-btn.is-soft { font-variant-numeric: tabular-nums; }
+.workflow-photo { display: flex; justify-content: center; }
+.workflow-photo .icon { width: 13px; height: 13px; }
+.workflow-tabbar { position: relative; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: auto; padding: 4px; border-radius: 15px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.workflow-tab-pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 4); border-radius: 11px; background: var(--paper); box-shadow: var(--shadow-1); }
+.workflow-tab { position: relative; display: grid; justify-items: center; gap: 1px; padding: 5px 0 4px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.workflow-tab .icon { width: 17px; height: 17px; }
+.workflow-tab.is-on { color: var(--accent-ink); }
+@keyframes workflow-tab-hop {
+  0%, 10% { translate: 0 0; }
+  32%, 60% { translate: 100% 0; }
+  84%, 100% { translate: 0 0; }
+}
+.workflow-metrics { display: grid; gap: 12px; padding: 18px 20px; border-radius: var(--r); background: var(--mist-50); border: 1px solid var(--line); }
+.workflow-metrics p { color: var(--ink-2); }
+.workflow-metrics dl { display: grid; gap: 8px; margin: 0; }
+.workflow-metrics dl > div { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr); gap: 10px; align-items: baseline; }
+.workflow-metrics dt { font-weight: 650; color: var(--ink); }
+.workflow-metrics dd { margin: 0; color: var(--ink-3); font-family: var(--font-mono); font-size: .9rem; letter-spacing: 0; }
+.workflow-metrics .link-arrow { justify-self: start; color: var(--accent-ink); }
+@media (max-width: 419.98px) { .workflow-metrics dl > div { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.workflow-tech-copy .checklist li { color: var(--ink-2); }
+
+/* ---------- Related ---------- */
+</style>
+</head>
+<body data-page="features" data-tab="features" id="top">
+<!-- @partial icons -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="art-tint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E1EDFB"/><stop offset=".5" stop-color="#F2F7FD"/><stop offset="1" stop-color="#E3F4EA"/></linearGradient>
+    <linearGradient id="gauge-tint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9D5F6"/><stop offset=".5" stop-color="#B9D5F6"/><stop offset=".5" stop-color="#BDE7CF"/><stop offset="1" stop-color="#BDE7CF"/></linearGradient>
+    <linearGradient id="gauge-pad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9534A"/><stop offset=".3" stop-color="#F0A53A"/><stop offset=".6" stop-color="#2DB36A"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+    <linearGradient id="gauge-tread" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#D9534A"/><stop offset=".35" stop-color="#F0A53A"/><stop offset=".65" stop-color="#2DB36A"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+    <marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#0F2B4C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrow-head-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#1A6FD6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrow-head-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#188048" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  </defs>
+  <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3.5c3 3.6 5.5 6.6 5.5 9.6a5.5 5.5 0 0 1-11 0c0-3 2.5-6 5.5-9.6z"/><path d="M9.4 14a2.6 2.6 0 0 0 2.6 2.6"/></symbol>
+  <symbol id="i-diagnostics" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M6.5 12.5l2.4-3 2.5 2.2 3-4.2 3.1 3.6"/><path d="M8.5 20.5h7M12 17v3.5"/></symbol>
+  <symbol id="i-engine" viewBox="0 0 24 24"><path d="M9.5 5.5h5M12 5.5v2.5"/><path d="M6 10.5V9a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l1.8 1.8h1.8a1 1 0 0 1 1 1v1.4h1v4h-1v1.3a1 1 0 0 1-1 1h-2.8L14.9 20H8.6l-2.6-2.6"/><path d="M6 10.5H4.5v7H6zM4.5 14H2.5M2.5 12v4"/></symbol>
+  <symbol id="i-tire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+  <symbol id="i-inspection" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2.2"/><path d="M9 4.5V3.2h6v1.3"/><path d="M8.6 12.6l2.3 2.3 4.6-4.8"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.2 3.8h3l1.6 4.1-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4.1 1.6v3a2 2 0 0 1-2.1 2A14.8 14.8 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2 2 4-4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.3V12l3.1 2"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7.2 12 13l8.2-5.8"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.6 2.6 5-5.2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 3.5a4.6 4.6 0 0 0-4.3 6L3.9 16.3a2 2 0 0 0 2.8 2.8l6.8-6.8a4.6 4.6 0 0 0 6-4.4c0-.5 0-.9-.2-1.3l-2.5 2.5-2.5-.6-.6-2.5 2.5-2.5c-.4-.1-.8-.1-1.2-.1z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.4c0 4.4-3 7.9-7 9.6-4-1.7-7-5.2-7-9.6V6z"/><path d="M8.8 12.1l2.2 2.2 4.3-4.4"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M2.5 15.6v-2.8a1.5 1.5 0 0 1 1-1.4l2.3-.8 2.4-3.3a2 2 0 0 1 1.6-.8h4.8a2 2 0 0 1 1.5.7l3 3.6 1.9.5a1.5 1.5 0 0 1 1.1 1.5v2.8"/><path d="M2.5 15.6h2.2M9.3 15.6h5.4M19.3 15.6h2.2"/><circle cx="7" cy="16" r="2.3"/><circle cx="17" cy="16" r="2.3"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 15.8V9.6a1 1 0 0 1 1-1h3.2l1.8-2.8h4.3a1 1 0 0 1 1 1v2.8h5.1a1.6 1.6 0 0 1 1.5 1.1l1.1 3.2v1.9"/><path d="M2.5 15.8h2M9 15.8h6M19.5 15.8h2"/><path d="M6.7 8.6h6.9"/><circle cx="6.8" cy="16.2" r="2.2"/><circle cx="17.2" cy="16.2" r="2.2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M6 9.6V20h12V9.6"/><path d="M10 20v-5.2h4V20"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 17h-9.5l-4.8 3.6V17H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 5z"/><path d="M7.5 10h9M7.5 13h5.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.4 2.9 17.3a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.5M12 17v.3"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24"><path d="M6.5 3h7.8l4.2 4.2V21h-12z"/><path d="M14 3v4.5h4.5M9.2 12h5.6M9.2 15.8h5.6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.5a1 1 0 0 1 1-1h7.8l8.2 8.2a1.5 1.5 0 0 1 0 2.1l-6.2 6.2a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7.5 4.5 3.5 4.5v14c4 0 6.5.5 8.5 2 2-1.5 4.5-2 8.5-2v-14c-4 0-6.5.5-8.5 2z"/><path d="M12 6.5v14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17.5 14.6c1.8.7 3 2.4 3.5 4.9"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.8-2.5 2.3-2.5 3.9M12 17v.3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.4 17.5a8.6 8.6 0 1 1 15.2 0"/><path d="M12 13.5l4.2-4.2"/><circle cx="12" cy="13.5" r="1.3"/><path d="M6.8 9.6l.9.6M12 6.4v1.1M17.2 9.6l-.9.6"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7.2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M5.5 18.5l1.4-1.4M17.1 6.9l1.4-1.4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13.5 14.5-14-.3 9.6-5.8 14.5-13.2 14.5"/><path d="M5 19c3-4 6-6.5 9.5-8.5"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15.5a4.5 4.5 0 0 1-.4-9 5.5 5.5 0 0 1 10.6 1.4A3.8 3.8 0 0 1 17 15.5z"/><path d="M8.5 18.2l-.8 2M12.5 18.2l-.8 2M16.5 18.2l-.8 2"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9.2 14.2v-2.5a1 1 0 0 1 1-1h5M13.5 8.7l2 2-2 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2.5 8.5 6 6.5l3.2 1.2M21.5 8.5 18 6.5l-4.8 1.6-3.3 2.7a1.3 1.3 0 0 0 1.6 2l2.4-1.6 4.3 3.9"/><path d="M2.5 14.2l2 .1 4.8 4a1.4 1.4 0 0 0 2-1.9M8 15.5l2.8 2.3a1.4 1.4 0 0 0 2-1.9M11.6 13.4l3 2.6a1.4 1.4 0 0 0 1.9-2M21.5 14.2h-3.3"/></symbol>
+  <symbol id="i-car-mini" viewBox="0 0 32 14"><path d="M2 10.8V8.6c0-.6.4-1.1 1-1.3l4-1.2L10.4 2.7c.4-.4 1-.7 1.6-.7h7.3c.6 0 1.2.3 1.6.7L24 6.1l4.8.9c.7.1 1.2.7 1.2 1.4v2.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--canvas, #F5F9FE)" stroke-width="1.2"/><circle cx="23.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--canvas, #F5F9FE)" stroke-width="1.2"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16M15 4v16"/><rect x="4.9" y="7" width="2.4" height="3" rx=".6"/><rect x="10.8" y="7" width="2.4" height="3" rx=".6"/><rect x="10.8" y="12" width="2.4" height="3" rx=".6"/><rect x="16.7" y="7" width="2.4" height="3" rx=".6"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M3.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h2M17 4h2a1.5 1.5 0 0 1 1.5 1.5V7M20.5 17v1.5A1.5 1.5 0 0 1 19 20h-2M7 20H5a1.5 1.5 0 0 1-1.5-1.5V17"/><path d="M7.5 8v8M10 8v8M12.8 8v8M15 8v8M16.8 8v8"/></symbol>
+  <symbol id="i-card-reader" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.6"/><rect x="8.5" y="5.5" width="7" height="4" rx="1"/><path d="M9 13h.01M12 13h.01M15 13h.01M9 15.8h.01M12 15.8h.01M15 15.8h.01M10 18.6h4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5.5" y="12" width="3" height="6" rx=".8"/><rect x="10.5" y="8" width="3" height="10" rx=".8"/><rect x="15.5" y="4.5" width="3" height="13.5" rx=".8"/></symbol>
+  <symbol id="i-ledger" viewBox="0 0 24 24"><path d="M5 3.5h12.5A1.5 1.5 0 0 1 19 5v15.5H6.5A1.5 1.5 0 0 1 5 19z"/><path d="M5 17.5h14M9 3.5v14M11.5 8h5M11.5 11h5M11.5 14h3"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16.5 6.5l2.6 2.6M14.3 8.7l2 2"/><circle cx="7" cy="16" r=".9"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.4"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7M12 14.5v2.5"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-9 6 6 0 0 1 11.5 1.6 3.8 3.8 0 0 1-.4 7.4z"/></symbol>
+  <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M8.5 16.2a5 5 0 0 1 5.6-.7M5.2 12.8a9.6 9.6 0 0 1 4-2.3M18.8 12.8a9.7 9.7 0 0 0-2.4-1.6M2 9.4a14.5 14.5 0 0 1 3.6-2.4M22 9.4a14.6 14.6 0 0 0-10.5-3.9"/><path d="M12 19.6h.01"/></symbol>
+  <symbol id="i-device-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.8"/><path d="M10.5 5.2h3M11 18.6h2"/></symbol>
+  <symbol id="i-device-tablet" viewBox="0 0 24 24"><rect x="3.5" y="3" width="17" height="18" rx="2.6"/><path d="M11 18.2h2"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2.2"/><path d="M8 20.5h8M12 17v3.5"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.5 8.5A1.5 1.5 0 0 1 5 7h2.6l1.6-2.3h5.6L16.4 7H19a1.5 1.5 0 0 1 1.5 1.5v9.5A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18z"/><circle cx="12" cy="13" r="3.6"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M20 11.5A8 8 0 0 0 6.1 6.6L4 8.7M4 4.5v4.2h4.2"/><path d="M4 12.5a8 8 0 0 0 13.9 4.9l2.1-2.1M20 19.5v-4.2h-4.2"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.2"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM18 14h2.5M14 18v2.5h1.5"/></symbol>
+  <symbol id="i-vin" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="19" height="11" rx="2"/><path d="M6 10l1.4 4 1.4-4M11 10v4M13.6 14v-4l2.8 4v-4"/></symbol>
+  <symbol id="i-signature" viewBox="0 0 24 24"><path d="M3 17.5c2.2-.3 3.6-2.5 4.2-5.5.5-2.6-1.6-3.1-2-.6-.5 3.1 1.3 6 3.7 4.3 1.6-1.1 2.3-3.4 3.2-3.4.8 0 .3 2.6 1.4 2.6 1 0 1.6-1.4 2.5-1.4.8 0 .8 1.3 1.7 1.3h2.3"/><path d="M3 20.5h18"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4.2l2.6 1.6M9.5 2.8h5M12 2.8V6M18.6 6.4l1.4-1.4"/></symbol>
+  <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 15v3.5A2 2 0 0 0 6 20.5h12a2 2 0 0 0 2-2V15"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.2 4.2 0 0 0 6 0l3-3a4.2 4.2 0 0 0-6-6l-1.2 1.2"/><path d="M14 10a4.2 4.2 0 0 0-6 0l-3 3a4.2 4.2 0 0 0 6 6l1.2-1.2"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9"/><path d="M4.5 4.5V9H9"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6.5" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.9" y="5" width="3.6" height="14" rx="1.2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7.5 4.8v14.4a.9.9 0 0 0 1.4.8l11-7.2a.9.9 0 0 0 0-1.6l-11-7.2a.9.9 0 0 0-1.4.8z"/></symbol>
+</svg>
+<!-- @end icons -->
+<!-- @partial header -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="../index.html" aria-label="WPI Driveline Shop Management System home">
+      <svg class="brand-logo" viewBox="-81 -190 653 361" width="83" height="46" aria-hidden="true" focusable="false"><path transform="translate(-5.74 0)" fill="#0F2B4C" d="M54.32 0H103.27L124.51 -83.98C127.93 -97.78 130 -112.67 132.2 -127.81C134.52 -112.43 136.84 -97.41 140.26 -83.98L161.5 0H210.33L258.91 -181.88H211.18L193.24 -101.44C189.58 -84.59 186.65 -64.09 183.84 -44.8C180.66 -64.09 177.49 -84.59 173.46 -101.44L154.3 -181.88H110.47L91.19 -101.44C87.16 -84.35 83.98 -63.72 80.81 -44.31C77.88 -63.72 74.95 -84.35 71.41 -101.44L53.47 -181.88H5.74ZM284.81 0H327.9V-56.76H358.05C399.8 -56.76 425.56 -81.54 425.56 -119.02C425.56 -156.25 400.29 -181.88 359.27 -181.88H284.81ZM327.9 -90.82V-146.97H350.12C370.38 -146.97 380.88 -136.11 380.88 -119.02C380.88 -102.17 370.38 -90.82 350.24 -90.82ZM496.86 -181.88H453.77V0H496.86Z"/><rect x="0" y="40" width="238.56" height="12" fill="#1F7AE0"/><rect x="252.56" y="40" width="238.56" height="12" fill="#2DB36A"/><path transform="translate(-80.28 162.93)" fill="#0F2B4C" d="M29.2 0C49.55 0 61.36 -12.62 61.36 -33.56C61.36 -54.36 49.55 -66.93 29.83 -66.93H7.41V0ZM17.65 -8.98V-57.95H29.15C43.75 -57.95 51.3 -49.28 51.3 -33.56C51.3 -17.7 43.75 -8.98 28.62 -8.98ZM95.81 0H106.05V-25.29H119.71C119.88 -25.29 120.11 -25.29 120.29 -25.29L133.86 0H145.49L130.76 -27.04C138.89 -30.1 142.97 -36.93 142.97 -45.91C142.97 -58.26 135.29 -66.93 119.79 -66.93H95.81ZM106.05 -34.05V-58.17H118.63C128.51 -58.17 132.6 -53.46 132.6 -45.91C132.6 -38.41 128.51 -34.05 118.72 -34.05ZM187.66 -66.93H177.42V0H187.66ZM243.58 0H256.11L280.01 -66.93H268.91L256.24 -29.69C254.58 -24.62 252.52 -17.74 249.91 -8.22C247.26 -17.56 245.15 -24.62 243.44 -29.69L230.41 -66.93H219.36ZM311.71 0H354.12V-8.8H321.95V-29.42H351.6V-38.18H321.95V-58.13H353.85V-66.93H311.71ZM389.19 0H429.75V-8.8H399.43V-66.93H389.19ZM473.45 -66.93H463.21V0H473.45ZM510.28 0H520.65V-35.71C520.65 -39.17 520.29 -46.09 519.89 -54.49C524.74 -45.51 527.3 -40.88 530.58 -35.62L553.18 0H565.04V-66.93H554.66V-28.84C554.66 -24.98 554.84 -18.73 555.33 -12.26C552.37 -18.69 549.36 -23.76 547.29 -27.09L522.09 -66.93H510.28ZM601.86 0H644.27V-8.8H612.1V-29.42H641.75V-38.18H612.1V-58.13H644V-66.93H601.86Z"/></svg>
+      <span class="brand-tagline" aria-hidden="true">Shop Management System</span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-menu" data-menu>
+          <a class="nav-link is-active" href="../features.html" data-nav="features" aria-current="true"><span class="nav-pill" aria-hidden="true"></span>Features</a>
+          <button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega-features" aria-label="Show all features"><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+          <div class="mega" id="mega-features">
+            <div class="mega-grid">
+              <div class="mega-col">
+                <p class="mega-label">Before the car arrives</p>
+                <a class="mega-item" href="../features/booking.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span class="mega-text"><strong>Booking &amp; check-in</strong><small>Real open times, key-drop check-in</small></span></a>
+                <a class="mega-item" href="../features/messaging.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span><span class="mega-text"><strong>Texting, calls &amp; email</strong><small>One thread per customer</small></span></a>
+                <a class="mega-item" href="../features/customers.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span><span class="mega-text"><strong>Customers &amp; follow-ups</strong><small>Oil-service and declined-work lists</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">In the bay</p>
+                <a class="mega-item" href="../features/workflow.html" aria-current="page"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span><span class="mega-text"><strong>Workflow &amp; tech clock</strong><small>Every car by stage, one-tap timers</small></span></a>
+                <a class="mega-item" href="../features/inspections.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="mega-text"><strong>Inspections &amp; approvals</strong><small>Photos, ratings and a yes by phone</small></span></a>
+                <a class="mega-item" href="../features/diagnosis.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span><span class="mega-text"><strong>Auto Diagnosis</strong><small>Recalls, owner reports, your fixes</small></span></a>
+                <a class="mega-item" href="../features/parts.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span><span class="mega-text"><strong>Parts, inventory &amp; tires</strong><small>Stock, POs, scanning, tire DOT log</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">At the counter</p>
+                <a class="mega-item" href="../features/repair-orders.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><span class="mega-text"><strong>Estimates &amp; ROs</strong><small>One record, estimate to receipt</small></span></a>
+                <a class="mega-item" href="../features/payments.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg></span><span class="mega-text"><strong>Payments &amp; card readers</strong><small>Exact-balance pay links and readers</small></span></a>
+                <a class="mega-item" href="../features/fleet.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span><span class="mega-text"><strong>Fleet accounts</strong><small>Terms, PM plans, statements</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">Behind the desk</p>
+                <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
+              </div>
+            </div>
+            <div class="mega-foot">
+              <p class="mega-note"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg> Want to click around first? <a href="../app/" data-no-prerender>Try the sample shop</a></p>
+              <div class="mega-actions">
+                <a class="link-arrow" href="../features.html">All features <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                <a class="btn btn-primary btn-sm" href="../demo.html">Request a demo</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="../mobile.html" data-nav="mobile">iPhone &amp; iPad</a></li>
+        <li><a class="nav-link" href="../works-with.html" data-nav="integrations">Integrations</a></li>
+        <li><a class="nav-link" href="../security.html" data-nav="security">Security</a></li>
+        <li><a class="nav-link" href="../faq.html" data-nav="faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-signin" href="../app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span class="header-signin-text">Sign in</span></a>
+      <a class="btn btn-primary btn-sm header-book" href="../demo.html" data-nav="demo">Request a demo</a>
+    </div>
+  </div>
+  <div class="road-progress" aria-hidden="true"><span class="road-progress-lane"></span><svg class="road-progress-car"><use href="#i-car-mini"/></svg></div>
+</header>
+<!-- @end header -->
+
+<main id="main">
+  <!-- ===== Hero ===== -->
+  <section class="page-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container workflow-hero-grid">
+      <div class="hero-in workflow-hero-copy">
+        <!-- @partial breadcrumbs -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><span aria-current="page">Workflow board, Today &amp; tech clock</span></li>
+  </ol>
+</nav>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Workflow board, Today & tech clock","item":"https://blakew316.github.io/automotive/features/workflow.html"}]}</script>
+<!-- @end breadcrumbs -->
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-workflow"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span>Workflow board, Today &amp; tech clock</p>
+        <h1 id="hero-title">See every car in the shop <span class="accent-text">at a glance.</span></h1>
+        <p class="lead">A drag-and-drop board with every open repair order by stage, a morning screen that tells you what needs someone right now, and a phone-sized time clock for every tech.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=workflow">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/workflow" data-no-prerender>Open the board in the sample shop</a>
+        </div>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Drag, swipe, undo</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Late promise times turn red</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>One-tap job timers</span>
+        </div>
+      </div>
+
+      <figure class="mock-figure workflow-hero-fig" data-play data-seq="5" data-loops="2" data-step="4" data-reached="0 1 2 3 4" aria-label="Example: a workflow board in the sample shop, with five stages. A 2021 Camry SE has moved from Approved through In Progress to Ready for Pickup, a Silverado's part has been received, and a 2018 F-150 is past its 10:00 AM promise time.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-window board-frame"><div class="mock-screen">
+            <div class="workflow-board-bar">
+              <span class="mock-title">Workflow</span>
+              <span class="mock-field"><svg class="icon"><use href="#i-search"/></svg>Filter by RO, customer, vehicle, plate</span>
+              <div class="mock-seg" style="--segs:5; --seg:0"><span>Everyone</span><span>Marcus</span><span>Luis</span><span>Dana</span><span>Kim</span></div>
+            </div>
+            <div class="mock-board">
+              <div class="mock-col is-optional" data-col="estimate"><div class="mock-col-head"><span>Estimate</span><span class="mock-count">3</span></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 Tesla Model 3</strong></div><div class="mock-card-meta"><span>Harper N.</span></div><div class="mock-card-foot"><span>2h ago</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2021 Jeep Wrangler</strong></div><div class="mock-card-meta"><span>Wesley G.</span></div><div class="mock-card-foot"><span>Yesterday</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 BMW 330i</strong></div><div class="mock-card-meta"><span>Lena K.</span></div><div class="mock-card-foot"><span>5h ago</span></div></div>
+              </div>
+              <div class="mock-col" data-col="approved"><div class="mock-col-head"><span>Approved</span><span class="mock-count">1</span></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2016 Nissan Altima</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Carlos M.</span><span class="mock-chip">1:00 PM</span></div><div class="workflow-prog"><i></i></div><div class="mock-card-foot"><span>Services 0/2</span></div></div>
+              </div>
+              <div class="mock-col" data-col="progress"><div class="mock-col-head"><span>In Progress</span><span class="mock-count">2</span></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2018 Ford F-150</strong><span class="mock-avatar">LO</span></div><div class="mock-card-meta"><span>Jordan M.</span><span class="mock-chip is-stop workflow-late" data-at="3" data-fx="pulse">10:00 AM</span></div><div class="workflow-prog" style="--p:.34"><i></i></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2020 Ram 1500</strong><span class="mock-avatar">MR</span></div><div class="mock-card-meta"><span>Carlos M.</span><span class="mock-chip">12:00 PM</span></div><div class="workflow-prog" style="--p:.34"><i></i></div><div class="mock-card-foot"><span>Services 1/3</span></div></div>
+              </div>
+              <div class="mock-col is-optional" data-col="parts"><div class="mock-col-head"><span>Waiting on Parts</span><span class="mock-count">1</span></div>
+                <div class="mock-card">
+                  <div class="mock-card-top"><strong>2020 Silverado 1500</strong><span class="mock-avatar">MR</span></div>
+                  <div class="mock-card-meta"><span>Jordan M.</span><span class="mock-chip">2:00 PM</span></div>
+                  <div class="workflow-prog"><i></i></div>
+                  <div class="mock-card-foot"><span>Services 0/2</span><span class="workflow-swap is-end"><span class="mock-chip is-warn workflow-parts-out" data-until="2">Parts on order 1</span><span class="mock-chip is-ok workflow-parts-in" data-at="2" data-fx="pop">Received</span></span></div>
+                </div>
+              </div>
+              <div class="mock-col" data-col="ready"><div class="mock-col-head"><span>Ready for Pickup</span><span class="mock-count">3</span></div>
+                <!-- The moving card ships in its final column; site.js moves it to path[0] when the sequence arms. -->
+                <div class="mock-card workflow-camry" data-path="approved progress progress progress ready">
+                  <span class="mock-done-dot" data-at="4" data-fx="pop"></span>
+                  <div class="mock-card-top"><strong>2021 Camry SE</strong><span class="mock-avatar">KP</span></div>
+                  <div class="mock-card-meta"><span>Priya R.</span><span class="mock-chip">10:30 AM</span></div>
+                  <div class="workflow-prog"><i></i></div>
+                  <div class="mock-card-foot"><span>Services <span class="workflow-swap"><span data-until="2">0/4</span><span data-at="2" data-until="4" data-fx="fade">2/4</span><span data-at="4" data-fx="fade">4/4</span></span></span></div>
+                </div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2020 Honda Accord</strong><span class="mock-avatar">KP</span></div><div class="mock-card-meta"><span>Avery T.</span><span class="mock-chip">11:00 AM</span></div><div class="workflow-prog is-done" style="--p:1"><i></i></div><div class="mock-card-foot"><span>Services 2/2</span></div></div>
+                <div class="mock-card"><div class="mock-card-top"><strong>2019 Honda CR-V</strong><span class="mock-avatar">DW</span></div><div class="mock-card-meta"><span>Elijah B.</span><span class="mock-chip">4:00 PM</span></div><div class="workflow-prog is-done" style="--p:1"><i></i></div><div class="mock-card-foot"><span>Services 2/2</span></div></div>
+              </div>
+            </div>
+          </div></div>
+          <div class="mock-toast"><span>Moved to <b data-toast-col>In Progress</b></span><span class="workflow-undo">Undo</span></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Moved to Ready for Pickup</strong><small>2021 Camry SE · Undo</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="dot is-stop"></span>
+          <span><strong>Past its promise time</strong><small>2018 F-150 · promised 10:00 AM</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+<script>
+/* Hero board: the Camry's last move lands in the right-most column, where the shared spring would overshoot
+   the window edge and clip the card and its green dot. Soften the spring for that one move. */
+(() => {
+  const fig = document.querySelector(".workflow-hero-fig");
+  const card = fig && fig.querySelector(".workflow-camry");
+  if (!card || !card.getAnimations) return;
+  fig.addEventListener("seqstep", (e) => {
+    if (!e.detail || !e.detail.final) return;
+    card.getAnimations()
+      .filter((a) => !("animationName" in a) && !("transitionProperty" in a) && a.effect && a.effect.updateTiming)
+      .forEach((a) => a.effect.updateTiming({ easing: "cubic-bezier(.3, 1.2, .6, 1)" }));
+  });
+})();
+</script>
+
+  <!-- ===== Pains ===== -->
+  <section class="section section-paper" id="pains" aria-labelledby="pains-title">
+    <div class="container split workflow-pains">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-title">Where cars get lost</h2>
+        <ul class="signal-list">
+          <li>The whiteboard is out of date by 9 AM.</li>
+          <li>&ldquo;Where&rsquo;s the Camry?&rdquo;</li>
+          <li>Promised times slip and nobody notices until the customer calls.</li>
+          <li>Techs walk to the counter for every update.</li>
+        </ul>
+      </div>
+      <div class="workflow-pains-side">
+        <figure class="page-hero-art workflow-art" data-reveal="right" data-reveal-seq data-play aria-label="Illustration: a marker whiteboard gets crossed out, and a five-column board on a screen takes its place while a card moves to the last column and gets a green dot">
+          <svg viewBox="0 0 480 290" aria-hidden="true">
+            <ellipse class="art-tint" cx="318" cy="146" rx="158" ry="128" opacity=".55"/>
+            <!-- the whiteboard -->
+            <g data-seq-i="0">
+              <g transform="rotate(-4 106 140)">
+                <rect class="art-ink art-paper" x="30" y="78" width="152" height="112" rx="10"/>
+                <path class="art-ink art-thin" d="M46 98c7-5 12 5 19 0s12-5 19 0 12 5 19 0" stroke-opacity=".42"/>
+                <path class="art-ink art-thin" d="M46 116c6-4 11 4 17 0s11-4 17 0" stroke-opacity=".42"/>
+                <path class="art-ink art-thin" d="M46 134c7-5 12 5 19 0s12-5 19 0 12 5 19 0 12 5 19 0" stroke-opacity=".42"/>
+                <path class="art-ink art-thin" d="M46 152c6-4 11 4 17 0" stroke-opacity=".42"/>
+                <ellipse cx="124" cy="162" rx="26" ry="9" fill="var(--mist-100)"/>
+                <path class="art-ink art-thin" d="M108 162c6-4 11 4 17 0s11-4 17 0" stroke-opacity=".2"/>
+                <path class="art-ink" d="M147 100c0-9 13-9 13 0 0 6-6.5 6.5-6.5 12.5M153.5 121v.5" stroke="var(--dot-warn)" stroke-width="2.6"/>
+                <path class="art-ink art-thin" d="M50 198h112"/>
+                <rect class="art-ink art-thin art-soft" x="118" y="192" width="30" height="7" rx="3.5"/>
+              </g>
+            </g>
+            <path data-seq-i="1" data-fx="draw" pathLength="1" d="M40 192L176 84" fill="none" stroke="var(--dot-stop)" stroke-width="3.2" stroke-linecap="round" opacity=".8"/>
+            <!-- the hand-off -->
+            <path class="art-ink art-accent" data-seq-i="2" data-fx="draw" pathLength="1" d="M192 158c14-20 28-26 40-24"/>
+            <path class="art-ink art-accent" data-seq-i="2" data-fx="pop" style="--fx-delay:.55s" d="M223 127l10 7-11 6"/>
+            <!-- the screen and its five stages -->
+            <g data-seq-i="3">
+              <path class="art-ink" d="M352 212v20M322 236h60"/>
+              <rect class="art-ink art-paper" x="240" y="56" width="224" height="156" rx="14"/>
+              <path class="art-ink art-thin" d="M240 78h224" stroke-opacity=".22"/>
+              <circle cx="255" cy="67" r="3" fill="var(--mist-300)"/><circle cx="265" cy="67" r="3" fill="var(--mist-300)"/><circle cx="275" cy="67" r="3" fill="var(--mist-300)"/>
+              <circle class="art-pulse" cx="450" cy="67" r="4" fill="var(--dot-ok)"/>
+              <g stroke="var(--mist-200)" fill="var(--mist-50)">
+                <rect x="250" y="88" width="36" height="112" rx="7"/><rect x="292" y="88" width="36" height="112" rx="7"/><rect x="334" y="88" width="36" height="112" rx="7"/><rect x="376" y="88" width="36" height="112" rx="7"/><rect x="418" y="88" width="36" height="112" rx="7"/>
+              </g>
+              <rect x="255" y="94" width="16" height="4" rx="2" fill="var(--mist-300)"/>
+              <rect x="297" y="94" width="16" height="4" rx="2" fill="var(--blue)"/>
+              <rect x="339" y="94" width="16" height="4" rx="2" fill="var(--blue)"/>
+              <rect x="381" y="94" width="16" height="4" rx="2" fill="var(--dot-warn)"/>
+              <rect x="423" y="94" width="16" height="4" rx="2" fill="var(--green)"/>
+            </g>
+            <!-- cards land in their stages -->
+            <g data-seq-i="4" data-fx="stagger" style="--fx: fx-drop; --fx-stagger: 70ms">
+              <g><rect x="253" y="104" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M258 111h14M258 118h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/></g>
+              <g><rect x="295" y="104" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M300 111h14M300 118h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/><circle cx="318" cy="118" r="3.5" fill="var(--blue-100)" stroke="var(--blue)"/></g>
+              <g><rect x="337" y="104" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M342 111h14M342 118h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/><circle cx="360" cy="118" r="3.5" fill="var(--stop-soft)" stroke="var(--dot-stop)"/></g>
+              <g><rect x="379" y="104" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M384 111h14M384 118h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/><circle cx="402" cy="118" r="3.5" fill="var(--warn-soft)" stroke="var(--dot-warn)"/></g>
+              <g><rect x="421" y="104" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M426 111h14M426 118h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/><circle cx="444" cy="118" r="3.5" fill="var(--green-100)" stroke="var(--green)"/></g>
+              <g><rect x="253" y="130" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M258 137h14M258 144h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/></g>
+              <g><rect x="337" y="130" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M342 137h14M342 144h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/><circle cx="360" cy="144" r="3.5" fill="var(--blue-100)" stroke="var(--blue)"/></g>
+              <g><rect x="253" y="156" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M258 163h14M258 170h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/></g>
+              <g><rect x="421" y="156" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--mist-300)"/><path d="M426 163h14M426 170h8" stroke="var(--ink-4)" stroke-width="2" stroke-linecap="round"/><circle cx="444" cy="170" r="3.5" fill="var(--green-100)" stroke="var(--green)"/></g>
+            </g>
+            <!-- one card moves on to Ready, the clock ticks, and its dot turns green -->
+            <g class="workflow-art-mover" data-seq-i="5" style="--fx: workflow-art-hop; --fx-dur: 1.5s; --fx-ease: var(--ease-in-out)">
+              <rect x="421" y="130" width="30" height="22" rx="4" fill="var(--paper)" stroke="var(--blue)" stroke-width="1.6"/>
+              <path d="M426 137h14M426 144h8" stroke="var(--ink-3)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="444" cy="144" r="3.5" fill="var(--blue-100)" stroke="var(--blue)"/>
+            </g>
+            <g data-seq-i="5" data-fx="pop">
+              <circle cx="462" cy="48" r="16" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+              <path d="M462 36v2.5M474 48h-2.5M462 60v-2.5M450 48h2.5" stroke="var(--ink-4)" stroke-width="1.6" stroke-linecap="round"/>
+              <path d="M462 48l5.5 3.5" stroke="var(--ink)" stroke-width="2" stroke-linecap="round"/>
+              <path data-seq-i="6" data-fx="sweep" d="M462 48v-9.5" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" style="--from:-110deg; --to:0deg; transform-origin: 462px 48px"/>
+            </g>
+            <circle data-seq-i="7" data-fx="pop" cx="451" cy="130" r="5.5" fill="var(--dot-ok)" stroke="var(--paper)" stroke-width="2"/>
+          </svg>
+        </figure>
+        <div class="callout" data-reveal="right">
+          <svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg>
+          <div>
+            <p class="callout-title">One board, one list, one clock</p>
+            <p>One board for the whole shop, a morning list that builds itself, and a time clock that moves the card when the tech starts.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== The board ===== -->
+  <section class="section" id="board" aria-labelledby="board-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Workflow board</p>
+        <h2 id="board-title">The board</h2>
+        <p class="lead">Every open repair order sits in the stage it&rsquo;s in. Move the card when the work moves.</p>
+      </div>
+      <div class="grid grid-3 workflow-facts" data-reveal-stagger>
+        <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span><h3 class="mt-2">Five stages</h3><p>Estimate, Approved, In Progress, Waiting on Parts and Ready for Pickup. Closed ROs drop off the board.</p></div>
+        <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-device-tablet"/></svg></span><h3 class="mt-2">Drag, or swipe</h3><p>Drag cards on a desktop or iPad. On a phone, swipe between stages and move a card from its &bull;&bull;&bull; menu.</p></div>
+        <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg></span><h3 class="mt-2">Undo on every move</h3><p>Each move shows a toast with an Undo button. A wrong drop is one tap to fix.</p></div>
+        <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></span><h3 class="mt-2">Filter and search</h3><p>Show everyone or one technician. Search by RO, customer, vehicle or plate.</p></div>
+        <div class="card value-card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><h3 class="mt-2">Cards that say enough</h3><p>The tech, the promised time, services done out of total, and parts still on order. A promised time turns red once it passes and the car isn&rsquo;t ready.</p></div>
+        <div class="card value-card" data-reveal-seq><span class="icon-tile"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 12l3.1 2"/><path data-seq-i="0" data-fx="sweep" d="M12 12V6.6" style="--from:-80deg; --to:0deg; --fx-delay:.5s; transform-origin: 12px 12px"/></svg></span><h3 class="mt-2">Time-stamped</h3><p>Every stage change is time-stamped. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, those times drive the customer&rsquo;s live status page.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Today ===== -->
+  <section class="section section-tint" id="today" aria-labelledby="today-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Today dashboard</p>
+        <h2 id="today-title">Today: <span class="accent-text">the shop&rsquo;s morning screen</span></h2>
+        <p>Today is the home screen of WPI Driveline Shop Management System. Five totals sit across the top: in the shop, billed today, awaiting approval, ready for pickup and receivables. Under them, <strong>Needs attention</strong> builds itself from what&rsquo;s already in the system. It watches for:</p>
+        <ul class="workflow-watch">
+          <li><span class="status-dot is-stop"></span><span>Cars past their promise time</span></li>
+          <li><span class="status-dot"></span><span>ROs waiting on parts</span></li>
+          <li><span class="status-dot is-info"></span><span>Estimates still waiting 3 hours after they were written</span></li>
+          <li><span class="status-dot is-ok"></span><span>Ready cars with a balance due</span></li>
+          <li><span class="status-dot"></span><span>Past-due fleet invoices</span></li>
+          <li><span class="status-dot"></span><span>POs due today or overdue</span></li>
+          <li><span class="status-dot"></span><span>Low stock</span></li>
+          <li><span class="status-dot is-info"></span><span>Booking requests to confirm</span></li>
+          <li><span class="status-dot is-info"></span><span>Today&rsquo;s self check-ins</span></li>
+          <li><span class="status-dot is-stop"></span><span>Unread messages and missed calls to return</span></li>
+        </ul>
+        <p>Also on the screen: today&rsquo;s appointments with a one-tap Book appointment button, an activity feed, and shortcut tiles with live counts. The tiles are filtered to what the signed-in role may open.</p>
+      </div>
+      <figure class="mock-figure workflow-today-fig" data-reveal="left" data-play data-seq="3" data-loops="1" data-step="2" data-reached="0 1 2" aria-label="Example: the sample shop's Today screen, with five totals, four items that need attention, four techs on the clock and a chart of what was invoiced over the last 14 days">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-window"><div class="mock-screen workflow-today">
+            <div class="mock-appbar"><svg class="mock-logo" viewBox="0 0 22 22"><rect x=".5" y=".5" width="21" height="21" rx="6" fill="#fff" stroke="#DCE5F0"/><path d="M4.6 6.4l3 8 3.4-6.4 3.4 6.4 3-8" fill="none" stroke="#0F2B4C" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><rect x="4.6" y="16.6" width="6" height="1.8" fill="#1F7AE0"/><rect x="11.4" y="16.6" width="6" height="1.8" fill="#2DB36A"/></svg>Today · Main Street Auto Service</div>
+            <div class="mock-today">
+              <div class="mock-tiles workflow-tiles">
+                <div class="mock-tile is-wash"><span class="mock-label">In the shop</span><strong><span class="odometer is-plain" data-odometer="5" data-at="0">5</span></strong><small>7 on the lot</small></div>
+                <div class="mock-tile"><span class="mock-label">Billed today</span><strong><span class="odometer is-plain" data-odometer="699" data-group="," data-prefix="$" data-at="0" style="--odo-base: .12s">$699</span></strong><small>2 invoices</small></div>
+                <div class="mock-tile"><span class="mock-label">Awaiting approval</span><strong><span class="odometer is-plain" data-odometer="1899" data-group="," data-prefix="$" data-at="0" style="--odo-base: .24s">$1,899</span></strong><small>3 open estimates</small></div>
+                <div class="mock-tile"><span class="mock-label">Ready for pickup</span><strong><span class="odometer is-plain" data-odometer="2" data-at="0" style="--odo-base: .36s">2</span></strong><small>$699 to collect</small></div>
+                <div class="mock-tile"><span class="mock-label">Receivables</span><strong><span class="odometer is-plain" data-odometer="1742" data-group="," data-prefix="$" data-at="0" style="--odo-base: .48s">$1,742</span></strong><small>6 unpaid</small></div>
+              </div>
+              <div class="mock-section-title">Needs attention <span class="mock-chip is-idle">4</span></div>
+              <div class="mock-rows" data-at="1" data-fx="stagger">
+                <div class="mock-row"><span class="mock-dot is-stop"></span><span>2018 F-150 is past its promise time</span><span class="mock-chip is-stop">Late</span></div>
+                <div class="mock-row"><span class="mock-dot is-warn"></span><span>2020 Silverado 1500 waiting on parts</span><span class="mock-chip is-warn">Parts</span></div>
+                <div class="mock-row"><span class="mock-dot"></span><span>2019 BMW 330i estimate needs a follow-up</span><span class="mock-chip">Follow up</span></div>
+                <div class="mock-row"><span class="mock-dot is-ok"></span><span>Ready · $254.52 due · Avery T.</span><span class="mock-chip is-ok">Ready</span></div>
+              </div>
+              <div class="mock-section-title">On the clock <small>4 of 4 technicians in</small></div>
+              <div class="mock-rows">
+                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">MR</span><span class="live-dot"></span></span><span><b>Marcus R.</b> · Water pump · <span class="nowrap">2020 Ram 1500</span></span><span class="mock-chip is-ok workflow-timer-chip"><svg class="icon"><use href="#i-timer"/></svg>48m</span></div>
+                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">LO</span><span class="live-dot"></span></span><span><b>Luis O.</b> · Spark plugs &amp; coil boots · <span class="nowrap">2018 F-150</span></span><span class="mock-chip is-ok workflow-timer-chip"><svg class="icon"><use href="#i-timer"/></svg>1h 05m</span></div>
+                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">KP</span><span class="live-dot"></span></span><span><b>Kim P.</b> · Full synthetic oil &amp; filter · <span class="nowrap">2021 Camry SE</span></span><span class="mock-chip is-ok workflow-timer-chip"><svg class="icon"><use href="#i-timer"/></svg>12m</span></div>
+                <div class="mock-row"><span class="workflow-ava"><span class="mock-avatar">DW</span><span class="live-dot is-warn"></span></span><span><b>Dana W.</b> · Clocked in, no job running</span><span class="mock-value workflow-since">since 7:26 AM</span></div>
+              </div>
+              <div class="mock-section-title">Invoiced, last 14 days</div>
+              <div class="mock-bars" data-at="2" data-fx="stagger" style="--fx: bar-grow; --fx-stagger: 40ms">
+                <span style="--h:.46"></span><span style="--h:.62"></span><span style="--h:.38"></span><span style="--h:.7"></span><span style="--h:.55"></span><span style="--h:.2"></span><span style="--h:.12"></span><span style="--h:.58"></span><span style="--h:.8"></span><span style="--h:.49"></span><span style="--h:.66"></span><span style="--h:.74"></span><span style="--h:.31"></span><span class="is-hi" style="--h:.52"></span>
+              </div>
+            </div>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Tech time clock ===== -->
+  <section class="section section-paper" id="tech-clock" aria-labelledby="tech-clock-title">
+    <div class="container split">
+      <div class="section-copy workflow-tech-copy" data-reveal="left">
+        <p class="eyebrow">Tech time clock</p>
+        <h2 id="tech-clock-title">A time clock <span class="accent-text">made for the bay</span></h2>
+        <p>Each tech picks their name once on the bay device. Their shift clock, their jobs and a Start button for each service are on one screen.</p>
+        <ul class="checklist pop-list">
+          <li>Clock in and out for the shift, with time on the clock today.</li>
+          <li>Assigned jobs, plus open jobs a tech can claim and start.</li>
+          <li>One-tap job timers. Starting a job clocks the tech in and moves an Approved RO to In Progress.</li>
+          <li>Mark services done and write the cause and correction.</li>
+          <li>Take a photo or video in the bay, straight onto the RO.</li>
+          <li>One tap to the inspection, Auto Diagnosis, and the vehicle&rsquo;s diagrams, parts and repair guides.</li>
+          <li>On phones, techs get their own tab bar: Clock, Board, Orders, Diagnose.</li>
+        </ul>
+        <div class="workflow-metrics">
+          <p>A <strong>Right now</strong> board shows who&rsquo;s on which job. Efficiency and productivity come from real clock time:</p>
+          <dl>
+            <div><dt>Efficiency</dt><dd>flagged hours &divide; hours on jobs</dd></div>
+            <div><dt>Productivity</dt><dd>hours on jobs &divide; hours on the clock</dd></div>
+          </dl>
+          <a class="link-arrow" href="reports.html">Payroll exports and tech reports <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+      </div>
+      <figure class="mock-figure workflow-tech-fig" data-reveal="right" data-play data-seq="4" data-loops="1" data-step="3" data-reached="0 1 2 3" aria-label="Example: a tech's time clock on a phone in the sample shop. The oil service on a 2021 Camry SE has been started, its timer is running, the repair order is In Progress, and a photo was added to it.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-phone is-auto workflow-phone"><div class="mock-screen">
+            <div class="workflow-tech-head"><span class="mock-avatar is-green">KP</span><span><b>Kim P.</b><small>Lube &amp; Maintenance</small></span></div>
+            <div class="workflow-shift">
+              <span class="workflow-shift-icon"><svg class="icon"><use href="#i-clock"/></svg></span>
+              <span><b>On the clock</b><small>Since 7:30 AM</small></span>
+              <span class="mock-btn is-ghost">Clock out</span>
+            </div>
+            <span class="mock-label">My jobs</span>
+            <div class="workflow-job">
+              <div class="workflow-job-head">
+                <span><b>2021 Toyota Camry SE</b><small>Priya R. · promised 10:30 AM</small></span>
+                <div class="workflow-job-row">
+                  <span class="workflow-swap"><span class="mock-chip is-idle" data-until="2">Approved</span><span class="mock-chip" data-at="2" data-fx="flip">In Progress</span></span>
+                  <span class="workflow-tools">
+                    <span class="workflow-tool is-cam" data-at="3" data-fx="pulse"><svg class="icon"><use href="#i-camera"/></svg></span>
+                    <span class="workflow-tool"><svg class="icon"><use href="#i-diagnostics"/></svg></span>
+                    <span class="workflow-tool"><svg class="icon"><use href="#i-inspection"/></svg></span>
+                    <span class="workflow-tool"><svg class="icon"><use href="#i-book"/></svg></span>
+                  </span>
+                </div>
+              </div>
+              <div class="workflow-svc">
+                <span class="workflow-tick"></span>
+                <span><b>Full synthetic oil&nbsp;&amp;&nbsp;filter</b><small>0.5 hr flagged</small></span>
+                <span class="workflow-swap is-end">
+                  <span class="mock-btn" data-at="0" data-fx="press" data-until="1"><svg class="icon"><use href="#i-play"/></svg>Start</span>
+                  <span class="mock-btn is-soft" data-at="1" data-fx="pop"><svg class="icon"><use href="#i-pause"/></svg><span class="odometer is-plain" data-odometer="0:00:12" data-from="0:00:00" data-duration=".4">0:00:12</span></span>
+                </span>
+              </div>
+              <div class="workflow-svc">
+                <span class="workflow-tick"></span>
+                <span><b>Tire rotation &amp; pressure check</b><small>0.4 hr flagged</small></span>
+                <span class="mock-btn is-ghost"><svg class="icon"><use href="#i-play"/></svg>Start</span>
+              </div>
+            </div>
+            <div class="workflow-photo" data-at="3" data-fx="pop"><span class="mock-chip is-ok"><svg class="icon"><use href="#i-camera"/></svg>Photo added to RO</span></div>
+            <span class="mock-label">Open jobs</span>
+            <div class="workflow-job workflow-open">
+              <div class="workflow-svc">
+                <span><b>Brake fluid exchange</b><small>2019 Honda Civic</small><small>0.8 hr</small></span>
+                <span class="mock-btn is-ghost">Claim &amp; start</span>
+              </div>
+            </div>
+            <div class="workflow-tabbar">
+              <span class="workflow-tab-pill" data-at="2" style="--fx: workflow-tab-hop; --fx-dur: 2.2s; --fx-ease: var(--ease-in-out); --fx-pre: 1"></span>
+              <span class="workflow-tab is-on"><svg class="icon"><use href="#i-timer"/></svg>Clock</span>
+              <span class="workflow-tab"><svg class="icon"><use href="#i-board"/></svg>Board</span>
+              <span class="workflow-tab"><svg class="icon"><use href="#i-document"/></svg>Orders</span>
+              <span class="workflow-tab"><svg class="icon"><use href="#i-diagnostics"/></svg>Diagnose</span>
+            </div>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== A card's day ===== -->
+  <section class="section section-tint" id="how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">One card, one day</p>
+        <h2 id="how-title">A card&rsquo;s day <span class="accent-text">on the board</span></h2>
+        <p class="lead">Follow one repair order from the customer&rsquo;s yes to pickup. Most moves are a drag or a tap. Starting the timer makes one for you.</p>
+      </div>
+      <div class="roadmap" style="--steps:4" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="Example board journey in the sample shop">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-signature"/></svg></span>
+            <h3>Approved</h3>
+            <p>The customer said yes. The card sits in Approved with its tech and promised time.</p>
+            <span class="roadmap-chip">Approved · 7:35 AM</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-timer"/></svg></span>
+            <h3>In Progress</h3>
+            <p>The tech tapped Start on the time clock. The timer runs, and the card moved to In Progress with it.</p>
+            <span class="roadmap-chip">Timer on · Kim P.</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-tag"/></svg></span>
+            <h3>Waiting on Parts</h3>
+            <p>If a part has to come in, the card moves here. The PO is open, and Today lists it on the day it&rsquo;s due.</p>
+            <span class="roadmap-chip">PO due today</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-car"/></svg></span>
+            <h3>Ready for Pickup</h3>
+            <p>Send the vehicle-ready text with the balance due, plus a pay link once <a href="payments.html">payments</a> are set up. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, you can also send the live status link so they can follow along.</p>
+            <span class="roadmap-chip">Ready · text sent</span>
+          </li>
+        </ol>
+      </div>
+      <p class="roadmap-caption">Times, names and chips are an example from the sample shop.</p>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> nothing extra. The board, Today and the time clock work on a single device.</li>
+            <li><strong>One live board for the shop:</strong> keeping the counter, bay tablets and phones on the same board uses <a href="../works-with.html#shop-cloud">Shop Cloud</a>. Without it, each device keeps its own records.</li>
+            <li>Online booking requests, website messages, check-ins from a customer&rsquo;s phone, and incoming texts and missed calls reach <strong>Needs attention</strong> on the shop&rsquo;s signed-in devices once they&rsquo;re set up. They use <a href="../works-with.html#shop-cloud">Shop Cloud</a>, and texts and calls also need your own Twilio account.</li>
+            <li>Moving a card doesn&rsquo;t text the customer. You choose when to send an update.</li>
+            <li>The payroll export uses clock hours for hourly techs and flagged hours for flat-rate techs. The app doesn&rsquo;t run payroll or pay anyone. That stays with your payroll service.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Board and time clock questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="feat-faq"><summary>Can techs move cards from a phone?</summary><div class="faq-body"><p>Yes. Swipe between stages, then use the &bull;&bull;&bull; menu on a card to move it. On a desktop or iPad, drag it.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>What if someone moves the wrong card?</summary><div class="faq-body"><p>Undo. Every move shows a toast with an Undo button, and one tap puts the card back.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Does moving a card text the customer?</summary><div class="faq-body"><p>No. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, the move updates the live status page if you&rsquo;ve shared it. To tell the customer, send the Live status link or a Status update text from the RO.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Does it handle flat-rate techs?</summary><div class="faq-body"><p>Yes. The payroll export counts clock hours, with overtime, for hourly techs and flagged hours from invoiced work for flat-rate techs. Commission is included. See <a href="reports.html">Reports, payroll &amp; QuickBooks</a>.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Related ===== -->
+  <section class="section section-sm workflow-related" id="related" aria-labelledby="related-title">
+    <div class="container">
+      <h2 id="related-title" class="h3">Works alongside</h2>
+      <!-- @partial related -->
+<div class="grid grid-3 related" data-related data-reveal-stagger>
+  <a class="card card-link feature-card" href="../features/inspections.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span>
+    <h3>Inspections &amp; approvals</h3>
+    <p>37 points, photos and a yes from their phone.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="../features/parts.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span>
+    <h3>Parts, inventory &amp; tires</h3>
+    <p>On the shelf, on the job, on order. Scan it.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="../features/reports.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span>
+    <h3>Reports, payroll &amp; QuickBooks</h3>
+    <p>Your numbers, goals, payroll exports and a daily QuickBooks entry.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+</div>
+<!-- @end related -->
+    </div>
+  </section>
+</main>
+
+<!-- @partial cta -->
+<section class="cta-road" aria-labelledby="cta-road-title">
+  <div class="container cta-road-inner">
+    <div class="cta-road-copy" data-reveal>
+      <p class="eyebrow">Ready when you are</p>
+      <h2 id="cta-road-title">See your own shop day in it.</h2>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
+    </div>
+    <div class="cta-road-actions" data-reveal>
+      <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
+      <a class="btn btn-secondary btn-lg" href="../app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Try the sample shop</a>
+    </div>
+  </div>
+  <div class="road" aria-hidden="true">
+    <span class="road-status"><span class="road-status-wip">In progress</span><span class="road-status-paid">Paid &middot; RO closed</span></span>
+    <div class="road-surface"><span class="road-dashes"></span></div>
+    <svg class="road-car" viewBox="0 0 32 14"><use href="#i-car-mini"/></svg>
+  </div>
+</section>
+<!-- @end cta -->
+<!-- @partial footer -->
+<footer class="site-footer" id="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
+        <img src="../assets/img/logo.svg" alt="" width="653" height="361" loading="lazy" decoding="async">
+        <span class="footer-card-tagline">Shop Management System</span>
+      </a>
+      <p class="footer-blurb">WPI Driveline Shop Management System runs the repair-shop day, from check-in to paid, on the counter PC, the bay tablet and your phone. Installs from the browser and works offline.</p>
+      <p class="footer-pill">Works offline &middot; installs from the browser</p>
+    </div>
+    <nav class="footer-col" aria-labelledby="footer-product">
+      <h2 id="footer-product">Product</h2>
+      <ul>
+        <li><a href="../features/booking.html">Booking &amp; check-in</a></li>
+        <li><a href="../features/messaging.html">Texting, calls &amp; email</a></li>
+        <li><a href="../features/customers.html">Customers &amp; follow-ups</a></li>
+        <li><a href="../features/workflow.html" aria-current="page">Workflow &amp; tech clock</a></li>
+        <li><a href="../features/inspections.html">Inspections &amp; approvals</a></li>
+        <li><a href="../features/diagnosis.html">Auto Diagnosis</a></li>
+        <li><a href="../features/parts.html">Parts, inventory &amp; tires</a></li>
+        <li><a href="../features/repair-orders.html">Estimates &amp; ROs</a></li>
+        <li><a href="../features/payments.html">Payments &amp; card readers</a></li>
+        <li><a href="../features/fleet.html">Fleet accounts</a></li>
+        <li><a href="../features/reports.html">Reports &amp; QuickBooks</a></li>
+        <li><a href="../features/ai.html">AI assistant</a></li>
+        <li><a href="../mobile.html">iPhone &amp; iPad</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../works-with.html">Integrations</a></li>
+        <li><a href="../security.html">Security</a></li>
+        <li><a href="../privacy.html">Privacy</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col">
+      <nav aria-labelledby="footer-help">
+        <h2 id="footer-help">Help</h2>
+        <ul>
+          <li><a href="../faq.html">FAQ</a></li>
+          <li><a href="../demo.html">Request a demo</a></li>
+          <li><a href="../app/" data-no-prerender>Try the sample shop</a></li>
+          <li><a href="../app/signin" data-no-prerender>Sign in</a></li>
+        </ul>
+      </nav>
+      <h2 class="footer-subhead">Talk to us</h2>
+      <p class="footer-talk">
+        <a class="footer-contact" href="../demo.html?topic=question"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Use the demo form</span></a>
+      </p>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span data-year>2026</span> WPI Driveline</p>
+    <p class="footer-links"><a href="../privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="../faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a><span aria-hidden="true">&middot;</span><a href="../app/signin" data-no-prerender>Sign in</a></p>
+    <button class="motion-toggle" type="button" aria-pressed="false"><svg class="icon mt-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="icon mt-play" aria-hidden="true"><use href="#i-play"/></svg><span class="motion-toggle-label">Pause animations</span></button>
+  </div>
+</footer>
+<!-- @end footer -->
+<!-- @partial tabbar -->
+<nav class="tabbar" aria-label="Quick navigation">
+  <a class="tab" href="../index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+  <a class="tab is-active" href="../features.html" data-nav="features" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Features</span></a>
+  <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
+  <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
+  <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
+</nav>
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="more-sheet-title">WPI Driveline Shop Management System</h2>
+      <button class="icon-btn" type="button" data-close-sheet aria-label="Close menu" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheet-quick">
+      <a class="quick-action is-primary" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg><span>Request a demo</span></a>
+      <a class="quick-action" href="../app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg><span>Try the sample shop</span></a>
+      <a class="quick-action" href="../app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span>Sign in</span></a>
+    </div>
+    <h3 class="sheet-label">Explore</h3>
+    <ul class="sheet-grid">
+      <li><a href="../index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a></li>
+      <li><a class="is-active" href="../features.html" data-nav="features" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Features</a></li>
+      <li><a href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>iPhone &amp; iPad</a></li>
+      <li><a href="../works-with.html" data-nav="integrations"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg>Integrations</a></li>
+      <li><a href="../security.html" data-nav="security"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Security</a></li>
+      <li><a href="../about.html" data-nav="about"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>About</a></li>
+      <li><a href="../faq.html" data-nav="faq"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+      <li><a href="../privacy.html" data-nav="privacy"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Privacy</a></li>
+    </ul>
+    <h3 class="sheet-label">Features</h3>
+    <ul class="sheet-list">
+      <li><a href="../features/booking.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Booking &amp; check-in<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/messaging.html"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Texting, calls &amp; email<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/customers.html"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Customers &amp; follow-ups<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/workflow.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Workflow &amp; tech clock<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/inspections.html"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspections &amp; approvals<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/diagnosis.html"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg>Auto Diagnosis<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/parts.html"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg>Parts, inventory &amp; tires<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/repair-orders.html"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>Estimates &amp; ROs<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/payments.html"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Payments &amp; card readers<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/fleet.html"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet accounts<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/reports.html"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Reports &amp; QuickBooks<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/ai.html"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>AI assistant<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+    </ul>
+    <div class="sheet-foot">
+      <button class="motion-toggle" type="button" aria-pressed="false"><svg class="icon mt-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="icon mt-play" aria-hidden="true"><use href="#i-play"/></svg><span class="motion-toggle-label">Pause animations</span></button>
+    </div>
+  </div>
+</dialog>
+<!-- @end tabbar -->
+</body>
+</html>

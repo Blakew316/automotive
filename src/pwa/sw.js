@@ -1,5 +1,6 @@
-// Service worker: keeps the app shell and code cached so WPI Driveline opens instantly, works offline,
-// and installs to the home screen. VERSION and PRECACHE are filled in at build time (vite.config.js).
+// Service worker: keeps the app shell and code cached so WPI Driveline Shop Management System opens
+// instantly, works offline, and installs to the home screen. VERSION and PRECACHE are filled in at
+// build time (vite.config.js).
 const VERSION = 'dev';
 const PRECACHE = [];
 

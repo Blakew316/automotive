@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Check, Phone, MapPin, FileText, CreditCard, Clock, Link2Off, RefreshCw } from 'lucide-react';
-import { ShopBrand } from '../brand/Logo';
+import { PoweredBy, ShopBrand } from '../brand/Logo';
+import { titleName, usePageTitle } from '../brand/title';
 import { EmptyState, Spinner } from '../components/ui';
 import { parseShareSource } from '../lib/cloudShare';
 import { phone as fmtPhone, telHref, money, relTime } from '../lib/format';
@@ -19,6 +20,7 @@ export default function Track() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(source ? '' : 'This link is incomplete.');
   const [checked, setChecked] = useState(null);
+  usePageTitle(data ? `${data.vehicle || 'Your vehicle'} — ${titleName(data.shop?.name)}` : '');
 
   useEffect(() => {
     if (!source || !/^[\w-]{10,64}$/.test(id || '')) return undefined;
@@ -150,6 +152,7 @@ export default function Track() {
           </span>
           {error && <span className="text-warn">{error}</span>}
         </p>
+        <PoweredBy name={data.shop.name} />
       </main>
     </div>
   );

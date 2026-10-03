@@ -3,7 +3,8 @@
 // the shop's data changes; pages through long lists on its own.
 import { useEffect, useMemo, useState } from 'react';
 import { Wifi, CircleCheck } from 'lucide-react';
-import { ShopBrand } from '../brand/Logo';
+import { PoweredBy, ShopBrand } from '../brand/Logo';
+import { titleName, usePageTitle } from '../brand/title';
 import { useScopedShop, useSite } from '../store/hooks';
 import QrCode from '../components/QrCode';
 import { lobbyRows, checkinLink } from '../lib/operations';
@@ -18,6 +19,7 @@ export default function Lobby() {
   const [now, setNow] = useState(() => new Date());
   const [page, setPage] = useState(0);
   const [tip, setTip] = useState(0);
+  usePageTitle(`${titleName(state.shop.name)} — Vehicle status`);
   useEffect(() => {
     const t = setInterval(() => setNow(new Date()), 15_000);
     return () => clearInterval(t);
@@ -39,8 +41,8 @@ export default function Lobby() {
   return (
     <div className="force-light flex min-h-[100dvh] flex-col bg-canvas text-ink">
       <header className="customer-header flex items-center gap-6 px-10 py-6">
-        <ShopBrand name={state.shop.name} className="h-16" />
-        <div className="flex-1 border-l border-line pl-6 text-2xl font-semibold tracking-tight text-ink-2">Vehicle status</div>
+        <ShopBrand name={state.shop.name} size="xl" />
+        <div className="flex-1 whitespace-nowrap border-l border-line pl-6 text-2xl font-semibold tracking-tight text-ink-2">Vehicle status</div>
         <div className="tabular text-4xl font-semibold">{now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</div>
       </header>
 
@@ -96,6 +98,9 @@ export default function Lobby() {
           )}
         </aside>
       </main>
+      <footer className="flex justify-end px-10 pb-4 empty:hidden">
+        <PoweredBy name={state.shop.name} />
+      </footer>
     </div>
   );
 }

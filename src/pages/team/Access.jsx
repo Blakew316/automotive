@@ -5,6 +5,7 @@ import { useShop, useUI, useAccess } from '../../store/hooks';
 import { Card, CardHeader, Modal, Field, Avatar } from '../../components/ui';
 import { ROLES, hashPin } from '../../lib/access';
 import { uid } from '../../lib/format';
+import { PRODUCT } from '../../brand/artwork';
 
 export default function Access() {
   const { state, updateShop } = useShop();
@@ -23,7 +24,7 @@ export default function Access() {
           icon={ShieldCheck}
           tone="blue"
           title="Staff & access"
-          subtitle="Who can use WPI Driveline on this shop’s devices, and what each role can open"
+          subtitle={`Who can use ${PRODUCT} on this shop’s devices, and what each role can open`}
           actions={
             <button className="btn-primary btn-sm" onClick={() => save([...staff, { id: uid('staff'), name: 'New team member', role: 'advisor', pin: '' }])}>
               <Plus size={13} /> Add person

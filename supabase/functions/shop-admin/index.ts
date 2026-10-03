@@ -1,4 +1,5 @@
-// shop-admin: AutoShop Pro team logins and housekeeping, run with the project's service role.
+// shop-admin: WPI Driveline Shop Management System team logins and housekeeping, run with the
+// project's service role.
 //   list    – staff logins (owner or manager)
 //   invite  – add a login with a temporary password (owner)
 //   update  – change someone's role or linked staff profile (owner)

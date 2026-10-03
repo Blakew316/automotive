@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Customers &amp; Follow-Ups | WPI Driveline Shop Management System</title>
+<meta name="description" content="Oil-service reminders, declined-work follow-ups, campaigns and connected-car oil life in WPI Driveline Shop Management System.">
+<!-- @partial head -->
+<script>document.documentElement.classList.add("js");try{if(localStorage.getItem("wpi-site:motion")==="paused")document.documentElement.classList.add("motion-paused","motion-parked")}catch(e){}</script>
+<meta name="theme-color" content="#F5F9FE">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="application-name" content="WPI Driveline Shop Management System">
+<meta name="form-endpoint" content="">
+<meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
+<meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script src="../assets/js/site.js" defer></script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"href_matches":"/automotive/app/*"}},{"not":{"selector_matches":"[target=_blank], [data-no-prerender]"}}]},"eagerness":"moderate"}]}</script>
+<link rel="canonical" href="https://blakew316.github.io/automotive/features/customers.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WPI Driveline Shop Management System">
+<meta property="og:title" content="Customers &amp; Follow-Ups | WPI Driveline Shop Management System">
+<meta property="og:description" content="Oil-service reminders, declined-work follow-ups, campaigns and connected-car oil life in WPI Driveline Shop Management System.">
+<meta property="og:url" content="https://blakew316.github.io/automotive/features/customers.html">
+<meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WPI Driveline Shop Management System logo">
+<meta name="twitter:card" content="summary_large_image">
+<!-- @end head -->
+<!-- @partial jsonld -->
+<script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
+<!-- @end jsonld -->
+<style>
+/* ===== features/customers.html (page-local; classes prefixed customers-) ===== */
+
+/* Hero: the oil-service list. A projected odometer reaches the oil-service mark, the car joins the list, Send to all. */
+.customers-hero { width: 100%; }
+.customers-hero-stage { width: min(100%, 470px); padding-bottom: 56px; }
+@media (max-width: 599.98px) { .customers-hero-stage { padding-bottom: 0; } }
+.customers-hero-win { width: 100%; }
+.customers-hero-win > .mock-screen { gap: 12px; padding: 14px; }
+.customers-hero-top { display: grid; gap: 2px; justify-items: start; }
+.customers-hero-status { display: grid; justify-items: start; }
+.customers-hero-status > * { grid-area: 1 / 1; display: inline-flex; align-items: center; gap: 6px; font-size: 17px; font-weight: 680; letter-spacing: -0.02em; white-space: nowrap; color: var(--ink); }
+.customers-hero-status .is-done { color: var(--green-ink); }
+.customers-hero-status .is-done svg { width: 18px; height: 18px; }
+.customers-car { display: grid; gap: 8px; padding: 12px 12px 10px; border-radius: 14px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.customers-car-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.customers-oil { display: grid; place-items: center; flex: none; width: 38px; height: 38px; border-radius: 11px; background: var(--accent-soft); color: var(--accent); }
+.customers-oil .icon { width: 21px; height: 21px; }
+.customers-car-name { display: grid; flex: 1 1 auto; min-width: 0; }
+.customers-car-name b { font-size: 14px; font-weight: 680; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-car-name small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-odo { flex: none; font-size: 20px; padding: 4px; gap: 2px; border-radius: 10px; }
+.customers-odo .odo-digit { border-radius: 4px; }
+/* The tenth wheel turns once with the roll and rests on 0 (35,120.0), so the hero rests on its last step */
+.customers-odo .odo-digit.is-tenth .odo-strip.is-running { animation: odo-tenth var(--odo-dur, 2.2s) var(--ease) var(--odo-base, 0s) both; }
+/* ...and turns again on the next loop (the restart clears data-reached first) */
+.customers-hero:not([data-reached~="0"]) .customers-odo .odo-digit.is-tenth .odo-strip.is-running { animation: none; }
+.motion-paused .customers-odo .odo-strip { animation: none !important; }
+/* The status line never goes blank: each count stays until the next text lands (fx-hide is a shared keyframe) */
+.customers-hero.is-armed[data-reached~="2"] .customers-hero-status [data-until="2"] { animation: fx-hide .2s var(--ease) .45s both; }
+.customers-hero.is-armed[data-reached~="3"] .customers-hero-status [data-until="3"] { animation: fx-hide .2s var(--ease) 1.2s both; }
+.motion-paused .customers-hero-status > * { animation: none !important; }
+/* The mileage ruler: 34,750 to 35,250 in 50-mile ticks; the car rolls to the 35,120 flag */
+.customers-ruler { position: relative; height: 52px; margin: 0 6px; }
+.customers-ruler-ticks { position: absolute; left: 0; right: 0; bottom: 8px; height: 7px; border-right: 1.5px solid var(--mist-300); background: repeating-linear-gradient(90deg, var(--mist-300) 0 1.5px, transparent 1.5px 10%); }
+.customers-ruler-major { position: absolute; left: 0; right: 0; bottom: 8px; height: 13px; border-right: 2px solid var(--ink-4); background: repeating-linear-gradient(90deg, var(--ink-4) 0 2px, transparent 2px 50%); opacity: .55; }
+.customers-ruler-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; border-radius: var(--pill); background: var(--mist-200); }
+.customers-ruler-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 74%; border-radius: inherit; background: var(--bar); transform-origin: 0 50%; transition: scale 1.9s var(--ease-in-out); }
+.customers-ride { position: absolute; left: 0; bottom: 9px; width: 74%; height: 14px; pointer-events: none; transition: translate 1.9s var(--ease-in-out); }
+.customers-ride svg { position: absolute; right: 3px; bottom: 0; width: 34px; height: 15px; color: var(--ink); }
+/* Until the odometer starts rolling (site.js marks its tenth wheel .is-running), the fill and the car wait at 34,870;
+   then they travel with it. A transition, not a page keyframe. A loop restart clears data-reached
+   (with a reflow) before step 0, which resets them too. */
+.customers-hero.is-armed:is(:not([data-reached~="0"]), :not(:has(.odo-strip.is-running))) .customers-ruler-fill { scale: .324 1; transition: none; }
+.customers-hero.is-armed:is(:not([data-reached~="0"]), :not(:has(.odo-strip.is-running))) .customers-ride { translate: -67.6% 0; transition: none; }
+.customers-flag { position: absolute; left: 74%; bottom: 0; height: 52px; }
+.customers-flag::before { content: ""; position: absolute; left: -1px; bottom: 0; width: 2px; height: 34px; border-radius: 1px; background: var(--ink-4); }
+.customers-flag > span { position: absolute; right: -1px; top: 0; display: grid; justify-items: end; }
+.customers-flag > span > * { grid-area: 1 / 1; }
+.customers-flag .mock-chip { border-radius: 9px 2px 2px 9px; padding: 1px 7px 1px 8px; font-size: 12px; transform-origin: 100% 50%; }
+.customers-flag .is-idle { background: var(--mist-100); color: var(--ink-3); }
+.customers-ruler-labels { display: flex; justify-content: space-between; margin: -2px 2px 0; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.customers-car .mock-sub { margin-top: -2px; }
+.customers-list-title { padding-top: 2px; }
+.customers-list .mock-row { gap: 10px; padding: 7px 10px; }
+.customers-list .mock-row > span:not(.mock-tickbox, .mock-chip) { display: grid; gap: 1px; -webkit-line-clamp: unset; }
+.customers-list b { font-size: 12.5px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-list small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-new { position: relative; z-index: 2; border-color: rgba(31, 122, 224, .35) !important; background: var(--accent-soft) !important; }
+.customers-hero .float-note.note-1 { top: 50px; left: auto; right: -14px; }
+.customers-hero .float-note.note-2 { bottom: 0; right: auto; left: -18px; max-width: 400px; }
+/* An empty slot waits at the top of the list until the reminder lands in it */
+.customers-slot { border-radius: 10px; outline: 1.5px dashed var(--mist-300); outline-offset: -1.5px; }
+
+/* Pains: a data-free illustration of three leaks flowing into one follow-up list */
+.customers-pains-side { display: grid; gap: 18px; min-width: 0; }
+.customers-art { min-height: 0; }
+.customers-art > svg { width: min(100%, 480px); }
+.customers-art-pop { transform-box: fill-box; transform-origin: center; }
+
+/* Six follow-up lists. Each card ends on its built-in rule (a product default, not example data). */
+.customers-auto { display: flex; flex-direction: column; align-items: flex-start; }
+.customers-auto > h3 { font-size: 1.15rem; }
+.customers-auto > p { margin-top: 8px; color: var(--ink-3); }
+.customers-auto-mode { display: inline-flex; align-items: center; gap: 7px; margin-top: 14px; padding: 4px 10px 4px 8px; border-radius: var(--pill); background: var(--mist-50); border: 1px solid var(--line); font-size: .82rem; font-weight: 620; line-height: 1.35; color: var(--ink-2); white-space: nowrap; }
+.customers-auto-mode .icon { flex: none; width: 15px; height: 15px; color: var(--accent); }
+.customers-auto-mode.is-server { background: var(--green-50); border-color: rgba(45, 179, 106, .22); color: var(--green-ink); }
+.customers-auto-mode.is-server .icon { color: var(--green-ink); }
+.customers-rule { position: relative; display: grid; gap: 1px; width: 100%; margin-top: auto; padding: 10px 12px 10px 20px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.customers-auto > .customers-auto-mode { margin-bottom: 16px; }
+.customers-rule::before { content: ""; position: absolute; left: 10px; top: 11px; bottom: 11px; width: 2px; border-radius: 1px; background: var(--bar-v); }
+.customers-rule b { font-size: 15.5px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; color: var(--ink); }
+.customers-rule small { font-size: 12.5px; line-height: 1.35; color: var(--ink-3); }
+.customers-auto-note { margin-top: clamp(20px, 1rem + 1vw, 32px); }
+
+/* Campaigns: one message, three names */
+.customers-camp-stage { width: min(100%, 460px); justify-items: stretch; gap: 14px; }
+.customers-camp-card { display: grid; gap: 12px; padding: 14px; border-radius: 16px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); }
+.customers-camp-head { display: flex; align-items: center; gap: 10px; }
+.customers-camp-head > span:last-child { display: grid; min-width: 0; }
+.customers-camp-filters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.customers-filter { display: grid; gap: 1px; min-width: 0; padding: 6px 9px; border-radius: 9px; border: 1px solid var(--line-strong); font-size: 12.5px; font-weight: 620; white-space: nowrap; }
+.customers-filter > * { overflow: hidden; text-overflow: ellipsis; }
+.customers-filter small { font-size: 12px; font-weight: 500; color: var(--ink-3); }
+.customers-camp-msg { display: grid; gap: 5px; }
+.customers-camp-body { padding: 9px 11px; border-radius: 10px; border: 1px solid var(--accent); box-shadow: 0 0 0 3px var(--accent-ring); background: var(--paper); font-size: 12.5px; line-height: 1.5; }
+.customers-key { font-family: var(--font-mono); font-size: 12px; padding: 1px 5px; border-radius: 5px; background: var(--accent-soft); color: var(--accent-ink); white-space: nowrap; }
+.customers-camp-foot { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 10px; }
+.customers-camp-foot .mock-seg { width: 124px; }
+.customers-camp-count { margin-left: auto; font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+.customers-camp-count b { font-size: 16px; font-weight: 700; color: var(--ink); }
+.customers-camp-sends { display: grid; gap: 10px; padding-inline: 6px 2px; }
+.customers-camp-first { justify-self: end; font-size: 12px; font-weight: 650; color: var(--ink-2); }
+.customers-camp-send { display: grid; justify-items: end; gap: 3px; }
+.customers-camp-to { font-size: 12px; color: var(--ink-3); }
+.customers-camp-send .mock-bubble { max-width: 90%; }
+.customers-token { display: inline-grid; justify-items: start; vertical-align: bottom; }
+.customers-token > * { grid-area: 1 / 1; }
+.customers-token-key { font-size: 12px; font-weight: 600; letter-spacing: -0.02em; white-space: nowrap; }
+.customers-token-key > span { box-shadow: inset 0 -1.5px 0 rgba(255, 255, 255, .75); }
+.customers-token-val { font-weight: 700; white-space: nowrap; }
+
+/* History: a vehicle's service timeline */
+.customers-history-head { margin-bottom: clamp(32px, 2rem + 1.5vw, 56px); }
+.customers-tl-win { width: min(100%, 470px); }
+.customers-tl-win > .mock-screen { gap: 12px; padding: 14px; }
+.customers-tl-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.customers-tl-head > span:nth-child(2) { display: grid; flex: 1 1 auto; min-width: 0; }
+.customers-tl-head b { font-size: 14px; font-weight: 680; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-tl-head small { font-size: 12px; color: var(--ink-3); }
+.customers-tl-head .mock-btn { flex: none; }
+.customers-tl-sum { font-weight: 550; color: var(--ink-3); }
+.customers-tl { position: relative; display: grid; gap: 10px; padding-left: 28px; }
+.customers-tl::before { content: ""; position: absolute; left: 9px; top: 14px; bottom: 14px; width: 2px; border-radius: 1px; background: var(--mist-200); }
+.customers-tl-line { position: absolute; left: 9px; top: 14px; bottom: 14px; width: 2px; border-radius: 1px; background: var(--bar-v); }
+.customers-tl-item { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: 6px 10px; padding: 9px 11px; border-radius: 11px; background: var(--paper); border: 1px solid var(--m-line); }
+.customers-tl-dot { position: absolute; left: -25px; top: 12px; width: 14px; height: 14px; border-radius: 50%; background: var(--blue); border: 3px solid var(--paper); box-shadow: 0 0 0 1.5px var(--blue-100); }
+.customers-tl-item:last-child .customers-tl-dot { background: var(--green); box-shadow: 0 0 0 1.5px var(--green-100); }
+/* The line ends at the last (green) dot: paper covers the tail below it */
+.customers-tl-item:last-child::after { content: ""; position: absolute; left: -22px; top: 28px; bottom: 0; width: 8px; background: var(--paper); }
+.customers-tl-item b { display: block; font-size: 13px; font-weight: 650; }
+.customers-tl-item small { display: block; font-size: 12px; line-height: 1.35; color: var(--ink-3); }
+.customers-tl-item .mock-chip { font-family: var(--font-mono); font-weight: 600; }
+/* Declined work lives on the customer's page, not in the vehicle's service history */
+.customers-tl-declined { display: grid; gap: 6px; justify-items: start; min-width: 0; max-width: 100%; padding: 10px 11px; border-radius: 11px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.customers-tl-declined .mock-chip { max-width: 100%; white-space: normal; font-weight: 650; }
+.customers-tl-declined svg { flex: none; width: 13px; height: 13px; }
+
+/* Connected cars: oil life drains, tires settle */
+.customers-cc-card { width: min(100%, 440px); display: grid; gap: 12px; padding: 16px; border-radius: 18px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); }
+.customers-cc-head { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.customers-cc-head > span:nth-child(2) { display: grid; flex: 1 1 auto; min-width: 0; }
+.customers-cc-head b { font-size: 14px; font-weight: 680; }
+.customers-cc-head small { font-size: 12px; color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.customers-cc-head .mock-chip { flex: none; }
+.customers-cc-alert { display: flex; align-items: center; gap: 8px; padding: 8px 11px; border-radius: 10px; border: 1px solid rgba(154, 93, 18, .22); background: var(--warn-soft); color: var(--warn); font-size: 12.5px; font-weight: 620; transform-origin: 0 50%; }
+.customers-cc-alert svg { flex: none; width: 16px; height: 16px; }
+.customers-cc-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.customers-cc-tile { position: relative; display: grid; align-content: start; gap: 3px; min-width: 0; padding: 9px 10px; border-radius: 11px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.customers-cc-tile .mock-label { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+.customers-cc-tile .mock-label svg { flex: none; width: 13px; height: 13px; }
+.customers-cc-tile strong { font-size: 16px; font-weight: 700; line-height: 1.3; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.customers-cc-val { display: grid; }
+.customers-cc-val > * { grid-area: 1 / 1; }
+.customers-cc-val .is-warn { color: var(--warn); }
+.customers-cc-tint { position: absolute; inset: -1px; border-radius: inherit; background: var(--warn-soft); border: 1px solid rgba(154, 93, 18, .3); }
+.customers-cc-tile > :not(.customers-cc-tint) { position: relative; }
+.customers-cc-bar { display: block; height: 6px; margin-top: 2px; border-radius: var(--pill); background: var(--mist-200); overflow: hidden; }
+.customers-cc-fill { display: block; height: 100%; border-radius: inherit; background: var(--accent); transform-origin: 0 50%; scale: var(--level, .6) 1; }
+.customers-cc-fill.is-oil { scale: .15 1; background: var(--dot-warn); transition: scale 1.8s var(--ease-in-out) .9s, background-color .5s var(--ease) 2.1s; }
+/* Before the figure is revealed, oil life sits at 62% (blue); the reveal drains it to 15% with the counter (a transition, not a page keyframe) */
+.js .customers-cc:not(.is-in) .customers-cc-fill.is-oil { scale: .62 1; background-color: var(--blue); transition: none; }
+.customers-cc-tires { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.customers-tire { display: grid; }
+.customers-tire > * { grid-area: 1 / 1; }
+.customers-tire-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; border-radius: 9px; background: var(--mist-50); font-size: 12.5px; }
+.customers-tire-row b { font-weight: 700; font-variant-numeric: tabular-nums; }
+.customers-tire-row.is-low { background: var(--warn-soft); color: var(--warn); }
+.customers-cc-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.customers-cc-foot .mock-chip svg { width: 13px; height: 13px; }
+.customers-cc-foot .mock-sub { margin-left: auto; }
+
+
+/* CARFAX */
+.customers-carfax { display: grid; gap: clamp(20px, 1rem + 2vw, 48px); align-items: center; }
+@media (min-width: 900px) { .customers-carfax { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } }
+.customers-carfax .section-copy { gap: 14px; }
+.customers-carfax .callout { padding: clamp(18px, 1rem + 1vw, 26px); border-radius: var(--r-lg); background: var(--paper); border-color: var(--line); box-shadow: var(--shadow-1); }
+.customers-carfax .callout > .icon { width: 24px; height: 24px; padding: 6px; box-sizing: content-box; border-radius: 11px; background: var(--accent-soft); margin-top: 0; }
+.customers-carfax .callout p + p { margin-top: 10px; }
+.customers-carfax .cluster { --cluster: 8px; margin-top: 14px; }
+
+@media (max-width: 599.98px) {
+  .customers-hero-win > .mock-screen, .customers-tl-win > .mock-screen { padding: 12px; }
+  .customers-odo { font-size: 18px; }
+  .customers-camp-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .customers-camp-filters > :last-child { grid-column: 1 / -1; }
+  .customers-cc-card { padding: 14px; }
+  .customers-cc-tile { padding: 8px; }
+  .customers-cc-tile strong { font-size: 15px; }
+  .customers-car-name small { white-space: normal; }
+  .customers-carfax .callout { flex-direction: column; }
+}
+/* Narrow phones: the car's name takes the first row and the odometer drops under it */
+@media (max-width: 379.98px) {
+  .customers-car-head { flex-wrap: wrap; }
+  .customers-car-name { flex-basis: calc(100% - 48px); }
+  .customers-odo { margin-left: 48px; font-size: 16px; }
+  .customers-car-name b { white-space: normal; }
+  .customers-tl-head b, .customers-cc-head small { white-space: normal; }
+}
+/* Very narrow phones: the odometer gets its own row so "68,412 mi" never spills out of its tile */
+@media (max-width: 359.98px) {
+  .customers-cc-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .customers-cc-tile:first-child { grid-column: 1 / -1; }
+}
+/* Phones: icon cards become compact rows (site.css); keep the send-mode pill and the rule tile compact inside them */
+@media (max-width: 639.98px) {
+  .customers-auto > .customers-auto-mode { margin-top: 12px; margin-bottom: 0; }
+  .customers-auto > .customers-rule { margin-top: 12px; }
+}
+@media (max-width: 359.98px) {
+  .customers-auto > .customers-auto-mode { font-size: .78rem; }
+}
+</style>
+</head>
+<body data-page="features" data-tab="features" id="top">
+<!-- @partial icons -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="art-tint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E1EDFB"/><stop offset=".5" stop-color="#F2F7FD"/><stop offset="1" stop-color="#E3F4EA"/></linearGradient>
+    <linearGradient id="gauge-tint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9D5F6"/><stop offset=".5" stop-color="#B9D5F6"/><stop offset=".5" stop-color="#BDE7CF"/><stop offset="1" stop-color="#BDE7CF"/></linearGradient>
+    <linearGradient id="gauge-pad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9534A"/><stop offset=".3" stop-color="#F0A53A"/><stop offset=".6" stop-color="#2DB36A"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+    <linearGradient id="gauge-tread" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#D9534A"/><stop offset=".35" stop-color="#F0A53A"/><stop offset=".65" stop-color="#2DB36A"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+    <marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#0F2B4C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrow-head-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#1A6FD6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrow-head-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#188048" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  </defs>
+  <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3.5c3 3.6 5.5 6.6 5.5 9.6a5.5 5.5 0 0 1-11 0c0-3 2.5-6 5.5-9.6z"/><path d="M9.4 14a2.6 2.6 0 0 0 2.6 2.6"/></symbol>
+  <symbol id="i-diagnostics" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M6.5 12.5l2.4-3 2.5 2.2 3-4.2 3.1 3.6"/><path d="M8.5 20.5h7M12 17v3.5"/></symbol>
+  <symbol id="i-engine" viewBox="0 0 24 24"><path d="M9.5 5.5h5M12 5.5v2.5"/><path d="M6 10.5V9a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l1.8 1.8h1.8a1 1 0 0 1 1 1v1.4h1v4h-1v1.3a1 1 0 0 1-1 1h-2.8L14.9 20H8.6l-2.6-2.6"/><path d="M6 10.5H4.5v7H6zM4.5 14H2.5M2.5 12v4"/></symbol>
+  <symbol id="i-tire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+  <symbol id="i-inspection" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2.2"/><path d="M9 4.5V3.2h6v1.3"/><path d="M8.6 12.6l2.3 2.3 4.6-4.8"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.2 3.8h3l1.6 4.1-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4.1 1.6v3a2 2 0 0 1-2.1 2A14.8 14.8 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2 2 4-4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.3V12l3.1 2"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7.2 12 13l8.2-5.8"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.6 2.6 5-5.2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 3.5a4.6 4.6 0 0 0-4.3 6L3.9 16.3a2 2 0 0 0 2.8 2.8l6.8-6.8a4.6 4.6 0 0 0 6-4.4c0-.5 0-.9-.2-1.3l-2.5 2.5-2.5-.6-.6-2.5 2.5-2.5c-.4-.1-.8-.1-1.2-.1z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.4c0 4.4-3 7.9-7 9.6-4-1.7-7-5.2-7-9.6V6z"/><path d="M8.8 12.1l2.2 2.2 4.3-4.4"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M2.5 15.6v-2.8a1.5 1.5 0 0 1 1-1.4l2.3-.8 2.4-3.3a2 2 0 0 1 1.6-.8h4.8a2 2 0 0 1 1.5.7l3 3.6 1.9.5a1.5 1.5 0 0 1 1.1 1.5v2.8"/><path d="M2.5 15.6h2.2M9.3 15.6h5.4M19.3 15.6h2.2"/><circle cx="7" cy="16" r="2.3"/><circle cx="17" cy="16" r="2.3"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 15.8V9.6a1 1 0 0 1 1-1h3.2l1.8-2.8h4.3a1 1 0 0 1 1 1v2.8h5.1a1.6 1.6 0 0 1 1.5 1.1l1.1 3.2v1.9"/><path d="M2.5 15.8h2M9 15.8h6M19.5 15.8h2"/><path d="M6.7 8.6h6.9"/><circle cx="6.8" cy="16.2" r="2.2"/><circle cx="17.2" cy="16.2" r="2.2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M6 9.6V20h12V9.6"/><path d="M10 20v-5.2h4V20"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 17h-9.5l-4.8 3.6V17H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 5z"/><path d="M7.5 10h9M7.5 13h5.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.4 2.9 17.3a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.5M12 17v.3"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24"><path d="M6.5 3h7.8l4.2 4.2V21h-12z"/><path d="M14 3v4.5h4.5M9.2 12h5.6M9.2 15.8h5.6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.5a1 1 0 0 1 1-1h7.8l8.2 8.2a1.5 1.5 0 0 1 0 2.1l-6.2 6.2a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7.5 4.5 3.5 4.5v14c4 0 6.5.5 8.5 2 2-1.5 4.5-2 8.5-2v-14c-4 0-6.5.5-8.5 2z"/><path d="M12 6.5v14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17.5 14.6c1.8.7 3 2.4 3.5 4.9"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.8-2.5 2.3-2.5 3.9M12 17v.3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.4 17.5a8.6 8.6 0 1 1 15.2 0"/><path d="M12 13.5l4.2-4.2"/><circle cx="12" cy="13.5" r="1.3"/><path d="M6.8 9.6l.9.6M12 6.4v1.1M17.2 9.6l-.9.6"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7.2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M5.5 18.5l1.4-1.4M17.1 6.9l1.4-1.4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13.5 14.5-14-.3 9.6-5.8 14.5-13.2 14.5"/><path d="M5 19c3-4 6-6.5 9.5-8.5"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15.5a4.5 4.5 0 0 1-.4-9 5.5 5.5 0 0 1 10.6 1.4A3.8 3.8 0 0 1 17 15.5z"/><path d="M8.5 18.2l-.8 2M12.5 18.2l-.8 2M16.5 18.2l-.8 2"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9.2 14.2v-2.5a1 1 0 0 1 1-1h5M13.5 8.7l2 2-2 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2.5 8.5 6 6.5l3.2 1.2M21.5 8.5 18 6.5l-4.8 1.6-3.3 2.7a1.3 1.3 0 0 0 1.6 2l2.4-1.6 4.3 3.9"/><path d="M2.5 14.2l2 .1 4.8 4a1.4 1.4 0 0 0 2-1.9M8 15.5l2.8 2.3a1.4 1.4 0 0 0 2-1.9M11.6 13.4l3 2.6a1.4 1.4 0 0 0 1.9-2M21.5 14.2h-3.3"/></symbol>
+  <symbol id="i-car-mini" viewBox="0 0 32 14"><path d="M2 10.8V8.6c0-.6.4-1.1 1-1.3l4-1.2L10.4 2.7c.4-.4 1-.7 1.6-.7h7.3c.6 0 1.2.3 1.6.7L24 6.1l4.8.9c.7.1 1.2.7 1.2 1.4v2.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--canvas, #F5F9FE)" stroke-width="1.2"/><circle cx="23.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--canvas, #F5F9FE)" stroke-width="1.2"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16M15 4v16"/><rect x="4.9" y="7" width="2.4" height="3" rx=".6"/><rect x="10.8" y="7" width="2.4" height="3" rx=".6"/><rect x="10.8" y="12" width="2.4" height="3" rx=".6"/><rect x="16.7" y="7" width="2.4" height="3" rx=".6"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M3.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h2M17 4h2a1.5 1.5 0 0 1 1.5 1.5V7M20.5 17v1.5A1.5 1.5 0 0 1 19 20h-2M7 20H5a1.5 1.5 0 0 1-1.5-1.5V17"/><path d="M7.5 8v8M10 8v8M12.8 8v8M15 8v8M16.8 8v8"/></symbol>
+  <symbol id="i-card-reader" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.6"/><rect x="8.5" y="5.5" width="7" height="4" rx="1"/><path d="M9 13h.01M12 13h.01M15 13h.01M9 15.8h.01M12 15.8h.01M15 15.8h.01M10 18.6h4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5.5" y="12" width="3" height="6" rx=".8"/><rect x="10.5" y="8" width="3" height="10" rx=".8"/><rect x="15.5" y="4.5" width="3" height="13.5" rx=".8"/></symbol>
+  <symbol id="i-ledger" viewBox="0 0 24 24"><path d="M5 3.5h12.5A1.5 1.5 0 0 1 19 5v15.5H6.5A1.5 1.5 0 0 1 5 19z"/><path d="M5 17.5h14M9 3.5v14M11.5 8h5M11.5 11h5M11.5 14h3"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16.5 6.5l2.6 2.6M14.3 8.7l2 2"/><circle cx="7" cy="16" r=".9"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.4"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7M12 14.5v2.5"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-9 6 6 0 0 1 11.5 1.6 3.8 3.8 0 0 1-.4 7.4z"/></symbol>
+  <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M8.5 16.2a5 5 0 0 1 5.6-.7M5.2 12.8a9.6 9.6 0 0 1 4-2.3M18.8 12.8a9.7 9.7 0 0 0-2.4-1.6M2 9.4a14.5 14.5 0 0 1 3.6-2.4M22 9.4a14.6 14.6 0 0 0-10.5-3.9"/><path d="M12 19.6h.01"/></symbol>
+  <symbol id="i-device-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.8"/><path d="M10.5 5.2h3M11 18.6h2"/></symbol>
+  <symbol id="i-device-tablet" viewBox="0 0 24 24"><rect x="3.5" y="3" width="17" height="18" rx="2.6"/><path d="M11 18.2h2"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2.2"/><path d="M8 20.5h8M12 17v3.5"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.5 8.5A1.5 1.5 0 0 1 5 7h2.6l1.6-2.3h5.6L16.4 7H19a1.5 1.5 0 0 1 1.5 1.5v9.5A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18z"/><circle cx="12" cy="13" r="3.6"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M20 11.5A8 8 0 0 0 6.1 6.6L4 8.7M4 4.5v4.2h4.2"/><path d="M4 12.5a8 8 0 0 0 13.9 4.9l2.1-2.1M20 19.5v-4.2h-4.2"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.2"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM18 14h2.5M14 18v2.5h1.5"/></symbol>
+  <symbol id="i-vin" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="19" height="11" rx="2"/><path d="M6 10l1.4 4 1.4-4M11 10v4M13.6 14v-4l2.8 4v-4"/></symbol>
+  <symbol id="i-signature" viewBox="0 0 24 24"><path d="M3 17.5c2.2-.3 3.6-2.5 4.2-5.5.5-2.6-1.6-3.1-2-.6-.5 3.1 1.3 6 3.7 4.3 1.6-1.1 2.3-3.4 3.2-3.4.8 0 .3 2.6 1.4 2.6 1 0 1.6-1.4 2.5-1.4.8 0 .8 1.3 1.7 1.3h2.3"/><path d="M3 20.5h18"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4.2l2.6 1.6M9.5 2.8h5M12 2.8V6M18.6 6.4l1.4-1.4"/></symbol>
+  <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 15v3.5A2 2 0 0 0 6 20.5h12a2 2 0 0 0 2-2V15"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.2 4.2 0 0 0 6 0l3-3a4.2 4.2 0 0 0-6-6l-1.2 1.2"/><path d="M14 10a4.2 4.2 0 0 0-6 0l-3 3a4.2 4.2 0 0 0 6 6l1.2-1.2"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9"/><path d="M4.5 4.5V9H9"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6.5" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.9" y="5" width="3.6" height="14" rx="1.2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7.5 4.8v14.4a.9.9 0 0 0 1.4.8l11-7.2a.9.9 0 0 0 0-1.6l-11-7.2a.9.9 0 0 0-1.4.8z"/></symbol>
+</svg>
+<!-- @end icons -->
+<!-- @partial header -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="../index.html" aria-label="WPI Driveline Shop Management System home">
+      <svg class="brand-logo" viewBox="-81 -190 653 361" width="83" height="46" aria-hidden="true" focusable="false"><path transform="translate(-5.74 0)" fill="#0F2B4C" d="M54.32 0H103.27L124.51 -83.98C127.93 -97.78 130 -112.67 132.2 -127.81C134.52 -112.43 136.84 -97.41 140.26 -83.98L161.5 0H210.33L258.91 -181.88H211.18L193.24 -101.44C189.58 -84.59 186.65 -64.09 183.84 -44.8C180.66 -64.09 177.49 -84.59 173.46 -101.44L154.3 -181.88H110.47L91.19 -101.44C87.16 -84.35 83.98 -63.72 80.81 -44.31C77.88 -63.72 74.95 -84.35 71.41 -101.44L53.47 -181.88H5.74ZM284.81 0H327.9V-56.76H358.05C399.8 -56.76 425.56 -81.54 425.56 -119.02C425.56 -156.25 400.29 -181.88 359.27 -181.88H284.81ZM327.9 -90.82V-146.97H350.12C370.38 -146.97 380.88 -136.11 380.88 -119.02C380.88 -102.17 370.38 -90.82 350.24 -90.82ZM496.86 -181.88H453.77V0H496.86Z"/><rect x="0" y="40" width="238.56" height="12" fill="#1F7AE0"/><rect x="252.56" y="40" width="238.56" height="12" fill="#2DB36A"/><path transform="translate(-80.28 162.93)" fill="#0F2B4C" d="M29.2 0C49.55 0 61.36 -12.62 61.36 -33.56C61.36 -54.36 49.55 -66.93 29.83 -66.93H7.41V0ZM17.65 -8.98V-57.95H29.15C43.75 -57.95 51.3 -49.28 51.3 -33.56C51.3 -17.7 43.75 -8.98 28.62 -8.98ZM95.81 0H106.05V-25.29H119.71C119.88 -25.29 120.11 -25.29 120.29 -25.29L133.86 0H145.49L130.76 -27.04C138.89 -30.1 142.97 -36.93 142.97 -45.91C142.97 -58.26 135.29 -66.93 119.79 -66.93H95.81ZM106.05 -34.05V-58.17H118.63C128.51 -58.17 132.6 -53.46 132.6 -45.91C132.6 -38.41 128.51 -34.05 118.72 -34.05ZM187.66 -66.93H177.42V0H187.66ZM243.58 0H256.11L280.01 -66.93H268.91L256.24 -29.69C254.58 -24.62 252.52 -17.74 249.91 -8.22C247.26 -17.56 245.15 -24.62 243.44 -29.69L230.41 -66.93H219.36ZM311.71 0H354.12V-8.8H321.95V-29.42H351.6V-38.18H321.95V-58.13H353.85V-66.93H311.71ZM389.19 0H429.75V-8.8H399.43V-66.93H389.19ZM473.45 -66.93H463.21V0H473.45ZM510.28 0H520.65V-35.71C520.65 -39.17 520.29 -46.09 519.89 -54.49C524.74 -45.51 527.3 -40.88 530.58 -35.62L553.18 0H565.04V-66.93H554.66V-28.84C554.66 -24.98 554.84 -18.73 555.33 -12.26C552.37 -18.69 549.36 -23.76 547.29 -27.09L522.09 -66.93H510.28ZM601.86 0H644.27V-8.8H612.1V-29.42H641.75V-38.18H612.1V-58.13H644V-66.93H601.86Z"/></svg>
+      <span class="brand-tagline" aria-hidden="true">Shop Management System</span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-menu" data-menu>
+          <a class="nav-link is-active" href="../features.html" data-nav="features" aria-current="true"><span class="nav-pill" aria-hidden="true"></span>Features</a>
+          <button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega-features" aria-label="Show all features"><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+          <div class="mega" id="mega-features">
+            <div class="mega-grid">
+              <div class="mega-col">
+                <p class="mega-label">Before the car arrives</p>
+                <a class="mega-item" href="../features/booking.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span class="mega-text"><strong>Booking &amp; check-in</strong><small>Real open times, key-drop check-in</small></span></a>
+                <a class="mega-item" href="../features/messaging.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span><span class="mega-text"><strong>Texting, calls &amp; email</strong><small>One thread per customer</small></span></a>
+                <a class="mega-item" href="../features/customers.html" aria-current="page"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span><span class="mega-text"><strong>Customers &amp; follow-ups</strong><small>Oil-service and declined-work lists</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">In the bay</p>
+                <a class="mega-item" href="../features/workflow.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span><span class="mega-text"><strong>Workflow &amp; tech clock</strong><small>Every car by stage, one-tap timers</small></span></a>
+                <a class="mega-item" href="../features/inspections.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="mega-text"><strong>Inspections &amp; approvals</strong><small>Photos, ratings and a yes by phone</small></span></a>
+                <a class="mega-item" href="../features/diagnosis.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span><span class="mega-text"><strong>Auto Diagnosis</strong><small>Recalls, owner reports, your fixes</small></span></a>
+                <a class="mega-item" href="../features/parts.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span><span class="mega-text"><strong>Parts, inventory &amp; tires</strong><small>Stock, POs, scanning, tire DOT log</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">At the counter</p>
+                <a class="mega-item" href="../features/repair-orders.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><span class="mega-text"><strong>Estimates &amp; ROs</strong><small>One record, estimate to receipt</small></span></a>
+                <a class="mega-item" href="../features/payments.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg></span><span class="mega-text"><strong>Payments &amp; card readers</strong><small>Exact-balance pay links and readers</small></span></a>
+                <a class="mega-item" href="../features/fleet.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span><span class="mega-text"><strong>Fleet accounts</strong><small>Terms, PM plans, statements</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">Behind the desk</p>
+                <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
+              </div>
+            </div>
+            <div class="mega-foot">
+              <p class="mega-note"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg> Want to click around first? <a href="../app/" data-no-prerender>Try the sample shop</a></p>
+              <div class="mega-actions">
+                <a class="link-arrow" href="../features.html">All features <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                <a class="btn btn-primary btn-sm" href="../demo.html">Request a demo</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="../mobile.html" data-nav="mobile">iPhone &amp; iPad</a></li>
+        <li><a class="nav-link" href="../works-with.html" data-nav="integrations">Integrations</a></li>
+        <li><a class="nav-link" href="../security.html" data-nav="security">Security</a></li>
+        <li><a class="nav-link" href="../faq.html" data-nav="faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-signin" href="../app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span class="header-signin-text">Sign in</span></a>
+      <a class="btn btn-primary btn-sm header-book" href="../demo.html" data-nav="demo">Request a demo</a>
+    </div>
+  </div>
+  <div class="road-progress" aria-hidden="true"><span class="road-progress-lane"></span><svg class="road-progress-car"><use href="#i-car-mini"/></svg></div>
+</header>
+<!-- @end header -->
+
+<main id="main">
+  <!-- ===== Hero ===== -->
+  <section class="page-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><span aria-current="page">Customers &amp; follow-ups</span></li>
+  </ol>
+</nav>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Customers & follow-ups","item":"https://blakew316.github.io/automotive/features/customers.html"}]}</script>
+<!-- @end breadcrumbs -->
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-customers"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>Customers &amp; follow-ups</p>
+        <h1 id="hero-title">Bring them back for the work <span class="accent-text">they put off.</span></h1>
+        <p class="lead">Follow-up lists built from the work you&rsquo;ve already done: oil service due, declined work, customers you haven&rsquo;t seen and review requests. Your team sends them in one pass.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=customers">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/marketing" data-no-prerender>Open follow-ups in the sample shop</a>
+        </div>
+        <p class="hero-note">Opens Main Street Auto Service, a made-up sample shop, in your browser. No sign-up.</p>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Oil service by time or mileage</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Declined work, remembered</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Connected-car oil life</span>
+        </div>
+      </div>
+      <figure class="page-hero-art mock-figure customers-hero" data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="2200" aria-label="Example: in the sample shop, about five months after the 2021 Camry SE's 30,000-mile service, its projected mileage reaches 35,120, 5,000 miles after that service, so Priya R. joins the oil-service list next to two customers already due, Owen R. and Hannah P. Send to all goes out, and the list shows all caught up.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage customers-hero-stage" aria-hidden="true">
+          <div class="mock-window customers-hero-win"><div class="mock-screen">
+            <div class="customers-hero-top">
+              <span class="mock-label">Oil-service reminders</span>
+              <span class="customers-hero-status">
+                <span data-until="2">2 ready to send</span>
+                <span data-at="2" data-until="3" data-fx="swap" style="--fx-delay: .5s">3 ready to send</span>
+                <span class="is-done" data-at="3" data-fx="swap" style="--fx-delay: 1.25s"><svg class="icon"><use href="#i-check-circle"/></svg>All caught up</span>
+              </span>
+            </div>
+            <div class="customers-car">
+              <div class="customers-car-head">
+                <span class="customers-oil" data-at="1" data-fx="pulse"><svg class="icon"><use href="#i-oil"/></svg></span>
+                <span class="customers-car-name"><b>2021 Camry SE</b><small>Priya R. · projected miles</small></span>
+                <span class="odometer customers-odo" data-odometer="35120" data-from="34870" data-group="," data-tenth data-duration="1.9" data-at="0">35,120</span>
+              </div>
+              <div class="customers-ruler">
+                <span class="customers-ruler-ticks"></span>
+                <span class="customers-ruler-major"></span>
+                <span class="customers-ruler-bar"><span class="customers-ruler-fill"></span></span>
+                <span class="customers-ride"><svg viewBox="0 0 32 14"><use href="#i-car-mini"/></svg></span>
+                <span class="customers-flag">
+                  <span>
+                    <span class="mock-chip is-idle" data-until="1">Due · 35,120</span>
+                    <span class="mock-chip is-warn" data-at="1" data-fx="pop">Due · 35,120</span>
+                  </span>
+                </span>
+              </div>
+              <div class="customers-ruler-labels"><span>34,750</span><span>35,000</span><span>35,250</span></div>
+              <span class="mock-sub">Projected from the 30,000-mile service at 30,120 mi · every 5,000 mi or 6 months</span>
+            </div>
+            <div class="mock-section-title customers-list-title"><span>Due for an oil service</span><span class="mock-btn" data-at="3" data-fx="press">Send to all</span></div>
+            <div class="mock-rows customers-list">
+              <div class="customers-slot"><div class="mock-row customers-new" data-at="2" data-fx="drop"><span class="mock-tickbox"><i data-at="3" data-fx="tick" style="--fx-delay: .35s"></i></span><span><b>Priya R. · 2021 Camry SE</b><small>Oil service due for your Camry</small></span><span class="mock-chip is-idle">Text</span></div></div>
+              <div class="mock-row"><span class="mock-tickbox"><i data-at="3" data-fx="tick" style="--fx-delay: .55s"></i></span><span><b>Owen R. · 2015 Ford Escape</b><small>Oil service due for your Escape</small></span><span class="mock-chip is-idle">Text</span></div>
+              <div class="mock-row"><span class="mock-tickbox"><i data-at="3" data-fx="tick" style="--fx-delay: .75s"></i></span><span><b>Hannah P. · 2017 Hyundai Elantra</b><small>Oil service due for your Elantra</small></span><span class="mock-chip is-idle">Text</span></div>
+            </div>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="dot"></span>
+          <span><strong>Follow-ups ready to send</strong><small>Oil service list</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-chat"/></svg></span>
+          <span><strong>Texts go out from your business number</strong><small>With Shop Cloud and Twilio</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Where repeat visits slip away ===== -->
+  <section class="section section-paper" id="pains" aria-labelledby="pains-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-title">Where repeat visits <span class="accent-text">slip away</span></h2>
+        <ul class="signal-list">
+          <li>Declined work forgotten.</li>
+          <li>Reminder postcards nobody reads.</li>
+          <li class="is-critical">No idea who&rsquo;s overdue.</li>
+        </ul>
+        <p>Your repair orders already know whose oil is due, who said &ldquo;not now&rdquo; to brakes and who hasn&rsquo;t been back. WPI Driveline Shop Management System reads them and lines up the follow-ups, so nobody has to keep a list in their head.</p>
+      </div>
+      <div class="customers-pains-side">
+        <figure class="page-hero-art customers-art" data-reveal="right" data-reveal-seq aria-label="Illustration: a sticky note about brakes, a calendar with a question mark and a postcard dropped in a wastebasket all flow into one follow-up list, which gets three checks and a green check mark">
+          <svg viewBox="0 0 480 300" aria-hidden="true">
+            <ellipse class="art-tint" cx="372" cy="152" rx="118" ry="126" opacity=".6"/>
+            <!-- declined work on a sticky note: brakes, next time? -->
+            <g data-seq-i="0" data-fx="pop" class="customers-art-pop">
+              <g transform="rotate(-7 82 58)">
+                <path d="M46 24h72v52l-15 15H46z" fill="var(--warn-soft)" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/>
+                <path d="M103 91V80a4 4 0 0 1 4-4h11" fill="none" stroke="var(--ink)" stroke-width="1.4" stroke-linejoin="round"/>
+                <circle cx="70" cy="52" r="13" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.6"/>
+                <circle cx="70" cy="52" r="5" fill="var(--mist-200)" stroke="var(--ink)" stroke-width="1.3"/>
+                <g fill="var(--ink-4)"><circle cx="70" cy="43.5" r="1.3"/><circle cx="78.5" cy="52" r="1.3"/><circle cx="70" cy="60.5" r="1.3"/><circle cx="61.5" cy="52" r="1.3"/></g>
+                <path d="M90 42c0-6.5 10-6.5 10 0 0 4.2-5 4.7-5 9M95 58v.4" fill="none" stroke="var(--dot-warn)" stroke-width="2.4" stroke-linecap="round"/>
+                <path class="art-ink art-thin" d="M56 74c5-3 9 3 14 0s9-3 14 0" stroke-opacity=".5"/>
+              </g>
+            </g>
+            <!-- no idea who's overdue: a calendar with a question mark -->
+            <g data-seq-i="1" data-fx="pop" class="customers-art-pop">
+              <rect class="art-ink art-paper" x="140" y="112" width="76" height="68" rx="10"/>
+              <path d="M140 132h76" stroke="var(--ink)" stroke-width="1.4"/>
+              <rect x="141" y="113" width="74" height="18" rx="9" fill="var(--blue-100)"/>
+              <path class="art-ink" d="M158 106v12M198 106v12" stroke-width="2.2"/>
+              <g fill="var(--mist-300)"><circle cx="154" cy="144" r="2.6"/><circle cx="166" cy="144" r="2.6"/><circle cx="178" cy="144" r="2.6"/><circle cx="190" cy="144" r="2.6"/><circle cx="202" cy="144" r="2.6"/><circle cx="154" cy="156" r="2.6"/><circle cx="166" cy="156" r="2.6"/><circle cx="178" cy="156" r="2.6"/><circle cx="190" cy="156" r="2.6"/><circle cx="202" cy="156" r="2.6"/><circle cx="154" cy="168" r="2.6"/><circle cx="166" cy="168" r="2.6"/><circle cx="178" cy="168" r="2.6"/></g>
+              <circle cx="214" cy="176" r="13" fill="var(--dot-stop)" stroke="var(--paper)" stroke-width="2.5"/>
+              <path d="M209.6 172.4c0-5.6 8.8-5.6 8.8 0 0 3.4-4.4 3.8-4.4 7M214 183.4v.3" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+            </g>
+            <!-- a reminder postcard drops into the wastebasket -->
+            <path class="art-ink art-thin" data-seq-i="2" data-fx="fade" d="M50 226h66" stroke-opacity=".5"/>
+            <g data-seq-i="2" data-fx="drop" style="--fx-delay: .35s" class="customers-art-pop">
+              <g transform="rotate(14 86 214)">
+                <rect class="art-ink art-paper" x="50" y="190" width="72" height="48" rx="5"/>
+                <rect x="102" y="196" width="14" height="16" rx="2" fill="var(--blue-100)" stroke="var(--accent)" stroke-width="1.2"/>
+                <path class="art-ink art-thin" d="M58 202h32M58 211h26M90 222h24M90 229h18" stroke-opacity=".4"/>
+                <path d="M86 198v34" stroke="var(--mist-300)" stroke-width="1.2"/>
+              </g>
+            </g>
+            <g data-seq-i="2" data-fx="pop" class="customers-art-pop">
+              <path class="art-ink art-paper" d="M48 226h70l-7 60H55z"/>
+              <path class="art-ink art-thin" d="M66 238l2 40M83 238v40M100 238l-2 40" stroke-opacity=".45"/>
+              <path class="art-ink" d="M44 226h78" stroke-width="2.4"/>
+            </g>
+            <!-- everything flows into one list -->
+            <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" d="M124 54c76 0 110 30 166 44"/>
+            <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" style="--fx-delay: .12s" d="M232 150h58"/>
+            <path class="flow-line is-blue" data-seq-i="3" data-fx="wipe" style="--fx-delay: .24s" d="M132 214c66 0 100-12 158-18"/>
+            <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130" d="M124 54c76 0 110 30 166 44"/>
+            <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130; --fx-delay: .15s" d="M232 150h58"/>
+            <path class="flow-dot" pathLength="100" data-seq-i="4" data-fx="flow" style="--flow-from: 130; --fx-delay: .3s" d="M132 214c66 0 100-12 158-18"/>
+            <g data-seq-i="4" data-fx="pop" class="customers-art-pop">
+              <rect class="art-ink art-paper" x="292" y="42" width="172" height="218" rx="18"/>
+              <circle cx="322" cy="74" r="15" fill="var(--blue-50)" stroke="var(--blue)" stroke-width="1.6"/>
+              <path d="M322 64.5c3.6 4.3 6.4 7.6 6.4 11.1a6.4 6.4 0 0 1-12.8 0c0-3.5 2.8-6.8 6.4-11.1z" fill="var(--paper)" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round"/>
+              <rect x="346" y="66" width="84" height="8" rx="4" fill="var(--ink)" opacity=".8"/>
+              <rect x="346" y="80" width="52" height="6" rx="3" fill="var(--mist-300)"/>
+              <path d="M306 102h144" stroke="var(--mist-200)" stroke-width="2"/>
+            </g>
+            <g data-seq-i="5" data-fx="stagger" style="--fx: fx-left; --fx-stagger: 120ms">
+              <g>
+                <rect x="306" y="116" width="18" height="18" rx="5" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5"/>
+                <rect x="336" y="118" width="96" height="6" rx="3" fill="var(--ink-4)" opacity=".55"/>
+                <rect x="336" y="128" width="62" height="5" rx="2.5" fill="var(--mist-300)"/>
+              </g>
+              <g>
+                <rect x="306" y="152" width="18" height="18" rx="5" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5"/>
+                <rect x="336" y="154" width="84" height="6" rx="3" fill="var(--ink-4)" opacity=".55"/>
+                <rect x="336" y="164" width="72" height="5" rx="2.5" fill="var(--mist-300)"/>
+              </g>
+              <g>
+                <rect x="306" y="188" width="18" height="18" rx="5" fill="var(--paper)" stroke="var(--line-strong)" stroke-width="1.5"/>
+                <rect x="336" y="190" width="100" height="6" rx="3" fill="var(--ink-4)" opacity=".55"/>
+                <rect x="336" y="200" width="54" height="5" rx="2.5" fill="var(--mist-300)"/>
+              </g>
+            </g>
+            <g data-seq-i="6" data-fx="tick" class="customers-art-pop"><rect x="306" y="116" width="18" height="18" rx="5" fill="var(--accent)"/><path d="M310.5 125.2l3.2 3.2 6-6.4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <g data-seq-i="6" data-fx="tick" style="--fx-delay: .16s" class="customers-art-pop"><rect x="306" y="152" width="18" height="18" rx="5" fill="var(--accent)"/><path d="M310.5 161.2l3.2 3.2 6-6.4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <g data-seq-i="6" data-fx="tick" style="--fx-delay: .32s" class="customers-art-pop"><rect x="306" y="188" width="18" height="18" rx="5" fill="var(--accent)"/><path d="M310.5 197.2l3.2 3.2 6-6.4" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>
+            <g data-seq-i="5" data-fx="pop" style="--fx-delay: .3s" class="customers-art-pop">
+              <rect x="306" y="222" width="144" height="24" rx="12" fill="var(--accent)"/>
+              <path d="M362 228.5l13 5.5-13 5.5 2.6-5.5z" fill="#fff" stroke="#fff" stroke-width="1.2" stroke-linejoin="round"/>
+              <rect x="380" y="231.5" width="34" height="5" rx="2.5" fill="#fff" opacity=".85"/>
+            </g>
+            <g data-seq-i="7" data-fx="pop" class="customers-art-pop">
+              <circle cx="458" cy="48" r="15" fill="var(--green)" stroke="var(--paper)" stroke-width="3"/>
+              <path d="M451 48.5l4.6 4.6 9-9.6" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </svg>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Six follow-up lists ===== -->
+  <section class="section" id="automations" aria-labelledby="automations-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Follow-up lists</p>
+        <h2 id="automations-title">Six <span class="accent-text">follow-up lists</span></h2>
+        <p class="lead">Marketing builds each list from your own appointments, repair orders and messages. Every card shows who&rsquo;s ready now and what went out in the last 30 days, and you switch each one on or off.</p>
+      </div>
+      <div class="grid grid-3 customers-autos" data-reveal-stagger>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span>
+          <h3 class="mt-2">Appointment confirmation</h3>
+          <p>Confirms new bookings so the customer knows they&rsquo;re on the schedule. Switched on, the server texts bookings made from then on, from your business number.</p>
+          <span class="customers-auto-mode is-server"><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg>Server sends it when on</span>
+          <span class="customers-rule"><b>New bookings</b><small>Made after you switch it on</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span>
+          <h3 class="mt-2">Day-before reminder</h3>
+          <p>The day before each appointment. Switched on, the server texts it from your business number at the hour you pick (8 AM to 5 PM); otherwise it waits in the list for your team.</p>
+          <span class="customers-auto-mode is-server"><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg>Server sends it when on</span>
+          <span class="customers-rule"><b>The day before</b><small>At the hour you pick</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+          <h3 class="mt-2">Review request</h3>
+          <p>Asks customers from recently closed visits how you did, with your Google review link once you add it in Settings.</p>
+          <span class="customers-auto-mode"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Your team sends it in one pass</span>
+          <span class="customers-rule"><b>Closed visits</b><small>Each customer is asked once</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-oil"/></svg></span>
+          <h3 class="mt-2">Oil-service reminder</h3>
+          <p>Due by time or by projected mileage since the last oil service: 6 months or 5,000 miles by default, both your settings. A connected car&rsquo;s latest oil-life reading (15% or less) counts too.</p>
+          <span class="customers-auto-mode"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Your team sends it in one pass</span>
+          <span class="customers-rule"><b>6 mo or <span class="odometer is-plain" data-odometer="5000" data-group=",">5,000</span> mi</b><small>Due every, by default</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span>
+          <h3 class="mt-2">Declined-work follow-up</h3>
+          <p>Work a customer said &ldquo;not now&rdquo; to that hasn&rsquo;t been done since. It comes up two weeks after the visit.</p>
+          <span class="customers-auto-mode"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Your team sends it in one pass</span>
+          <span class="customers-rule"><b><span class="odometer is-plain" data-odometer="14">14</span> days</b><small>After the visit</small></span>
+        </div>
+        <div class="card value-card customers-auto">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-handshake"/></svg></span>
+          <h3 class="mt-2">We miss you</h3>
+          <p>Customers you haven&rsquo;t seen in a while and who aren&rsquo;t already booked. Nine months by default, and you set the number.</p>
+          <span class="customers-auto-mode"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Your team sends it in one pass</span>
+          <span class="customers-rule"><b><span class="odometer is-plain" data-odometer="9">9</span>+ months</b><small>Without a visit, by default</small></span>
+        </div>
+      </div>
+      <div class="callout customers-auto-note" data-reveal>
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <p class="callout-title">What the server sends, and what waits for your team</p>
+          <p>Confirmations and day-before reminders, once you switch them on, are sent by the server with Twilio (<a href="../works-with.html#shop-cloud">Shop Cloud</a>). Until then they wait in the list with the others, for your team to send in one pass.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Campaigns ===== -->
+  <section class="section section-tint" id="campaigns" aria-labelledby="campaigns-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Campaigns</p>
+        <h2 id="campaigns-title">Campaigns, <span class="accent-text">written once</span></h2>
+        <p>Build a custom campaign by customer tag, the make they drive or when they last visited. Write the message once with merge fields like <span class="mono">{first}</span> and <span class="mono">{vehicle}</span>, and each customer gets their own name and their car on file.</p>
+        <p>Send everything at once from your business number (Twilio) or your email (Resend), with Shop Cloud. Otherwise send one tap at a time from the shop phone, as one BCC email, or export the list for a bulk tool.</p>
+        <p>Every send is logged on the customer&rsquo;s thread. With Resend, addresses that bounced or marked you as spam are skipped.</p>
+        <p class="fine-print">One-pass sending uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> with your Twilio number or Resend. See <a href="messaging.html">Texting, calls &amp; email</a>.</p>
+      </div>
+      <figure class="mock-figure customers-camp" data-reveal="left" data-reveal-seq aria-label="Example: a campaign to Toyota drivers, with any last visit, goes to 39 recipients in the sample shop. The first three texts show the first-name merge field as Priya, Sofia and Tyler.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage customers-camp-stage" aria-hidden="true">
+          <div class="customers-camp-card">
+            <div class="customers-camp-head"><span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-chat"/></svg></span><span><span class="mock-title">New campaign</span><span class="mock-sub">Write once, personalize automatically</span></span></div>
+            <div class="customers-camp-filters">
+              <span class="customers-filter"><small>Customer tag</small><span>All customers</span></span>
+              <span class="customers-filter"><small>Drives a</small><span>Toyota</span></span>
+              <span class="customers-filter"><small>Last visit</small><span>Anyone</span></span>
+            </div>
+            <div class="customers-camp-msg">
+              <span class="mock-label">Message</span>
+              <span class="customers-camp-body">Hi <span class="customers-key">{first}</span>, it&rsquo;s <span class="customers-key">{shop}</span>. This month: free brake &amp; tire check with any oil service. Call <span class="customers-key">{phone}</span> or book online: <span class="customers-key">{bookLink}</span></span>
+            </div>
+            <div class="customers-camp-foot">
+              <span class="mock-seg" style="--segs:2; --seg:0"><span>Text</span><span>Email</span></span>
+              <span class="customers-camp-count"><b>39</b> recipients</span>
+              <span class="mock-btn">Review &amp; send</span>
+            </div>
+          </div>
+          <div class="customers-camp-sends">
+            <span class="customers-camp-first" data-seq-i="1" data-fx="fade">First 3 of 39</span>
+            <div class="customers-camp-send" data-seq-i="1" data-fx="bubble">
+              <span class="customers-camp-to">To Priya R.</span>
+              <span class="mock-bubble out">Hi <span class="customers-token"><span class="customers-token-key" data-seq-out="4"><span>{first}</span>,</span><span class="customers-token-val" data-seq-i="4" data-fx="swap" style="--fx-dur: .6s">Priya,</span></span> it&rsquo;s Main Street Auto Service. This month: free brake &amp; tire check&hellip;</span>
+            </div>
+            <div class="customers-camp-send" data-seq-i="2" data-fx="bubble">
+              <span class="customers-camp-to">To Sofia C.</span>
+              <span class="mock-bubble out">Hi <span class="customers-token"><span class="customers-token-key" data-seq-out="5"><span>{first}</span>,</span><span class="customers-token-val" data-seq-i="5" data-fx="swap" style="--fx-dur: .6s">Sofia,</span></span> it&rsquo;s Main Street Auto Service. This month: free brake &amp; tire check&hellip;</span>
+            </div>
+            <div class="customers-camp-send" data-seq-i="3" data-fx="bubble">
+              <span class="customers-camp-to">To Tyler O.</span>
+              <span class="mock-bubble out">Hi <span class="customers-token"><span class="customers-token-key" data-seq-out="6"><span>{first}</span>,</span><span class="customers-token-val" data-seq-i="6" data-fx="swap" style="--fx-dur: .6s">Tyler,</span></span> it&rsquo;s Main Street Auto Service. This month: free brake &amp; tire check&hellip;</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Customer and vehicle history ===== -->
+  <section class="section section-paper" id="history" aria-labelledby="history-title">
+    <div class="container">
+      <div class="split customers-history-head">
+        <div class="section-copy" data-reveal="left">
+          <p class="eyebrow">History</p>
+          <h2 id="history-title">The whole story on every <span class="accent-text">customer and vehicle</span></h2>
+          <p>Every repair order and message stays on the customer and the vehicle, and declined work stays on the customer&rsquo;s page. Whoever picks up the phone sees what was done, at what mileage, and what&rsquo;s still waiting.</p>
+          <a class="link-arrow" href="diagnosis.html">Auto Diagnosis &amp; vehicle data <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+        <figure class="mock-figure customers-tl-fig" data-reveal="right" data-reveal-seq aria-label="Example: the service history of the sample shop's 2021 Toyota Camry SE, 4 visits and 3,016.52 dollars lifetime. The current 30,000-mile service at 30,120 miles is approved. Earlier visits: full synthetic oil and filter, tire installation and rear brakes at 29,474 miles; front lower control arms at 26,852 miles; rear brakes and a cooling system service at 24,914 miles. Declined work shows on the customer's page, not in the vehicle's history: front struts, declined at 29,474 miles and not done since.">
+          <span class="mock-tag">Example · sample shop</span>
+          <div class="mock-stage" aria-hidden="true">
+            <div class="mock-window customers-tl-win"><div class="mock-screen">
+              <div class="customers-tl-head">
+                <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-car"/></svg></span>
+                <span><b>2021 Toyota Camry SE</b><small>Priya R. · PRY 921</small></span>
+                <span class="mock-btn is-soft"><svg class="icon" style="width:14px;height:14px"><use href="#i-diagnostics"/></svg>Diagnose</span>
+              </div>
+              <div class="mock-section-title"><span>Service history</span><span class="customers-tl-sum">4 visits · $3,016.52 lifetime</span></div>
+              <div class="customers-tl">
+                <span class="customers-tl-line" data-seq-i="0" data-fx="wipe-down" style="--fx-dur: 1.5s; --fx-ease: var(--ease-in-out)"></span>
+                <div class="customers-tl-item">
+                  <span class="customers-tl-dot" data-seq-i="1" data-fx="pop"></span>
+                  <span><b>30,000-mile service</b><small>Approved · oil &amp; filter, tire rotation, air filters, brake fluid</small></span>
+                  <span class="mock-chip" data-seq-i="1" data-fx="pop">30,120 mi</span>
+                </div>
+                <div class="customers-tl-item">
+                  <span class="customers-tl-dot" data-seq-i="2" data-fx="pop"></span>
+                  <span><b>Oil &amp; filter, tire installation, rear brakes</b><small>Closed</small></span>
+                  <span class="mock-chip" data-seq-i="2" data-fx="pop">29,474 mi</span>
+                </div>
+                <div class="customers-tl-item">
+                  <span class="customers-tl-dot" data-seq-i="3" data-fx="pop"></span>
+                  <span><b>Front lower control arms</b><small>Closed</small></span>
+                  <span class="mock-chip" data-seq-i="3" data-fx="pop">26,852 mi</span>
+                </div>
+                <div class="customers-tl-item">
+                  <span class="customers-tl-dot" data-seq-i="4" data-fx="pop"></span>
+                  <span><b>Rear brakes, cooling system service</b><small>Closed</small></span>
+                  <span class="mock-chip" data-seq-i="4" data-fx="pop">24,914 mi</span>
+                </div>
+              </div>
+              <div class="customers-tl-declined" data-seq-i="5" data-fx="pop">
+                <span class="mock-label">Declined work · customer page</span>
+                <span class="mock-chip is-warn" data-seq-i="6" data-fx="pulse" style="--fx-n: 1"><svg class="icon"><use href="#i-alert"/></svg>Declined: front struts · not done since</span>
+              </div>
+            </div></div>
+          </div>
+        </figure>
+      </div>
+      <div class="grid grid-3" data-reveal-stagger>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span>
+          <h3 class="mt-2">Customers</h3>
+          <p>Lifetime spend, visit history, recent messages, declined work to follow up and tags, on one page. <a href="ai.html">Summarize with AI</a> (Shop Cloud with your Anthropic key) gives the advisor a short summary.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span>
+          <h3 class="mt-2">Vehicles</h3>
+          <p>A service timeline with mileage and lifetime spend, the vehicle&rsquo;s configuration (system diagrams, parts list and repair guides) and a <a href="diagnosis.html">Diagnose</a> button.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span>
+          <h3 class="mt-2">Recalls and record history</h3>
+          <p>NHTSA recalls, complaints and crash ratings on demand: tap Check now, or turn on Always check. With <a href="../works-with.html#shop-cloud">Shop Cloud</a>, every record keeps a change history with one-click restore.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Connected cars ===== -->
+  <section class="section" id="connected-cars" aria-labelledby="connected-cars-title">
+    <div class="container split">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Connected cars</p>
+        <h2 id="connected-cars-title">Connected cars, <span class="accent-text">with the owner&rsquo;s OK</span></h2>
+        <p><strong>Send connect link</strong> texts the owner a link, good for 7 days, that opens Smartcar Connect. They sign in to their carmaker account and approve access.</p>
+        <p>Access is read-only: vehicle info, VIN, odometer, oil life, tire pressure, fuel and battery. There is no unlocking, starting or location.</p>
+        <p>When someone opens the vehicle and the last reading is more than 12 hours old, or taps Read now, the app reads the car: the mileage updates, and oil life of 15% or less and tires under 28 psi are flagged. A low oil-life reading puts the car on your oil-service list for your team to send, once it has had an oil service with you.</p>
+        <p class="fine-print">Tokens stay on your <a href="../works-with.html#shop-cloud">Shop Cloud</a> server and never reach a device. The owner can disconnect any time.</p>
+      </div>
+      <figure class="mock-figure customers-cc" data-reveal="right" data-reveal-seq aria-label="Example: a connected 2019 Honda CR-V reads 68,412 miles, oil life 15% and fuel 58%. Oil life is flagged as due for an oil change, the rear-right tire reads 26 psi and is flagged low, and the car is added to the oil-service list. Connected cars need Shop Cloud and Smartcar, so the sample shop has none connected.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="customers-cc-card">
+            <div class="customers-cc-head">
+              <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-car"/></svg></span>
+              <span><b>Connected car</b><small>2019 Honda CR-V · read-only</small></span>
+              <span class="mock-chip is-ok"><span class="mock-dot is-ok"></span>Connected</span>
+            </div>
+            <div class="customers-cc-alert" data-seq-i="6" data-fx="pop"><svg class="icon"><use href="#i-alert"/></svg>Oil life 15% · due for an oil change</div>
+            <div class="customers-cc-tiles" data-seq-i="0" data-fx="stagger">
+              <div class="customers-cc-tile">
+                <span class="mock-label"><svg class="icon"><use href="#i-gauge"/></svg>Odometer</span>
+                <strong><span class="odometer is-plain" data-odometer="68412" data-from="68330" data-group="," data-duration="1.6">68,412</span> mi</strong>
+              </div>
+              <div class="customers-cc-tile is-low">
+                <span class="customers-cc-tint" data-seq-i="6" data-fx="fade"></span>
+                <span class="mock-label"><svg class="icon"><use href="#i-oil"/></svg>Oil life</span>
+                <strong class="customers-cc-val"><span data-seq-out="6"><span data-seq-i="2" data-fx="none"><span class="odometer is-plain" data-odometer="15" data-from="62" data-duration="1.8" data-suffix="%">15%</span></span></span><span class="is-warn" data-seq-i="6" data-fx="fade">15%</span></strong>
+                <span class="customers-cc-bar"><span class="customers-cc-fill is-oil"></span></span>
+              </div>
+              <div class="customers-cc-tile">
+                <span class="mock-label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20.5V5a1.5 1.5 0 0 1 1.5-1.5h6A1.5 1.5 0 0 1 14 5v15.5M3.5 20.5h12M5 10h9M14 8l3 2.5v7a1.5 1.5 0 0 0 3 0V9.5L17.5 7"/></svg>Fuel</span>
+                <strong>58%</strong>
+                <span class="customers-cc-bar"><span class="customers-cc-fill" style="--level: .58"></span></span>
+              </div>
+            </div>
+            <span class="mock-label">Tire pressure (psi)</span>
+            <div class="customers-cc-tires" data-seq-i="1" data-fx="stagger">
+              <span class="customers-tire"><span class="customers-tire-row"><span>Front left</span><b><span class="odometer is-plain" data-odometer="35" data-from="30" data-duration="1.3">35</span></b></span></span>
+              <span class="customers-tire"><span class="customers-tire-row"><span>Front right</span><b><span class="odometer is-plain" data-odometer="35" data-from="31" data-duration="1.3">35</span></b></span></span>
+              <span class="customers-tire"><span class="customers-tire-row"><span>Rear left</span><b><span class="odometer is-plain" data-odometer="34" data-from="29" data-duration="1.3">34</span></b></span></span>
+              <span class="customers-tire">
+                <span class="customers-tire-row" data-seq-out="7"><span>Rear right</span><b><span class="odometer is-plain" data-odometer="26" data-from="31" data-duration="1.3">26</span></b></span>
+                <span class="customers-tire-row is-low" data-seq-i="7" data-fx="fade"><span>Rear right</span><b>26</b></span>
+              </span>
+            </div>
+            <div class="customers-cc-foot">
+              <span class="mock-chip" data-seq-i="8" data-fx="pop"><svg class="icon"><use href="#i-oil"/></svg>Added to the oil-service list</span>
+              <span class="mock-sub">No unlock, start or location</span>
+            </div>
+          </div>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== CARFAX ===== -->
+  <section class="section section-tint" id="carfax" aria-labelledby="carfax-title">
+    <div class="container customers-carfax">
+      <div class="section-copy" data-reveal="fade">
+        <p class="eyebrow">Vehicle history reports</p>
+        <h2 id="carfax-title">Service records <span class="accent-text">for CARFAX</span></h2>
+        <p>Get the work you&rsquo;ve finished onto vehicle history reports, tied to each VIN.</p>
+      </div>
+      <div class="callout" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>
+        <div>
+          <p class="callout-title">Guidance and a CSV, not a direct connection</p>
+          <p>The app explains how to enroll in the free CARFAX Car Care service-shop program and exports a service-history CSV for any date range. ROs without a 17-character VIN are skipped and counted so you can fix them. Records reach CARFAX only after your shop enrolls.</p>
+          <p>Each row carries the VIN, year, make and model, service date, odometer, RO number, the service performed and your shop&rsquo;s name, address and phone.</p>
+          <div class="cluster">
+            <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-import"/></svg>CSV export</span>
+            <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Any date range</span>
+            <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-vin"/></svg>ROs without a VIN counted</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> one-pass texting uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> with Twilio, and one-pass email uses Shop Cloud with Resend. Without them, your team sends one tap at a time from the shop phone or mail app.</li>
+            <li>U.S. carriers block business texts until A2P 10DLC or toll-free verification is done, and Twilio bills per text. See <a href="messaging.html">Texting, calls &amp; email</a>.</li>
+            <li>Automatic appointment confirmations and day-before reminders are off until you turn them on.</li>
+            <li>Connected cars need Shop Cloud, Smartcar (free developer tier, paid beyond) and the owner&rsquo;s OK. Which readings are available depends on the car&rsquo;s make, model and year.</li>
+            <li>Smartcar&rsquo;s Simulated mode is for trials with test vehicles only.</li>
+            <li>Summarize with AI uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your own Anthropic API key, billed to your shop.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Follow-up questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="feat-faq"><summary>Do follow-ups send themselves?</summary><div class="faq-body"><p>Only appointment confirmations and day-before reminders, once you switch them on. The server sends those from your Twilio number through <a href="../works-with.html#shop-cloud">Shop Cloud</a>. Your team sends the rest in one pass from the Marketing page.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Can customers opt out?</summary><div class="faq-body"><p>Yes. STOP is honored: when a customer replies STOP to your business number, texts to them are blocked until they reply START.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Does connected-car access track location?</summary><div class="faq-body"><p>No. Access is read-only and covers vehicle info, VIN, odometer, oil life, tire pressure, fuel and battery. Location, unlocking and starting aren&rsquo;t part of it.</p></div></details>
+        <details class="faq" name="feat-faq"><summary>Does it report to CARFAX automatically?</summary><div class="faq-body"><p>No. Once your shop enrolls in the CARFAX Car Care program, you export the service-history CSV and send it the way CARFAX asks.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Related ===== -->
+  <section class="section section-sm customers-related" id="related" aria-labelledby="related-title">
+    <div class="container">
+      <h2 id="related-title" class="h3">Works alongside</h2>
+      <!-- @partial related -->
+<div class="grid grid-3 related" data-related data-reveal-stagger>
+  <a class="card card-link feature-card" href="../features/messaging.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+    <h3>Texting, calls &amp; email</h3>
+    <p>One thread per customer, from your own number.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="../features/fleet.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span>
+    <h3>Fleet &amp; business accounts</h3>
+    <p>Terms, PM plans, statements and a portal.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="../features/ai.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
+    <h3>AI assistant</h3>
+    <p>First drafts from Claude for your team to review, plus an AI receptionist for calls.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+</div>
+<!-- @end related -->
+    </div>
+  </section>
+</main>
+
+<!-- @partial cta -->
+<section class="cta-road" aria-labelledby="cta-road-title">
+  <div class="container cta-road-inner">
+    <div class="cta-road-copy" data-reveal>
+      <p class="eyebrow">Ready when you are</p>
+      <h2 id="cta-road-title">See your own shop day in it.</h2>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
+    </div>
+    <div class="cta-road-actions" data-reveal>
+      <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
+      <a class="btn btn-secondary btn-lg" href="../app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Try the sample shop</a>
+    </div>
+  </div>
+  <div class="road" aria-hidden="true">
+    <span class="road-status"><span class="road-status-wip">In progress</span><span class="road-status-paid">Paid &middot; RO closed</span></span>
+    <div class="road-surface"><span class="road-dashes"></span></div>
+    <svg class="road-car" viewBox="0 0 32 14"><use href="#i-car-mini"/></svg>
+  </div>
+</section>
+<!-- @end cta -->
+<!-- @partial footer -->
+<footer class="site-footer" id="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
+        <img src="../assets/img/logo.svg" alt="" width="653" height="361" loading="lazy" decoding="async">
+        <span class="footer-card-tagline">Shop Management System</span>
+      </a>
+      <p class="footer-blurb">WPI Driveline Shop Management System runs the repair-shop day, from check-in to paid, on the counter PC, the bay tablet and your phone. Installs from the browser and works offline.</p>
+      <p class="footer-pill">Works offline &middot; installs from the browser</p>
+    </div>
+    <nav class="footer-col" aria-labelledby="footer-product">
+      <h2 id="footer-product">Product</h2>
+      <ul>
+        <li><a href="../features/booking.html">Booking &amp; check-in</a></li>
+        <li><a href="../features/messaging.html">Texting, calls &amp; email</a></li>
+        <li><a href="../features/customers.html" aria-current="page">Customers &amp; follow-ups</a></li>
+        <li><a href="../features/workflow.html">Workflow &amp; tech clock</a></li>
+        <li><a href="../features/inspections.html">Inspections &amp; approvals</a></li>
+        <li><a href="../features/diagnosis.html">Auto Diagnosis</a></li>
+        <li><a href="../features/parts.html">Parts, inventory &amp; tires</a></li>
+        <li><a href="../features/repair-orders.html">Estimates &amp; ROs</a></li>
+        <li><a href="../features/payments.html">Payments &amp; card readers</a></li>
+        <li><a href="../features/fleet.html">Fleet accounts</a></li>
+        <li><a href="../features/reports.html">Reports &amp; QuickBooks</a></li>
+        <li><a href="../features/ai.html">AI assistant</a></li>
+        <li><a href="../mobile.html">iPhone &amp; iPad</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../works-with.html">Integrations</a></li>
+        <li><a href="../security.html">Security</a></li>
+        <li><a href="../privacy.html">Privacy</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col">
+      <nav aria-labelledby="footer-help">
+        <h2 id="footer-help">Help</h2>
+        <ul>
+          <li><a href="../faq.html">FAQ</a></li>
+          <li><a href="../demo.html">Request a demo</a></li>
+          <li><a href="../app/" data-no-prerender>Try the sample shop</a></li>
+          <li><a href="../app/signin" data-no-prerender>Sign in</a></li>
+        </ul>
+      </nav>
+      <h2 class="footer-subhead">Talk to us</h2>
+      <p class="footer-talk">
+        <a class="footer-contact" href="../demo.html?topic=question"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Use the demo form</span></a>
+      </p>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span data-year>2026</span> WPI Driveline</p>
+    <p class="footer-links"><a href="../privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="../faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a><span aria-hidden="true">&middot;</span><a href="../app/signin" data-no-prerender>Sign in</a></p>
+    <button class="motion-toggle" type="button" aria-pressed="false"><svg class="icon mt-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="icon mt-play" aria-hidden="true"><use href="#i-play"/></svg><span class="motion-toggle-label">Pause animations</span></button>
+  </div>
+</footer>
+<!-- @end footer -->
+<!-- @partial tabbar -->
+<nav class="tabbar" aria-label="Quick navigation">
+  <a class="tab" href="../index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+  <a class="tab is-active" href="../features.html" data-nav="features" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Features</span></a>
+  <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
+  <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
+  <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
+</nav>
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="more-sheet-title">WPI Driveline Shop Management System</h2>
+      <button class="icon-btn" type="button" data-close-sheet aria-label="Close menu" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheet-quick">
+      <a class="quick-action is-primary" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg><span>Request a demo</span></a>
+      <a class="quick-action" href="../app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg><span>Try the sample shop</span></a>
+      <a class="quick-action" href="../app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span>Sign in</span></a>
+    </div>
+    <h3 class="sheet-label">Explore</h3>
+    <ul class="sheet-grid">
+      <li><a href="../index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a></li>
+      <li><a class="is-active" href="../features.html" data-nav="features" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Features</a></li>
+      <li><a href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>iPhone &amp; iPad</a></li>
+      <li><a href="../works-with.html" data-nav="integrations"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg>Integrations</a></li>
+      <li><a href="../security.html" data-nav="security"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Security</a></li>
+      <li><a href="../about.html" data-nav="about"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>About</a></li>
+      <li><a href="../faq.html" data-nav="faq"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+      <li><a href="../privacy.html" data-nav="privacy"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Privacy</a></li>
+    </ul>
+    <h3 class="sheet-label">Features</h3>
+    <ul class="sheet-list">
+      <li><a href="../features/booking.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Booking &amp; check-in<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/messaging.html"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Texting, calls &amp; email<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/customers.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Customers &amp; follow-ups<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/workflow.html"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Workflow &amp; tech clock<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/inspections.html"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspections &amp; approvals<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/diagnosis.html"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg>Auto Diagnosis<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/parts.html"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg>Parts, inventory &amp; tires<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/repair-orders.html"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>Estimates &amp; ROs<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/payments.html"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Payments &amp; card readers<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/fleet.html"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet accounts<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/reports.html"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Reports &amp; QuickBooks<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/ai.html"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>AI assistant<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+    </ul>
+    <div class="sheet-foot">
+      <button class="motion-toggle" type="button" aria-pressed="false"><svg class="icon mt-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="icon mt-play" aria-hidden="true"><use href="#i-play"/></svg><span class="motion-toggle-label">Pause animations</span></button>
+    </div>
+  </div>
+</dialog>
+<!-- @end tabbar -->
+</body>
+</html>

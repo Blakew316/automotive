@@ -192,7 +192,7 @@ const dl = A.page.waitForEvent('download');
 await A.page.getByRole('button', { name: 'Download' }).first().click();
 const file = await dl;
 ok(/wpi-driveline-cloud-backup-/.test(file.suggestedFilename()), 'cloud backup downloads as a backup file');
-ok((await A.page.getByRole('button', { name: /Reload demo data/ }).count()) === 0, 'demo reset hidden on a shared shop');
+ok((await A.page.getByRole('button', { name: /Reload the sample shop/ }).count()) === 0, 'demo reset hidden on a shared shop');
 await A.page.screenshot({ path: `${SP}/shots/sync-backups.png`, fullPage: true });
 
 // ---- Signed out: edits wait, then sync after signing back in.

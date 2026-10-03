@@ -10,6 +10,7 @@ import { dueDate, hasTerms, termsLabel } from '../lib/accounts';
 import { shopAt } from '../lib/locations';
 import { docKind, orderPdf, downloadPdf } from '../lib/pdf';
 import { canShareFiles, shareSheet } from '../lib/share';
+import { PoweredBy } from '../brand/Logo';
 
 export default function PrintOrder() {
   const { id } = useParams();
@@ -258,6 +259,7 @@ export default function PrintOrder() {
               </div>
             </div>
           )}
+          <PoweredBy name={shop.name} className="pt-2" />
         </footer>
       </article>
     </div>

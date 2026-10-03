@@ -8,6 +8,8 @@ import { money, date, dateTime, phone as fmtPhone, telHref, smsHref, number } fr
 import { approvalText, totalWithChoice } from '../lib/report';
 import { formatDuration } from '../lib/media';
 import { TiresBrakes } from './Gauges';
+import { PoweredBy } from '../brand/Logo';
+import { titleName, usePageTitle } from '../brand/title';
 
 const RATING = {
   good: { label: 'Good', tone: 'text-ok', dot: 'bg-ok', icon: CircleCheck },
@@ -27,13 +29,7 @@ const SVC_STATUS = { pending: 'Awaiting your approval', approved: 'Approved', de
 export default function ReportView({ report, Media, onDecision, decisions = {}, footer }) {
   const [open, setOpen] = useState(null);
   const { shop, vehicle, ro, totals } = report;
-  useEffect(() => {
-    const prev = document.title;
-    document.title = `${vehicle ? [vehicle.year, vehicle.make, vehicle.model].filter(Boolean).join(' ') : 'Vehicle report'} — ${shop.name}`;
-    return () => {
-      document.title = prev;
-    };
-  }, [vehicle, shop.name]);
+  usePageTitle(`${vehicle ? [vehicle.year, vehicle.make, vehicle.model].filter(Boolean).join(' ') : 'Vehicle report'} — ${titleName(shop.name)}`);
   const media = report.media || [];
   const byService = (id) => media.filter((m) => m.serviceId === id);
   const byInspection = (key) => media.filter((m) => m.inspectionKey === key && !m.serviceId);
@@ -266,6 +262,7 @@ export default function ReportView({ report, Media, onDecision, decisions = {}, 
           </a>
           {shop.email ? ` · ${shop.email}` : ''} · Report updated {dateTime(report.generatedAt)}
         </p>
+        <PoweredBy name={shop.name} className="mt-4" />
       </footer>
 
       {open && <Lightbox items={media} id={open} onNavigate={setOpen} onClose={() => setOpen(null)} Media={Media} />}

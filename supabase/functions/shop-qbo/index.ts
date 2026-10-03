@@ -12,6 +12,8 @@ const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const REDIRECT = `${SUPABASE_URL}/functions/v1/oauth-callback`;
 const MINOR = "minorversion=75";
+// The QuickBooks customer the journals post under. It's how this function finds that customer again,
+// so it keeps its original name: renaming it would create a second customer and split the history.
 const DAILY_CUSTOMER = "AutoShop Pro daily sales";
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -171,7 +173,7 @@ Deno.serve(async (req) => {
       const needCustomer = async () => {
         if (customerId) return customerId;
         const found = await query(t, `select Id from Customer where DisplayName = '${quote(DAILY_CUSTOMER)}'`);
-        customerId = found.Customer?.[0]?.Id || (await qbo(t, "/customer", { DisplayName: DAILY_CUSTOMER, Notes: "Daily sales summaries posted by AutoShop Pro" })).Customer.Id;
+        customerId = found.Customer?.[0]?.Id || (await qbo(t, "/customer", { DisplayName: DAILY_CUSTOMER, Notes: "Daily sales summaries posted by WPI Driveline Shop Management System" })).Customer.Id;
         return customerId;
       };
       const accounts = await query(t, "select Id, AccountType from Account maxresults 1000");
@@ -201,7 +203,7 @@ Deno.serve(async (req) => {
             results.push({ no, status: "empty" });
             continue;
           }
-          const entry = { DocNumber: no, TxnDate: j.date, PrivateNote: String(j.memo || "Daily sales summary from AutoShop Pro").slice(0, 4000), Line: lines };
+          const entry = { DocNumber: no, TxnDate: j.date, PrivateNote: String(j.memo || "Daily sales summary from WPI Driveline Shop Management System").slice(0, 4000), Line: lines };
           const existing = (await query(t, `select * from JournalEntry where DocNumber = '${quote(no)}'`)).JournalEntry?.[0];
           if (existing) {
             const same = existing.Line?.length === lines.length && existing.Line.every((x: any, i: number) => cents(x.Amount) === cents(lines[i].Amount) && x.JournalEntryLineDetail?.PostingType === lines[i].JournalEntryLineDetail.PostingType && x.JournalEntryLineDetail?.AccountRef?.value === lines[i].JournalEntryLineDetail.AccountRef.value);

@@ -11,6 +11,9 @@ import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const RESEND = "https://api.resend.com";
+// The software's name, for the owner's daily summary and the test email only — customer emails
+// (branded()) carry the shop's name alone.
+const PRODUCT = "WPI Driveline Shop Management System";
 const WEBHOOK = `${SUPABASE_URL}/functions/v1/email-webhook`;
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -100,7 +103,7 @@ ${tile("In the shop", String(s.inShop ?? 0), `${s.waitingParts || 0} waiting on 
 </tr></table>
 ${list("Tomorrow’s appointments", s.tomorrow)}
 ${list("Needs attention", s.attention)}
-<p style="margin:18px 0 0;color:#607088;font-size:12.5px">Numbers as of ${esc(s.asOf || "")} from WPI Driveline.</p>
+<p style="margin:18px 0 0;color:#607088;font-size:12.5px">Numbers as of ${esc(s.asOf || "")} from ${PRODUCT}.</p>
 </div></div></body></html>`;
 }
 
@@ -126,7 +129,7 @@ Deno.serve(async (req) => {
       const dayLabel = new Date().toLocaleDateString("en-US", { timeZone: d.tz, weekday: "long", month: "long", day: "numeric" });
       const html = fresh
         ? digestHtml(shopName, dayLabel, s)
-        : branded({ name: shopName }, `No device has been open in WPI Driveline today, so there are no new numbers for ${dayLabel}. The summary comes back as soon as the shop's app is used.`);
+        : branded({ name: shopName }, `No device has been open in ${PRODUCT} today, so there are no new numbers for ${dayLabel}. The summary comes back as soon as the shop's app is used.`);
       await resend(key, "/emails", { method: "POST", body: { from, to: d.recipients, subject: `${shopName} — ${dayLabel}`, html, tags: [{ name: "kind", value: "digest" }] } });
       await db("/rest/v1/shop_digest?id=eq.1", { method: "PATCH", prefer: "return=minimal", body: JSON.stringify({ last_sent: today }) });
       return json({ sent: d.recipients.length });
@@ -192,7 +195,7 @@ Deno.serve(async (req) => {
       if (!emailOk(to)) return fail("Which address should the test go to?");
       const r = await resend(key, "/emails", {
         method: "POST",
-        body: { from, to: [to], subject: `Test email from ${body.shop || "WPI Driveline"}`, html: branded({ name: body.shop, phone: body.phone, address: body.address, email: replyTo }, "This is a test from WPI Driveline. If you can read this, customer emails are working — they’ll come from this address and replies go to your inbox."), ...(replyTo ? { reply_to: replyTo } : {}), tags: [{ name: "kind", value: "test" }] },
+        body: { from, to: [to], subject: `Test email from ${body.shop || PRODUCT}`, html: branded({ name: body.shop, phone: body.phone, address: body.address, email: replyTo }, `This is a test from ${PRODUCT}. If you can read this, customer emails are working — they’ll come from this address and replies go to your inbox.`), ...(replyTo ? { reply_to: replyTo } : {}), tags: [{ name: "kind", value: "test" }] },
       });
       return json({ id: r.id, to });
     }

@@ -1,0 +1,1092 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Auto Diagnosis &amp; Vehicle Data | WPI Driveline Shop Management System</title>
+<meta name="description" content="Auto Diagnosis, a built-in vehicle database and an on-device VIN decoder in WPI Driveline Shop Management System, from NHTSA data and your own repair orders.">
+<!-- @partial head -->
+<script>document.documentElement.classList.add("js");try{if(localStorage.getItem("wpi-site:motion")==="paused")document.documentElement.classList.add("motion-paused","motion-parked")}catch(e){}</script>
+<meta name="theme-color" content="#F5F9FE">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="application-name" content="WPI Driveline Shop Management System">
+<meta name="form-endpoint" content="">
+<meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
+<meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script src="../assets/js/site.js" defer></script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"href_matches":"/automotive/app/*"}},{"not":{"selector_matches":"[target=_blank], [data-no-prerender]"}}]},"eagerness":"moderate"}]}</script>
+<link rel="canonical" href="https://blakew316.github.io/automotive/features/diagnosis.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WPI Driveline Shop Management System">
+<meta property="og:title" content="Auto Diagnosis &amp; Vehicle Data | WPI Driveline Shop Management System">
+<meta property="og:description" content="Auto Diagnosis, a built-in vehicle database and an on-device VIN decoder in WPI Driveline Shop Management System, from NHTSA data and your own repair orders.">
+<meta property="og:url" content="https://blakew316.github.io/automotive/features/diagnosis.html">
+<meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WPI Driveline Shop Management System logo">
+<meta name="twitter:card" content="summary_large_image">
+<!-- @end head -->
+<!-- @partial jsonld -->
+<script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
+<!-- @end jsonld -->
+<style>
+/* features/diagnosis.html: page-local styles (slug-prefixed) */
+
+/* ---------- Hero: a code typed in, its meaning, then the ranked quick answer ---------- */
+.diagnosis-h1-lead { display: block; text-wrap: balance; }
+.diagnosis-hero h1 { font-size: clamp(2.1rem, 1.25rem + 3.1vw, 3.6rem); }
+.diagnosis-hero h1 .accent-text { white-space: nowrap; }
+.diagnosis-hero-fig { width: 100%; max-width: 560px; justify-self: center; }
+@media (min-width: 960px) { .diagnosis-hero .page-hero-grid { grid-template-columns: minmax(0, 1.06fr) minmax(0, .94fr); } }
+@media (min-width: 600px) { .diagnosis-hero-fig { padding-bottom: 50px; } }
+.diagnosis-hero-fig .mock-stage::before { /* a soft glow behind the window */
+  content: ""; position: absolute; inset: 4% -4% -2%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(31, 122, 224, .12), rgba(45, 179, 106, .06) 60%, transparent);
+  pointer-events: none;
+}
+.diagnosis-win { width: min(100%, 470px); }
+.diagnosis-win > .mock-screen { gap: 12px; padding: 14px 14px 16px; }
+.diagnosis-appicon { display: grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 7px; background: var(--accent-soft); color: var(--accent); }
+.diagnosis-appicon .icon { width: 15px; height: 15px; }
+.diagnosis-inputs { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 8px; }
+.diagnosis-input { display: grid; gap: 4px; min-width: 0; }
+.diagnosis-input.is-wide { grid-column: 1 / -1; }
+/* The picked vehicle: nothing ranks until there is one */
+.diagnosis-vehicle {
+  display: flex; align-items: center; gap: 8px; min-width: 0; min-height: 30px; padding: 5px 10px; border-radius: 9px;
+  border: 1px solid var(--m-line); background: var(--paper); font-size: 12px; white-space: nowrap; overflow: hidden;
+}
+.diagnosis-vehicle .icon { flex: none; width: 15px; height: 15px; color: var(--accent); }
+.diagnosis-vehicle b { flex: none; font-weight: 650; color: var(--ink); }
+.diagnosis-vehicle small { min-width: 0; font-size: 12px; color: var(--ink-3); overflow: hidden; text-overflow: ellipsis; }
+.diagnosis-concern {
+  display: flex; align-items: center; min-height: 30px; padding: 5px 10px; border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line)); background: var(--blue-50);
+  font-size: 12px; font-weight: 600; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.diagnosis-code { font-size: 13px; font-weight: 650; letter-spacing: .06em; gap: 0; }
+.diagnosis-meaning {
+  display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; row-gap: 1px; align-items: center;
+  padding: 10px 12px; border-radius: 12px; background: var(--mist-50); border: 1px solid var(--m-line);
+}
+.diagnosis-meaning .mock-chip { grid-row: 1 / span 2; font-size: 12px; }
+.diagnosis-meaning b { font-size: 14px; line-height: 1.25; font-weight: 680; letter-spacing: -0.01em; color: var(--ink); }
+.diagnosis-meaning small { font-size: 12px; color: var(--ink-3); }
+.diagnosis-qa { display: grid; gap: 8px; }
+/* Before a step lands, faint placeholder rows hold its place (they leave as the real rows arrive) */
+.diagnosis-swap { display: grid; }
+.diagnosis-swap > * { grid-area: 1 / 1; min-width: 0; }
+.diagnosis-skel-list { display: grid; gap: 6px; transition: opacity .3s var(--ease); }
+.diagnosis-skel { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; min-height: 42px; padding: 6px 12px 6px 8px; border-radius: 11px; border: 1px dashed var(--mist-200); background: var(--mist-50); transition: opacity .3s var(--ease); }
+.diagnosis-skel > i { width: 24px; height: 24px; border-radius: 8px; background: var(--mist-100); }
+.diagnosis-skel > span { display: grid; gap: 6px; }
+.diagnosis-skel > span > i { display: block; height: 7px; width: calc(var(--w, .5) * 100%); border-radius: var(--pill); background: var(--mist-100); }
+.diagnosis-skel-meaning { min-height: 58px; }
+.diagnosis-qa-sub { font-size: 12px; font-weight: 550; color: var(--ink-3); }
+.diagnosis-leads { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.diagnosis-lead {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) clamp(44px, 16%, 70px); align-items: center; gap: 10px;
+  min-height: 42px; padding: 6px 12px 6px 8px; border-radius: 11px; border: 1px solid var(--m-line); background: var(--paper);
+}
+.diagnosis-rank { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; background: var(--accent-soft); color: var(--accent-ink); font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.diagnosis-lead.is-shop .diagnosis-rank { background: var(--green-100); color: var(--green-ink); }
+.diagnosis-lead-text { display: grid; min-width: 0; line-height: 1.3; }
+.diagnosis-lead-text b { font-size: 12.5px; font-weight: 650; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.diagnosis-lead-text small { font-size: 12px; color: var(--ink-3); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.diagnosis-bar { position: relative; display: block; height: 6px; border-radius: var(--pill); background: var(--mist-100); overflow: hidden; }
+.diagnosis-bar > i { position: absolute; inset: 0 auto 0 0; width: calc(var(--w, .5) * 100%); border-radius: inherit; background: var(--blue); transform-origin: 0 50%; }
+.diagnosis-lead.is-shop .diagnosis-bar > i { background: var(--green); }
+.diagnosis-ready { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.diagnosis-ready > .mock-chip { margin-right: auto; }
+.diagnosis-ready .icon { width: 13px; height: 13px; }
+.diagnosis-ready .mock-btn { min-height: 28px; }
+@media (max-width: 479.98px) { .diagnosis-ready .mock-btn.is-ghost { display: none; } }
+/* App chips hang off the window's two lower corners, below its content (the figure keeps 50px for them);
+   each shows with the step it describes */
+.diagnosis-hero-fig .float-note.note-1 { top: auto; bottom: -6px; left: -22px; }
+.diagnosis-hero-fig .float-note.note-2 { top: auto; bottom: -6px; right: -22px; }
+@media (max-width: 959.98px) { .diagnosis-hero-fig .float-note.note-1 { left: 0; } .diagnosis-hero-fig .float-note.note-2 { right: 0; } }
+@media (min-width: 1100px) and (max-width: 1279.98px) { .diagnosis-hero-fig .float-note.note-2 { right: -12px; } }
+@media (min-width: 960px) and (max-width: 1099.98px) { .diagnosis-hero-fig .float-note { display: none; } }
+.diagnosis-hero-fig .float-note { transition: filter .45s var(--ease); }
+.diagnosis-hero-fig:not([data-reached~="3"]) .float-note.note-1,
+.diagnosis-hero-fig:not([data-reached~="2"]) .float-note.note-2 { filter: opacity(0); }
+
+/* ---------- Concern lamps ---------- */
+.diagnosis-concerns { align-items: start; }
+@media (min-width: 900px) { .diagnosis-concerns { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: clamp(28px, 1rem + 2.4vw, 56px); } }
+.dash-head { align-items: center; }
+.diagnosis-bulb {
+  display: inline-flex; align-items: center; gap: 5px; min-height: 30px; padding: 4px 11px 4px 8px; border-radius: var(--pill);
+  border: 1px solid var(--line); background: var(--paper); box-shadow: var(--shadow-1);
+  font: inherit; font-size: .72rem; letter-spacing: .06em; color: var(--ink-2); cursor: pointer;
+  transition: border-color var(--dur-1) var(--ease), transform var(--dur-1) var(--ease);
+  -webkit-tap-highlight-color: transparent;
+}
+.diagnosis-bulb .icon { width: 14px; height: 14px; color: var(--warn); }
+@media (hover: hover) { .diagnosis-bulb:hover { border-color: var(--line-strong); } }
+.diagnosis-bulb:active { transform: scale(.95); }
+@media (pointer: coarse) { .diagnosis-bulb { min-height: 40px; } }
+html:not(.js) .diagnosis-bulb, .motion-paused .diagnosis-bulb { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) { .diagnosis-bulb { visibility: hidden; } }
+.diagnosis-details {
+  display: grid; align-content: start; gap: 20px;
+  padding: clamp(20px, 1rem + 1.2vw, 32px); border-radius: var(--r-xl);
+  background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-2);
+}
+.diagnosis-details .lamp-detail { padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; }
+.diagnosis-details .lamp-detail + .lamp-detail { margin-top: 0; }
+html:not(.js) .diagnosis-details .lamp-detail + .lamp-detail { padding-top: 18px; border-top: 1px solid var(--line); }
+.diagnosis-details [data-color] { --lamp: #f09a12; }
+.diagnosis-details [data-color="red"] { --lamp: #e5483b; }
+.diagnosis-details [data-color="green"] { --lamp: #1f9f57; }
+.diagnosis-details [data-color="blue"] { --lamp: #2f80e8; }
+.diagnosis-lamp-kicker { display: flex; align-items: center; gap: 9px; font-size: .74rem; font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+.diagnosis-lamp-dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--lamp); box-shadow: 0 0 0 4px color-mix(in srgb, var(--lamp) 18%, transparent), 0 0 10px color-mix(in srgb, var(--lamp) 55%, transparent); }
+.diagnosis-details .lamp-detail h3 { margin-top: 8px; }
+.diagnosis-pulls { padding-top: 20px; border-top: 1px solid var(--line); }
+.diagnosis-pulls-title { font-size: 1rem; font-weight: 650; letter-spacing: -0.01em; color: var(--ink); }
+.diagnosis-pulls ul { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 12px; }
+.diagnosis-pulls li { display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: center; font-size: .93rem; line-height: 1.4; color: var(--ink-3); text-wrap: pretty; }
+.diagnosis-pulls .icon-tile { width: 34px; height: 34px; border-radius: 10px; }
+.diagnosis-pulls .icon-tile .icon { width: 18px; height: 18px; }
+.diagnosis-pulls b { font-weight: 620; color: var(--ink); }
+.diagnosis-caption { display: flex; gap: 12px; align-items: flex-start; max-width: 62em; margin-top: clamp(22px, 1rem + 1vw, 34px); font-size: .95rem; line-height: 1.5; color: var(--ink-3); text-wrap: pretty; }
+.diagnosis-caption .icon { flex: none; width: 20px; height: 20px; margin-top: 1px; color: var(--accent); }
+
+/* ---------- Sources ---------- */
+.diagnosis-sources .card p { color: var(--ink-3); }
+.diagnosis-sources .badge { margin-left: 4px; vertical-align: .18em; }
+.diagnosis-fixed-fig { margin-top: 16px; }
+.diagnosis-fixed {
+  display: flex; align-items: center; gap: 14px; width: 100%; padding: 10px 14px; border-radius: 12px;
+  background: var(--green-50); border: 1px solid rgba(45, 179, 106, .22);
+}
+.diagnosis-fixed-count { flex: none; font-size: 28px; line-height: 1; font-weight: 720; letter-spacing: -0.02em; color: var(--green-ink); font-variant-numeric: tabular-nums; }
+.diagnosis-fixed-text { display: grid; min-width: 0; line-height: 1.3; }
+.diagnosis-fixed-text b { font-size: 13px; font-weight: 650; color: var(--ink); }
+.diagnosis-fixed-text small { font-size: 12px; color: var(--ink-3); }
+.diagnosis-wash { display: grid; gap: 20px 48px; align-items: center; margin-top: clamp(28px, 1rem + 2vw, 48px); }
+@media (min-width: 860px) { .diagnosis-wash { grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); } }
+.diagnosis-wash-title { font-size: clamp(1.5rem, 1.1rem + 1.3vw, 2.2rem); line-height: 1.12; letter-spacing: -0.03em; font-weight: 700; }
+.diagnosis-wash-copy p { margin-top: 12px; max-width: 34em; color: var(--ink-2); }
+.diagnosis-wash-list { gap: 10px; }
+.diagnosis-wash-list li { font-weight: 550; color: var(--ink); }
+/* The heading's bar draws when the panel comes into view (the shared rule draws on load) */
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.motion-paused) .diagnosis-wash:not(.is-in) .accent-text { animation: none; background-size: 0% .085em; }
+  html.js:not(.motion-paused) .diagnosis-wash.is-in .accent-text { animation: bar-draw 1.1s var(--ease) .35s both; }
+}
+
+/* ---------- VIN decoder ---------- */
+.diagnosis-vin { align-items: center; }
+@media (min-width: 900px) { .diagnosis-vin { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); } }
+.diagnosis-vin .checklist { gap: 10px; }
+.diagnosis-vin-fig { width: 100%; }
+.diagnosis-vin-card {
+  display: grid; gap: 14px; width: min(100%, 540px); min-width: 0; max-width: 100%; padding: clamp(12px, .5rem + 1vw, 20px);
+  border-radius: 20px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); text-align: left;
+  container-type: inline-size;
+}
+.diagnosis-offline { margin-left: auto; }
+.diagnosis-offline .icon { width: 13px; height: 13px; }
+@media (max-width: 359.98px) {
+  .diagnosis-vin-card .mock-appbar { flex-wrap: wrap; row-gap: 6px; }
+  .diagnosis-offline { margin-left: 0; }
+}
+/* The 17 cells, brackets and position row are one 21.1em grid; the type scales so it always fits the card
+   (the row's padding and border take 10px). Older browsers fall back to a viewport-based size. */
+.diagnosis-vin-row {
+  display: grid; justify-items: center; padding: 14px 4px 10px; border-radius: 14px;
+  background: var(--mist-50); border: 1px solid var(--m-line);
+  font-size: clamp(11.5px, 3.7vw, 22px);
+}
+@media (min-width: 900px) and (max-width: 1099.98px) { .diagnosis-vin-row { font-size: 18px; } }
+@supports (width: 1cqi) { .diagnosis-vin-row { font-size: clamp(11.5px, (100cqi - 10px) / 21.2, 22px); } }
+/* Steps of 25/32px keep the slot rows (1.28em) on whole pixels, so rolled glyphs don't drift off center */
+@supports (width: round(down, 1cqi, 1px)) { .diagnosis-vin-row { font-size: round(down, clamp(11.5px, (100cqi - 10px) / 21.2, 22px), .78125px); } }
+.diagnosis-vin-grid { display: grid; justify-items: start; gap: 5px; width: 21.1em; }
+.diagnosis-vin-roll.slot-roll.is-boxed { gap: .15em; font-size: 1em; }
+.diagnosis-vin-roll .slot-cell { width: 1.1em; background: var(--paper); }
+.diagnosis-brackets { display: block; width: 21.1em; height: 1.6em; overflow: visible; }
+.diagnosis-brackets path { fill: none; stroke: #8FA1B7; stroke-width: 1.3; stroke-linecap: round; stroke-linejoin: round; }
+.diagnosis-brackets path.is-check { stroke: var(--green); stroke-width: 1.6; }
+.diagnosis-vin-pos { display: grid; grid-template-columns: repeat(17, 1.1em); column-gap: .15em; width: 21.1em; margin-top: -2px; }
+.diagnosis-vin-pos span { justify-self: center; font-family: var(--font-mono); font-size: 12px; font-weight: 650; line-height: 1.2; color: var(--ink-3); white-space: nowrap; }
+.diagnosis-vin-pos span.is-check { color: var(--green-ink); }
+@media (max-width: 359.98px) { .diagnosis-vin-pos span { font-size: 11px; letter-spacing: -0.04em; } }
+.diagnosis-decode { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 0; }
+.diagnosis-decode > div { display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--m-line); background: var(--paper); min-width: 0; }
+.diagnosis-decode > div:first-child, .diagnosis-decode > div:last-child { grid-column: 1 / -1; }
+.diagnosis-decode > div.is-check { background: var(--green-50); border-color: rgba(45, 179, 106, .25); }
+.diagnosis-decode dt { display: flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 600; color: var(--ink-3); }
+.diagnosis-decode dd { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 13.5px; font-weight: 650; color: var(--ink); font-variant-numeric: tabular-nums; }
+.diagnosis-pos { flex: none; white-space: nowrap; display: inline-grid; place-items: center; min-width: 26px; padding: 0 5px; height: 18px; border-radius: 6px; background: var(--mist-100); font-family: var(--font-mono); font-size: 12px; font-weight: 650; color: var(--ink-2); }
+.is-check .diagnosis-pos { background: var(--green-100); color: var(--green-ink); }
+.diagnosis-valid { display: inline-flex; align-items: center; gap: 3px; padding: 1px 8px 1px 5px; border-radius: var(--pill); background: var(--green-100); font-size: 12px; font-weight: 700; color: var(--green-ink); }
+.diagnosis-valid .icon { width: 13px; height: 13px; stroke-width: 2.6; }
+
+/* ---------- Vehicle database ---------- */
+.diagnosis-stats {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; overflow: hidden;
+  border-radius: var(--r-xl); border: 1px solid var(--line); background: var(--line); box-shadow: var(--shadow-1);
+}
+@media (min-width: 820px) { .diagnosis-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.diagnosis-stat { display: grid; justify-items: center; align-content: center; gap: 10px; padding: clamp(18px, 1rem + 1vw, 28px) 10px; background: linear-gradient(180deg, var(--paper), var(--mist-50)); text-align: center; }
+.diagnosis-stat .odometer { font-size: clamp(1.45rem, .9rem + 2vw, 2.4rem); }
+.diagnosis-stat-label { font-size: .92rem; font-weight: 600; color: var(--ink-3); }
+.diagnosis-stats-caption { max-width: 52em; margin-top: 16px; font-size: .95rem; line-height: 1.5; color: var(--ink-3); }
+.diagnosis-db { margin-top: clamp(40px, 2rem + 2.5vw, 72px); align-items: center; }
+@media (min-width: 900px) { .diagnosis-db { grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); } }
+.diagnosis-fire-fig { min-height: 0; align-content: center; gap: 10px; padding-inline: 4px; }
+.diagnosis-art-label {
+  position: absolute; top: 4px; left: 0; z-index: 4;
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border-radius: 7px;
+  background: var(--paper); border: 1px solid var(--line);
+  font-family: var(--font-mono); font-size: 12px; font-weight: 600; line-height: 1.3; color: var(--ink-3); white-space: nowrap;
+}
+.diagnosis-art-label::before { content: ""; width: 6px; height: 6px; border-radius: 2px; background: var(--mist-300); }
+/* Narrow phones: the label shortens so it clears the Replay button */
+@media (max-width: 399.98px) { .diagnosis-art-more { display: none; } }
+.page-hero-art > svg.diagnosis-fire-svg { width: min(100%, 520px); }
+.diagnosis-front text { font: 700 12px/1 var(--font); letter-spacing: .08em; fill: var(--ink-3); }
+.diagnosis-bore { fill: var(--mist-50); stroke: #9AAABD; stroke-width: 1.5; }
+.diagnosis-lit.is-blue { fill: url(#diagnosis-lit-blue); stroke: var(--blue); stroke-width: 1.5; }
+.diagnosis-lit.is-green { fill: url(#diagnosis-lit-green); stroke: var(--green); stroke-width: 1.5; }
+.diagnosis-spark { opacity: 0; transform-box: fill-box; transform-origin: center; pointer-events: none; }
+@keyframes diagnosis-spark { 0% { opacity: 0; scale: .5; } 22% { opacity: 1; scale: 1.08; } 100% { opacity: 0; scale: 1.2; } }
+.diagnosis-piston { fill: var(--paper); stroke: var(--ink); stroke-width: 1.8; }
+.diagnosis-ring { fill: none; stroke: #9AAABD; stroke-width: 1.4; stroke-linecap: round; }
+.diagnosis-rod { stroke: #8FA1B7; stroke-width: 5; stroke-linecap: round; }
+.diagnosis-plug { fill: var(--mist-100); stroke: var(--ink); stroke-width: 1.6; }
+.diagnosis-throw { fill: var(--paper); stroke: #8FA1B7; stroke-width: 2.5; }
+.diagnosis-crank { fill: none; stroke: #9AAABD; stroke-width: 6; stroke-linecap: round; }
+.diagnosis-badge { transform-box: fill-box; transform-origin: center; }
+.diagnosis-badge rect { fill: var(--accent-soft); stroke: var(--blue); stroke-width: 1.4; }
+.diagnosis-badge.is-green rect { fill: var(--green-100); stroke: var(--green); }
+.diagnosis-badge text { font: 700 15px/1 var(--font); fill: var(--accent-ink); }
+.diagnosis-badge.is-green text { fill: var(--green-ink); }
+.diagnosis-cyl-num { font: 650 16px/1 var(--font); fill: var(--ink-2); }
+.diagnosis-svg-note { font: 600 12px/1 var(--font); fill: var(--ink-3); letter-spacing: .02em; }
+.diagnosis-fire-order { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 12px; font-size: .9rem; font-weight: 600; color: var(--ink-3); }
+.diagnosis-fire-seq { display: inline-flex; align-items: center; gap: 6px; }
+.diagnosis-fire-seq b { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--paper); border: 1px solid var(--line-strong); font-family: var(--font-mono); font-size: .95rem; font-weight: 700; color: var(--ink); box-shadow: var(--shadow-1); }
+.diagnosis-fire-seq .icon { width: 14px; height: 14px; color: var(--ink-4); }
+/* The order chips fill in as each cylinder fires (blue for the first two, green for the last two) */
+.diagnosis-fire-seq b { transition: background-color .35s var(--ease), border-color .35s var(--ease), color .35s var(--ease); }
+.diagnosis-fire-fig[data-reached~="0"] .diagnosis-fire-seq b:nth-of-type(1),
+.diagnosis-fire-fig[data-reached~="1"] .diagnosis-fire-seq b:nth-of-type(2) { background: var(--accent-soft); border-color: var(--blue); color: var(--accent-ink); }
+.diagnosis-fire-fig[data-reached~="2"] .diagnosis-fire-seq b:nth-of-type(3),
+.diagnosis-fire-fig[data-reached~="3"] .diagnosis-fire-seq b:nth-of-type(4) { background: var(--green-100); border-color: var(--green); color: var(--green-ink); }
+.diagnosis-db-list { display: grid; gap: 18px; align-content: center; }
+.diagnosis-db-cards { gap: 12px; }
+.diagnosis-db-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; padding: clamp(16px, .8rem + .8vw, 24px); }
+.diagnosis-db-card h3 { font-size: 1.12rem; }
+.diagnosis-db-card p { margin-top: 6px; font-size: .96rem; line-height: 1.5; color: var(--ink-3); }
+.diagnosis-search { display: flex; align-items: flex-start; gap: 10px; font-size: .95rem; line-height: 1.6; color: var(--ink-3); }
+.diagnosis-search .icon { flex: none; width: 18px; height: 18px; margin-top: 3px; color: var(--accent); }
+.diagnosis-search .kbd { white-space: nowrap; }
+.diagnosis-db-list > .link-arrow { justify-self: start; min-height: 44px; }
+
+/* ---------- Service library ---------- */
+.diagnosis-lib { margin-bottom: clamp(36px, 2rem + 2vw, 64px); }
+@media (min-width: 900px) { .diagnosis-lib { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); } }
+.diagnosis-obd-fig { min-height: 0; gap: 8px; }
+.page-hero-art > svg.diagnosis-obd { width: min(100%, 520px); }
+.diagnosis-obd-shell { fill: var(--paper); stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; }
+.diagnosis-obd-inner { fill: var(--mist-50); stroke: #9AAABD; stroke-width: 1.4; stroke-linejoin: round; }
+.diagnosis-sockets rect { fill: var(--paper); stroke: #9AAABD; stroke-width: 1.4; }
+.diagnosis-pins-lit > rect { fill: var(--blue-100); stroke: #6FA6E8; stroke-width: 1.4; transform-box: fill-box; transform-origin: center; }
+.diagnosis-can { transform-box: fill-box; transform-origin: center; stroke-width: 1.6; }
+.diagnosis-can.is-blue { fill: var(--blue); stroke: #1662C2; }
+.diagnosis-can.is-green { fill: var(--green); stroke: #1E8E52; }
+@keyframes diagnosis-can { 0% { opacity: 0; scale: .6; } 22% { opacity: 1; scale: 1.28; } 44% { scale: 1; } 66% { scale: 1.22; } 100% { opacity: 1; scale: 1; } }
+.diagnosis-pin-nums text { font: 650 14px/1 var(--font-mono); fill: var(--ink-3); text-anchor: middle; }
+.diagnosis-pin-nums text.is-can { fill: var(--ink); font-weight: 750; }
+.diagnosis-can-callout rect { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.2; }
+.diagnosis-can-callout text { font: 650 14px/1 var(--font); fill: var(--ink); }
+/* Phones: both 460-unit drawings shrink to about 0.6x, so their labels get bigger to stay readable */
+.diagnosis-can-pill { transform-box: fill-box; transform-origin: 100% 50%; } /* grows to the left, over its leader line */
+@media (max-width: 479.98px) {
+  .diagnosis-front text { font-size: 16px; letter-spacing: .02em; }
+  .diagnosis-cyl-num { font-size: 19px; }
+  .diagnosis-badge text { font-size: 17px; }
+  .diagnosis-svg-note { font-size: 18px; }
+  .diagnosis-pin-nums text { font-size: 18px; }
+  .diagnosis-can-pill { transform: scale(1.22); }
+}
+.diagnosis-obd-caption { max-width: 34em; font-size: .9rem; line-height: 1.5; color: var(--ink-3); text-align: center; text-wrap: pretty; }
+.diagnosis-lib-cards .card p { color: var(--ink-3); }
+/* Phones: icon cards become compact rows (as the shared .grid-3 rule does) */
+@media (max-width: 559.98px) {
+  .diagnosis-lib-cards > .card { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: center; padding: 18px; border-radius: var(--r); }
+  .diagnosis-lib-cards > .card > .icon-tile { width: 44px; height: 44px; border-radius: 13px; }
+  .diagnosis-lib-cards > .card > .icon-tile .icon { width: 23px; height: 23px; }
+  .diagnosis-lib-cards > .card > h3 { margin-top: 0; font-size: 1.1rem; }
+  .diagnosis-lib-cards > .card > p { grid-column: 1 / -1; margin-top: 10px; font-size: .95rem; }
+}
+
+/* ---------- Related ---------- */
+</style>
+</head>
+<body data-page="features" data-tab="features" id="top">
+<!-- @partial icons -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="art-tint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E1EDFB"/><stop offset=".5" stop-color="#F2F7FD"/><stop offset="1" stop-color="#E3F4EA"/></linearGradient>
+    <linearGradient id="gauge-tint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9D5F6"/><stop offset=".5" stop-color="#B9D5F6"/><stop offset=".5" stop-color="#BDE7CF"/><stop offset="1" stop-color="#BDE7CF"/></linearGradient>
+    <linearGradient id="gauge-pad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9534A"/><stop offset=".3" stop-color="#F0A53A"/><stop offset=".6" stop-color="#2DB36A"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+    <linearGradient id="gauge-tread" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#D9534A"/><stop offset=".35" stop-color="#F0A53A"/><stop offset=".65" stop-color="#2DB36A"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+    <marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#0F2B4C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrow-head-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#1A6FD6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrow-head-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#188048" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  </defs>
+  <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3.5c3 3.6 5.5 6.6 5.5 9.6a5.5 5.5 0 0 1-11 0c0-3 2.5-6 5.5-9.6z"/><path d="M9.4 14a2.6 2.6 0 0 0 2.6 2.6"/></symbol>
+  <symbol id="i-diagnostics" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M6.5 12.5l2.4-3 2.5 2.2 3-4.2 3.1 3.6"/><path d="M8.5 20.5h7M12 17v3.5"/></symbol>
+  <symbol id="i-engine" viewBox="0 0 24 24"><path d="M9.5 5.5h5M12 5.5v2.5"/><path d="M6 10.5V9a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l1.8 1.8h1.8a1 1 0 0 1 1 1v1.4h1v4h-1v1.3a1 1 0 0 1-1 1h-2.8L14.9 20H8.6l-2.6-2.6"/><path d="M6 10.5H4.5v7H6zM4.5 14H2.5M2.5 12v4"/></symbol>
+  <symbol id="i-tire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+  <symbol id="i-inspection" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2.2"/><path d="M9 4.5V3.2h6v1.3"/><path d="M8.6 12.6l2.3 2.3 4.6-4.8"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.2 3.8h3l1.6 4.1-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4.1 1.6v3a2 2 0 0 1-2.1 2A14.8 14.8 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2 2 4-4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.3V12l3.1 2"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7.2 12 13l8.2-5.8"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.6 2.6 5-5.2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 3.5a4.6 4.6 0 0 0-4.3 6L3.9 16.3a2 2 0 0 0 2.8 2.8l6.8-6.8a4.6 4.6 0 0 0 6-4.4c0-.5 0-.9-.2-1.3l-2.5 2.5-2.5-.6-.6-2.5 2.5-2.5c-.4-.1-.8-.1-1.2-.1z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.4c0 4.4-3 7.9-7 9.6-4-1.7-7-5.2-7-9.6V6z"/><path d="M8.8 12.1l2.2 2.2 4.3-4.4"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M2.5 15.6v-2.8a1.5 1.5 0 0 1 1-1.4l2.3-.8 2.4-3.3a2 2 0 0 1 1.6-.8h4.8a2 2 0 0 1 1.5.7l3 3.6 1.9.5a1.5 1.5 0 0 1 1.1 1.5v2.8"/><path d="M2.5 15.6h2.2M9.3 15.6h5.4M19.3 15.6h2.2"/><circle cx="7" cy="16" r="2.3"/><circle cx="17" cy="16" r="2.3"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 15.8V9.6a1 1 0 0 1 1-1h3.2l1.8-2.8h4.3a1 1 0 0 1 1 1v2.8h5.1a1.6 1.6 0 0 1 1.5 1.1l1.1 3.2v1.9"/><path d="M2.5 15.8h2M9 15.8h6M19.5 15.8h2"/><path d="M6.7 8.6h6.9"/><circle cx="6.8" cy="16.2" r="2.2"/><circle cx="17.2" cy="16.2" r="2.2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M6 9.6V20h12V9.6"/><path d="M10 20v-5.2h4V20"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 17h-9.5l-4.8 3.6V17H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 5z"/><path d="M7.5 10h9M7.5 13h5.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.4 2.9 17.3a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.5M12 17v.3"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24"><path d="M6.5 3h7.8l4.2 4.2V21h-12z"/><path d="M14 3v4.5h4.5M9.2 12h5.6M9.2 15.8h5.6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.5a1 1 0 0 1 1-1h7.8l8.2 8.2a1.5 1.5 0 0 1 0 2.1l-6.2 6.2a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7.5 4.5 3.5 4.5v14c4 0 6.5.5 8.5 2 2-1.5 4.5-2 8.5-2v-14c-4 0-6.5.5-8.5 2z"/><path d="M12 6.5v14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17.5 14.6c1.8.7 3 2.4 3.5 4.9"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.8-2.5 2.3-2.5 3.9M12 17v.3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.4 17.5a8.6 8.6 0 1 1 15.2 0"/><path d="M12 13.5l4.2-4.2"/><circle cx="12" cy="13.5" r="1.3"/><path d="M6.8 9.6l.9.6M12 6.4v1.1M17.2 9.6l-.9.6"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7.2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M5.5 18.5l1.4-1.4M17.1 6.9l1.4-1.4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13.5 14.5-14-.3 9.6-5.8 14.5-13.2 14.5"/><path d="M5 19c3-4 6-6.5 9.5-8.5"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15.5a4.5 4.5 0 0 1-.4-9 5.5 5.5 0 0 1 10.6 1.4A3.8 3.8 0 0 1 17 15.5z"/><path d="M8.5 18.2l-.8 2M12.5 18.2l-.8 2M16.5 18.2l-.8 2"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9.2 14.2v-2.5a1 1 0 0 1 1-1h5M13.5 8.7l2 2-2 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2.5 8.5 6 6.5l3.2 1.2M21.5 8.5 18 6.5l-4.8 1.6-3.3 2.7a1.3 1.3 0 0 0 1.6 2l2.4-1.6 4.3 3.9"/><path d="M2.5 14.2l2 .1 4.8 4a1.4 1.4 0 0 0 2-1.9M8 15.5l2.8 2.3a1.4 1.4 0 0 0 2-1.9M11.6 13.4l3 2.6a1.4 1.4 0 0 0 1.9-2M21.5 14.2h-3.3"/></symbol>
+  <symbol id="i-car-mini" viewBox="0 0 32 14"><path d="M2 10.8V8.6c0-.6.4-1.1 1-1.3l4-1.2L10.4 2.7c.4-.4 1-.7 1.6-.7h7.3c.6 0 1.2.3 1.6.7L24 6.1l4.8.9c.7.1 1.2.7 1.2 1.4v2.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--canvas, #F5F9FE)" stroke-width="1.2"/><circle cx="23.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--canvas, #F5F9FE)" stroke-width="1.2"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16M15 4v16"/><rect x="4.9" y="7" width="2.4" height="3" rx=".6"/><rect x="10.8" y="7" width="2.4" height="3" rx=".6"/><rect x="10.8" y="12" width="2.4" height="3" rx=".6"/><rect x="16.7" y="7" width="2.4" height="3" rx=".6"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M3.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h2M17 4h2a1.5 1.5 0 0 1 1.5 1.5V7M20.5 17v1.5A1.5 1.5 0 0 1 19 20h-2M7 20H5a1.5 1.5 0 0 1-1.5-1.5V17"/><path d="M7.5 8v8M10 8v8M12.8 8v8M15 8v8M16.8 8v8"/></symbol>
+  <symbol id="i-card-reader" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.6"/><rect x="8.5" y="5.5" width="7" height="4" rx="1"/><path d="M9 13h.01M12 13h.01M15 13h.01M9 15.8h.01M12 15.8h.01M15 15.8h.01M10 18.6h4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5.5" y="12" width="3" height="6" rx=".8"/><rect x="10.5" y="8" width="3" height="10" rx=".8"/><rect x="15.5" y="4.5" width="3" height="13.5" rx=".8"/></symbol>
+  <symbol id="i-ledger" viewBox="0 0 24 24"><path d="M5 3.5h12.5A1.5 1.5 0 0 1 19 5v15.5H6.5A1.5 1.5 0 0 1 5 19z"/><path d="M5 17.5h14M9 3.5v14M11.5 8h5M11.5 11h5M11.5 14h3"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16.5 6.5l2.6 2.6M14.3 8.7l2 2"/><circle cx="7" cy="16" r=".9"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.4"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7M12 14.5v2.5"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-9 6 6 0 0 1 11.5 1.6 3.8 3.8 0 0 1-.4 7.4z"/></symbol>
+  <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M8.5 16.2a5 5 0 0 1 5.6-.7M5.2 12.8a9.6 9.6 0 0 1 4-2.3M18.8 12.8a9.7 9.7 0 0 0-2.4-1.6M2 9.4a14.5 14.5 0 0 1 3.6-2.4M22 9.4a14.6 14.6 0 0 0-10.5-3.9"/><path d="M12 19.6h.01"/></symbol>
+  <symbol id="i-device-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.8"/><path d="M10.5 5.2h3M11 18.6h2"/></symbol>
+  <symbol id="i-device-tablet" viewBox="0 0 24 24"><rect x="3.5" y="3" width="17" height="18" rx="2.6"/><path d="M11 18.2h2"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2.2"/><path d="M8 20.5h8M12 17v3.5"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.5 8.5A1.5 1.5 0 0 1 5 7h2.6l1.6-2.3h5.6L16.4 7H19a1.5 1.5 0 0 1 1.5 1.5v9.5A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18z"/><circle cx="12" cy="13" r="3.6"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M20 11.5A8 8 0 0 0 6.1 6.6L4 8.7M4 4.5v4.2h4.2"/><path d="M4 12.5a8 8 0 0 0 13.9 4.9l2.1-2.1M20 19.5v-4.2h-4.2"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.2"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM18 14h2.5M14 18v2.5h1.5"/></symbol>
+  <symbol id="i-vin" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="19" height="11" rx="2"/><path d="M6 10l1.4 4 1.4-4M11 10v4M13.6 14v-4l2.8 4v-4"/></symbol>
+  <symbol id="i-signature" viewBox="0 0 24 24"><path d="M3 17.5c2.2-.3 3.6-2.5 4.2-5.5.5-2.6-1.6-3.1-2-.6-.5 3.1 1.3 6 3.7 4.3 1.6-1.1 2.3-3.4 3.2-3.4.8 0 .3 2.6 1.4 2.6 1 0 1.6-1.4 2.5-1.4.8 0 .8 1.3 1.7 1.3h2.3"/><path d="M3 20.5h18"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4.2l2.6 1.6M9.5 2.8h5M12 2.8V6M18.6 6.4l1.4-1.4"/></symbol>
+  <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 15v3.5A2 2 0 0 0 6 20.5h12a2 2 0 0 0 2-2V15"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.2 4.2 0 0 0 6 0l3-3a4.2 4.2 0 0 0-6-6l-1.2 1.2"/><path d="M14 10a4.2 4.2 0 0 0-6 0l-3 3a4.2 4.2 0 0 0 6 6l1.2-1.2"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9"/><path d="M4.5 4.5V9H9"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6.5" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.9" y="5" width="3.6" height="14" rx="1.2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7.5 4.8v14.4a.9.9 0 0 0 1.4.8l11-7.2a.9.9 0 0 0 0-1.6l-11-7.2a.9.9 0 0 0-1.4.8z"/></symbol>
+</svg>
+<!-- @end icons -->
+<!-- @partial header -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="../index.html" aria-label="WPI Driveline Shop Management System home">
+      <svg class="brand-logo" viewBox="-81 -190 653 361" width="83" height="46" aria-hidden="true" focusable="false"><path transform="translate(-5.74 0)" fill="#0F2B4C" d="M54.32 0H103.27L124.51 -83.98C127.93 -97.78 130 -112.67 132.2 -127.81C134.52 -112.43 136.84 -97.41 140.26 -83.98L161.5 0H210.33L258.91 -181.88H211.18L193.24 -101.44C189.58 -84.59 186.65 -64.09 183.84 -44.8C180.66 -64.09 177.49 -84.59 173.46 -101.44L154.3 -181.88H110.47L91.19 -101.44C87.16 -84.35 83.98 -63.72 80.81 -44.31C77.88 -63.72 74.95 -84.35 71.41 -101.44L53.47 -181.88H5.74ZM284.81 0H327.9V-56.76H358.05C399.8 -56.76 425.56 -81.54 425.56 -119.02C425.56 -156.25 400.29 -181.88 359.27 -181.88H284.81ZM327.9 -90.82V-146.97H350.12C370.38 -146.97 380.88 -136.11 380.88 -119.02C380.88 -102.17 370.38 -90.82 350.24 -90.82ZM496.86 -181.88H453.77V0H496.86Z"/><rect x="0" y="40" width="238.56" height="12" fill="#1F7AE0"/><rect x="252.56" y="40" width="238.56" height="12" fill="#2DB36A"/><path transform="translate(-80.28 162.93)" fill="#0F2B4C" d="M29.2 0C49.55 0 61.36 -12.62 61.36 -33.56C61.36 -54.36 49.55 -66.93 29.83 -66.93H7.41V0ZM17.65 -8.98V-57.95H29.15C43.75 -57.95 51.3 -49.28 51.3 -33.56C51.3 -17.7 43.75 -8.98 28.62 -8.98ZM95.81 0H106.05V-25.29H119.71C119.88 -25.29 120.11 -25.29 120.29 -25.29L133.86 0H145.49L130.76 -27.04C138.89 -30.1 142.97 -36.93 142.97 -45.91C142.97 -58.26 135.29 -66.93 119.79 -66.93H95.81ZM106.05 -34.05V-58.17H118.63C128.51 -58.17 132.6 -53.46 132.6 -45.91C132.6 -38.41 128.51 -34.05 118.72 -34.05ZM187.66 -66.93H177.42V0H187.66ZM243.58 0H256.11L280.01 -66.93H268.91L256.24 -29.69C254.58 -24.62 252.52 -17.74 249.91 -8.22C247.26 -17.56 245.15 -24.62 243.44 -29.69L230.41 -66.93H219.36ZM311.71 0H354.12V-8.8H321.95V-29.42H351.6V-38.18H321.95V-58.13H353.85V-66.93H311.71ZM389.19 0H429.75V-8.8H399.43V-66.93H389.19ZM473.45 -66.93H463.21V0H473.45ZM510.28 0H520.65V-35.71C520.65 -39.17 520.29 -46.09 519.89 -54.49C524.74 -45.51 527.3 -40.88 530.58 -35.62L553.18 0H565.04V-66.93H554.66V-28.84C554.66 -24.98 554.84 -18.73 555.33 -12.26C552.37 -18.69 549.36 -23.76 547.29 -27.09L522.09 -66.93H510.28ZM601.86 0H644.27V-8.8H612.1V-29.42H641.75V-38.18H612.1V-58.13H644V-66.93H601.86Z"/></svg>
+      <span class="brand-tagline" aria-hidden="true">Shop Management System</span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-menu" data-menu>
+          <a class="nav-link is-active" href="../features.html" data-nav="features" aria-current="true"><span class="nav-pill" aria-hidden="true"></span>Features</a>
+          <button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega-features" aria-label="Show all features"><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+          <div class="mega" id="mega-features">
+            <div class="mega-grid">
+              <div class="mega-col">
+                <p class="mega-label">Before the car arrives</p>
+                <a class="mega-item" href="../features/booking.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span class="mega-text"><strong>Booking &amp; check-in</strong><small>Real open times, key-drop check-in</small></span></a>
+                <a class="mega-item" href="../features/messaging.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span><span class="mega-text"><strong>Texting, calls &amp; email</strong><small>One thread per customer</small></span></a>
+                <a class="mega-item" href="../features/customers.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span><span class="mega-text"><strong>Customers &amp; follow-ups</strong><small>Oil-service and declined-work lists</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">In the bay</p>
+                <a class="mega-item" href="../features/workflow.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span><span class="mega-text"><strong>Workflow &amp; tech clock</strong><small>Every car by stage, one-tap timers</small></span></a>
+                <a class="mega-item" href="../features/inspections.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="mega-text"><strong>Inspections &amp; approvals</strong><small>Photos, ratings and a yes by phone</small></span></a>
+                <a class="mega-item" href="../features/diagnosis.html" aria-current="page"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span><span class="mega-text"><strong>Auto Diagnosis</strong><small>Recalls, owner reports, your fixes</small></span></a>
+                <a class="mega-item" href="../features/parts.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span><span class="mega-text"><strong>Parts, inventory &amp; tires</strong><small>Stock, POs, scanning, tire DOT log</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">At the counter</p>
+                <a class="mega-item" href="../features/repair-orders.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><span class="mega-text"><strong>Estimates &amp; ROs</strong><small>One record, estimate to receipt</small></span></a>
+                <a class="mega-item" href="../features/payments.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg></span><span class="mega-text"><strong>Payments &amp; card readers</strong><small>Exact-balance pay links and readers</small></span></a>
+                <a class="mega-item" href="../features/fleet.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span><span class="mega-text"><strong>Fleet accounts</strong><small>Terms, PM plans, statements</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">Behind the desk</p>
+                <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
+              </div>
+            </div>
+            <div class="mega-foot">
+              <p class="mega-note"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg> Want to click around first? <a href="../app/" data-no-prerender>Try the sample shop</a></p>
+              <div class="mega-actions">
+                <a class="link-arrow" href="../features.html">All features <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                <a class="btn btn-primary btn-sm" href="../demo.html">Request a demo</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="../mobile.html" data-nav="mobile">iPhone &amp; iPad</a></li>
+        <li><a class="nav-link" href="../works-with.html" data-nav="integrations">Integrations</a></li>
+        <li><a class="nav-link" href="../security.html" data-nav="security">Security</a></li>
+        <li><a class="nav-link" href="../faq.html" data-nav="faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-signin" href="../app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span class="header-signin-text">Sign in</span></a>
+      <a class="btn btn-primary btn-sm header-book" href="../demo.html" data-nav="demo">Request a demo</a>
+    </div>
+  </div>
+  <div class="road-progress" aria-hidden="true"><span class="road-progress-lane"></span><svg class="road-progress-car"><use href="#i-car-mini"/></svg></div>
+</header>
+<!-- @end header -->
+
+<main id="main">
+  <!-- ===== Hero ===== -->
+  <section class="page-hero diagnosis-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><span aria-current="page">Auto Diagnosis &amp; vehicle data</span></li>
+  </ol>
+</nav>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Auto Diagnosis & vehicle data","item":"https://blakew316.github.io/automotive/features/diagnosis.html"}]}</script>
+<!-- @end breadcrumbs -->
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-diagnosis"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span>Auto Diagnosis &amp; vehicle data</p>
+        <h1 id="hero-title"><span class="diagnosis-h1-lead">Known answers first.</span> <span class="accent-text">Then the test plan.</span></h1>
+        <p class="lead">Pick the vehicle and describe the concern. You see what&rsquo;s already known before anyone picks up a wrench: recalls that may cover it, what other owners of the same model report to NHTSA, what fixed it at your shop before, and what the codes mean. An optional AI test plan is built from the same data.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=diagnosis">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/diagnose" data-no-prerender>Open Auto Diagnosis in the sample shop</a>
+        </div>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>NHTSA recalls &amp; complaints</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Fixed here before</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>725 trouble codes</span>
+        </div>
+      </div>
+      <figure class="page-hero-art mock-figure diagnosis-hero-fig" data-play data-seq="4" data-loops="2" data-step="3" data-reached="0 1 2 3" data-seq-ms="1600" aria-label="Example: Auto Diagnosis in the sample shop. The vehicle is a 2018 Ford F-150, the concern is a misfire and the code P0301 is typed in. It reads Cylinder 1 Misfire Detected. The Quick answer then ranks four leads, best first: a recall that may cover it from NHTSA, fixed here before on one repair order, the code's common causes, and NHTSA owner reports. The quick answer is ready to add to the repair order.">
+        <span class="mock-tag">Example &middot; sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-window diagnosis-win"><div class="mock-screen">
+            <div class="mock-appbar"><span class="diagnosis-appicon"><svg class="icon"><use href="#i-diagnostics"/></svg></span>Auto Diagnosis<small>Luis O.</small></div>
+            <div class="diagnosis-inputs">
+              <div class="diagnosis-input is-wide"><span class="mock-label">Vehicle</span><span class="diagnosis-vehicle"><svg class="icon"><use href="#i-car"/></svg><b>2018 Ford F-150</b><small>2.7L EcoBoost V6</small></span></div>
+              <div class="diagnosis-input"><span class="mock-label">What&rsquo;s it doing?</span><span class="diagnosis-concern">Misfire / runs rough</span></div>
+              <div class="diagnosis-input"><span class="mock-label">Trouble codes</span><span class="mock-field mock-mono is-focus diagnosis-code"><span data-at="0" data-fx="type" style="--chars: 5; --fx-delay: .2s">P0301</span><span class="caret"></span></span></div>
+            </div>
+            <div class="diagnosis-swap">
+            <div class="diagnosis-skel diagnosis-skel-meaning" data-until="1"><i></i><span><i style="--w: .62"></i><i style="--w: .4"></i></span></div>
+            <div class="diagnosis-meaning" data-at="1" data-fx="fade">
+              <span class="mock-chip mock-mono">P0301</span>
+              <b>Cylinder 1 Misfire Detected</b>
+              <small>Generic SAE &middot; Ignition &amp; Misfire</small>
+            </div>
+            </div>
+            <div class="diagnosis-qa">
+              <div class="mock-section-title">Quick answer <span class="diagnosis-qa-sub">Strongest first</span></div>
+              <div class="diagnosis-swap">
+              <div class="diagnosis-skel-list" data-until="2">
+                <div class="diagnosis-skel"><i></i><span><i style="--w: .55"></i><i style="--w: .32"></i></span></div>
+                <div class="diagnosis-skel"><i></i><span><i style="--w: .48"></i><i style="--w: .36"></i></span></div>
+                <div class="diagnosis-skel"><i></i><span><i style="--w: .6"></i><i style="--w: .44"></i></span></div>
+                <div class="diagnosis-skel"><i></i><span><i style="--w: .42"></i><i style="--w: .3"></i></span></div>
+              </div>
+              <ol class="diagnosis-leads">
+                <li class="diagnosis-lead" data-at="2" data-fx="left"><span class="diagnosis-rank" data-at="2" data-fx="pop" style="--fx-delay: .2s">1</span><span class="diagnosis-lead-text"><b>A recall may cover it</b><small>NHTSA recalls</small></span><span class="diagnosis-bar"><i data-at="2" data-fx="grow-x" style="--w: .94; --fx-delay: .25s"></i></span></li>
+                <li class="diagnosis-lead is-shop" data-at="2" data-fx="left" style="--fx-delay: .14s"><span class="diagnosis-rank" data-at="2" data-fx="pop" style="--fx-delay: .34s">2</span><span class="diagnosis-lead-text"><b>Fixed here before</b><small>1 RO at this shop</small></span><span class="diagnosis-bar"><i data-at="2" data-fx="grow-x" style="--w: .78; --fx-delay: .39s"></i></span></li>
+                <li class="diagnosis-lead" data-at="2" data-fx="left" style="--fx-delay: .28s"><span class="diagnosis-rank" data-at="2" data-fx="pop" style="--fx-delay: .48s">3</span><span class="diagnosis-lead-text"><b>Common causes</b><small>Worn or fouled spark plug in cylinder&nbsp;1</small></span><span class="diagnosis-bar"><i data-at="2" data-fx="grow-x" style="--w: .6; --fx-delay: .53s"></i></span></li>
+                <li class="diagnosis-lead" data-at="2" data-fx="left" style="--fx-delay: .42s"><span class="diagnosis-rank" data-at="2" data-fx="pop" style="--fx-delay: .62s">4</span><span class="diagnosis-lead-text"><b>Owner reports</b><small>NHTSA complaints</small></span><span class="diagnosis-bar"><i data-at="2" data-fx="grow-x" style="--w: .42; --fx-delay: .67s"></i></span></li>
+              </ol>
+              </div>
+            </div>
+            <div class="diagnosis-ready">
+              <span class="mock-chip is-ok" data-at="3" data-fx="pop"><svg class="icon"><use href="#i-check"/></svg>Quick answer ready</span>
+              <span class="mock-btn is-ghost"><svg class="icon"><use href="#i-sparkle"/></svg>AI test plan</span>
+              <span class="mock-btn" data-at="3" data-fx="press" style="--fx-delay: .5s">Add to RO</span>
+            </div>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="icon-tile icon-tile-sm"><svg class="icon"><use href="#i-sparkle"/></svg></span>
+          <span><strong>Quick answer &middot; 4 leads</strong><small>Strongest first, to verify</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Fixed here before &middot; 1 RO</strong><small>Same make and model</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Start from the concern (Concern lamps) ===== -->
+  <section class="section" id="concerns" aria-labelledby="concerns-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">The concern</p>
+        <h2 id="concerns-title">Start from <span class="accent-text">the concern</span></h2>
+        <p class="lead">Tap what the customer described. Auto Diagnosis pulls the same five sources for every concern, then ranks what it finds against it.</p>
+      </div>
+      <div class="split diagnosis-concerns">
+        <div class="dash" data-reveal="left">
+          <div class="dash-head"><span>Concerns</span><button class="diagnosis-bulb" type="button" data-bulb-check><svg class="icon" aria-hidden="true"><use href="#i-bolt"/></svg>Bulb check</button></div>
+          <div class="dash-grid" data-lamps="concern-details" role="group" aria-label="Common concerns">
+            <button class="lamp" type="button" data-lamp="cel" data-color="amber" aria-pressed="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-engine"/></svg><span class="lamp-label">Check engine</span></button>
+            <button class="lamp" type="button" data-lamp="misfire" data-color="amber" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5V5"/><path d="M10 5h4v3h-4z"/><path d="M8.8 8h6.4v3.2H8.8z"/><path d="M10.4 11.2h3.2l-.5 4.6h-2.2z"/><path d="M12 15.8v1.7"/><path d="M8 20.6l1.8-1.5M16 20.6l-1.8-1.5M12 21.6v-.9"/></svg><span class="lamp-label">Misfire</span></button>
+            <button class="lamp" type="button" data-lamp="nostart" data-color="red" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#i-key"/></svg><span class="lamp-label">No start</span></button>
+            <button class="lamp" type="button" data-lamp="stall" data-color="amber" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.4 17.5a8.6 8.6 0 1 1 15.2 0"/><path d="M12 13.5 7.3 11"/><circle cx="12" cy="13.5" r="1.3"/><path d="M12 6.4v1.1M17.2 9.6l-.9.6"/></svg><span class="lamp-label">Stalls</span></button>
+            <button class="lamp" type="button" data-lamp="overheat" data-color="red" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v9.4"/><path d="M12 4.5h3M12 7.5h2.4M12 10.5h3"/><circle cx="12" cy="14.6" r="2.2"/><path d="M3.5 19.6c1.4-1.1 2.8-1.1 4.2 0s2.8 1.1 4.2 0 2.8-1.1 4.2 0 2.8 1.1 4.2 0"/></svg><span class="lamp-label">Over&shy;heating</span></button>
+            <button class="lamp" type="button" data-lamp="oil" data-color="red" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3.5 11h3.6l1-1.6h6.2l1.6 1.6 4.6-2-4.1 6.2H8.1l-1-1.6H3.5z"/><path d="M11.2 9.4V7.3M9.2 7.3h4"/><path d="M20.4 13.4c.6.9 1 1.5 1 2a1 1 0 0 1-2 0c0-.5.4-1.1 1-2z"/></svg><span class="lamp-label">Oil leak</span></button>
+            <button class="lamp" type="button" data-lamp="trans" data-color="amber" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5.4"/><path d="M12 3.2v2.4M12 18.4v2.4M3.2 12h2.4M18.4 12h2.4M5.8 5.8l1.7 1.7M16.5 16.5l1.7 1.7M5.8 18.2l1.7-1.7M16.5 7.5l1.7-1.7"/><path d="M12 9.4v3M12 14.6v.2"/></svg><span class="lamp-label">Shifting</span></button>
+            <button class="lamp" type="button" data-lamp="brakes" data-color="red" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="6"/><path d="M12 8.8v3.8M12 15.2v.2"/><path d="M4.9 6.4a8.8 8.8 0 0 0 0 11.2M19.1 6.4a8.8 8.8 0 0 1 0 11.2"/></svg><span class="lamp-label">Brakes</span></button>
+            <button class="lamp" type="button" data-lamp="steering" data-color="amber" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="2.2"/><path d="M4.1 10.6l5.7 1M14.2 11.6l5.7-1M12 14.2V20"/></svg><span class="lamp-label">Steering</span></button>
+            <button class="lamp" type="button" data-lamp="noise" data-color="amber" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.6v2.2"/><path d="M7 4.8h10L7 8.2l10 2.4L7 13l10 2.4L7 17.8"/><path d="M7 17.8h10"/><path d="M12 17.8v3.6"/></svg><span class="lamp-label">Clunks</span></button>
+            <button class="lamp" type="button" data-lamp="vibration" data-color="amber" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5.2"/><circle cx="12" cy="12" r="1.7"/><path d="M3.6 7.6c-.9 1.2-.9 2.6 0 4.2s.9 3 0 4.4M20.4 7.6c.9 1.2.9 2.6 0 4.2s-.9 3 0 4.4"/></svg><span class="lamp-label">Vibration</span></button>
+            <button class="lamp" type="button" data-lamp="electrical" data-color="red" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="7.5" width="17" height="11" rx="1.6"/><path d="M6.6 7.5V5.6h3v1.9M14.4 7.5V5.6h3v1.9"/><path d="M6.6 13h3M8.1 11.5v3M14.4 13h3"/></svg><span class="lamp-label">Battery drain</span></button>
+            <button class="lamp" type="button" data-lamp="ac" data-color="blue" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="1.7"/><path d="M12 10.3c-.6-2.6.2-5.4 2.5-5.9 1.9-.4 2.9 1.5 1.6 3.2-1.1 1.4-2.5 2.2-4.1 2.7"/><path d="M12 10.3c-.6-2.6.2-5.4 2.5-5.9 1.9-.4 2.9 1.5 1.6 3.2-1.1 1.4-2.5 2.2-4.1 2.7" transform="rotate(120 12 12)"/><path d="M12 10.3c-.6-2.6.2-5.4 2.5-5.9 1.9-.4 2.9 1.5 1.6 3.2-1.1 1.4-2.5 2.2-4.1 2.7" transform="rotate(240 12 12)"/></svg><span class="lamp-label">A/C or heat</span></button>
+            <button class="lamp" type="button" data-lamp="airbag" data-color="red" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8.6" cy="4.8" r="1.9"/><path d="M8.2 8.4 7.2 14h5.2l2 5.6"/><path d="M7.2 14l-2.6 5.6"/><path d="M8 9.6l4 2"/><circle cx="16.6" cy="9.4" r="3.6"/></svg><span class="lamp-label">Airbag / SRS</span></button>
+            <button class="lamp" type="button" data-lamp="fuel" data-color="amber" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 20.5V5A1.5 1.5 0 0 1 6.5 3.5h6A1.5 1.5 0 0 1 14 5v15.5"/><path d="M3.5 20.5h12"/><path d="M7 7h5v4H7z"/><path d="M14 9.5h1.5A1.5 1.5 0 0 1 17 11v4.6a1.2 1.2 0 0 0 2.4 0V8.6L17 6.2"/></svg><span class="lamp-label">Fuel smell</span></button>
+            <button class="lamp" type="button" data-lamp="adas" data-color="green" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7.2 14.2l1.1-3.3a1.5 1.5 0 0 1 1.4-1h4.6a1.5 1.5 0 0 1 1.4 1l1.1 3.3"/><rect x="6.2" y="14.2" width="11.6" height="3.6" rx="1.1"/><path d="M8 17.8v1.6M16 17.8v1.6"/><path d="M4.8 3.5 2.6 20.5M19.2 3.5l2.2 17"/></svg><span class="lamp-label">Driver assist</span></button>
+          </div>
+        </div>
+        <div class="lamp-details diagnosis-details" id="concern-details" aria-live="polite" data-reveal="right">
+          <div class="lamp-detail is-active" data-lamp-panel="cel" data-color="amber"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Check engine light</h3></div>
+          <div class="lamp-detail" data-lamp-panel="misfire" data-color="amber"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Misfire / runs rough</h3></div>
+          <div class="lamp-detail" data-lamp-panel="nostart" data-color="red"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>No start / no crank</h3></div>
+          <div class="lamp-detail" data-lamp-panel="stall" data-color="amber"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Stalls / shuts off</h3></div>
+          <div class="lamp-detail" data-lamp-panel="overheat" data-color="red"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Overheating / coolant loss</h3></div>
+          <div class="lamp-detail" data-lamp-panel="oil" data-color="red"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Oil leak / burning oil</h3></div>
+          <div class="lamp-detail" data-lamp-panel="trans" data-color="amber"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Shifting / transmission</h3></div>
+          <div class="lamp-detail" data-lamp-panel="brakes" data-color="red"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Brakes: noise, pedal, ABS</h3></div>
+          <div class="lamp-detail" data-lamp-panel="steering" data-color="amber"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Steering / pulling</h3></div>
+          <div class="lamp-detail" data-lamp-panel="noise" data-color="amber"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Clunk / suspension noise</h3></div>
+          <div class="lamp-detail" data-lamp-panel="vibration" data-color="amber"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Vibration / shake</h3></div>
+          <div class="lamp-detail" data-lamp-panel="electrical" data-color="red"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Battery drain / electrical</h3></div>
+          <div class="lamp-detail" data-lamp-panel="ac" data-color="blue"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>A/C or heat</h3></div>
+          <div class="lamp-detail" data-lamp-panel="airbag" data-color="red"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Airbag / SRS light</h3></div>
+          <div class="lamp-detail" data-lamp-panel="fuel" data-color="amber"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Fuel smell / leak / mileage</h3></div>
+          <div class="lamp-detail" data-lamp-panel="adas" data-color="green"><p class="diagnosis-lamp-kicker"><span class="diagnosis-lamp-dot" aria-hidden="true"></span>The concern</p><h3>Driver-assist warnings</h3></div>
+          <div class="diagnosis-pulls">
+            <p class="diagnosis-pulls-title">What Auto Diagnosis pulls for this</p>
+            <ul>
+              <li><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg></span><span><b>Recalls</b> for the model year</span></li>
+              <li><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span><span><b>Owner complaints</b> for one model year either side, ranked, with common phrases and typical failure mileage</span></li>
+              <li><span class="icon-tile icon-tile-sm icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span><span><b>Your shop&rsquo;s matching ROs</b></span></li>
+              <li><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span><span><b>Code meanings</b> with causes ordered most likely first</span></li>
+              <li><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg></span><span><b>General first checks</b>, labelled &ldquo;confirm with the OEM procedure&rdquo;</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <p class="diagnosis-caption" data-reveal><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg><span>Pick the vehicle from the shop, a customer or plate, a scanned or typed VIN, or year/make/model. P, B, C and U codes are picked out of what you type, and opening it from an RO brings in the concern and codes.</span></p>
+    </div>
+  </section>
+
+  <!-- ===== Where the answers come from ===== -->
+  <section class="section section-tint" id="sources" aria-labelledby="sources-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Sources</p>
+        <h2 id="sources-title">Where the answers come from</h2>
+        <p class="lead">Every lead says where it came from, so the tech knows how much weight to give it.</p>
+      </div>
+      <div class="grid grid-3 diagnosis-sources" data-reveal-stagger>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg></span><h3 class="mt-2">Recalls</h3><p>NHTSA recalls for the model year. One that may relate to the concern goes to the top of the quick answer.</p></div>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span><h3 class="mt-2">Owner complaints</h3><p>What owners reported to NHTSA for one model year either side, ranked against the concern, with common phrases and typical failure mileage.</p></div>
+        <div class="card diagnosis-fixed-card"><span class="icon-tile icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span><h3 class="mt-2">Fixed here before</h3><p>Your own ROs on the same make and model, then the same make, with a matching concern, code or cause.</p>
+          <figure class="mock-figure is-inline diagnosis-fixed-fig" data-reveal-seq aria-label="Example: spark plugs and ignition coil boots on the V6, fixed once at this shop in about 2.1 hours, with a link to the last repair order">
+            <span class="mock-tag">Example &middot; sample shop</span>
+            <div class="mock-stage" aria-hidden="true">
+              <div class="diagnosis-fixed" data-seq-i="0" data-fx="fade">
+                <span class="diagnosis-fixed-count"><span class="odometer is-plain" data-odometer="1" data-suffix="&times;">1&times;</span></span>
+                <span class="diagnosis-fixed-text"><b>Spark plugs &amp; ignition coil boots (V6)</b><small>At this shop &middot; about 2.1 h &middot; last RO linked</small></span>
+              </div>
+            </div>
+          </figure>
+        </div>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></span><h3 class="mt-2">Code meanings</h3><p>Generic SAE meanings, with causes ordered most likely first. Manufacturer-specific codes are flagged to look up in OEM information.</p></div>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg></span><h3 class="mt-2">First checks</h3><p>General first checks for each concern, labelled &ldquo;confirm with the OEM procedure.&rdquo;</p></div>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><h3 class="mt-2">AI test plan <span class="badge">Optional</span></h3><p>Claude builds a test plan from the same data. When you open Auto Diagnosis from an RO, you can save the plan to that RO&rsquo;s notes. Needs <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your Anthropic key.</p></div>
+      </div>
+      <div class="panel-wash diagnosis-wash" data-reveal>
+        <div class="diagnosis-wash-copy">
+          <h3 class="diagnosis-wash-title">Nothing is <span class="accent-text">invented</span></h3>
+          <p>Vehicle-specific facts come only from NHTSA data or your own repair orders. These are leads to verify, not a diagnosis, and the AI test plan always needs staff review.</p>
+        </div>
+        <ul class="checklist pop-list diagnosis-wash-list">
+          <li>Recalls and owner reports: NHTSA data</li>
+          <li>Fixed here before: your own repair orders</li>
+          <li>Opened from an RO, the findings go into its notes for the tech to verify</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VIN decoder ===== -->
+  <section class="section section-paper" id="vin" aria-labelledby="vin-title">
+    <div class="container split diagnosis-vin">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">VIN decoder</p>
+        <h2 id="vin-title">A VIN decoder that <span class="accent-text">runs on the device</span></h2>
+        <p>Type or scan a VIN and it decodes from NHTSA data that ships with the app. There&rsquo;s no outside VIN service.</p>
+        <ul class="checklist">
+          <li>Check digit (ISO 3779), model year and country always work offline, and so does the maker for common manufacturers.</li>
+          <li>The detailed decode for a maker, including six-character WMIs for small manufacturers, downloads once from the app and is kept for offline use.</li>
+          <li>Scan VIN barcodes with the camera.</li>
+        </ul>
+        <a class="link-arrow" href="../app/vin" data-no-prerender>VIN decoder in the sample shop <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+      </div>
+      <figure class="mock-figure diagnosis-vin-fig" data-reveal="right" data-reveal-seq aria-label="Example: the public sample VIN 1HGCM82633A004352 decoded on the device. Positions 1 to 3, 1HG, are the manufacturer: Honda, United States. Positions 4 to 8 are vehicle attributes. Position 9 is the check digit, 3, and it is valid. Position 10 is model year 2003, position 11 is plant A, and positions 12 to 17 are the serial, 004352.">
+        <span class="mock-tag">Example &middot; sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="diagnosis-vin-card">
+            <div class="mock-appbar"><span class="diagnosis-appicon"><svg class="icon"><use href="#i-vin"/></svg></span>VIN Decoder<span class="mock-chip is-ok diagnosis-offline"><svg class="icon"><use href="#i-wifi-off"/></svg>On this device</span></div>
+            <div class="diagnosis-vin-row">
+              <div class="diagnosis-vin-grid">
+                <span class="slot-roll is-boxed diagnosis-vin-roll" data-seq-i="0" data-fx="none" data-slots="1HGCM82633A004352" data-charset="vin" data-check="8">1HGCM82633A004352</span>
+                <svg class="diagnosis-brackets" viewBox="0 0 211 16">
+                  <path data-seq-i="5" data-fx="draw" pathLength="1" d="M1 1.5v2.5q0 3 3 3h10l1 3.5 1-3.5h10q3 0 3-3v-2.5"/>
+                  <path data-seq-i="5" data-fx="draw" pathLength="1" style="--fx-delay: .08s" d="M38.5 1.5v2.5q0 3 3 3h22.5l1 3.5 1-3.5h22.5q3 0 3-3v-2.5"/>
+                  <path class="is-check" data-seq-i="5" data-fx="draw" pathLength="1" style="--fx-delay: .16s" d="M101 1.5v2.5q0 3 3 3h.5l1 3.5 1-3.5h.5q3 0 3-3v-2.5"/>
+                  <path data-seq-i="5" data-fx="draw" pathLength="1" style="--fx-delay: .24s" d="M113.5 1.5v2.5q0 3 3 3h.5l1 3.5 1-3.5h.5q3 0 3-3v-2.5"/>
+                  <path data-seq-i="5" data-fx="draw" pathLength="1" style="--fx-delay: .32s" d="M126 1.5v2.5q0 3 3 3h.5l1 3.5 1-3.5h.5q3 0 3-3v-2.5"/>
+                  <path data-seq-i="5" data-fx="draw" pathLength="1" style="--fx-delay: .4s" d="M138.5 1.5v2.5q0 3 3 3h28.25l1 3.5 1-3.5h28.25q3 0 3-3v-2.5"/>
+                </svg>
+                <div class="diagnosis-vin-pos" data-seq-i="6" data-fx="fade">
+                  <span style="grid-column: 1 / 4">1&ndash;3</span><span style="grid-column: 4 / 9">4&ndash;8</span><span class="is-check" style="grid-column: 9">9</span><span style="grid-column: 10">10</span><span style="grid-column: 11">11</span><span style="grid-column: 12 / 18">12&ndash;17</span>
+                </div>
+              </div>
+            </div>
+            <dl class="diagnosis-decode" data-seq-i="6" data-fx="stagger" style="--fx: fx-drop; --fx-ease: var(--spring); --fx-dur: .6s; --fx-stagger: 90ms; --fx-delay: .15s">
+              <div><dt><span class="diagnosis-pos">1&ndash;3</span>Manufacturer (WMI)</dt><dd>1HG &middot; Honda, United States</dd></div>
+              <div><dt><span class="diagnosis-pos">4&ndash;8</span>Vehicle attributes</dt><dd>CM826</dd></div>
+              <div class="is-check"><dt><span class="diagnosis-pos">9</span>Check digit</dt><dd>3 <span class="diagnosis-valid" data-seq-i="8" data-fx="pop"><svg class="icon"><use href="#i-check"/></svg>Valid</span></dd></div>
+              <div><dt><span class="diagnosis-pos">10</span>Model year</dt><dd>2003</dd></div>
+              <div><dt><span class="diagnosis-pos">11</span>Plant</dt><dd>A</dd></div>
+              <div><dt><span class="diagnosis-pos">12&ndash;17</span>Serial</dt><dd>004352</dd></div>
+            </dl>
+          </div>
+        </div>
+        <p class="mock-caption">A public sample VIN, decoded with no internet connection.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Vehicle database ===== -->
+  <section class="section" id="database" aria-labelledby="database-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Vehicle database</p>
+        <h2 id="database-title">435 makes and 4,073 models, <span class="accent-text">built in</span></h2>
+        <p class="lead">Look up a configuration without leaving WPI Driveline Shop Management System. Model-year pages, system diagrams, parts lists and repair guides are generated from the data.</p>
+      </div>
+      <div class="diagnosis-stats" data-reveal>
+        <div class="diagnosis-stat"><span class="odometer" data-odometer="435" data-label="435 makes">435</span><span class="diagnosis-stat-label">makes</span></div>
+        <div class="diagnosis-stat"><span class="odometer" data-odometer="4073" data-group="," data-label="4,073 models" style="--odo-base: .15s">4,073</span><span class="diagnosis-stat-label">models</span></div>
+        <div class="diagnosis-stat"><span class="odometer" data-odometer="2027" data-label="Newest model year covered: 2027" style="--odo-base: .3s">2027</span><span class="diagnosis-stat-label">newest model year covered</span></div>
+        <div class="diagnosis-stat"><span class="odometer" data-odometer="725" data-label="725 trouble codes" style="--odo-base: .45s">725</span><span class="diagnosis-stat-label">trouble codes</span></div>
+      </div>
+      <p class="diagnosis-stats-caption" data-reveal>From NHTSA&rsquo;s vPIC database (public domain): passenger cars, SUVs, trucks and incomplete chassis. Vehicle data is saved on the device as you use it.</p>
+
+      <div class="split diagnosis-db">
+        <figure class="page-hero-art diagnosis-fire-fig" data-reveal="left" data-play data-seq="4" data-loops="1" data-step="3" data-reached="0 1 2 3" data-seq-ms="950" data-seq-hold="2200" aria-label="Illustration of a generated engine-layout diagram: a typical inline four-cylinder engine with cylinder 1 at the front. The cylinders light in the firing order 1, 3, 4, 2.">
+          <span class="diagnosis-art-label">Illustration<span class="diagnosis-art-more">&middot; typical inline four</span></span>
+          <svg class="diagnosis-fire-svg" viewBox="0 0 460 276" aria-hidden="true">
+            <defs>
+              <pattern id="diagnosis-dots" width="16" height="16" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#C9D6E6"/></pattern>
+              <linearGradient id="diagnosis-lit-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CFE2FA"/><stop offset="1" stop-color="#EEF5FE"/></linearGradient>
+              <linearGradient id="diagnosis-lit-green" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CBEBD8"/><stop offset="1" stop-color="#EDF8F2"/></linearGradient>
+              <radialGradient id="diagnosis-flash" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#FFF4D6"/><stop offset=".55" stop-color="#F7C65A" stop-opacity=".75"/><stop offset="1" stop-color="#F0A53A" stop-opacity="0"/></radialGradient>
+            </defs>
+            <rect x="0" y="0" width="460" height="276" rx="22" fill="url(#diagnosis-dots)" opacity=".7"/>
+            <!-- front of the engine: cylinder 1 -->
+            <g class="diagnosis-front">
+              <path d="M44 146H18m7-7-7 7 7 7" fill="none" stroke="#7D8DA3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="31" y="170" text-anchor="middle">FRONT</text>
+            </g>
+            <!-- block, crankshaft. Pistons are drawn schematically, all at the same height, so no cylinder fires at bottom dead center -->
+            <rect class="art-ink art-paper" x="60" y="58" width="378" height="180" rx="20"/>
+            <path class="diagnosis-crank" d="M74 221H424"/>
+            <g class="diagnosis-cyl">
+              <rect class="diagnosis-bore" x="82" y="80" width="70" height="120" rx="12"/>
+              <rect class="diagnosis-lit is-blue" data-at="0" data-fx="fade" x="82" y="80" width="70" height="38" rx="12"/>
+              <ellipse class="diagnosis-spark" data-at="0" style="--fx: diagnosis-spark; --fx-dur: .9s" cx="117" cy="99" rx="30" ry="18" fill="url(#diagnosis-flash)"/>
+              <path class="diagnosis-rod" d="M117 148V212"/>
+              <rect class="diagnosis-piston" x="87" y="118" width="60" height="32" rx="6"/>
+              <path class="diagnosis-ring" d="M95 128h44M95 134h44"/>
+              <circle class="diagnosis-throw" cx="117" cy="212" r="6"/>
+              <rect class="diagnosis-plug" x="110" y="40" width="14" height="24" rx="3"/>
+              <g class="diagnosis-badge" data-at="0" data-fx="pop"><rect x="94" y="8" width="46" height="24" rx="12"/><text x="117" y="25" text-anchor="middle">1st</text></g>
+              <text class="diagnosis-cyl-num" x="117" y="264" text-anchor="middle">Cyl 1</text>
+            </g>
+            <g class="diagnosis-cyl">
+              <rect class="diagnosis-bore" x="170" y="80" width="70" height="120" rx="12"/>
+              <rect class="diagnosis-lit is-green" data-at="3" data-fx="fade" x="170" y="80" width="70" height="38" rx="12"/>
+              <ellipse class="diagnosis-spark" data-at="3" style="--fx: diagnosis-spark; --fx-dur: .9s" cx="205" cy="99" rx="30" ry="18" fill="url(#diagnosis-flash)"/>
+              <path class="diagnosis-rod" d="M205 148V212"/>
+              <rect class="diagnosis-piston" x="175" y="118" width="60" height="32" rx="6"/>
+              <path class="diagnosis-ring" d="M183 128h44M183 134h44"/>
+              <circle class="diagnosis-throw" cx="205" cy="212" r="6"/>
+              <rect class="diagnosis-plug" x="198" y="40" width="14" height="24" rx="3"/>
+              <g class="diagnosis-badge is-green" data-at="3" data-fx="pop"><rect x="182" y="8" width="46" height="24" rx="12"/><text x="205" y="25" text-anchor="middle">4th</text></g>
+              <text class="diagnosis-cyl-num" x="205" y="264" text-anchor="middle">Cyl 2</text>
+            </g>
+            <g class="diagnosis-cyl">
+              <rect class="diagnosis-bore" x="258" y="80" width="70" height="120" rx="12"/>
+              <rect class="diagnosis-lit is-blue" data-at="1" data-fx="fade" x="258" y="80" width="70" height="38" rx="12"/>
+              <ellipse class="diagnosis-spark" data-at="1" style="--fx: diagnosis-spark; --fx-dur: .9s" cx="293" cy="99" rx="30" ry="18" fill="url(#diagnosis-flash)"/>
+              <path class="diagnosis-rod" d="M293 148V212"/>
+              <rect class="diagnosis-piston" x="263" y="118" width="60" height="32" rx="6"/>
+              <path class="diagnosis-ring" d="M271 128h44M271 134h44"/>
+              <circle class="diagnosis-throw" cx="293" cy="212" r="6"/>
+              <rect class="diagnosis-plug" x="286" y="40" width="14" height="24" rx="3"/>
+              <g class="diagnosis-badge" data-at="1" data-fx="pop"><rect x="270" y="8" width="46" height="24" rx="12"/><text x="293" y="25" text-anchor="middle">2nd</text></g>
+              <text class="diagnosis-cyl-num" x="293" y="264" text-anchor="middle">Cyl 3</text>
+            </g>
+            <g class="diagnosis-cyl">
+              <rect class="diagnosis-bore" x="346" y="80" width="70" height="120" rx="12"/>
+              <rect class="diagnosis-lit is-green" data-at="2" data-fx="fade" x="346" y="80" width="70" height="38" rx="12"/>
+              <ellipse class="diagnosis-spark" data-at="2" style="--fx: diagnosis-spark; --fx-dur: .9s" cx="381" cy="99" rx="30" ry="18" fill="url(#diagnosis-flash)"/>
+              <path class="diagnosis-rod" d="M381 148V212"/>
+              <rect class="diagnosis-piston" x="351" y="118" width="60" height="32" rx="6"/>
+              <path class="diagnosis-ring" d="M359 128h44M359 134h44"/>
+              <circle class="diagnosis-throw" cx="381" cy="212" r="6"/>
+              <rect class="diagnosis-plug" x="374" y="40" width="14" height="24" rx="3"/>
+              <g class="diagnosis-badge is-green" data-at="2" data-fx="pop"><rect x="358" y="8" width="46" height="24" rx="12"/><text x="381" y="25" text-anchor="middle">3rd</text></g>
+              <text class="diagnosis-cyl-num" x="381" y="264" text-anchor="middle">Cyl 4</text>
+            </g>
+          </svg>
+          <p class="diagnosis-fire-order"><span>Firing order</span> <span class="diagnosis-fire-seq"><b>1</b><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg><b>3</b><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg><b>4</b><svg class="icon" aria-hidden="true"><use href="#i-chevron-right"/></svg><b>2</b></span></p>
+          <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        </figure>
+        <div class="diagnosis-db-list">
+          <div class="grid diagnosis-db-cards" data-reveal-stagger>
+            <div class="card diagnosis-db-card"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-car"/></svg></span><div><h3>Model-year pages</h3><p>Engines, drive types, bodies, transmissions, trims and plants, each tied to the VIN codes that select it (including the 8th-digit engine code), plus a VIN pattern table.</p></div></div>
+            <div class="card diagnosis-db-card"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-plug"/></svg></span><div><h3>Generated system diagrams</h3><p>Engine layout with cylinder numbering and firing order, engine-control inputs and outputs, starting &amp; charging, drivetrain, cooling or EV thermal loops, brake hydraulics, network topology, OBD-II pins in use, and the high-voltage system on hybrids and EVs.</p></div></div>
+            <div class="card diagnosis-db-card"><span class="icon-tile icon-tile-sm icon-tile-green"><svg class="icon" aria-hidden="true"><use href="#i-wrench"/></svg></span><div><h3>Parts lists and repair guides</h3><p>A service parts list per configuration, matched to your inventory, and up to 17 general repair guides chosen for the configuration, with tools, steps and cautions.</p></div></div>
+          </div>
+          <p class="diagnosis-search" data-reveal><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg><span>Search from the page or the command palette: <span class="kbd">&#8984;K</span>, or <span class="kbd">Ctrl K</span> on Windows.</span></p>
+          <a class="link-arrow" href="../app/catalog" data-no-prerender data-reveal>Vehicle database in the sample shop <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Service library ===== -->
+  <section class="section section-tint" id="library" aria-labelledby="library-title">
+    <div class="container">
+      <div class="split diagnosis-lib">
+        <div class="section-copy" data-reveal="left">
+          <p class="eyebrow">Reference shelf</p>
+          <h2 id="library-title">The service <span class="accent-text">library</span></h2>
+          <p>Factory portals, free documents, wiring references, trouble codes and shop calculators, under Technical in the app or from the command palette.</p>
+          <a class="link-arrow" href="../app/library" data-no-prerender>Service library in the sample shop <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+        </div>
+        <figure class="page-hero-art diagnosis-obd-fig" data-reveal="right" data-reveal-seq data-play aria-label="Illustration of the SAE J1962 OBD-II connector, front view: sixteen pins in two rows light up one by one, then pin 6, CAN high, and pin 14, CAN low, pulse together.">
+          <svg class="diagnosis-obd" viewBox="0 0 460 290" aria-hidden="true">
+            <ellipse class="art-tint" cx="230" cy="150" rx="222" ry="132" opacity=".7"/>
+            <!-- connector shell -->
+            <path class="diagnosis-obd-shell" d="M74 62H386Q398 62 395.6 73.8L370.4 198.2Q368 210 356 210H104Q92 210 89.6 198.2L64.4 73.8Q62 62 74 62Z"/>
+            <path class="diagnosis-obd-inner" d="M88 76H372Q380 76 378.3 83.8L355.7 188.2Q354 196 346 196H114Q106 196 104.3 188.2L81.7 83.8Q80 76 88 76Z"/>
+            <!-- unlit sockets -->
+            <g class="diagnosis-sockets">
+              <rect x="105" y="96" width="16" height="24" rx="4"/><rect x="138" y="96" width="16" height="24" rx="4"/><rect x="171" y="96" width="16" height="24" rx="4"/><rect x="204" y="96" width="16" height="24" rx="4"/><rect x="237" y="96" width="16" height="24" rx="4"/><rect x="270" y="96" width="16" height="24" rx="4"/><rect x="303" y="96" width="16" height="24" rx="4"/><rect x="336" y="96" width="16" height="24" rx="4"/>
+              <rect x="115" y="140" width="16" height="24" rx="4"/><rect x="146" y="140" width="16" height="24" rx="4"/><rect x="177" y="140" width="16" height="24" rx="4"/><rect x="208" y="140" width="16" height="24" rx="4"/><rect x="239" y="140" width="16" height="24" rx="4"/><rect x="270" y="140" width="16" height="24" rx="4"/><rect x="301" y="140" width="16" height="24" rx="4"/><rect x="332" y="140" width="16" height="24" rx="4"/>
+            </g>
+            <!-- pins light in order, 1 to 16 -->
+            <g class="diagnosis-pins-lit" data-seq-i="1" data-fx="stagger" style="--fx: fx-pop; --fx-stagger: 70ms; --fx-dur: .45s">
+              <rect x="105" y="96" width="16" height="24" rx="4"/><rect x="138" y="96" width="16" height="24" rx="4"/><rect x="171" y="96" width="16" height="24" rx="4"/><rect x="204" y="96" width="16" height="24" rx="4"/><rect x="237" y="96" width="16" height="24" rx="4"/><rect x="270" y="96" width="16" height="24" rx="4"/><rect x="303" y="96" width="16" height="24" rx="4"/><rect x="336" y="96" width="16" height="24" rx="4"/>
+              <rect x="115" y="140" width="16" height="24" rx="4"/><rect x="146" y="140" width="16" height="24" rx="4"/><rect x="177" y="140" width="16" height="24" rx="4"/><rect x="208" y="140" width="16" height="24" rx="4"/><rect x="239" y="140" width="16" height="24" rx="4"/><rect x="270" y="140" width="16" height="24" rx="4"/><rect x="301" y="140" width="16" height="24" rx="4"/><rect x="332" y="140" width="16" height="24" rx="4"/>
+            </g>
+            <!-- CAN high (6) and CAN low (14) pulse together -->
+            <rect class="diagnosis-can is-blue" data-seq-i="5" style="--fx: diagnosis-can; --fx-dur: 1.5s" x="270" y="96" width="16" height="24" rx="4"/>
+            <rect class="diagnosis-can is-green" data-seq-i="5" style="--fx: diagnosis-can; --fx-dur: 1.5s" x="270" y="140" width="16" height="24" rx="4"/>
+            <!-- pin numbers -->
+            <g class="diagnosis-pin-nums">
+              <text x="113" y="90">1</text><text x="146" y="90">2</text><text x="179" y="90">3</text><text x="212" y="90">4</text><text x="245" y="90">5</text><text class="is-can" x="278" y="90">6</text><text x="311" y="90">7</text><text x="344" y="90">8</text>
+              <text x="123" y="184">9</text><text x="154" y="184">10</text><text x="185" y="184">11</text><text x="216" y="184">12</text><text x="247" y="184">13</text><text class="is-can" x="278" y="184">14</text><text x="309" y="184">15</text><text x="340" y="184">16</text>
+            </g>
+            <!-- CAN callouts -->
+            <g class="diagnosis-can-callout" data-seq-i="6" data-fx="fade">
+              <path d="M278 58V40h52" fill="none" stroke="#1F7AE0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <g class="diagnosis-can-pill">
+                <rect x="330" y="26" width="120" height="28" rx="14" class="is-blue"/>
+                <circle cx="346" cy="40" r="4.5" fill="#1F7AE0"/>
+                <text x="356" y="45.5">6 &middot; CAN high</text>
+              </g>
+              <path d="M278 214v16h52" fill="none" stroke="#2DB36A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <g class="diagnosis-can-pill">
+                <rect x="330" y="216" width="120" height="28" rx="14" class="is-green"/>
+                <circle cx="346" cy="230" r="4.5" fill="#2DB36A"/>
+                <text x="356" y="235.5">14 &middot; CAN low</text>
+              </g>
+            </g>
+            <text class="diagnosis-svg-note" x="230" y="278" text-anchor="middle">SAE J1962 &middot; front view</text>
+          </svg>
+          <figcaption class="diagnosis-obd-caption">One of the library&rsquo;s CAN tests: pins 6 to 14 with the battery disconnected should read about 60&nbsp;&Omega;, two 120&nbsp;&Omega; terminators in parallel.</figcaption>
+        </figure>
+      </div>
+      <div class="grid grid-4 diagnosis-lib-cards" data-reveal-stagger>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg></span><h3 class="mt-2">OEM service information</h3><p>22 OEM service-information portals for factory manuals, wiring diagrams, TSBs and programming. They&rsquo;re links; the subscriptions are yours.</p></div>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><h3 class="mt-2">Free documents</h3><p>33 free official documents, such as body-builder guides and emergency-response guides, plus 15 industry &amp; safety resources.</p></div>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-plug"/></svg></span><h3 class="mt-2">Wiring &amp; pinouts</h3><p>An interactive SAE J1962 OBD-II pinout with CAN tests, a relay schematic, fuse colors, OEM wire-color abbreviations, trailer connectors and an AWG table.</p></div>
+        <div class="card"><span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-gauge"/></svg></span><h3 class="mt-2">Codes &amp; calculators</h3><p>725 generic OBD-II codes, with causes and checks for the 65 most common. Calculators for voltage drop and wire sizing, Ohm&rsquo;s law, tire size and unit conversions.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> internet for NHTSA lookups. They&rsquo;re free and need no key.</li>
+            <li><strong>Recalls match by year, make and model.</strong> They aren&rsquo;t a VIN-specific open-recall status; there&rsquo;s a link to NHTSA&rsquo;s VIN lookup for that.</li>
+            <li><strong>First checks are general,</strong> not make-specific.</li>
+            <li><strong>The AI test plan</strong> uses <a href="../works-with.html#shop-cloud">Shop Cloud</a> and your Anthropic API key.</li>
+            <li><strong>Diagrams, parts lists and guides are generated,</strong> with inferred items labelled typical. Torque values, capacities, component pinouts and wire colors are left to factory service information.</li>
+            <li><strong>It isn&rsquo;t a replacement</strong> for ALLDATA, Mitchell or OEM information.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Diagnosis questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="diagnosis-faq"><summary>Is it a diagnosis?</summary><div class="faq-body"><p>No. It gives ranked leads to verify, each with its source. The tech still tests the car.</p></div></details>
+        <details class="faq" name="diagnosis-faq"><summary>Does it need AI?</summary><div class="faq-body"><p>No. Recalls, owner reports, your shop&rsquo;s history, code meanings and first checks all work without it. The AI test plan is optional.</p></div></details>
+        <details class="faq" name="diagnosis-faq"><summary>Does the VIN decoder need internet?</summary><div class="faq-body"><p>It doesn&rsquo;t use an outside service. Check digit, year and country work offline, and so does the maker for common manufacturers. Once a maker&rsquo;s detailed data is on the device, that works offline too.</p></div></details>
+        <details class="faq" name="diagnosis-faq"><summary>Does it include factory wiring diagrams?</summary><div class="faq-body"><p>No. The service library links to the OEM service-information portals, and the subscriptions are yours.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Related ===== -->
+  <section class="section section-sm diagnosis-related" id="related" aria-labelledby="related-title">
+    <div class="container">
+      <h2 id="related-title" class="h3">Works alongside</h2>
+      <!-- @partial related -->
+<div class="grid grid-3 related" data-related data-reveal-stagger>
+  <a class="card card-link feature-card" href="../features/workflow.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span>
+    <h3>Workflow board, Today &amp; tech clock</h3>
+    <p>Every car by stage. <span class="nowrap">One-tap</span> job timers.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="../features/parts.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span>
+    <h3>Parts, inventory &amp; tires</h3>
+    <p>On the shelf, on the job, on order. Scan it.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="../features/ai.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span>
+    <h3>AI assistant</h3>
+    <p>First drafts from Claude for your team to review, plus an AI receptionist for calls.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+</div>
+<!-- @end related -->
+    </div>
+  </section>
+</main>
+
+<!-- @partial cta -->
+<section class="cta-road" aria-labelledby="cta-road-title">
+  <div class="container cta-road-inner">
+    <div class="cta-road-copy" data-reveal>
+      <p class="eyebrow">Ready when you are</p>
+      <h2 id="cta-road-title">See your own shop day in it.</h2>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
+    </div>
+    <div class="cta-road-actions" data-reveal>
+      <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
+      <a class="btn btn-secondary btn-lg" href="../app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Try the sample shop</a>
+    </div>
+  </div>
+  <div class="road" aria-hidden="true">
+    <span class="road-status"><span class="road-status-wip">In progress</span><span class="road-status-paid">Paid &middot; RO closed</span></span>
+    <div class="road-surface"><span class="road-dashes"></span></div>
+    <svg class="road-car" viewBox="0 0 32 14"><use href="#i-car-mini"/></svg>
+  </div>
+</section>
+<!-- @end cta -->
+<!-- @partial footer -->
+<footer class="site-footer" id="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
+        <img src="../assets/img/logo.svg" alt="" width="653" height="361" loading="lazy" decoding="async">
+        <span class="footer-card-tagline">Shop Management System</span>
+      </a>
+      <p class="footer-blurb">WPI Driveline Shop Management System runs the repair-shop day, from check-in to paid, on the counter PC, the bay tablet and your phone. Installs from the browser and works offline.</p>
+      <p class="footer-pill">Works offline &middot; installs from the browser</p>
+    </div>
+    <nav class="footer-col" aria-labelledby="footer-product">
+      <h2 id="footer-product">Product</h2>
+      <ul>
+        <li><a href="../features/booking.html">Booking &amp; check-in</a></li>
+        <li><a href="../features/messaging.html">Texting, calls &amp; email</a></li>
+        <li><a href="../features/customers.html">Customers &amp; follow-ups</a></li>
+        <li><a href="../features/workflow.html">Workflow &amp; tech clock</a></li>
+        <li><a href="../features/inspections.html">Inspections &amp; approvals</a></li>
+        <li><a href="../features/diagnosis.html" aria-current="page">Auto Diagnosis</a></li>
+        <li><a href="../features/parts.html">Parts, inventory &amp; tires</a></li>
+        <li><a href="../features/repair-orders.html">Estimates &amp; ROs</a></li>
+        <li><a href="../features/payments.html">Payments &amp; card readers</a></li>
+        <li><a href="../features/fleet.html">Fleet accounts</a></li>
+        <li><a href="../features/reports.html">Reports &amp; QuickBooks</a></li>
+        <li><a href="../features/ai.html">AI assistant</a></li>
+        <li><a href="../mobile.html">iPhone &amp; iPad</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../works-with.html">Integrations</a></li>
+        <li><a href="../security.html">Security</a></li>
+        <li><a href="../privacy.html">Privacy</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col">
+      <nav aria-labelledby="footer-help">
+        <h2 id="footer-help">Help</h2>
+        <ul>
+          <li><a href="../faq.html">FAQ</a></li>
+          <li><a href="../demo.html">Request a demo</a></li>
+          <li><a href="../app/" data-no-prerender>Try the sample shop</a></li>
+          <li><a href="../app/signin" data-no-prerender>Sign in</a></li>
+        </ul>
+      </nav>
+      <h2 class="footer-subhead">Talk to us</h2>
+      <p class="footer-talk">
+        <a class="footer-contact" href="../demo.html?topic=question"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Use the demo form</span></a>
+      </p>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span data-year>2026</span> WPI Driveline</p>
+    <p class="footer-links"><a href="../privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="../faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a><span aria-hidden="true">&middot;</span><a href="../app/signin" data-no-prerender>Sign in</a></p>
+    <button class="motion-toggle" type="button" aria-pressed="false"><svg class="icon mt-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="icon mt-play" aria-hidden="true"><use href="#i-play"/></svg><span class="motion-toggle-label">Pause animations</span></button>
+  </div>
+</footer>
+<!-- @end footer -->
+<!-- @partial tabbar -->
+<nav class="tabbar" aria-label="Quick navigation">
+  <a class="tab" href="../index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+  <a class="tab is-active" href="../features.html" data-nav="features" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Features</span></a>
+  <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
+  <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
+  <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
+</nav>
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="more-sheet-title">WPI Driveline Shop Management System</h2>
+      <button class="icon-btn" type="button" data-close-sheet aria-label="Close menu" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheet-quick">
+      <a class="quick-action is-primary" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg><span>Request a demo</span></a>
+      <a class="quick-action" href="../app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg><span>Try the sample shop</span></a>
+      <a class="quick-action" href="../app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span>Sign in</span></a>
+    </div>
+    <h3 class="sheet-label">Explore</h3>
+    <ul class="sheet-grid">
+      <li><a href="../index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a></li>
+      <li><a class="is-active" href="../features.html" data-nav="features" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Features</a></li>
+      <li><a href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>iPhone &amp; iPad</a></li>
+      <li><a href="../works-with.html" data-nav="integrations"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg>Integrations</a></li>
+      <li><a href="../security.html" data-nav="security"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Security</a></li>
+      <li><a href="../about.html" data-nav="about"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>About</a></li>
+      <li><a href="../faq.html" data-nav="faq"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+      <li><a href="../privacy.html" data-nav="privacy"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Privacy</a></li>
+    </ul>
+    <h3 class="sheet-label">Features</h3>
+    <ul class="sheet-list">
+      <li><a href="../features/booking.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Booking &amp; check-in<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/messaging.html"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Texting, calls &amp; email<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/customers.html"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Customers &amp; follow-ups<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/workflow.html"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Workflow &amp; tech clock<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/inspections.html"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspections &amp; approvals<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/diagnosis.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg>Auto Diagnosis<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/parts.html"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg>Parts, inventory &amp; tires<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/repair-orders.html"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>Estimates &amp; ROs<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/payments.html"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Payments &amp; card readers<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/fleet.html"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet accounts<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/reports.html"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Reports &amp; QuickBooks<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/ai.html"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>AI assistant<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+    </ul>
+    <div class="sheet-foot">
+      <button class="motion-toggle" type="button" aria-pressed="false"><svg class="icon mt-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="icon mt-play" aria-hidden="true"><use href="#i-play"/></svg><span class="motion-toggle-label">Pause animations</span></button>
+    </div>
+  </div>
+</dialog>
+<!-- @end tabbar -->
+</body>
+</html>

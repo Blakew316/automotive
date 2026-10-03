@@ -26,7 +26,7 @@ async function run(staff) {
     return route.fulfill({ status: 404, body: '{}' });
   });
   await page.goto(BASE + '/settings?tab=cloud');
-  await page.getByText('Connected to the WPI Driveline cloud').waitFor();
+  await page.getByText('Connected to the WPI Driveline Shop Management System cloud').waitFor();
   await page.waitForFunction(() => window.__autoshop);
 const s0 = await page.evaluate(() => window.__autoshop.state());
   ok(s0.shop.cloud.url === CLOUD && s0.shop.cloud.bucket === 'autoshop-media', 'fresh install is preconfigured for the AutoShop Pro project');
@@ -51,8 +51,14 @@ const s0 = await page.evaluate(() => window.__autoshop.state());
     await page.goto(BASE + '/integrations');
     await page.getByText('Connected', { exact: true }).first().waitFor({ timeout: 5000 });
     ok(true, 'integrations shows Shop Cloud connected');
-    const site = await page.locator('a', { hasText: 'Open' }).first().getAttribute('href');
-    ok(site === ROOT, 'shop website opens the public site');
+    // Your website: only the shop's own address, never the product site the app is published with.
+    const web = page.getByRole('group', { name: 'Your website', exact: true });
+    ok((await web.getByRole('link', { name: /Open/ }).count()) === 0 && (await web.getByText('Add address').count()) === 1, 'no website Open link until the shop adds its own address');
+    ok(!(await page.locator(`a[href="${ROOT}"]`).count()), 'nothing on Integrations links to the product site as the shop website');
+    await page.evaluate(() => window.__autoshop.update((s) => void (s.shop.website = { url: 'https://www.mainstreetauto.example' })));
+    await web.getByText('Live').waitFor();
+    ok((await web.getByRole('link', { name: /Open/ }).getAttribute('href')) === 'https://www.mainstreetauto.example', 'website Open goes to the shop’s own address');
+    ok((await web.getByRole('link', { name: 'Details' }).getAttribute('href')).endsWith('/settings?tab=website'), 'website Details opens Settings → Website');
   } else {
     await page.getByText('isn’t marked as shop staff').first().waitFor();
     ok(true, 'non-staff account warned');

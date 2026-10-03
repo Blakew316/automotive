@@ -132,6 +132,7 @@ ok(r.status === 200 && r.body.id, 'advisor sends a customer email');
 ok(sent.from === 'Main Street Auto <service@MainStreetAuto.com>' && sent.to[0] === 'jane@example.com' && sent.reply_to === 'office@mainstreetauto.com', 'from the shop’s address, replies to the shop inbox');
 ok(sent.text.includes('<b>today</b>') && sent.html.includes('&lt;b&gt;today&lt;/b&gt;') && !sent.html.includes('<b>today'), 'plain text kept; HTML version escaped');
 ok(sent.html.includes('<a href="https://pay.example/x"') && sent.html.includes('Main Street Auto') && sent.html.includes('(512) 555-0100'), 'links clickable, shop name and phone in the layout');
+ok(!/WPI Driveline|Powered by/.test(sent.html + sent.text), 'customer emails carry the shop’s name only, no software mark');
 ok(sent.attachments.length === 1 && sent.attachments[0].filename === 'Estimate-1042-Main..Street.pdf' && sent.attachments[0].content === pdf, 'PDF attached, filename made safe');
 ok(sent.tags[0].name === 'kind' && sent.tags[0].value === 'estimate', 'tagged by kind');
 await call(ADVISOR, { action: 'send', to: 'jane@example.com', subject: 'Line one\r\nBcc: x@evil.co', text: 'Pay here: "https://pay.example/a?b=1&c=2".', shop: { name: 'Main Street Auto' } });
@@ -149,6 +150,9 @@ world.resendDown = false;
 ok((await call(ADVISOR, { action: 'test' })).status === 403, 'only owners and managers send tests');
 r = await call(MANAGER, { action: 'test', shop: 'Main Street Auto' });
 ok(r.status === 200 && r.body.to === 'mgr@shop.test' && world.resend.at(-1).body.to[0] === 'mgr@shop.test', 'test goes to the signed-in manager');
+ok(world.resend.at(-1).body.subject === 'Test email from Main Street Auto' && world.resend.at(-1).body.html.includes('This is a test from WPI Driveline Shop Management System.'), 'test email: the shop in the subject, the software named in the body');
+await call(MANAGER, { action: 'test' });
+ok(world.resend.at(-1).body.subject === 'Test email from WPI Driveline Shop Management System', 'test email with no shop name: the software’s full name in the subject');
 
 // ---- Daily summary (pg_cron).
 ok((await call(null, { action: 'digest' }, { 'x-dispatch-secret': 'wrong' })).status === 403, 'summary needs the dispatch secret');
@@ -159,12 +163,13 @@ const before = world.resend.length;
 r = await call(null, { action: 'digest' }, { 'x-dispatch-secret': 'disp-123' });
 sent = world.resend.at(-1).body;
 ok(r.body.sent === 2 && world.resend.length === before + 1 && sent.to.length === 2 && sent.subject.startsWith('Main Street Auto — '), 'summary emailed to both recipients');
+ok(sent.html.includes('Numbers as of 5:40 PM from WPI Driveline Shop Management System.'), 'summary footer names the software');
 ok(sent.html.includes('$4,210.50') && sent.html.includes('ARO $601.50') && sent.html.includes('Jane Cooper') && sent.html.includes('2 ROs past the promised time') && sent.html.includes('$1,830.25'), 'summary has sales, ARO, receivables, tomorrow and attention items');
 ok(world.digest.last_sent === today('America/Chicago'), 'marked sent for today');
 ok((await call(null, { action: 'digest' }, { 'x-dispatch-secret': 'disp-123' })).body.skipped === 'already sent', 'never twice in a day');
 Object.assign(world.digest, { last_sent: null, snapshot_day: '2000-01-01' });
 await call(null, { action: 'digest' }, { 'x-dispatch-secret': 'disp-123' });
-ok(/No device has been open/.test(world.resend.at(-1).body.html), 'stale numbers: says so instead of sending old figures');
+ok(/No device has been open in WPI Driveline Shop Management System today/.test(world.resend.at(-1).body.html), 'stale numbers: says so instead of sending old figures');
 
 // ---- Delivery webhook (Svix signatures).
 const hook = await load('email-webhook');

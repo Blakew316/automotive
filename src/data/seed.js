@@ -810,6 +810,9 @@ export function createSeed(now = new Date()) {
   return {
     version: 2,
     seededAt: now.toISOString(),
+    // This is the made-up sample shop: the app shows a banner with a way back to the product's site
+    // until the shop is replaced or someone signs in. Local only — it never syncs or goes in a backup.
+    sample: true,
     shop: { ...shop, ...extras.shopExtras, frontDesk: shop.frontDesk },
     technicians: extras.technicians,
     customers,

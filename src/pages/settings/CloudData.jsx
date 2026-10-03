@@ -4,7 +4,7 @@ import { CloudUpload, CloudDownload, RefreshCw, Monitor, LogOut, ShieldCheck, Da
 import { useShop, useSync, useUI, useAccess } from '../../store/hooks';
 import { Modal, Spinner, InlineText, Field } from '../../components/ui';
 import { listBackups, getBackup, backupNow, restoreBackup } from '../../lib/sync/api';
-import { stateFromRows } from '../../lib/sync/records';
+import { stateFromRows, withoutLocal } from '../../lib/sync/records';
 import { downloadJson, syncLabel } from '../../lib/sync/labels';
 import Section from './Section';
 
@@ -115,7 +115,7 @@ export function SyncSection() {
               Start with an empty shop
             </button>
           </div>
-          <p className="text-xs text-ink-3">“Use this device’s data” uploads the {state.orders.length} repair orders and {state.customers.length} customers here (including demo data if you haven’t cleared it). “Start with an empty shop” keeps your settings, rates, service menu and team but removes customers, vehicles and orders.</p>
+          <p className="text-xs text-ink-3">“Use this device’s data” uploads the {state.orders.length} repair orders and {state.customers.length} customers here (including the sample shop’s made-up records if you haven’t cleared them). “Start with an empty shop” keeps your settings, rates, service menu and team but removes customers, vehicles and orders.</p>
         </div>
       ) : (
         <p className="text-sm text-ink-2">Ask the shop owner to turn on shared data, then load it here.</p>
@@ -165,7 +165,7 @@ export function SyncSection() {
           {confirm === 'leave' && 'This device keeps its current copy but stops sending and receiving changes. You can load the shared data again any time.'}
         </p>
         {confirm === 'join' && (
-          <button className="btn-plain btn-sm mt-2 px-0" onClick={() => downloadJson(state, `wpi-driveline-this-device-${new Date().toISOString().slice(0, 10)}.json`)}>
+          <button className="btn-plain btn-sm mt-2 px-0" onClick={() => downloadJson(withoutLocal(state), `wpi-driveline-this-device-${new Date().toISOString().slice(0, 10)}.json`)}>
             <Download size={13} /> Download this device’s data first
           </button>
         )}
@@ -211,6 +211,7 @@ export function CloudBackups() {
     try {
       const full = await getBackup(cfg, b.id);
       const rows = (full?.data || []).map(([collection, id, data]) => ({ collection, id, data }));
+      // Only what the cloud holds — device-local flags such as the sample-shop marker never go in a backup.
       const skeleton = { version: 2, seededAt: full.created_at, shop: {}, counters: {} };
       for (const k of Object.keys(state)) if (Array.isArray(state[k])) skeleton[k] = [];
       downloadJson(stateFromRows(rows, skeleton), `wpi-driveline-cloud-backup-${full.created_at.slice(0, 10)}.json`);

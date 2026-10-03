@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 /*
- * Design tokens — the WPI Driveline logo in light hues. A pale blue-grey canvas, white cards and a
- * near-white sidebar; the logo's navy is the ink, its blue is the accent for actions, links and the
- * current page, and its two-tone bar (blue, then green) is the signature line. Status color
- * (green/amber/red) is reserved for meaning and appears only as dots, thin tints and small pills.
+ * Design tokens — the WPI Driveline Shop Management System logo in light hues. A pale blue-grey
+ * canvas, white cards and a near-white sidebar; the logo's navy is the ink, its blue is the accent for
+ * actions, links and the current page, and its two-tone bar (blue, then green) is the signature line.
+ * Status color (green/amber/red) is reserved for meaning and appears only as dots, thin tints and small
+ * pills.
  *
  * A small family of cool hues (blue, periwinkle, cyan, green — the hue-* tokens) tells the sections
  * apart on icon tiles, the sidebar and avatars — always as light tints or thin lines, never big blocks.

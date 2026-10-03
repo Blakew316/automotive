@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Phone, CalendarPlus, CreditCard, Link2Off, RefreshCw, Activity, FileText, Truck } from 'lucide-react';
-import { ShopBrand } from '../brand/Logo';
+import { PoweredBy, ShopBrand } from '../brand/Logo';
+import { titleName, usePageTitle } from '../brand/title';
 import { EmptyState, Spinner, Segmented } from '../components/ui';
 import AgingBar from '../components/AgingBar';
 import { parseShareSource } from '../lib/cloudShare';
@@ -21,6 +22,7 @@ export default function FleetPortal() {
   const [data, setData] = useState(null);
   const [error, setError] = useState(source ? '' : 'This link is incomplete.');
   const [filter, setFilter] = useState('all');
+  usePageTitle(data ? `${data.company || 'Fleet account'} — ${titleName(data.shop?.name)}` : '');
 
   useEffect(() => {
     if (!source || !/^[\w-]{10,64}$/.test(id || '')) return undefined;
@@ -226,6 +228,7 @@ export default function FleetPortal() {
           </span>
           {error && <span className="text-warn">{error}</span>}
         </p>
+        <PoweredBy name={data.shop.name} />
       </main>
     </div>
   );

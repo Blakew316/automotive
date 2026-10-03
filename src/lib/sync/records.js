@@ -3,7 +3,18 @@
 
 export const META = 'meta';
 export const SINGLETONS = ['shop', 'counters'];
-const SKIP = new Set(['version', 'seededAt']);
+// Device-local markers (sample: this device is showing the made-up sample shop). They never sync
+// and never go in a backup, so a backup or the shop's shared data is always the shop's own.
+const LOCAL = ['sample'];
+const SKIP = new Set(['version', 'seededAt', ...LOCAL]);
+
+/** A state without its device-local markers: for backups, imports and fresh starts. */
+export function withoutLocal(state) {
+  if (!state || !LOCAL.some((k) => k in state)) return state;
+  const out = { ...state };
+  for (const k of LOCAL) delete out[k];
+  return out;
+}
 // Lists the app keeps newest-first (new records go at the top).
 const NEWEST_FIRST = new Set(['activity', 'bookingRequests', 'campaigns', 'customers', 'expenses', 'inventory', 'purchaseOrders', 'vehicles']);
 

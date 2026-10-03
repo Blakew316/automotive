@@ -1,0 +1,1203 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Inspections &amp; Approvals | WPI Driveline Shop Management System</title>
+<meta name="description" content="Digital inspections with photos, online approvals and a live status link in WPI Driveline Shop Management System.">
+<!-- @partial head -->
+<script>document.documentElement.classList.add("js");try{if(localStorage.getItem("wpi-site:motion")==="paused")document.documentElement.classList.add("motion-paused","motion-parked")}catch(e){}</script>
+<meta name="theme-color" content="#F5F9FE">
+<meta name="color-scheme" content="light">
+<meta name="format-detection" content="telephone=no">
+<meta name="application-name" content="WPI Driveline Shop Management System">
+<meta name="form-endpoint" content="">
+<meta name="shop-inbox-url" content="https://huwcrbkplpudpsfczbyg.supabase.co">
+<meta name="shop-inbox-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1d2NyYmtwbHB1ZHBzZmN6YnlnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4MzMwMjgsImV4cCI6MjEwNjQwOTAyOH0.qnQb14ObGJTyDirYM3fDk2eX-sjTZIaec74aeJAnJ-I">
+<link rel="icon" href="../favicon.ico" sizes="32x32">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/img/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="../assets/img/apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/site.css">
+<script src="../assets/js/site.js" defer></script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"href_matches":"/automotive/app/*"}},{"not":{"selector_matches":"[target=_blank], [data-no-prerender]"}}]},"eagerness":"moderate"}]}</script>
+<link rel="canonical" href="https://blakew316.github.io/automotive/features/inspections.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="WPI Driveline Shop Management System">
+<meta property="og:title" content="Inspections &amp; Approvals | WPI Driveline Shop Management System">
+<meta property="og:description" content="Digital inspections with photos, online approvals and a live status link in WPI Driveline Shop Management System.">
+<meta property="og:url" content="https://blakew316.github.io/automotive/features/inspections.html">
+<meta property="og:image" content="https://blakew316.github.io/automotive/assets/img/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="WPI Driveline Shop Management System logo">
+<meta name="twitter:card" content="summary_large_image">
+<!-- @end head -->
+<!-- @partial jsonld -->
+<script type="application/ld+json" id="product-data">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://blakew316.github.io/automotive/#org","name":"WPI Driveline","url":"https://blakew316.github.io/automotive/","logo":"https://blakew316.github.io/automotive/assets/img/icon-512.png"},{"@type":"SoftwareApplication","@id":"https://blakew316.github.io/automotive/#app","name":"WPI Driveline Shop Management System","alternateName":"WPI Driveline","applicationCategory":"BusinessApplication","applicationSubCategory":"Auto repair shop management","operatingSystem":"Web browser; installs on iPhone, iPad, Android, Mac and PC","description":"Shop management software for independent auto repair shops: check-in, inspections, approvals, workflow, parts, payments, reports and QuickBooks sync. Works offline.","url":"https://blakew316.github.io/automotive/app/","image":"https://blakew316.github.io/automotive/assets/img/og-image.png","publisher":{"@id":"https://blakew316.github.io/automotive/#org"},"featureList":["Booking, check-in & front desk","Texting, calls & email","Customers & follow-ups","Workflow board, Today & tech clock","Inspections & approvals","Auto Diagnosis & vehicle data","Parts, inventory & tires","Estimates, ROs & invoices","Payments & card readers","Fleet & business accounts","Reports, payroll & QuickBooks","AI assistant"],"softwareHelp":{"@type":"WebPage","url":"https://blakew316.github.io/automotive/faq.html"}},{"@type":"WebSite","@id":"https://blakew316.github.io/automotive/#website","name":"WPI Driveline Shop Management System","url":"https://blakew316.github.io/automotive/","publisher":{"@id":"https://blakew316.github.io/automotive/#org"}}]}</script>
+<!-- @end jsonld -->
+<style>
+/* features/inspections.html: page-local styles (slug-prefixed) */
+
+/* ---------- Hero: the inspection, then the approval, on one light phone ---------- */
+.inspections-hero h1 .accent-text { white-space: nowrap; }
+.inspections-h1-lead { display: block; text-wrap: balance; }
+.inspections-hero-fig { width: 100%; max-width: 540px; justify-self: center; }
+@media (min-width: 960px) { .inspections-hero .page-hero-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+@media (min-width: 600px) { .inspections-hero-fig { padding-bottom: 30px; } }
+.inspections-hero-fig .mock-stage::before { /* a soft glow behind the phone */
+  content: ""; position: absolute; inset: 6% -2% 2%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(31, 122, 224, .12), rgba(45, 179, 106, .06) 60%, transparent);
+  pointer-events: none;
+}
+.inspections-phone { width: min(100%, 278px); aspect-ratio: auto; }
+@media (min-width: 1100px) { .inspections-phone { width: 296px; } }
+.inspections-phone > .mock-screen { padding: 38px 12px 14px; }
+.inspections-views { display: grid; flex: 1 1 auto; min-height: 0; }
+.inspections-views > .inspections-view { grid-area: 1 / 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; min-height: 0; }
+/* The inspection slides off to the left as the approval view slides in from the right. The two overlap,
+   so the screen is never blank between them. */
+.inspections-insp { transition: opacity .3s var(--ease) .1s, translate .4s var(--ease), visibility .45s; }
+.inspections-hero-fig[data-reached~="2"] .inspections-insp { translate: -30px 0; }
+.inspections-appicon { display: grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 7px; background: var(--accent-soft); color: var(--accent); }
+.inspections-appicon .icon { width: 15px; height: 15px; }
+.inspections-veh { display: grid; gap: 1px; padding-bottom: 8px; border-bottom: 1px solid var(--m-line); }
+.inspections-veh b { font-size: 14px; font-weight: 700; letter-spacing: -0.01em; color: var(--ink); }
+.inspections-veh span { font-size: 12px; color: var(--ink-3); }
+.inspections-checks { gap: 5px; }
+.inspections-checks .mock-check { min-height: 31px; padding: 5px 9px; }
+.inspections-checks .mock-check > span:nth-child(2) { font-weight: 550; color: var(--ink-2); }
+.inspections-shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.inspections-shot { position: relative; display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: 8px; overflow: hidden; border: 1px solid var(--m-line); background: var(--mist-100); color: var(--ink-3); }
+.inspections-shot svg { display: block; width: 100%; height: 100%; }
+.inspections-shot.is-add { border-style: dashed; border-color: var(--line-strong); background: var(--paper); color: var(--accent); }
+.inspections-shot.is-add .icon { width: 18px; height: 18px; }
+.inspections-padcard { display: grid; gap: 9px; margin-top: auto; padding: 9px 11px 12px; border-radius: 14px; border: 1px solid var(--m-line); background: var(--mist-50); }
+.inspections-padcard-top { display: flex; align-items: baseline; gap: 8px; }
+.inspections-padcard-top b { font-size: 19px; line-height: 1.15; font-weight: 720; letter-spacing: -0.02em; color: var(--warn); font-variant-numeric: tabular-nums; }
+.inspections-padcard-top .mock-chip { margin-left: auto; align-self: center; }
+/* The app's measurement gauge (Gauges.jsx MeasureGauge): tinted zones on a 0-12 mm bar, a dot at the reading */
+.inspections-bar { position: relative; display: block; height: 8px; border-radius: var(--pill); }
+.inspections-bar-zones { position: absolute; inset: 0; display: flex; border-radius: inherit; overflow: hidden; background: var(--mist-100); }
+.inspections-bar-zones > i { display: block; height: 100%; }
+.inspections-bar-zones > .z-bad { flex: 0 0 var(--a); background: rgba(217, 83, 74, .22); }
+.inspections-bar-zones > .z-warn { flex: 0 0 calc(var(--b) - var(--a)); background: rgba(227, 161, 59, .3); }
+.inspections-bar-zones > .z-ok { flex: 1 1 auto; background: rgba(45, 179, 106, .22); }
+.inspections-bar-dot { position: absolute; top: 50%; left: var(--to); width: 16px; height: 16px; margin: -8px 0 0 -8px; border-radius: 50%; border: 2.5px solid var(--paper); background: var(--dot-ok); box-shadow: 0 1px 4px rgba(15, 43, 76, .22); }
+.inspections-bar-dot.is-soon { background: var(--dot-warn); }
+.inspections-bar-dot.is-now { background: var(--dot-stop); }
+@keyframes inspections-dot-slide { 0% { left: 2%; } 70% { left: calc(var(--to) + 3%); } 100% { left: var(--to); } }
+/* Approval view (the customer's report on their phone) */
+.inspections-cust { display: flex; align-items: center; gap: 9px; padding-bottom: 8px; border-bottom: 1px solid var(--m-line); }
+.inspections-cust b { display: block; font-size: 13px; font-weight: 700; color: var(--ink); }
+.inspections-cust small { display: block; font-size: 12px; color: var(--ink-3); }
+.inspections-mark { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 9px; background: var(--wash); color: var(--accent); border: 1px solid var(--m-line); }
+.inspections-mark .icon { width: 16px; height: 16px; }
+.inspections-svc { display: grid; gap: 7px; padding: 8px 9px; border-radius: 12px; border: 1px solid var(--m-line); background: var(--paper); }
+.inspections-svc-top { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.inspections-svc-top b { flex: 1 1 auto; min-width: 0; font-size: 12.5px; font-weight: 650; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.inspections-thumb { flex: none; display: grid; place-items: center; width: 30px; height: 24px; border-radius: 6px; background: var(--mist-100); color: var(--ink-3); }
+.inspections-thumb .icon { width: 14px; height: 14px; }
+.inspections-pick { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; padding: 3px; border-radius: 10px; background: var(--mist-50); border: 1px solid var(--m-line); }
+.inspections-pick > span { display: grid; place-items: center; min-height: 24px; border-radius: 7px; font-size: 12px; font-weight: 650; color: var(--ink-3); }
+.inspections-pick > .is-yes { background: var(--green-100); color: var(--green-ink); box-shadow: inset 0 0 0 1.5px var(--green); }
+@keyframes inspections-tap {
+  0%, 35% { background-color: transparent; color: var(--ink-3); box-shadow: inset 0 0 0 1.5px transparent; scale: 1; }
+  50% { scale: .9; }
+  72%, 100% { scale: 1; }
+}
+/* Like the real panel: a prompt until both services are chosen, then the count and the pre-tax sum */
+.inspections-total { display: grid; align-items: center; min-height: 22px; padding: 2px 3px 0; font-size: 12.5px; color: var(--ink-2); }
+.inspections-total > * { grid-area: 1 / 1; }
+.inspections-hint { font-size: 12px; color: var(--ink-3); opacity: 0; }
+@keyframes inspections-hint-hold { 0%, 72% { opacity: 1; } 100% { opacity: 0; } }
+.inspections-sum { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.inspections-sum > span { font-weight: 650; color: var(--ink); }
+.inspections-sum b { font-size: 16px; font-weight: 720; color: var(--ink); font-variant-numeric: tabular-nums; }
+.inspections-sum b small { font-size: 12px; font-weight: 500; color: var(--ink-3); }
+.inspections-send-wrap { display: grid; margin-top: auto; }
+.inspections-sign { display: grid; gap: 5px; }
+.inspections-sign .mock-field { min-height: 28px; }
+.inspections-sigbox { position: relative; height: 44px; border-radius: 10px; border: 1px dashed var(--line-strong); background: var(--paper); }
+.inspections-sigbox::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 9px; height: 1px; background: var(--mist-300); }
+.inspections-sigbox svg { position: absolute; left: 8px; top: 3px; width: calc(100% - 16px); height: calc(100% - 10px); overflow: visible; }
+.inspections-send { width: 100%; min-height: 30px; margin-top: auto; transition: filter .3s var(--ease) 1.35s; }
+/* Like the real panel: the button stays disabled until the name and signature are in */
+.inspections-hero-fig:not([data-reached~="3"]) .inspections-send { filter: grayscale(.85) opacity(.5); transition-delay: 0s; }
+.inspections-stamp { position: absolute; right: 18px; bottom: 60px; z-index: 3; }
+/* The two app chips: one beside the pads row, one hanging off the phone's lower corner.
+   Each shows up with the step it describes. */
+.inspections-hero-fig .float-note.note-1 { top: 41%; left: 0; }
+.inspections-hero-fig .float-note.note-2 { top: auto; bottom: 0; right: 0; }
+@media (min-width: 600px) and (max-width: 959.98px) {
+  .inspections-hero-fig .float-note.note-1 { left: -24px; }
+  .inspections-hero-fig .float-note.note-2 { right: -24px; }
+}
+/* From 960px the chips hang below the phone, clear of its buttons. From 1240px there is room for the
+   first one beside the phone, level with the checklist. */
+@media (min-width: 960px) {
+  .inspections-hero-fig { padding-bottom: 48px; }
+  .inspections-hero-fig .float-note.note-1 { top: auto; bottom: -18px; left: -8px; }
+  .inspections-hero-fig .float-note.note-2 { bottom: -18px; right: -8px; }
+}
+@media (min-width: 1240px) {
+  .inspections-hero-fig .float-note.note-1 { top: 30%; bottom: auto; left: -44px; }
+  .inspections-hero-fig .float-note.note-2 { right: 0; }
+}
+.inspections-hero-fig .float-note { transition: filter .45s var(--ease); }
+.inspections-hero-fig:not([data-reached~="1"]) .float-note.note-1,
+.inspections-hero-fig:not([data-reached~="4"]) .float-note.note-2 { filter: opacity(0); }
+
+/* ---------- Pains ---------- */
+.inspections-pains { align-items: center; }
+.inspections-pains-side { display: grid; gap: 18px; }
+.inspections-art { min-height: 0; }
+.inspections-art > svg { width: min(100%, 500px); }
+.inspections-art [data-fx="pop"] { transform-box: fill-box; transform-origin: center; }
+
+/* ---------- The inspection ---------- */
+.inspections-facts .card p { color: var(--ink-3); }
+.inspections-count { display: flex; align-items: center; gap: 12px; margin-top: 16px; }
+.inspections-count .odometer { font-size: 1.7rem; padding: 6px; border-radius: 12px; }
+.inspections-count > span:last-child { font-size: .93rem; line-height: 1.35; color: var(--ink-3); }
+.inspections-ratings { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 8px; }
+.inspections-ratings li { display: flex; align-items: center; gap: 10px; font-size: .95rem; line-height: 1.3; color: var(--ink-2); }
+.inspections-scales { display: grid; gap: 14px; margin-top: 16px; }
+.inspections-scale { display: grid; gap: 5px; }
+.inspections-scale-name { font-size: .86rem; font-weight: 600; color: var(--ink-2); }
+.inspections-scale-bar { display: block; height: 8px; border-radius: var(--pill); background: linear-gradient(90deg, var(--dot-stop) 0 var(--a), var(--dot-warn) var(--a) var(--b), var(--green) var(--b) 100%); }
+.inspections-scale-ticks { position: relative; display: block; height: 16px; font-size: .78rem; font-weight: 600; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.inspections-scale-ticks i { position: absolute; top: 0; translate: -50% 0; font-style: normal; }
+.inspections-scale-ticks i:first-child { left: 0; translate: 0 0; }
+.inspections-scale-ticks i:last-child { left: auto; right: 0; translate: 0 0; }
+
+/* Tires & brakes: the same diagram the RO and the customer's report draw (Gauges.jsx TiresBrakes) */
+.inspections-glance-fig { width: 100%; max-width: 780px; margin-inline: auto; margin-top: clamp(32px, 1rem + 3vw, 60px); border-radius: 24px; }
+.inspections-glance-fig:focus-visible { outline: 3px solid var(--accent-ring); outline-offset: 8px; }
+.inspections-glance { width: min(100%, 780px); display: grid; gap: 20px; padding: clamp(16px, .6rem + 1.6vw, 28px); border-radius: 22px; background: var(--paper); border: 1px solid var(--line-strong); box-shadow: var(--shadow-2); text-align: left; }
+.inspections-glance-pads { display: grid; align-content: center; padding-top: 18px; border-top: 1px solid var(--m-line); }
+@media (min-width: 640px) {
+  .inspections-glance { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: clamp(20px, 3vw, 34px); }
+  .inspections-glance-pads { padding: 0 0 0 clamp(20px, 3vw, 34px); border-top: 0; border-left: 1px solid var(--m-line); }
+}
+.inspections-glance-title { display: block; margin-bottom: 12px; font-size: 14px; font-weight: 650; color: var(--ink); }
+.inspections-glance-scale { display: block; margin-top: 12px; font-size: 12px; line-height: 1.35; color: var(--ink-3); }
+.inspections-glance-tires .inspections-glance-scale { text-align: center; }
+.inspections-glance-body { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); grid-template-rows: 1fr 1fr; column-gap: clamp(12px, 3vw, 22px); align-items: center; }
+.inspections-car { grid-column: 2; grid-row: 1 / span 2; width: clamp(84px, 13vw, 112px); height: auto; overflow: visible; }
+.inspections-wheel { display: grid; gap: 1px; justify-items: end; text-align: right; }
+.inspections-wheel.is-right { justify-items: start; text-align: left; }
+.inspections-wheel.is-front { grid-row: 1; }
+.inspections-wheel.is-rear { grid-row: 2; }
+.inspections-wheel.is-left { grid-column: 1; }
+.inspections-wheel.is-right { grid-column: 3; }
+.inspections-wheel .mock-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
+.inspections-wheel strong { font-size: clamp(19px, .9rem + .7vw, 24px); line-height: 1.2; font-weight: 700; letter-spacing: -0.01em; font-variant-numeric: tabular-nums; }
+.inspections-wheel strong small { font-size: .72em; font-weight: 650; color: inherit; letter-spacing: 0; }
+/* Rating colors as text (AA): good, soon, now */
+.inspections-glance .is-ok-txt { color: var(--green-ink); }
+.inspections-glance .is-soon-txt { color: var(--warn); }
+.inspections-glance .is-now-txt { color: var(--stop); }
+@keyframes inspections-num-tint { from { color: var(--ink-3); } }
+.inspections-tire { stroke: rgba(15, 43, 76, .35); stroke-width: 1.5; }
+.inspections-tire.is-ok { fill: var(--dot-ok); }
+.inspections-tire.is-soon { fill: var(--dot-warn); }
+.inspections-tire.is-now { fill: var(--dot-stop); }
+@keyframes inspections-tire-tint { from { fill: var(--mist-300); } }
+.inspections-tire-g { transform-box: fill-box; transform-origin: center; transition: translate .6s var(--spring), scale .6s var(--spring); }
+.inspections-tire-g:nth-of-type(2) { transition-delay: 50ms; }
+.inspections-tire-g:nth-of-type(3) { transition-delay: 100ms; }
+.inspections-tire-g:nth-of-type(4) { transition-delay: 150ms; }
+@media (hover: hover) { .inspections-glance-fig:hover .inspections-tire-g { translate: 0 -6px; scale: 1.08; } }
+.inspections-glance-fig:focus-visible .inspections-tire-g { translate: 0 -6px; scale: 1.08; }
+.inspections-padlist { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.inspections-padlist li { display: grid; gap: 8px; }
+.inspections-pad-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 14px; color: var(--ink-2); }
+.inspections-pad-row b { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ---------- Photos and video: the markup editor ---------- */
+.inspections-media-fig { width: 100%; }
+.inspections-editor { width: min(100%, 560px); }
+.inspections-editor > .mock-screen { gap: 10px; padding: 10px; }
+.inspections-tools { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.inspections-toolset { display: flex; gap: 2px; padding: 3px; border-radius: var(--pill); background: var(--mist-100); }
+.inspections-tool { display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 10px; border-radius: var(--pill); font-size: 12px; font-weight: 600; color: var(--ink-3); transition: background-color .3s var(--ease), color .3s var(--ease), box-shadow .3s var(--ease); }
+.inspections-tool .icon { width: 15px; height: 15px; }
+.inspections-media-fig:not([data-reached~="1"]) .inspections-tool.is-arrow,
+.inspections-media-fig[data-reached~="1"]:not([data-reached~="2"]) .inspections-tool.is-circle,
+.inspections-media-fig[data-reached~="2"] .inspections-tool.is-label { background: var(--paper); color: var(--accent-ink); box-shadow: var(--shadow-1); }
+.inspections-swatches { position: relative; display: flex; gap: 6px; margin-left: auto; --sw: 24px; }
+.inspections-swatch { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(15, 43, 76, .2); }
+.inspections-swatch-ring { position: absolute; left: -3px; top: -3px; width: 24px; height: 24px; border-radius: 50%; box-shadow: 0 0 0 2px var(--accent); translate: calc(var(--sw) * 2) 0; }
+.inspections-media-fig:not([data-reached~="2"]) .inspections-swatch-ring { translate: 0 0; }
+@keyframes inspections-swatch-cycle { 0%, 15% { translate: 0 0; } 40%, 58% { translate: var(--sw) 0; } 84%, 100% { translate: calc(var(--sw) * 2) 0; } }
+.inspections-undo { display: grid; place-items: center; flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1px solid var(--line-strong); color: var(--ink-2); }
+.inspections-undo .icon { width: 15px; height: 15px; }
+.inspections-photo { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--m-line); }
+.inspections-photo svg { display: block; width: 100%; height: auto; }
+.inspections-photo [data-fx="pop"] { transform-box: fill-box; transform-origin: center; }
+.inspections-photo-label { font: 700 17px/1 var(--font); letter-spacing: .01em; fill: #fff; stroke: rgba(15, 43, 76, .62); stroke-width: 3px; paint-order: stroke; stroke-linejoin: round; }
+/* Not an app screen: a note under the editor showing what re-encoding removes from the photo file */
+.inspections-meta { display: flex; align-items: center; justify-content: space-between; gap: 6px 10px; flex-wrap: wrap; width: min(100%, 560px); margin-top: 12px; padding: 8px 12px; border-radius: 12px; border: 1px dashed var(--line-strong); background: var(--mist-50); }
+.inspections-meta-note { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 650; color: var(--green-ink); }
+.inspections-meta-note .icon { width: 13px; height: 13px; }
+.inspections-meta-line { position: relative; display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-3); transition: color .4s var(--ease); }
+.inspections-meta-line .icon { width: 14px; height: 14px; }
+.inspections-media-fig[data-reached~="3"] .inspections-meta-line { color: var(--ink-4); }
+.inspections-strike { position: absolute; left: 18px; right: -3px; top: 50%; height: 2px; margin-top: -1px; border-radius: 1px; background: var(--dot-stop); }
+@media (max-width: 519.98px) {
+  .inspections-tool b { display: none; }
+  .inspections-tool { padding: 0 8px; }
+}
+
+/* ---------- Approvals ---------- */
+.inspections-approve-grid .card p { color: var(--ink-3); }
+.inspections-share { background: var(--wash); border-color: rgba(31, 122, 224, .14); }
+.inspections-share-art { display: block; width: 100%; max-width: 326px; height: auto; margin-bottom: 16px; overflow: visible; }
+.inspections-share-art .flow-line { stroke-width: 2.2; }
+.inspections-share-art .t-box { fill: var(--paper); stroke: var(--line-strong); stroke-width: 1.2; }
+.inspections-share-art .t-box.is-src { stroke: rgba(31, 122, 224, .3); filter: drop-shadow(0 4px 10px rgba(15, 43, 76, .08)); }
+.inspections-share-art .t-ico { fill: none; stroke: var(--accent); stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.inspections-share-art .t-txt { font: 600 13px/1 var(--font); fill: var(--ink-2); }
+.inspections-share-art .t-src { font: 700 13px/1 var(--font-mono); letter-spacing: .04em; fill: var(--ink-3); }
+.inspections-share .fine-print { margin-top: 10px; }
+/* On the narrowest phones the art scales down, so its labels grow to stay at least 12px */
+@media (max-width: 379.98px) {
+  .inspections-share-art .t-txt { font-size: 16px; }
+  .inspections-share-art .t-src { font-size: 16px; }
+}
+/* Wide screens: the share card fills two columns beside the two short cards, so no card stands half empty */
+@media (min-width: 960px) {
+  .inspections-approve-grid > .inspections-share { grid-column: 2 / -1; grid-row: 2 / span 2; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); column-gap: 32px; align-content: center; }
+  .inspections-share > .inspections-share-art { grid-column: 1; grid-row: 1 / span 3; align-self: center; margin: 0; }
+  .inspections-share > :not(.inspections-share-art) { grid-column: 2; }
+  /* the two short cards beside it sit as compact rows: icon and title side by side */
+  .inspections-approve-grid > .is-short { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 14px; align-items: center; }
+  .inspections-approve-grid > .is-short > h3 { margin: 0; }
+  .inspections-approve-grid > .is-short > p { grid-column: 1 / -1; margin-top: 12px; }
+}
+@media (max-width: 639.98px) {
+  .inspections-share h3 { font-size: 1.1rem; }
+  .inspections-share > p:not(.fine-print) { font-size: .95rem; }
+}
+
+/* ---------- Live status ---------- */
+.inspections-live-fig { width: 100%; max-width: 460px; margin-inline: auto; }
+.inspections-track { width: min(100%, 304px); aspect-ratio: auto; }
+.inspections-track > .mock-screen { gap: 9px; padding: 36px 11px 12px; background: var(--mist-50); }
+.inspections-track-head { display: grid; gap: 4px; justify-items: start; padding: 10px 11px 11px; border-radius: 14px; background: var(--wash); border: 1px solid rgba(31, 122, 224, .12); }
+.inspections-shop { display: flex; align-items: center; gap: 7px; font-size: 12.5px; font-weight: 700; color: var(--ink); }
+.inspections-shop .inspections-mark { width: 22px; height: 22px; border-radius: 7px; background: var(--paper); }
+.inspections-shop .inspections-mark .icon { width: 13px; height: 13px; }
+.inspections-track-head .mock-sub { margin-top: 4px; }
+.inspections-swap { display: grid; justify-items: start; }
+.inspections-swap > * { grid-area: 1 / 1; }
+.inspections-track-title { font-size: 17px; line-height: 1.2; font-weight: 720; letter-spacing: -0.02em; color: var(--ink); }
+.inspections-track-detail { font-size: 12px; line-height: 1.35; color: var(--ink-2); }
+.inspections-track-detail .mock-chip .icon { width: 12px; height: 12px; }
+.inspections-card { display: grid; gap: 7px; padding: 10px 11px; border-radius: 13px; background: var(--paper); border: 1px solid var(--m-line); box-shadow: var(--shadow-1); }
+.inspections-tl { --k: 4; gap: 9px; }
+.inspections-tl::after { content: ""; position: absolute; left: 10px; top: 8px; width: 2px; border-radius: 1px; height: calc((100% - 16px) * var(--k) / 5); background: var(--blue); transition: height .6s var(--ease); }
+.inspections-live-fig:not([data-reached~="4"]) .inspections-tl { --k: 3; }
+.inspections-live-fig:not([data-reached~="3"]) .inspections-tl { --k: 2; }
+.inspections-live-fig:not([data-reached~="2"]) .inspections-tl { --k: 1; }
+.inspections-live-fig:not([data-reached~="1"]) .inspections-tl { --k: 0; }
+.inspections-tl li { font-size: 12px; }
+.inspections-tl li > span:nth-child(2) { font-weight: 600; color: var(--ink-2); }
+.inspections-tl li.is-todo > span:nth-child(2) { font-weight: 500; color: var(--ink-3); }
+.inspections-tl .mock-tl-dot > i { position: absolute; inset: -2px; border-radius: 50%; background: var(--blue); box-shadow: 0 0 0 3px var(--blue-100); }
+.inspections-tl .is-ready .mock-tl-dot > i { background: var(--green); box-shadow: 0 0 0 3px var(--green-100); }
+.inspections-work-row { display: flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; color: var(--ink-2); }
+.inspections-done { position: relative; flex: none; width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--ink-4); }
+.inspections-done > i { position: absolute; inset: -1.5px; border-radius: 50%; background: var(--dot-ok) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4L18 8.5'/%3E%3C/svg%3E") center / 11px no-repeat; }
+.inspections-track-btns { display: grid; gap: 6px; }
+.inspections-track-btns .mock-btn { min-height: 30px; }
+.inspections-track-btns .mock-btn .icon { width: 14px; height: 14px; }
+.inspections-pay { position: relative; overflow: hidden; }
+.inspections-sheen { position: absolute; top: 0; bottom: 0; left: -60%; width: 46%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .6), transparent); pointer-events: none; }
+.inspections-track .live-pill { justify-self: center; align-self: center; }
+
+/* ---------- Related ---------- */
+</style>
+</head>
+<body data-page="features" data-tab="features" id="top">
+<!-- @partial icons -->
+<svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="art-tint" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E1EDFB"/><stop offset=".5" stop-color="#F2F7FD"/><stop offset="1" stop-color="#E3F4EA"/></linearGradient>
+    <linearGradient id="gauge-tint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9D5F6"/><stop offset=".5" stop-color="#B9D5F6"/><stop offset=".5" stop-color="#BDE7CF"/><stop offset="1" stop-color="#BDE7CF"/></linearGradient>
+    <linearGradient id="gauge-pad" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#D9534A"/><stop offset=".3" stop-color="#F0A53A"/><stop offset=".6" stop-color="#2DB36A"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+    <linearGradient id="gauge-tread" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#D9534A"/><stop offset=".35" stop-color="#F0A53A"/><stop offset=".65" stop-color="#2DB36A"/><stop offset="1" stop-color="#2DB36A"/></linearGradient>
+    <marker id="arrow-head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#0F2B4C" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrow-head-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#1A6FD6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+    <marker id="arrow-head-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1.5 8.5 5 1 8.5" fill="none" stroke="#188048" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker>
+  </defs>
+  <symbol id="i-oil" viewBox="0 0 24 24"><path d="M12 3.5c3 3.6 5.5 6.6 5.5 9.6a5.5 5.5 0 0 1-11 0c0-3 2.5-6 5.5-9.6z"/><path d="M9.4 14a2.6 2.6 0 0 0 2.6 2.6"/></symbol>
+  <symbol id="i-diagnostics" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2.5"/><path d="M6.5 12.5l2.4-3 2.5 2.2 3-4.2 3.1 3.6"/><path d="M8.5 20.5h7M12 17v3.5"/></symbol>
+  <symbol id="i-engine" viewBox="0 0 24 24"><path d="M9.5 5.5h5M12 5.5v2.5"/><path d="M6 10.5V9a1 1 0 0 1 1-1h8.2a1 1 0 0 1 .7.3l1.8 1.8h1.8a1 1 0 0 1 1 1v1.4h1v4h-1v1.3a1 1 0 0 1-1 1h-2.8L14.9 20H8.6l-2.6-2.6"/><path d="M6 10.5H4.5v7H6zM4.5 14H2.5M2.5 12v4"/></symbol>
+  <symbol id="i-tire" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.2"/><circle cx="12" cy="12" r="1"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M5.6 18.4l1.8-1.8M16.6 7.4l1.8-1.8"/></symbol>
+  <symbol id="i-inspection" viewBox="0 0 24 24"><rect x="5" y="4.5" width="14" height="16.5" rx="2.2"/><path d="M9 4.5V3.2h6v1.3"/><path d="M8.6 12.6l2.3 2.3 4.6-4.8"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5.2 3.8h3l1.6 4.1-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4.1 1.6v3a2 2 0 0 1-2.1 2A14.8 14.8 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-calendar-check" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.6"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M9 15.2l2 2 4-4"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21.2s-6.6-5.7-6.6-11.2a6.6 6.6 0 0 1 13.2 0c0 5.5-6.6 11.2-6.6 11.2z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7.3V12l3.1 2"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="M3.8 7.2 12 13l8.2-5.8"/></symbol>
+  <symbol id="i-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  <symbol id="i-chevron-down" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
+  <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8.2 12.3l2.6 2.6 5-5.2"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 24 24"><path d="M15 3.5a4.6 4.6 0 0 0-4.3 6L3.9 16.3a2 2 0 0 0 2.8 2.8l6.8-6.8a4.6 4.6 0 0 0 6-4.4c0-.5 0-.9-.2-1.3l-2.5 2.5-2.5-.6-.6-2.5 2.5-2.5c-.4-.1-.8-.1-1.2-.1z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7 3v5.4c0 4.4-3 7.9-7 9.6-4-1.7-7-5.2-7-9.6V6z"/><path d="M8.8 12.1l2.2 2.2 4.3-4.4"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M2.5 15.6v-2.8a1.5 1.5 0 0 1 1-1.4l2.3-.8 2.4-3.3a2 2 0 0 1 1.6-.8h4.8a2 2 0 0 1 1.5.7l3 3.6 1.9.5a1.5 1.5 0 0 1 1.1 1.5v2.8"/><path d="M2.5 15.6h2.2M9.3 15.6h5.4M19.3 15.6h2.2"/><circle cx="7" cy="16" r="2.3"/><circle cx="17" cy="16" r="2.3"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M2.5 15.8V9.6a1 1 0 0 1 1-1h3.2l1.8-2.8h4.3a1 1 0 0 1 1 1v2.8h5.1a1.6 1.6 0 0 1 1.5 1.1l1.1 3.2v1.9"/><path d="M2.5 15.8h2M9 15.8h6M19.5 15.8h2"/><path d="M6.7 8.6h6.9"/><circle cx="6.8" cy="16.2" r="2.2"/><circle cx="17.2" cy="16.2" r="2.2"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M6 9.6V20h12V9.6"/><path d="M10 20v-5.2h4V20"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.8"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.8"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.8"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 17h-9.5l-4.8 3.6V17H4a1.5 1.5 0 0 1-1.5-1.5v-9A1.5 1.5 0 0 1 4 5z"/><path d="M7.5 10h9M7.5 13h5.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.6l2.6 5.3 5.8.8-4.2 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.2-4.1 5.8-.8z"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.8v.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 4.4 2.9 17.3a2 2 0 0 0 1.7 3h14.8a2 2 0 0 0 1.7-3L13.7 4.4a2 2 0 0 0-3.4 0z"/><path d="M12 9.5v4.5M12 17v.3"/></symbol>
+  <symbol id="i-document" viewBox="0 0 24 24"><path d="M6.5 3h7.8l4.2 4.2V21h-12z"/><path d="M14 3v4.5h4.5M9.2 12h5.6M9.2 15.8h5.6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.3V4.5a1 1 0 0 1 1-1h7.8l8.2 8.2a1.5 1.5 0 0 1 0 2.1l-6.2 6.2a1.5 1.5 0 0 1-2.1 0z"/><circle cx="8" cy="8" r="1.5"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6.5C10 5 7.5 4.5 3.5 4.5v14c4 0 6.5.5 8.5 2 2-1.5 4.5-2 8.5-2v-14c-4 0-6.5.5-8.5 2z"/><path d="M12 6.5v14"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 19.5c.6-3.3 3-5.3 6-5.3s5.4 2 6 5.3"/><path d="M15.5 5.2a3 3 0 0 1 0 5.6M17.5 14.6c1.8.7 3 2.4 3.5 4.9"/></symbol>
+  <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M8.5 7V5.5A1.5 1.5 0 0 1 10 4h4a1.5 1.5 0 0 1 1.5 1.5V7M3 12.5h18"/></symbol>
+  <symbol id="i-question" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5 1c0 1.8-2.5 2.3-2.5 3.9M12 17v.3"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4.4 17.5a8.6 8.6 0 1 1 15.2 0"/><path d="M12 13.5l4.2-4.2"/><circle cx="12" cy="13.5" r="1.3"/><path d="M6.8 9.6l.9.6M12 6.4v1.1M17.2 9.6l-.9.6"/></symbol>
+  <symbol id="i-thermo" viewBox="0 0 24 24"><path d="M14 14.8V5a2 2 0 0 0-4 0v9.8a4 4 0 1 0 4 0z"/><path d="M12 9v7.2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2.5 5 13.5h6l-1 8 8-11h-6z"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.8v2M12 19.2v2M2.8 12h2M19.2 12h2M5.5 5.5l1.4 1.4M17.1 17.1l1.4 1.4M5.5 18.5l1.4-1.4M17.1 6.9l1.4-1.4"/></symbol>
+  <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-13.5 14.5-14-.3 9.6-5.8 14.5-13.2 14.5"/><path d="M5 19c3-4 6-6.5 9.5-8.5"/></symbol>
+  <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/></symbol>
+  <symbol id="i-rain" viewBox="0 0 24 24"><path d="M7 15.5a4.5 4.5 0 0 1-.4-9 5.5 5.5 0 0 1 10.6 1.4A3.8 3.8 0 0 1 17 15.5z"/><path d="M8.5 18.2l-.8 2M12.5 18.2l-.8 2M16.5 18.2l-.8 2"/></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></symbol>
+  <symbol id="i-directions" viewBox="0 0 24 24"><path d="M12 2.8 21.2 12 12 21.2 2.8 12z"/><path d="M9.2 14.2v-2.5a1 1 0 0 1 1-1h5M13.5 8.7l2 2-2 2"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><path d="M12 3.5c.6 4.6 2.9 6.9 7.5 7.5-4.6.6-6.9 2.9-7.5 7.5-.6-4.6-2.9-6.9-7.5-7.5 4.6-.6 6.9-2.9 7.5-7.5z"/></symbol>
+  <symbol id="i-handshake" viewBox="0 0 24 24"><path d="M2.5 8.5 6 6.5l3.2 1.2M21.5 8.5 18 6.5l-4.8 1.6-3.3 2.7a1.3 1.3 0 0 0 1.6 2l2.4-1.6 4.3 3.9"/><path d="M2.5 14.2l2 .1 4.8 4a1.4 1.4 0 0 0 2-1.9M8 15.5l2.8 2.3a1.4 1.4 0 0 0 2-1.9M11.6 13.4l3 2.6a1.4 1.4 0 0 0 1.9-2M21.5 14.2h-3.3"/></symbol>
+  <symbol id="i-car-mini" viewBox="0 0 32 14"><path d="M2 10.8V8.6c0-.6.4-1.1 1-1.3l4-1.2L10.4 2.7c.4-.4 1-.7 1.6-.7h7.3c.6 0 1.2.3 1.6.7L24 6.1l4.8.9c.7.1 1.2.7 1.2 1.4v2.4" fill="currentColor" stroke="none"/><circle cx="8.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--canvas, #F5F9FE)" stroke-width="1.2"/><circle cx="23.5" cy="10.8" r="2.4" fill="currentColor" stroke="var(--canvas, #F5F9FE)" stroke-width="1.2"/></symbol>
+  <symbol id="i-board" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2.5"/><path d="M9 4v16M15 4v16"/><rect x="4.9" y="7" width="2.4" height="3" rx=".6"/><rect x="10.8" y="7" width="2.4" height="3" rx=".6"/><rect x="10.8" y="12" width="2.4" height="3" rx=".6"/><rect x="16.7" y="7" width="2.4" height="3" rx=".6"/></symbol>
+  <symbol id="i-barcode" viewBox="0 0 24 24"><path d="M3.5 7V5.5a1.5 1.5 0 0 1 1.5-1.5h2M17 4h2a1.5 1.5 0 0 1 1.5 1.5V7M20.5 17v1.5A1.5 1.5 0 0 1 19 20h-2M7 20H5a1.5 1.5 0 0 1-1.5-1.5V17"/><path d="M7.5 8v8M10 8v8M12.8 8v8M15 8v8M16.8 8v8"/></symbol>
+  <symbol id="i-card-reader" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.6"/><rect x="8.5" y="5.5" width="7" height="4" rx="1"/><path d="M9 13h.01M12 13h.01M15 13h.01M9 15.8h.01M12 15.8h.01M15 15.8h.01M10 18.6h4"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3.5 20.5h17"/><rect x="5.5" y="12" width="3" height="6" rx=".8"/><rect x="10.5" y="8" width="3" height="10" rx=".8"/><rect x="15.5" y="4.5" width="3" height="13.5" rx=".8"/></symbol>
+  <symbol id="i-ledger" viewBox="0 0 24 24"><path d="M5 3.5h12.5A1.5 1.5 0 0 1 19 5v15.5H6.5A1.5 1.5 0 0 1 5 19z"/><path d="M5 17.5h14M9 3.5v14M11.5 8h5M11.5 11h5M11.5 14h3"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4.5"/><path d="M11.2 11.8 20 3M16.5 6.5l2.6 2.6M14.3 8.7l2 2"/><circle cx="7" cy="16" r=".9"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4.5" y="10.5" width="15" height="10" rx="2.4"/><path d="M8 10.5V7.8a4 4 0 0 1 8 0v2.7M12 14.5v2.5"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18.5a4.5 4.5 0 0 1-.6-9 6 6 0 0 1 11.5 1.6 3.8 3.8 0 0 1-.4 7.4z"/></symbol>
+  <symbol id="i-wifi-off" viewBox="0 0 24 24"><path d="M3 3l18 18"/><path d="M8.5 16.2a5 5 0 0 1 5.6-.7M5.2 12.8a9.6 9.6 0 0 1 4-2.3M18.8 12.8a9.7 9.7 0 0 0-2.4-1.6M2 9.4a14.5 14.5 0 0 1 3.6-2.4M22 9.4a14.6 14.6 0 0 0-10.5-3.9"/><path d="M12 19.6h.01"/></symbol>
+  <symbol id="i-device-phone" viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.8"/><path d="M10.5 5.2h3M11 18.6h2"/></symbol>
+  <symbol id="i-device-tablet" viewBox="0 0 24 24"><rect x="3.5" y="3" width="17" height="18" rx="2.6"/><path d="M11 18.2h2"/></symbol>
+  <symbol id="i-tv" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="13" rx="2.2"/><path d="M8 20.5h8M12 17v3.5"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M3.5 8.5A1.5 1.5 0 0 1 5 7h2.6l1.6-2.3h5.6L16.4 7H19a1.5 1.5 0 0 1 1.5 1.5v9.5A1.5 1.5 0 0 1 19 19.5H5A1.5 1.5 0 0 1 3.5 18z"/><circle cx="12" cy="13" r="3.6"/></symbol>
+  <symbol id="i-sync" viewBox="0 0 24 24"><path d="M20 11.5A8 8 0 0 0 6.1 6.6L4 8.7M4 4.5v4.2h4.2"/><path d="M4 12.5a8 8 0 0 0 13.9 4.9l2.1-2.1M20 19.5v-4.2h-4.2"/></symbol>
+  <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="14" y="3.5" width="6.5" height="6.5" rx="1.2"/><rect x="3.5" y="14" width="6.5" height="6.5" rx="1.2"/><path d="M14 14h2.5v2.5H14zM18 18h2.5v2.5H18zM18 14h2.5M14 18v2.5h1.5"/></symbol>
+  <symbol id="i-vin" viewBox="0 0 24 24"><rect x="2.5" y="6.5" width="19" height="11" rx="2"/><path d="M6 10l1.4 4 1.4-4M11 10v4M13.6 14v-4l2.8 4v-4"/></symbol>
+  <symbol id="i-signature" viewBox="0 0 24 24"><path d="M3 17.5c2.2-.3 3.6-2.5 4.2-5.5.5-2.6-1.6-3.1-2-.6-.5 3.1 1.3 6 3.7 4.3 1.6-1.1 2.3-3.4 3.2-3.4.8 0 .3 2.6 1.4 2.6 1 0 1.6-1.4 2.5-1.4.8 0 .8 1.3 1.7 1.3h2.3"/><path d="M3 20.5h18"/></symbol>
+  <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="13.5" r="7.5"/><path d="M12 9.5v4.2l2.6 1.6M9.5 2.8h5M12 2.8V6M18.6 6.4l1.4-1.4"/></symbol>
+  <symbol id="i-import" viewBox="0 0 24 24"><path d="M12 3.5v11M7.5 10.5 12 15l4.5-4.5"/><path d="M4 15v3.5A2 2 0 0 0 6 20.5h12a2 2 0 0 0 2-2V15"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4.2 4.2 0 0 0 6 0l3-3a4.2 4.2 0 0 0-6-6l-1.2 1.2"/><path d="M14 10a4.2 4.2 0 0 0-6 0l-3 3a4.2 4.2 0 0 0 6 6l1.2-1.2"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3L4.5 9"/><path d="M4.5 4.5V9H9"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><rect x="6.5" y="5" width="3.6" height="14" rx="1.2"/><rect x="13.9" y="5" width="3.6" height="14" rx="1.2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7.5 4.8v14.4a.9.9 0 0 0 1.4.8l11-7.2a.9.9 0 0 0 0-1.6l-11-7.2a.9.9 0 0 0-1.4.8z"/></symbol>
+</svg>
+<!-- @end icons -->
+<!-- @partial header -->
+<a class="skip-link" href="#main">Skip to content</a>
+<header class="site-header" data-header>
+  <div class="container header-inner">
+    <a class="brand" href="../index.html" aria-label="WPI Driveline Shop Management System home">
+      <svg class="brand-logo" viewBox="-81 -190 653 361" width="83" height="46" aria-hidden="true" focusable="false"><path transform="translate(-5.74 0)" fill="#0F2B4C" d="M54.32 0H103.27L124.51 -83.98C127.93 -97.78 130 -112.67 132.2 -127.81C134.52 -112.43 136.84 -97.41 140.26 -83.98L161.5 0H210.33L258.91 -181.88H211.18L193.24 -101.44C189.58 -84.59 186.65 -64.09 183.84 -44.8C180.66 -64.09 177.49 -84.59 173.46 -101.44L154.3 -181.88H110.47L91.19 -101.44C87.16 -84.35 83.98 -63.72 80.81 -44.31C77.88 -63.72 74.95 -84.35 71.41 -101.44L53.47 -181.88H5.74ZM284.81 0H327.9V-56.76H358.05C399.8 -56.76 425.56 -81.54 425.56 -119.02C425.56 -156.25 400.29 -181.88 359.27 -181.88H284.81ZM327.9 -90.82V-146.97H350.12C370.38 -146.97 380.88 -136.11 380.88 -119.02C380.88 -102.17 370.38 -90.82 350.24 -90.82ZM496.86 -181.88H453.77V0H496.86Z"/><rect x="0" y="40" width="238.56" height="12" fill="#1F7AE0"/><rect x="252.56" y="40" width="238.56" height="12" fill="#2DB36A"/><path transform="translate(-80.28 162.93)" fill="#0F2B4C" d="M29.2 0C49.55 0 61.36 -12.62 61.36 -33.56C61.36 -54.36 49.55 -66.93 29.83 -66.93H7.41V0ZM17.65 -8.98V-57.95H29.15C43.75 -57.95 51.3 -49.28 51.3 -33.56C51.3 -17.7 43.75 -8.98 28.62 -8.98ZM95.81 0H106.05V-25.29H119.71C119.88 -25.29 120.11 -25.29 120.29 -25.29L133.86 0H145.49L130.76 -27.04C138.89 -30.1 142.97 -36.93 142.97 -45.91C142.97 -58.26 135.29 -66.93 119.79 -66.93H95.81ZM106.05 -34.05V-58.17H118.63C128.51 -58.17 132.6 -53.46 132.6 -45.91C132.6 -38.41 128.51 -34.05 118.72 -34.05ZM187.66 -66.93H177.42V0H187.66ZM243.58 0H256.11L280.01 -66.93H268.91L256.24 -29.69C254.58 -24.62 252.52 -17.74 249.91 -8.22C247.26 -17.56 245.15 -24.62 243.44 -29.69L230.41 -66.93H219.36ZM311.71 0H354.12V-8.8H321.95V-29.42H351.6V-38.18H321.95V-58.13H353.85V-66.93H311.71ZM389.19 0H429.75V-8.8H399.43V-66.93H389.19ZM473.45 -66.93H463.21V0H473.45ZM510.28 0H520.65V-35.71C520.65 -39.17 520.29 -46.09 519.89 -54.49C524.74 -45.51 527.3 -40.88 530.58 -35.62L553.18 0H565.04V-66.93H554.66V-28.84C554.66 -24.98 554.84 -18.73 555.33 -12.26C552.37 -18.69 549.36 -23.76 547.29 -27.09L522.09 -66.93H510.28ZM601.86 0H644.27V-8.8H612.1V-29.42H641.75V-38.18H612.1V-58.13H644V-66.93H601.86Z"/></svg>
+      <span class="brand-tagline" aria-hidden="true">Shop Management System</span>
+    </a>
+    <nav class="primary-nav" aria-label="Primary">
+      <ul class="nav-list">
+        <li class="has-menu" data-menu>
+          <a class="nav-link is-active" href="../features.html" data-nav="features" aria-current="true"><span class="nav-pill" aria-hidden="true"></span>Features</a>
+          <button class="nav-caret" type="button" aria-expanded="false" aria-controls="mega-features" aria-label="Show all features"><svg class="icon" aria-hidden="true"><use href="#i-chevron-down"/></svg></button>
+          <div class="mega" id="mega-features">
+            <div class="mega-grid">
+              <div class="mega-col">
+                <p class="mega-label">Before the car arrives</p>
+                <a class="mega-item" href="../features/booking.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span class="mega-text"><strong>Booking &amp; check-in</strong><small>Real open times, key-drop check-in</small></span></a>
+                <a class="mega-item" href="../features/messaging.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span><span class="mega-text"><strong>Texting, calls &amp; email</strong><small>One thread per customer</small></span></a>
+                <a class="mega-item" href="../features/customers.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg></span><span class="mega-text"><strong>Customers &amp; follow-ups</strong><small>Oil-service and declined-work lists</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">In the bay</p>
+                <a class="mega-item" href="../features/workflow.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg></span><span class="mega-text"><strong>Workflow &amp; tech clock</strong><small>Every car by stage, one-tap timers</small></span></a>
+                <a class="mega-item" href="../features/inspections.html" aria-current="page"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span><span class="mega-text"><strong>Inspections &amp; approvals</strong><small>Photos, ratings and a yes by phone</small></span></a>
+                <a class="mega-item" href="../features/diagnosis.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg></span><span class="mega-text"><strong>Auto Diagnosis</strong><small>Recalls, owner reports, your fixes</small></span></a>
+                <a class="mega-item" href="../features/parts.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg></span><span class="mega-text"><strong>Parts, inventory &amp; tires</strong><small>Stock, POs, scanning, tire DOT log</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">At the counter</p>
+                <a class="mega-item" href="../features/repair-orders.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span><span class="mega-text"><strong>Estimates &amp; ROs</strong><small>One record, estimate to receipt</small></span></a>
+                <a class="mega-item" href="../features/payments.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg></span><span class="mega-text"><strong>Payments &amp; card readers</strong><small>Exact-balance pay links and readers</small></span></a>
+                <a class="mega-item" href="../features/fleet.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg></span><span class="mega-text"><strong>Fleet accounts</strong><small>Terms, PM plans, statements</small></span></a>
+              </div>
+              <div class="mega-col">
+                <p class="mega-label">Behind the desk</p>
+                <a class="mega-item" href="../features/reports.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg></span><span class="mega-text"><strong>Reports &amp; QuickBooks</strong><small>Goals, payroll export, daily journal</small></span></a>
+                <a class="mega-item" href="../features/ai.html"><span class="icon-tile icon-tile-sm"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg></span><span class="mega-text"><strong>AI assistant</strong><small>Drafts to review and an AI receptionist</small></span></a>
+              </div>
+            </div>
+            <div class="mega-foot">
+              <p class="mega-note"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg> Want to click around first? <a href="../app/" data-no-prerender>Try the sample shop</a></p>
+              <div class="mega-actions">
+                <a class="link-arrow" href="../features.html">All features <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></a>
+                <a class="btn btn-primary btn-sm" href="../demo.html">Request a demo</a>
+              </div>
+            </div>
+          </div>
+        </li>
+        <li><a class="nav-link" href="../mobile.html" data-nav="mobile">iPhone &amp; iPad</a></li>
+        <li><a class="nav-link" href="../works-with.html" data-nav="integrations">Integrations</a></li>
+        <li><a class="nav-link" href="../security.html" data-nav="security">Security</a></li>
+        <li><a class="nav-link" href="../faq.html" data-nav="faq">FAQ</a></li>
+      </ul>
+    </nav>
+    <div class="header-actions">
+      <a class="header-signin" href="../app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span class="header-signin-text">Sign in</span></a>
+      <a class="btn btn-primary btn-sm header-book" href="../demo.html" data-nav="demo">Request a demo</a>
+    </div>
+  </div>
+  <div class="road-progress" aria-hidden="true"><span class="road-progress-lane"></span><svg class="road-progress-car"><use href="#i-car-mini"/></svg></div>
+</header>
+<!-- @end header -->
+
+<main id="main">
+  <!-- ===== Hero ===== -->
+  <section class="page-hero inspections-hero" id="hero" aria-labelledby="hero-title">
+    <div class="page-hero-bg" aria-hidden="true"></div>
+    <div class="container page-hero-grid">
+      <div class="hero-in">
+        <!-- @partial breadcrumbs -->
+<nav class="breadcrumb" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="../index.html">Home</a></li>
+    <li><a href="../features.html">Features</a></li>
+    <li><span aria-current="page">Inspections &amp; approvals</span></li>
+  </ol>
+</nav>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://blakew316.github.io/automotive/"},{"@type":"ListItem","position":2,"name":"Features","item":"https://blakew316.github.io/automotive/features.html"},{"@type":"ListItem","position":3,"name":"Inspections & approvals","item":"https://blakew316.github.io/automotive/features/inspections.html"}]}</script>
+<!-- @end breadcrumbs -->
+        <p class="eyebrow"><span class="icon-tile" style="view-transition-name: ft-inspections"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span>Inspections &amp; approvals</p>
+        <h1 id="hero-title"><span class="inspections-h1-lead">Show what you found.</span> <span class="accent-text">Get it approved.</span></h1>
+        <p class="lead">Techs work a multi-point inspection on a phone or tablet with ratings, measurements, photos and video. Customers get a clean report by text or email and approve or decline each service with their name and signature, and the decision is applied to the repair order on your signed-in devices.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-lg" href="../demo.html?interest=inspections">Request a demo</a>
+          <a class="btn btn-secondary btn-lg" href="../app/orders" data-no-prerender>Open repair orders in the sample shop</a>
+        </div>
+        <div class="hero-trust">
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Approve or decline per service</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>Photos with markup</span>
+          <span class="chip"><svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>No costs or tech pay on the report</span>
+        </div>
+      </div>
+
+      <figure class="page-hero-art mock-figure inspections-hero-fig" data-play data-seq="5" data-loops="2" data-step="4" data-reached="0 1 2 3 4" data-seq-ms="1700" aria-label="Example: a technician's phone inspection of a 2016 Nissan Altima finds the front pads at 3 mm and the front rotors urgent. On his phone, the customer, Carlos Mendoza, approves front brake pads and rotors and a CVT fluid exchange ($832.45 before tax), types his name and signs, and the estimate is stamped Approved.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-phone inspections-phone"><div class="mock-screen">
+            <div class="inspections-views">
+              <!-- 1-2: the tech's inspection -->
+              <div class="inspections-view inspections-insp" data-until="2">
+                <div class="mock-appbar"><span class="inspections-appicon"><svg class="icon"><use href="#i-inspection"/></svg></span>Inspection<small>Dana W.</small></div>
+                <div class="inspections-veh"><b>2016 Nissan Altima</b><span>Standard multi-point</span></div>
+                <div class="mock-checklist inspections-checks">
+                  <div class="mock-check"><span class="mock-tickbox"><i data-at="0" data-fx="tick"></i></span><span>Engine oil</span><span class="mock-rating" data-at="0" data-fx="fade" style="--fx-delay: .12s">Good</span></div>
+                  <div class="mock-check"><span class="mock-tickbox"><i data-at="0" data-fx="tick" style="--fx-delay: .18s"></i></span><span>Brake fluid</span><span class="mock-rating" data-at="0" data-fx="fade" style="--fx-delay: .3s">Good</span></div>
+                  <div class="mock-check"><span class="mock-tickbox"><i data-at="0" data-fx="tick" style="--fx-delay: .36s"></i></span><span>Front pads</span><span class="mock-rating is-soon" data-at="0" data-fx="fade" style="--fx-delay: .48s">3 mm</span></div>
+                  <div class="mock-check"><span class="mock-tickbox"><i data-at="0" data-fx="tick" style="--fx-delay: .54s"></i></span><span>Rear pads/shoes</span><span class="mock-rating" data-at="0" data-fx="fade" style="--fx-delay: .66s">8 mm</span></div>
+                  <div class="mock-check"><span class="mock-tickbox"><i data-at="0" data-fx="tick" style="--fx-delay: .72s"></i></span><span>Front rotors</span><span class="mock-rating is-now" data-at="0" data-fx="fade" style="--fx-delay: .84s">Urgent</span></div>
+                  <div class="mock-check"><span class="mock-tickbox"><i data-at="0" data-fx="tick" style="--fx-delay: .9s"></i></span><span>Tire pressure</span><span class="mock-rating" data-at="0" data-fx="fade" style="--fx-delay: 1.02s">Good</span></div>
+                </div>
+                <div class="inspections-shots">
+                  <span class="inspections-shot"><svg viewBox="0 0 48 36" preserveAspectRatio="xMidYMid slice"><rect width="48" height="36" fill="#D8E0EA"/><circle cx="19" cy="18" r="13" fill="#EEF2F7" stroke="#93A2B5" stroke-width="1.5"/><circle cx="19" cy="18" r="5.5" fill="#C9D2DE" stroke="#8796AA"/><rect x="29" y="7" width="8" height="22" rx="3.5" fill="#8697AE"/><rect x="27" y="10" width="2.5" height="16" rx="1" fill="#D9A441"/><ellipse cx="29" cy="18" rx="6" ry="11.5" fill="none" stroke="#EF3B3B" stroke-width="1.8"/></svg></span>
+                  <span class="inspections-shot"><svg viewBox="0 0 48 36" preserveAspectRatio="xMidYMid slice"><rect width="48" height="36" fill="#CBD5E1"/><path d="M0 8h48M0 28h48" stroke="#AEBACA" stroke-width="6"/><path d="M8 0v36M18 0v36M28 0v36M38 0v36" stroke="#9AA8BA" stroke-width="3"/><path d="M4 30L42 6" stroke="#FFD23F" stroke-width="2" stroke-linecap="round"/></svg></span>
+                  <span class="inspections-shot"><svg viewBox="0 0 48 36" preserveAspectRatio="xMidYMid slice"><rect width="48" height="36" fill="#D3DCE7"/><circle cx="24" cy="18" r="9" fill="#fff" fill-opacity=".9"/><path d="M21.5 13.5v9l7.5-4.5z" fill="#1A6FD6"/></svg></span>
+                  <span class="inspections-shot is-add"><svg class="icon"><use href="#i-camera"/></svg></span>
+                </div>
+                <div class="inspections-padcard">
+                  <div class="inspections-padcard-top"><span class="mock-label">Front pads</span><b>3 mm</b><span class="mock-chip is-warn" data-at="1" data-fx="pop" style="--fx-delay: .9s">Soon</span></div>
+                  <span class="inspections-bar" style="--a: 25%; --b: 41.667%"><span class="inspections-bar-zones"><i class="z-bad"></i><i class="z-warn"></i><i class="z-ok"></i></span><span class="inspections-bar-dot is-soon" data-at="1" style="--fx: inspections-dot-slide; --fx-dur: 1.2s; --fx-pre: 1; --to: 25%"></span></span>
+                </div>
+              </div>
+              <!-- 3-5: the customer's report, approved and signed -->
+              <div class="inspections-view inspections-ok" data-at="2" data-fx="right" style="--fx-delay: .06s; --fx-dur: .6s">
+                <div class="inspections-cust"><span class="inspections-mark"><svg class="icon"><use href="#i-wrench"/></svg></span><span><b>Main Street Auto Service</b><small>Estimate · 2016 Nissan Altima</small></span></div>
+                <div class="inspections-svc">
+                  <div class="inspections-svc-top"><span class="inspections-thumb"><svg class="icon"><use href="#i-camera"/></svg></span><b>Front brake pads &amp; rotors</b></div>
+                  <div class="inspections-pick"><span class="is-yes" data-at="2" style="--fx: inspections-tap; --fx-dur: .8s; --fx-delay: .55s">Approve</span><span>Not now</span></div>
+                </div>
+                <div class="inspections-svc">
+                  <div class="inspections-svc-top"><span class="inspections-thumb"><svg class="icon"><use href="#i-camera"/></svg></span><b>CVT fluid exchange</b></div>
+                  <div class="inspections-pick"><span class="is-yes" data-at="2" style="--fx: inspections-tap; --fx-dur: .8s; --fx-delay: .95s">Approve</span><span>Not now</span></div>
+                </div>
+                <div class="inspections-total">
+                  <span class="inspections-hint" data-at="2" style="--fx: inspections-hint-hold; --fx-dur: 1.3s">Choose Approve or Not now for each item.</span>
+                  <span class="inspections-sum" data-at="2" data-fx="fade" style="--fx-delay: 1.1s"><span>2 approved</span><b>$832.45 <small>before tax</small></b></span>
+                </div>
+                <div class="inspections-sign" data-at="2" data-fx="fade" style="--fx-delay: 1.1s">
+                  <span class="mock-label">Your name</span>
+                  <span class="mock-field"><span data-at="3" data-fx="type" style="--chars: 14">Carlos Mendoza</span></span>
+                  <div class="inspections-sigbox"><svg viewBox="0 0 200 40" preserveAspectRatio="none"><path data-at="3" data-fx="draw" style="--fx-delay: .7s" pathLength="1" d="M8 30c5-11 10-20 14-14s-5 16 1 12 10-19 15-16-2 15 4 12 9-11 14-9 4 9 10 4 9-9 15-7M98 28c14-3 38-5 58-3" fill="none" stroke="#0F2B4C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+                </div>
+                <div class="inspections-send-wrap" data-at="2" data-fx="fade" style="--fx-delay: 1.1s"><span class="mock-btn is-green inspections-send" data-at="4" data-fx="press">Sign &amp; send to the shop</span></div>
+              </div>
+            </div>
+            <span class="stamp is-lg inspections-stamp" data-at="4" style="--fx-delay: .35s">Approved</span>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <div class="float-note note-1" aria-hidden="true">
+          <span class="dot"></span>
+          <span><strong>Front pads 3 mm</strong><small>Needs attention soon</small></span>
+        </div>
+        <div class="float-note note-2" aria-hidden="true">
+          <span class="dot is-ok"></span>
+          <span><strong>Estimate approved · $889.61</strong><small>Carlos M. · 2 services</small></span>
+        </div>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Pains ===== -->
+  <section class="section section-paper" id="pains" aria-labelledby="pains-title">
+    <div class="container split inspections-pains">
+      <div class="section-copy" data-reveal="left">
+        <p class="eyebrow">Sound familiar?</p>
+        <h2 id="pains-title">Where approvals stall</h2>
+        <ul class="signal-list">
+          <li>You found worn pads. On the phone, the customer heard &ldquo;brakes&rdquo; and said &ldquo;just the oil change.&rdquo;</li>
+          <li>The photos stay on a tech&rsquo;s phone.</li>
+          <li class="is-critical">Nobody can say who approved what, or when.</li>
+          <li>Customers call all afternoon asking if it&rsquo;s ready.</li>
+        </ul>
+      </div>
+      <div class="inspections-pains-side">
+        <figure class="page-hero-art inspections-art" data-reveal="right" data-reveal-seq data-play aria-label="Illustration: a phone call about the brakes is crossed out. In its place, a phone shows a brake photo with the worn pad circled in red, two services switched on and a signature, and a repair order gets a green check.">
+          <svg viewBox="0 0 480 300" aria-hidden="true">
+            <ellipse class="art-tint" cx="300" cy="156" rx="172" ry="134" opacity=".6"/>
+            <!-- the phone call -->
+            <g data-seq-i="0">
+              <path class="art-ink art-paper" d="M44 54h112a18 18 0 0 1 18 18v52a18 18 0 0 1-18 18H90l-20 18 3-18H44a18 18 0 0 1-18-18V72a18 18 0 0 1 18-18z"/>
+              <path class="art-ink art-thin" d="M44 84c6-5 11 5 17 0s11-5 17 0 11 5 17 0 11-5 17 0" stroke-opacity=".45"/>
+              <path class="art-ink art-thin" d="M44 108c6-5 11 5 17 0s11-5 17 0 11 5 17 0" stroke-opacity=".45"/>
+              <path d="M140 80c0-9 13-9 13 0 0 6-6.5 6.5-6.5 12.5M146.5 104v.5" fill="none" stroke="var(--dot-warn)" stroke-width="3" stroke-linecap="round"/>
+              <path class="art-ink art-soft" vector-effect="non-scaling-stroke" transform="translate(30 176) scale(2.7)" d="M5.2 3.8h3l1.6 4.1-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4.1 1.6v3a2 2 0 0 1-2.1 2A14.8 14.8 0 0 1 3.2 5.9a2 2 0 0 1 2-2.1z"/>
+              <path class="art-ink art-thin" d="M92 194a16 16 0 0 1 0 24M101 186a28 28 0 0 1 0 40" stroke-opacity=".45"/>
+            </g>
+            <g data-seq-i="1" data-fx="pop">
+              <circle cx="170" cy="58" r="12" fill="var(--stop-soft)" stroke="var(--dot-stop)" stroke-width="2"/>
+              <path d="M165 53l10 10M175 53l-10 10" stroke="var(--dot-stop)" stroke-width="2.4" stroke-linecap="round"/>
+            </g>
+            <!-- the hand-off -->
+            <path class="art-ink art-accent" data-seq-i="2" data-fx="draw" pathLength="1" d="M188 118c16-14 32-18 46-12"/>
+            <path class="art-ink art-accent" data-seq-i="2" data-fx="pop" style="--fx-delay: .6s" d="M223 97l11 9-13 5"/>
+            <!-- the phone with the report -->
+            <g data-seq-i="3">
+              <g class="art-float">
+                <rect class="art-ink art-paper" x="244" y="30" width="136" height="244" rx="24"/>
+                <rect x="253" y="39" width="118" height="226" rx="17" fill="var(--mist-50)" stroke="var(--mist-200)"/>
+                <rect x="296" y="46" width="32" height="8" rx="4" fill="var(--mist-300)"/>
+                <rect x="261" y="62" width="102" height="76" rx="9" fill="var(--mist-100)" stroke="var(--mist-200)"/>
+                <circle cx="298" cy="100" r="27" fill="var(--paper)" stroke="var(--ink-4)" stroke-width="2"/>
+                <circle cx="298" cy="100" r="10" fill="var(--mist-200)" stroke="var(--ink-4)" stroke-width="1.6"/>
+                <path d="M319 76c12 5 20 14 22 26l-11 3c-2-7-6-13-13-16z" fill="var(--blue-100)" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M315 84c7 3 12 9 14 16" fill="none" stroke="var(--dot-warn)" stroke-width="3" stroke-linecap="round"/>
+                <path data-seq-i="4" data-fx="draw" pathLength="1" d="M322 68c14 2 23 14 22 28s-12 22-25 19-17-17-14-29 9-19 22-17" fill="none" stroke="var(--dot-stop)" stroke-width="2.6" stroke-linecap="round"/>
+                <rect x="261" y="148" width="102" height="26" rx="8" fill="var(--paper)" stroke="var(--mist-200)"/>
+                <path d="M269 157h40M269 165h24" stroke="var(--ink-4)" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
+                <rect x="334" y="154.5" width="22" height="13" rx="6.5" fill="var(--mist-300)"/><circle cx="340.5" cy="161" r="4.6" fill="var(--paper)"/>
+                <g data-seq-i="5" data-fx="pop"><rect x="334" y="154.5" width="22" height="13" rx="6.5" fill="var(--green)"/><circle cx="349.5" cy="161" r="4.6" fill="var(--paper)"/></g>
+                <rect x="261" y="180" width="102" height="26" rx="8" fill="var(--paper)" stroke="var(--mist-200)"/>
+                <path d="M269 189h34M269 197h22" stroke="var(--ink-4)" stroke-width="2.4" stroke-linecap="round" stroke-opacity=".7"/>
+                <rect x="334" y="186.5" width="22" height="13" rx="6.5" fill="var(--mist-300)"/><circle cx="340.5" cy="193" r="4.6" fill="var(--paper)"/>
+                <g data-seq-i="5" data-fx="pop" style="--fx-delay: .25s"><rect x="334" y="186.5" width="22" height="13" rx="6.5" fill="var(--green)"/><circle cx="349.5" cy="193" r="4.6" fill="var(--paper)"/></g>
+                <rect x="261" y="214" width="102" height="36" rx="8" fill="var(--paper)" stroke="var(--mist-200)"/>
+                <path d="M269 242h86" stroke="var(--mist-300)" stroke-width="1.4"/>
+                <path data-seq-i="6" data-fx="draw" pathLength="1" d="M270 238c5-8 9-14 12-9s-4 12 1 9 8-14 12-11-2 11 3 8 7-8 11-6 3 6 8 2 7-6 12-4" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </g>
+            </g>
+            <!-- the repair order -->
+            <g data-seq-i="7">
+              <g transform="rotate(5 431 198)">
+                <rect class="art-ink art-paper" x="394" y="146" width="74" height="104" rx="11"/>
+                <path d="M404 160h27" stroke="var(--blue)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M433 160h25" stroke="var(--green)" stroke-width="4" stroke-linecap="round"/>
+                <rect class="art-ink art-thin art-soft" x="418" y="139" width="26" height="12" rx="4"/>
+                <path class="art-ink art-thin" d="M404 178h46M404 192h54M404 206h38M404 220h48" stroke-opacity=".32"/>
+              </g>
+            </g>
+            <g data-seq-i="8" data-fx="pop">
+              <circle cx="462" cy="240" r="15" fill="var(--green)" stroke="var(--paper)" stroke-width="3"/>
+              <path d="M455 240.5l4.8 4.8 9-9.6" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </g>
+          </svg>
+        </figure>
+        <div class="callout" data-reveal="right">
+          <svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg>
+          <div>
+            <p class="callout-title">Decisions made on the facts</p>
+            <p>With photos in front of them and a button per service, customers decide on the facts, and every decision is on the RO.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== The inspection ===== -->
+  <section class="section section-tint" id="inspection" aria-labelledby="inspection-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">The inspection</p>
+        <h2 id="inspection-title">Measurements that <span class="accent-text">rate themselves</span></h2>
+        <p class="lead">In WPI Driveline Shop Management System, techs work the checklist on a phone or tablet at the car. Type a pad or tread measurement and the rating fills itself in, on a color gauge the customer can read.</p>
+      </div>
+      <div class="grid grid-3 inspections-facts" data-reveal-stagger>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg></span>
+          <h3 class="mt-2">37 points, your way</h3>
+          <p>The default &ldquo;Standard multi-point&rdquo; template covers under hood, brakes, tires &amp; wheels, steering &amp; suspension, exterior &amp; safety, and underbody. Edit it, or build your own templates.</p>
+          <p class="inspections-count"><span class="odometer" data-odometer="37" data-label="37 points in the default inspection template">37</span><span>points in 6 sections,<br>out of the box</span></p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-check-circle"/></svg></span>
+          <h3 class="mt-2">Three ratings</h3>
+          <p>Each point is Good, Needs attention soon or Needs immediate attention. Points you skip count as not inspected and stay off the customer&rsquo;s report.</p>
+          <ul class="inspections-ratings" aria-hidden="true">
+            <li><span class="status-dot is-ok"></span>Good</li>
+            <li><span class="status-dot"></span>Needs attention soon</li>
+            <li><span class="status-dot is-stop"></span>Needs immediate attention</li>
+          </ul>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-gauge"/></svg></span>
+          <h3 class="mt-2">Pads and tread</h3>
+          <p>Brake pads in millimeters: 5 mm and up is good, 3 mm and up is soon. Tread in 32nds: 6/32 and up is good, 3/32 and up is soon. Anything less needs attention now.</p>
+          <div class="inspections-scales" data-reveal-seq aria-hidden="true">
+            <div class="inspections-scale" style="--a: 25%; --b: 41.667%">
+              <span class="inspections-scale-name">Brake pads, mm</span>
+              <span class="inspections-scale-bar" data-seq-i="0" data-fx="wipe"></span>
+              <span class="inspections-scale-ticks"><i>0</i><i style="left: 25%">3</i><i style="left: 41.667%">5</i><i>12</i></span>
+            </div>
+            <div class="inspections-scale" style="--a: 30%; --b: 60%">
+              <span class="inspections-scale-name">Tread, 32nds</span>
+              <span class="inspections-scale-bar" data-seq-i="1" data-fx="wipe"></span>
+              <span class="inspections-scale-ticks"><i>0</i><i style="left: 30%">3</i><i style="left: 60%">6</i><i>10</i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <figure class="mock-figure inspections-glance-fig" data-reveal data-reveal-seq tabindex="0" aria-label="Example: the tire and brake diagram from an inspection. Tread is 7/32 inch at the left front, 6/32 at the right front, 4/32 at the left rear and 2/32 at the right rear. The front pads are at 3 mm and the rear pads/shoes at 8 mm.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="inspections-glance">
+            <div class="inspections-glance-tires">
+              <span class="inspections-glance-title">Tire tread</span>
+              <div class="inspections-glance-body">
+                <div class="inspections-wheel is-left is-front" data-seq-i="0">
+                  <span class="mock-label">Left front</span>
+                  <strong class="is-ok-txt" data-seq-i="3" style="--fx: inspections-num-tint; --fx-dur: .8s; --fx-pre: 1"><span class="odometer is-plain" data-odometer="7" data-from="0" data-duration="1.2">7</span><small>/32″</small></strong>
+                </div>
+                <div class="inspections-wheel is-right is-front" data-seq-i="0" style="--fx-delay: .1s">
+                  <span class="mock-label">Right front</span>
+                  <strong class="is-ok-txt" data-seq-i="3" style="--fx: inspections-num-tint; --fx-dur: .8s; --fx-pre: 1; --fx-delay: .1s"><span class="odometer is-plain" data-odometer="6" data-from="0" data-duration="1.2">6</span><small>/32″</small></strong>
+                </div>
+                <svg class="inspections-car" viewBox="0 0 140 250">
+                  <g class="inspections-tire-g"><rect class="inspections-tire is-ok" data-seq-i="3" style="--fx: inspections-tire-tint; --fx-dur: .8s; --fx-pre: 1" x="9" y="40" width="22" height="50" rx="8"/><path d="M13 50h14M13 58h14M13 66h14M13 74h14M13 82h14" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/></g>
+                  <g class="inspections-tire-g"><rect class="inspections-tire is-ok" data-seq-i="3" style="--fx: inspections-tire-tint; --fx-dur: .8s; --fx-delay: .1s; --fx-pre: 1" x="109" y="40" width="22" height="50" rx="8"/><path d="M113 50h14M113 58h14M113 66h14M113 74h14M113 82h14" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/></g>
+                  <g class="inspections-tire-g"><rect class="inspections-tire is-soon" data-seq-i="3" style="--fx: inspections-tire-tint; --fx-dur: .8s; --fx-delay: .2s; --fx-pre: 1" x="9" y="160" width="22" height="50" rx="8"/><path d="M13 170h14M13 178h14M13 186h14M13 194h14M13 202h14" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/></g>
+                  <g class="inspections-tire-g"><rect class="inspections-tire is-now" data-seq-i="3" style="--fx: inspections-tire-tint; --fx-dur: .8s; --fx-delay: .3s; --fx-pre: 1" x="109" y="160" width="22" height="50" rx="8"/><path d="M113 170h14M113 178h14M113 186h14M113 194h14M113 202h14" stroke="#fff" stroke-opacity=".45" stroke-width="2" stroke-linecap="round"/></g>
+                  <rect x="24" y="8" width="92" height="234" rx="42" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+                  <path d="M46 24c12-5 36-5 48 0" fill="none" stroke="var(--mist-300)" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M36 96c3-16 8-26 14-30h40c6 4 11 14 14 30z" fill="var(--blue-50)" stroke="var(--ink-4)" stroke-width="1.5" stroke-linejoin="round"/>
+                  <rect x="38" y="102" width="64" height="64" rx="12" fill="var(--mist-50)" stroke="var(--mist-200)" stroke-width="1.5"/>
+                  <path d="M38 172h64c-3 14-7 22-12 26H50c-5-4-9-12-12-26z" fill="var(--blue-50)" stroke="var(--ink-4)" stroke-width="1.5" stroke-linejoin="round"/>
+                  <path d="M48 224c10 4 34 4 44 0" fill="none" stroke="var(--mist-300)" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M34 18c3-4 7-7 12-8M106 18c-3-4-7-7-12-8" fill="none" stroke="var(--dot-warn)" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+                <div class="inspections-wheel is-left is-rear" data-seq-i="0" style="--fx-delay: .2s">
+                  <span class="mock-label">Left rear</span>
+                  <strong class="is-soon-txt" data-seq-i="3" style="--fx: inspections-num-tint; --fx-dur: .8s; --fx-pre: 1; --fx-delay: .2s"><span class="odometer is-plain" data-odometer="4" data-from="0" data-duration="1.2">4</span><small>/32″</small></strong>
+                </div>
+                <div class="inspections-wheel is-right is-rear" data-seq-i="0" style="--fx-delay: .3s">
+                  <span class="mock-label">Right rear</span>
+                  <strong class="is-now-txt" data-seq-i="3" style="--fx: inspections-num-tint; --fx-dur: .8s; --fx-pre: 1; --fx-delay: .3s"><span class="odometer is-plain" data-odometer="2" data-from="0" data-duration="1.2">2</span><small>/32″</small></strong>
+                </div>
+              </div>
+              <span class="inspections-glance-scale">New tires &asymp; 10/32″ &middot; replace at 2/32″</span>
+            </div>
+            <div class="inspections-glance-pads">
+              <span class="inspections-glance-title">Brake pads</span>
+              <ul class="inspections-padlist">
+                <li>
+                  <span class="inspections-pad-row"><span>Front pads</span><b class="is-soon-txt" data-seq-i="4" style="--fx: inspections-num-tint; --fx-dur: .8s; --fx-pre: 1">3 mm</b></span>
+                  <span class="inspections-bar" style="--a: 25%; --b: 41.667%"><span class="inspections-bar-zones" data-seq-i="3" data-fx="wipe"><i class="z-bad"></i><i class="z-warn"></i><i class="z-ok"></i></span><span class="inspections-bar-dot is-soon" data-seq-i="4" style="--fx: inspections-dot-slide; --fx-dur: 1.2s; --fx-pre: 1; --to: 25%"></span></span>
+                </li>
+                <li>
+                  <span class="inspections-pad-row"><span>Rear pads/shoes</span><b class="is-ok-txt" data-seq-i="4" style="--fx: inspections-num-tint; --fx-dur: .8s; --fx-pre: 1; --fx-delay: .15s">8 mm</b></span>
+                  <span class="inspections-bar" style="--a: 25%; --b: 41.667%"><span class="inspections-bar-zones" data-seq-i="3" data-fx="wipe" style="--fx-delay: .15s"><i class="z-bad"></i><i class="z-warn"></i><i class="z-ok"></i></span><span class="inspections-bar-dot" data-seq-i="4" style="--fx: inspections-dot-slide; --fx-dur: 1.2s; --fx-pre: 1; --fx-delay: .15s; --to: 66.667%"></span></span>
+                </li>
+              </ul>
+              <span class="inspections-glance-scale">New pads &asymp; 10&ndash;12 mm &middot; replace at 3 mm</span>
+            </div>
+          </div>
+        </div>
+        <p class="mock-caption">This diagram appears on the RO, on the counter-tablet report and on the share link.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Photos and video ===== -->
+  <section class="section section-paper" id="media" aria-labelledby="media-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Photos &amp; video</p>
+        <h2 id="media-title">Photos and video that <span class="accent-text">tell the story</span></h2>
+        <p>Attach photos and video to an inspection point, a service line or the whole vehicle, each with a caption. Mark any item internal and it stays off the customer&rsquo;s report.</p>
+        <ul class="checklist">
+          <li><span><strong>Markup.</strong> Arrows, circles, freehand lines and labels in red, yellow or white, with undo. The original is kept, and the customer sees the marked-up copy.</span></li>
+          <li><span><strong>Re-encoded photos.</strong> Photos the browser can open are resized to at most 2,400 px on the long edge and re-encoded, which removes GPS location and device data. A format it can&rsquo;t open (such as HEIC outside Safari) is kept as-is. Videos are stored as recorded, up to 300 MB.</span></li>
+          <li><span><strong>Dictation.</strong> Tap the mic button to dictate notes in Chrome, Edge or Safari.</span></li>
+        </ul>
+      </div>
+      <figure class="mock-figure inspections-media-fig" data-reveal="left" data-play data-seq="4" data-loops="1" data-step="3" data-reached="0 1 2 3" aria-label="Example: a brake photo in the markup editor with a red arrow pointing at the worn pad, a red circle around it and a white label reading Pad 3 mm. Below the editor, an illustration of the photo file shows its GPS location struck through, because re-encoding removes it when the photo is added.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-tablet is-auto inspections-editor"><div class="mock-screen">
+            <div class="inspections-tools">
+              <span class="inspections-toolset">
+                <span class="inspections-tool is-arrow"><svg class="icon"><use href="#i-arrow-up-right"/></svg><b>Arrow</b></span>
+                <span class="inspections-tool is-circle"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5"/></svg><b>Circle</b></span>
+                <span class="inspections-tool is-draw"><svg class="icon" viewBox="0 0 24 24"><path d="M4 16c3-6 5-8 7-6s-1 6 2 6 4-6 7-8"/></svg><b>Draw</b></span>
+                <span class="inspections-tool is-label"><svg class="icon" viewBox="0 0 24 24"><path d="M6 7V5h12v2M12 5v14M9 19h6"/></svg><b>Label</b></span>
+              </span>
+              <span class="inspections-swatches">
+                <span class="inspections-swatch" style="background: #EF3B3B"></span>
+                <span class="inspections-swatch" style="background: #FFD23F"></span>
+                <span class="inspections-swatch" style="background: #FFFFFF"></span>
+                <span class="inspections-swatch-ring" data-at="2" style="--fx: inspections-swatch-cycle; --fx-dur: 1.3s; --fx-ease: var(--ease-in-out); --fx-pre: 1"></span>
+              </span>
+              <span class="inspections-undo"><svg class="icon" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></span>
+            </div>
+            <div class="inspections-photo">
+              <svg viewBox="0 0 400 220">
+                <defs><linearGradient id="inspections-photo-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6ECF3"/><stop offset="1" stop-color="#C7D2DF"/></linearGradient></defs>
+                <rect width="400" height="220" fill="url(#inspections-photo-bg)"/>
+                <circle cx="168" cy="118" r="104" fill="#BFCAD8"/>
+                <circle cx="168" cy="118" r="88" fill="#E9EEF4" stroke="#93A2B5" stroke-width="3"/>
+                <circle cx="168" cy="118" r="71" fill="none" stroke="#D3DBE5" stroke-width="12"/>
+                <g fill="none" stroke="#B9C4D2" stroke-width="1"><circle cx="168" cy="118" r="62"/><circle cx="168" cy="118" r="78"/><circle cx="168" cy="118" r="83"/></g>
+                <circle cx="168" cy="118" r="42" fill="#C9D2DE" stroke="#8796AA" stroke-width="2.5"/>
+                <circle cx="168" cy="118" r="13" fill="#A3B0C1" stroke="#8796AA" stroke-width="2"/>
+                <g fill="#7F8EA3"><circle cx="168" cy="91" r="5"/><circle cx="193.7" cy="109.7" r="5"/><circle cx="183.9" cy="139.8" r="5"/><circle cx="152.1" cy="139.8" r="5"/><circle cx="142.3" cy="109.7" r="5"/></g>
+                <rect x="235" y="80" width="11" height="76" rx="3" fill="#D9A441" stroke="#9A6A1A" stroke-width="1.5"/>
+                <rect x="244" y="66" width="46" height="104" rx="18" fill="#8697AE" stroke="#66778F" stroke-width="2"/>
+                <circle cx="267" cy="86" r="5" fill="#B6C2D1"/><circle cx="267" cy="150" r="5" fill="#B6C2D1"/>
+                <path d="M258 104h18M258 118h18M258 132h18" stroke="#A7B4C5" stroke-width="2" stroke-linecap="round"/>
+                <path d="M290 96c30-8 50 6 68-10s30-18 46-14" fill="none" stroke="#8291A6" stroke-width="5" stroke-linecap="round"/>
+                <!-- 1: arrow -->
+                <path data-at="0" data-fx="draw" pathLength="1" d="M352 30C326 44 288 62 254 84" fill="none" stroke="#EF3B3B" stroke-width="4.5" stroke-linecap="round"/>
+                <path data-at="0" data-fx="pop" style="--fx-delay: .8s" d="M261.8 70.1L254 84l15.9-1.3" fill="none" stroke="#EF3B3B" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+                <!-- 2: circle -->
+                <path data-at="1" data-fx="draw" pathLength="1" d="M244 60C262 62 270 88 268 118S258 174 242 174 216 148 216 118 226 60 250 62" fill="none" stroke="#EF3B3B" stroke-width="4" stroke-linecap="round"/>
+                <!-- 3: a white label -->
+                <text class="inspections-photo-label" x="292" y="200" data-at="2" data-fx="pop" style="--fx-delay: 1s">Pad 3 mm</text>
+              </svg>
+            </div>
+          </div></div>
+          <div class="inspections-meta">
+            <span class="inspections-meta-line"><svg class="icon"><use href="#i-camera"/></svg>Photo file · GPS 41.88, -87.62<i class="inspections-strike" data-at="3" data-fx="grow-x"></i></span>
+            <span class="inspections-meta-note" data-at="3" data-fx="pop" style="--fx-delay: .55s"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>Removed when added</span>
+          </div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+        <p class="mock-caption">Below the editor: what re-encoding strips from a photo the browser can open.</p>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== Approvals ===== -->
+  <section class="section" id="approval" aria-labelledby="approval-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Approvals</p>
+        <h2 id="approval-title">A yes <span class="accent-text">on the record</span></h2>
+        <p class="lead">Customers see a clean report with your photos and decide service by service. Every decision lands on the repair order with a name, a time and the amount.</p>
+      </div>
+      <div class="grid grid-3 inspections-approve-grid" data-reveal-stagger>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-signature"/></svg></span>
+          <h3 class="mt-2">At the counter or by phone</h3>
+          <p>Record an approval in person with an on-screen signature, or log one that came by phone, text or email.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg></span>
+          <h3 class="mt-2">Approve or decline online</h3>
+          <p>Customers approve or decline each service from the report link, with a typed name and signature. The decision is applied to the RO within about a minute on a signed-in shop device that has the app open on screen.</p>
+        </div>
+        <div class="card value-card">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-ledger"/></svg></span>
+          <h3 class="mt-2">Every authorization logged</h3>
+          <p>Who, how, when, which services and the amount, kept on the repair order.</p>
+        </div>
+        <div class="card value-card is-short">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg></span>
+          <h3 class="mt-2">Your numbers stay yours</h3>
+          <p>The report never shows costs, margins, tech pay, internal notes or photos marked internal.</p>
+        </div>
+        <div class="card value-card is-short">
+          <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-tire"/></svg></span>
+          <h3 class="mt-2">Good, better, best tires</h3>
+          <p>Quote three tire options, and the customer picks one right on the report.</p>
+        </div>
+        <div class="card inspections-share" data-reveal-seq>
+          <svg class="inspections-share-art" viewBox="0 0 326 124" aria-hidden="true">
+            <!-- three dashed routes draw in, then a short dash runs each one once -->
+            <g data-seq-i="0" data-fx="wipe">
+              <rect x="60" y="0" width="120" height="124" fill="none"/>
+              <path class="flow-line is-blue" d="M62 54C112 54 124 20 180 20"/>
+              <path class="flow-line is-blue" d="M62 62H180"/>
+              <path class="flow-line is-blue" d="M62 70C112 70 124 104 180 104"/>
+            </g>
+            <path class="flow-dot" pathLength="100" data-seq-i="1" data-fx="flow" d="M62 54C112 54 124 20 180 20"/>
+            <path class="flow-dot" pathLength="100" data-seq-i="2" data-fx="flow" d="M62 62H180"/>
+            <path class="flow-dot is-green" pathLength="100" data-seq-i="3" data-fx="flow" d="M62 70C112 70 124 104 180 104"/>
+            <!-- the repair order -->
+            <rect class="t-box is-src" x="2" y="32" width="60" height="60" rx="16"/>
+            <use class="t-ico" href="#i-document" x="18" y="40" width="28" height="28"/>
+            <text class="t-src" x="32" y="84" text-anchor="middle">RO</text>
+            <!-- tablet, phone, file -->
+            <rect class="t-box" x="180" y="5" width="144" height="30" rx="10"/>
+            <use class="t-ico" href="#i-device-tablet" x="189" y="12" width="16" height="16"/>
+            <text class="t-txt" x="210" y="24.5">Counter tablet</text>
+            <rect class="t-box" x="180" y="47" width="144" height="30" rx="10"/>
+            <use class="t-ico" href="#i-device-phone" x="189" y="54" width="16" height="16"/>
+            <text class="t-txt" x="210" y="66.5">Text or email</text>
+            <rect class="t-box" x="180" y="89" width="144" height="30" rx="10"/>
+            <svg class="t-ico" x="189" y="96" width="16" height="16" viewBox="0 0 24 24"><path d="M6.5 3h7.8l4.2 4.2V21h-12z"/><path d="M14 3v4.5h4.5"/><path d="M10.4 12.4 8.2 14.6l2.2 2.2M13.6 12.4l2.2 2.2-2.2 2.2"/></svg>
+            <text class="t-txt" x="210" y="108.5">.html file</text>
+          </svg>
+          <h3>Three ways to share</h3>
+          <p>Hand over the counter tablet, text or email a link, or send one self-contained .html report that works offline.</p>
+          <p class="fine-print">Links use <a href="../works-with.html#shop-cloud">Shop Cloud</a>. Each has a random 22-character id, and turning a link off deletes its files.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Live status ===== -->
+  <section class="section section-tint" id="live-status" aria-labelledby="live-status-title">
+    <div class="container split split-reverse">
+      <div class="section-copy" data-reveal="right">
+        <p class="eyebrow">Live status</p>
+        <h2 id="live-status-title">A live status page <span class="accent-text">customers check themselves</span></h2>
+        <p>Send the link once. The page shows each stage with its time: checked in, approved, being worked on, waiting on parts (when it happens), ready and picked up. It also shows the promised time until the car is ready, the approved work, and buttons to call the shop, view the inspection (when you&rsquo;ve shared the report) and pay the balance.</p>
+        <ul class="checklist">
+          <li>It refreshes itself while it&rsquo;s open.</li>
+          <li>It shows only the customer&rsquo;s first name and the balance due, never line prices.</li>
+          <li>You can turn it off.</li>
+        </ul>
+        <p class="fine-print">The status page uses <a href="../works-with.html#shop-cloud">Shop Cloud</a>. The Pay button appears once the car is ready, if you&rsquo;ve set up a pay link.</p>
+      </div>
+      <figure class="mock-figure inspections-live-fig" data-reveal="left" data-play data-seq="5" data-loops="1" data-step="4" data-reached="0 1 2 3 4" aria-label="Example: how a live status page for Carlos's 2016 Nissan Altima at Main Street Auto Service reads at the end of a day with a parts wait. It says Ready for pickup. The timeline shows checked in at 8:05 AM, approved at 9:12 AM, being worked on at 9:40 AM, waiting on parts at 11:15 AM and ready at 3:30 PM. Both approved services are done, with buttons to pay $889.61, view the inspection and estimate, and call the shop.">
+        <span class="mock-tag">Example · sample shop</span>
+        <div class="mock-stage" aria-hidden="true">
+          <div class="mock-phone inspections-track"><div class="mock-screen">
+            <div class="inspections-track-head">
+              <span class="inspections-shop"><span class="inspections-mark"><svg class="icon"><use href="#i-wrench"/></svg></span>Main Street Auto Service</span>
+              <span class="mock-sub">Hi Carlos, here&rsquo;s your 2016 Nissan Altima</span>
+              <span class="inspections-swap inspections-track-title">
+                <span data-at="0" data-until="1" data-fx="fade">Checked in &amp; inspected</span>
+                <span data-at="1" data-until="2" data-fx="fade">Work approved</span>
+                <span data-at="2" data-until="3" data-fx="fade">Being worked on</span>
+                <span data-at="3" data-until="4" data-fx="fade">Waiting on parts</span>
+                <span data-at="4" data-fx="fade">Ready for pickup</span>
+              </span>
+              <span class="inspections-swap inspections-track-detail">
+                <span class="mock-chip" data-until="4"><svg class="icon"><use href="#i-clock"/></svg>Expected 4:00 PM</span>
+                <span data-at="4" data-fx="fade">All done! Your vehicle is ready to pick up.</span>
+              </span>
+            </div>
+            <div class="inspections-card">
+              <ol class="mock-timeline inspections-tl">
+                <li><span class="mock-tl-dot"><i data-at="0" style="--fx: gear-pop; --fx-dur: .55s; --fx-ease: var(--spring)"></i></span><span>Checked in &amp; inspected</span><span class="mock-time" data-at="0" data-fx="fade" style="--fx-delay: .2s">8:05 AM</span></li>
+                <li><span class="mock-tl-dot"><i data-at="1" style="--fx: gear-pop; --fx-dur: .55s; --fx-ease: var(--spring)"></i></span><span>Work approved</span><span class="mock-time" data-at="1" data-fx="fade" style="--fx-delay: .2s">9:12 AM</span></li>
+                <li><span class="mock-tl-dot"><i data-at="2" style="--fx: gear-pop; --fx-dur: .55s; --fx-ease: var(--spring)"></i></span><span>Being worked on</span><span class="mock-time" data-at="2" data-fx="fade" style="--fx-delay: .2s">9:40 AM</span></li>
+                <li><span class="mock-tl-dot"><i data-at="3" style="--fx: gear-pop; --fx-dur: .55s; --fx-ease: var(--spring)"></i></span><span>Waiting on parts</span><span class="mock-time" data-at="3" data-fx="fade" style="--fx-delay: .2s">11:15 AM</span></li>
+                <li class="is-ready"><span class="mock-tl-dot"><i data-at="4" style="--fx: gear-pop; --fx-dur: .55s; --fx-ease: var(--spring)"></i></span><span>Ready for pickup</span><span class="mock-time" data-at="4" data-fx="fade" style="--fx-delay: .2s">3:30 PM</span></li>
+                <li class="is-todo"><span class="mock-tl-dot"></span><span>Picked up</span><span class="mock-time"></span></li>
+              </ol>
+            </div>
+            <div class="inspections-card">
+              <span class="mock-label">Work on your vehicle</span>
+              <span class="inspections-work-row"><span class="inspections-done"><i data-at="4" data-fx="tick" style="--fx-delay: .3s"></i></span>Front brake pads &amp; rotors</span>
+              <span class="inspections-work-row"><span class="inspections-done"><i data-at="3" data-fx="tick" style="--fx-delay: .3s"></i></span>CVT fluid exchange</span>
+            </div>
+            <div class="inspections-track-btns">
+              <span class="mock-btn inspections-pay" data-at="4" data-fx="pop" style="--fx-delay: .2s"><svg class="icon"><use href="#i-card-reader"/></svg>Pay $889.61<span class="inspections-sheen" data-at="4" style="--fx: btn-sheen; --fx-dur: .9s; --fx-delay: .8s"></span></span>
+              <span class="mock-btn is-ghost"><svg class="icon"><use href="#i-inspection"/></svg>Inspection &amp; estimate</span>
+              <span class="mock-btn is-ghost"><svg class="icon"><use href="#i-phone"/></svg>Call the shop</span>
+            </div>
+            <span class="live-pill"><span class="live-dot"></span>Updated just now</span>
+          </div></div>
+        </div>
+        <button class="mock-replay" type="button"><svg class="icon" aria-hidden="true"><use href="#i-replay"/></svg>Replay</button>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ===== How it works ===== -->
+  <section class="section section-paper" id="how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">How it works</p>
+        <h2 id="how-title">From the bay <span class="accent-text">to a yes</span></h2>
+      </div>
+      <div class="roadmap" style="--steps:4" data-reveal>
+        <svg class="roadmap-car" viewBox="0 0 32 14" aria-hidden="true"><use href="#i-car-mini"/></svg>
+        <div class="roadmap-road" aria-hidden="true"></div>
+        <ol class="roadmap-steps" aria-label="Example inspection journey in the sample shop">
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-inspection"/></svg></span>
+            <h3>Inspect</h3>
+            <p>Rate, measure and shoot photos and video at the car.</p>
+            <span class="roadmap-chip">Inspected · 37 points</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-link"/></svg></span>
+            <h3>Share</h3>
+            <p>Hand over the tablet, send a link or send the file.</p>
+            <span class="roadmap-chip">Link sent</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-signature"/></svg></span>
+            <h3>They decide</h3>
+            <p>They approve or decline each service and sign.</p>
+            <span class="roadmap-chip">Approved · 2 of 2</span>
+          </li>
+          <li class="roadmap-step">
+            <span class="roadmap-marker" aria-hidden="true"><svg class="icon"><use href="#i-document"/></svg></span>
+            <h3>On the RO</h3>
+            <p>Applied on your signed-in devices and logged. Declined work is saved for a <a href="customers.html">follow-up</a>.</p>
+            <span class="roadmap-chip">On the RO</span>
+          </li>
+        </ol>
+      </div>
+      <p class="roadmap-caption">The chips show an example from the sample shop.</p>
+    </div>
+  </section>
+
+  <!-- ===== Good to know ===== -->
+  <section class="section-sm" id="needs" aria-labelledby="needs-title">
+    <div class="container">
+      <aside class="callout good-to-know" data-reveal="fade">
+        <svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>
+        <div>
+          <h2 class="callout-title" id="needs-title">Good to know</h2>
+          <ul class="callout-list">
+            <li><strong>Needs:</strong> <a href="../works-with.html#shop-cloud">Shop Cloud</a> for share links, online approvals and the live status page. The counter-tablet view and the .html report file work without it.</li>
+            <li><strong>Your own number or address:</strong> sending from them uses Shop Cloud with your Twilio or Resend account. Without them, the link opens in your device&rsquo;s Messages or Mail app.</li>
+            <li><strong>Online approvals</strong> land on your signed-in shop devices. A device checks about every minute while the app is open on screen.</li>
+            <li><strong>Large videos:</strong> videos over 50 MB stay on the device that recorded them and don&rsquo;t sync to your other devices. Share links follow your Shop Cloud storage&rsquo;s file-size limit (50 MB on Supabase&rsquo;s free plan).</li>
+            <li><strong>Dictation</strong> needs browser speech recognition (Chrome, Edge or Safari).</li>
+            <li><strong>The Pay button</strong> on the status page needs a pay link: a <a href="payments.html">Stripe pay link</a> through Shop Cloud, or a payment link you already use.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===== FAQ ===== -->
+  <section class="section" id="faq" aria-labelledby="faq-title">
+    <div class="container container-narrow">
+      <div class="section-head" data-reveal>
+        <p class="eyebrow">Questions</p>
+        <h2 id="faq-title">Inspection questions</h2>
+      </div>
+      <div class="faq-list" data-reveal>
+        <details class="faq" name="insp-faq"><summary>Do customers need an app or a login?</summary><div class="faq-body"><p>No. The report and the status page open in the web browser on the customer&rsquo;s phone, tablet or computer.</p></div></details>
+        <details class="faq" name="insp-faq"><summary>Can they approve some work and decline the rest?</summary><div class="faq-body"><p>Yes, service by service. Declined work is saved for a follow-up.</p></div></details>
+        <details class="faq" name="insp-faq"><summary>Can I change the checklist?</summary><div class="faq-body"><p>Yes, in Settings &rarr; Services &amp; inspections. Edit the Standard multi-point template or build your own.</p></div></details>
+        <details class="faq" name="insp-faq"><summary>Can I turn off a link I sent?</summary><div class="faq-body"><p>Yes, and turning it off deletes the shared files.</p></div></details>
+        <details class="faq" name="insp-faq"><summary>Is location data removed?</summary><div class="faq-body"><p>From photos the browser can open, yes: they&rsquo;re re-encoded, which removes GPS location and device data. Photos in a format the browser can&rsquo;t open (such as HEIC outside Safari) and videos are stored as recorded.</p></div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Related ===== -->
+  <section class="section section-sm inspections-related" id="related" aria-labelledby="related-title">
+    <div class="container">
+      <h2 id="related-title" class="h3">Works alongside</h2>
+      <!-- @partial related -->
+<div class="grid grid-3 related" data-related data-reveal-stagger>
+  <a class="card card-link feature-card" href="../features/messaging.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg></span>
+    <h3>Texting, calls &amp; email</h3>
+    <p>One thread per customer, from your own number.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="../features/repair-orders.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg></span>
+    <h3>Estimates, ROs &amp; invoices</h3>
+    <p>One record from estimate to paid receipt, with real PDFs.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+  <a class="card card-link feature-card" href="../features/payments.html">
+    <span class="icon-tile"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg></span>
+    <h3>Payments &amp; card readers</h3>
+    <p>Pay links for the exact balance. Readers that know the amount.</p>
+    <span class="link-arrow">Learn more <svg class="icon" aria-hidden="true"><use href="#i-arrow-right"/></svg></span>
+  </a>
+</div>
+<!-- @end related -->
+    </div>
+  </section>
+</main>
+
+<!-- @partial cta -->
+<section class="cta-road" aria-labelledby="cta-road-title">
+  <div class="container cta-road-inner">
+    <div class="cta-road-copy" data-reveal>
+      <p class="eyebrow">Ready when you are</p>
+      <h2 id="cta-road-title">See your own shop day in it.</h2>
+      <p class="lead">Send a demo request, or try the sample shop right now.</p>
+    </div>
+    <div class="cta-road-actions" data-reveal>
+      <a class="btn btn-primary btn-lg" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Request a demo</a>
+      <a class="btn btn-secondary btn-lg" href="../app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Try the sample shop</a>
+    </div>
+  </div>
+  <div class="road" aria-hidden="true">
+    <span class="road-status"><span class="road-status-wip">In progress</span><span class="road-status-paid">Paid &middot; RO closed</span></span>
+    <div class="road-surface"><span class="road-dashes"></span></div>
+    <svg class="road-car" viewBox="0 0 32 14"><use href="#i-car-mini"/></svg>
+  </div>
+</section>
+<!-- @end cta -->
+<!-- @partial footer -->
+<footer class="site-footer" id="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="footer-card" href="../index.html" aria-label="WPI Driveline Shop Management System home">
+        <img src="../assets/img/logo.svg" alt="" width="653" height="361" loading="lazy" decoding="async">
+        <span class="footer-card-tagline">Shop Management System</span>
+      </a>
+      <p class="footer-blurb">WPI Driveline Shop Management System runs the repair-shop day, from check-in to paid, on the counter PC, the bay tablet and your phone. Installs from the browser and works offline.</p>
+      <p class="footer-pill">Works offline &middot; installs from the browser</p>
+    </div>
+    <nav class="footer-col" aria-labelledby="footer-product">
+      <h2 id="footer-product">Product</h2>
+      <ul>
+        <li><a href="../features/booking.html">Booking &amp; check-in</a></li>
+        <li><a href="../features/messaging.html">Texting, calls &amp; email</a></li>
+        <li><a href="../features/customers.html">Customers &amp; follow-ups</a></li>
+        <li><a href="../features/workflow.html">Workflow &amp; tech clock</a></li>
+        <li><a href="../features/inspections.html" aria-current="page">Inspections &amp; approvals</a></li>
+        <li><a href="../features/diagnosis.html">Auto Diagnosis</a></li>
+        <li><a href="../features/parts.html">Parts, inventory &amp; tires</a></li>
+        <li><a href="../features/repair-orders.html">Estimates &amp; ROs</a></li>
+        <li><a href="../features/payments.html">Payments &amp; card readers</a></li>
+        <li><a href="../features/fleet.html">Fleet accounts</a></li>
+        <li><a href="../features/reports.html">Reports &amp; QuickBooks</a></li>
+        <li><a href="../features/ai.html">AI assistant</a></li>
+        <li><a href="../mobile.html">iPhone &amp; iPad</a></li>
+      </ul>
+    </nav>
+    <nav class="footer-col" aria-labelledby="footer-company">
+      <h2 id="footer-company">Company</h2>
+      <ul>
+        <li><a href="../about.html">About</a></li>
+        <li><a href="../works-with.html">Integrations</a></li>
+        <li><a href="../security.html">Security</a></li>
+        <li><a href="../privacy.html">Privacy</a></li>
+      </ul>
+    </nav>
+    <div class="footer-col">
+      <nav aria-labelledby="footer-help">
+        <h2 id="footer-help">Help</h2>
+        <ul>
+          <li><a href="../faq.html">FAQ</a></li>
+          <li><a href="../demo.html">Request a demo</a></li>
+          <li><a href="../app/" data-no-prerender>Try the sample shop</a></li>
+          <li><a href="../app/signin" data-no-prerender>Sign in</a></li>
+        </ul>
+      </nav>
+      <h2 class="footer-subhead">Talk to us</h2>
+      <p class="footer-talk">
+        <a class="footer-contact" href="../demo.html?topic=question"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg><span>Use the demo form</span></a>
+      </p>
+    </div>
+  </div>
+  <div class="container footer-bottom">
+    <p>&copy; <span data-year>2026</span> WPI Driveline</p>
+    <p class="footer-links"><a href="../privacy.html">Privacy</a><span aria-hidden="true">&middot;</span><a href="../faq.html">FAQ</a><span aria-hidden="true">&middot;</span><a href="#top" data-scroll-top>Back to top <svg class="icon" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a><span aria-hidden="true">&middot;</span><a href="../app/signin" data-no-prerender>Sign in</a></p>
+    <button class="motion-toggle" type="button" aria-pressed="false"><svg class="icon mt-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="icon mt-play" aria-hidden="true"><use href="#i-play"/></svg><span class="motion-toggle-label">Pause animations</span></button>
+  </div>
+</footer>
+<!-- @end footer -->
+<!-- @partial tabbar -->
+<nav class="tabbar" aria-label="Quick navigation">
+  <a class="tab" href="../index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg><span>Home</span></a>
+  <a class="tab is-active" href="../features.html" data-nav="features" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg><span>Features</span></a>
+  <a class="tab tab-book" href="../demo.html" data-nav="demo"><span class="tab-book-dot"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg></span><span>Get a demo</span></a>
+  <a class="tab" href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg><span>iPhone</span></a>
+  <button class="tab" type="button" data-open-sheet="more-sheet" aria-haspopup="dialog" aria-controls="more-sheet" aria-expanded="false"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></button>
+  <a class="tab tab-more-link" href="#site-footer"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg><span>More</span></a>
+</nav>
+<dialog class="sheet" id="more-sheet" aria-labelledby="more-sheet-title">
+  <div class="sheet-panel">
+    <div class="sheet-grabber" aria-hidden="true"></div>
+    <div class="sheet-head">
+      <h2 id="more-sheet-title">WPI Driveline Shop Management System</h2>
+      <button class="icon-btn" type="button" data-close-sheet aria-label="Close menu" autofocus><svg class="icon" aria-hidden="true"><use href="#i-close"/></svg></button>
+    </div>
+    <div class="sheet-quick">
+      <a class="quick-action is-primary" href="../demo.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg><span>Request a demo</span></a>
+      <a class="quick-action" href="../app/" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg><span>Try the sample shop</span></a>
+      <a class="quick-action" href="../app/signin" data-no-prerender><svg class="icon" aria-hidden="true"><use href="#i-key"/></svg><span>Sign in</span></a>
+    </div>
+    <h3 class="sheet-label">Explore</h3>
+    <ul class="sheet-grid">
+      <li><a href="../index.html" data-nav="home"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Home</a></li>
+      <li><a class="is-active" href="../features.html" data-nav="features" aria-current="true"><svg class="icon" aria-hidden="true"><use href="#i-grid"/></svg>Features</a></li>
+      <li><a href="../mobile.html" data-nav="mobile"><svg class="icon" aria-hidden="true"><use href="#i-device-phone"/></svg>iPhone &amp; iPad</a></li>
+      <li><a href="../works-with.html" data-nav="integrations"><svg class="icon" aria-hidden="true"><use href="#i-link"/></svg>Integrations</a></li>
+      <li><a href="../security.html" data-nav="security"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Security</a></li>
+      <li><a href="../about.html" data-nav="about"><svg class="icon" aria-hidden="true"><use href="#i-info"/></svg>About</a></li>
+      <li><a href="../faq.html" data-nav="faq"><svg class="icon" aria-hidden="true"><use href="#i-question"/></svg>FAQ</a></li>
+      <li><a href="../privacy.html" data-nav="privacy"><svg class="icon" aria-hidden="true"><use href="#i-lock"/></svg>Privacy</a></li>
+    </ul>
+    <h3 class="sheet-label">Features</h3>
+    <ul class="sheet-list">
+      <li><a href="../features/booking.html"><svg class="icon" aria-hidden="true"><use href="#i-calendar-check"/></svg>Booking &amp; check-in<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/messaging.html"><svg class="icon" aria-hidden="true"><use href="#i-chat"/></svg>Texting, calls &amp; email<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/customers.html"><svg class="icon" aria-hidden="true"><use href="#i-users"/></svg>Customers &amp; follow-ups<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/workflow.html"><svg class="icon" aria-hidden="true"><use href="#i-board"/></svg>Workflow &amp; tech clock<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/inspections.html" aria-current="page"><svg class="icon" aria-hidden="true"><use href="#i-inspection"/></svg>Inspections &amp; approvals<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/diagnosis.html"><svg class="icon" aria-hidden="true"><use href="#i-diagnostics"/></svg>Auto Diagnosis<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/parts.html"><svg class="icon" aria-hidden="true"><use href="#i-barcode"/></svg>Parts, inventory &amp; tires<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/repair-orders.html"><svg class="icon" aria-hidden="true"><use href="#i-document"/></svg>Estimates &amp; ROs<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/payments.html"><svg class="icon" aria-hidden="true"><use href="#i-card-reader"/></svg>Payments &amp; card readers<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/fleet.html"><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Fleet accounts<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/reports.html"><svg class="icon" aria-hidden="true"><use href="#i-chart"/></svg>Reports &amp; QuickBooks<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+      <li><a href="../features/ai.html"><svg class="icon" aria-hidden="true"><use href="#i-sparkle"/></svg>AI assistant<svg class="icon chev" aria-hidden="true"><use href="#i-chevron-right"/></svg></a></li>
+    </ul>
+    <div class="sheet-foot">
+      <button class="motion-toggle" type="button" aria-pressed="false"><svg class="icon mt-pause" aria-hidden="true"><use href="#i-pause"/></svg><svg class="icon mt-play" aria-hidden="true"><use href="#i-play"/></svg><span class="motion-toggle-label">Pause animations</span></button>
+    </div>
+  </div>
+</dialog>
+<!-- @end tabbar -->
+</body>
+</html>

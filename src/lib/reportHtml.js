@@ -2,6 +2,7 @@
 // don't use cloud sharing: email it, AirDrop it, or put it on a USB stick. Opens in any browser.
 import { getFile } from './media';
 import { money, date, dateTime, phone as fmtPhone, number } from './format';
+import { PRODUCT, otherName } from '../brand/artwork';
 
 const esc = (s = '') => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const RATING = { good: ['Good', '#1a9e5c'], soon: ['Needs attention soon', '#c27c0e'], now: ['Needs attention now', '#d63b30'] };
@@ -86,7 +87,7 @@ ${report.services.length ? `<section class="card"><h2>${['ready', 'closed'].incl
 ${general.some((m) => data.has(m.id)) ? `<section class="card"><h2>Photos &amp; video</h2><div style="padding:0 16px 16px">${media(general)}</div></section>` : ''}
 ${totals ? `<section class="card"><h2>Summary</h2><dl><div><dt>Subtotal</dt><dd>${money(totals.subtotal)}</dd></div>${totals.discount > 0 ? `<div><dt>Discount</dt><dd>−${money(totals.discount)}</dd></div>` : ''}${totals.tax > 0 ? `<div><dt>Tax</dt><dd>${money(totals.tax)}</dd></div>` : ''}<div class="total"><dt>Total</dt><dd>${money(totals.total)}</dd></div>${totals.paid > 0 ? `<div><dt>Paid</dt><dd>${money(totals.paid)}</dd></div><div class="total"><dt>Balance due</dt><dd>${money(totals.balance)}</dd></div>` : ''}</dl></section>` : ''}
 ${report.notes.length ? `<section class="card"><h2>Notes from the shop</h2><ul>${report.notes.map((n) => `<li><div class="muted">${esc(dateTime(n.at))}</div><p style="margin-top:2px;color:var(--ink)">${esc(n.text)}</p></li>`).join('')}</ul></section>` : ''}
-<footer>${shop.warranty ? `Warranty: ${esc(shop.warranty)}<br>` : ''}${vehicle?.vin ? `VIN ${esc(vehicle.vin)}<br>` : ''}${esc(shop.name)} · ${esc(fmtPhone(shop.phone))}${shop.email ? ` · ${esc(shop.email)}` : ''} · Report created ${esc(dateTime(report.generatedAt))}</footer>
+<footer>${shop.warranty ? `Warranty: ${esc(shop.warranty)}<br>` : ''}${vehicle?.vin ? `VIN ${esc(vehicle.vin)}<br>` : ''}${esc(shop.name)} · ${esc(fmtPhone(shop.phone))}${shop.email ? ` · ${esc(shop.email)}` : ''} · Report created ${esc(dateTime(report.generatedAt))}${otherName(shop.name) ? `<br>Powered by ${esc(PRODUCT)}` : ''}</footer>
 </main>${zoom}</body></html>`;
 }
 

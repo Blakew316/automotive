@@ -2,7 +2,7 @@
   "name": "wpi-driveline-website",
   "version": "1.0.0",
   "private": true,
-  "description": "Static multi-page website for WPI Driveline, auto and small engine repair.",
+  "description": "Marketing website for WPI Driveline Shop Management System.",
   "scripts": {
     "sync": "node scripts/sync.mjs",
     "check": "node scripts/check.mjs",

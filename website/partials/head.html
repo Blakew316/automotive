@@ -1,15 +1,14 @@
-<script>document.documentElement.classList.add("js")</script>
+<script>document.documentElement.classList.add("js");try{if(localStorage.getItem("wpi-site:motion")==="paused")document.documentElement.classList.add("motion-paused","motion-parked")}catch(e){}</script>
 <meta name="theme-color" content="#F5F9FE">
 <meta name="color-scheme" content="light">
 <meta name="format-detection" content="telephone=no">
-<meta name="apple-mobile-web-app-title" content="{{shortName}}">
+<meta name="application-name" content="{{name}}">
 <meta name="form-endpoint" content="{{formEndpoint}}">
 <meta name="shop-inbox-url" content="{{inboxUrl}}">
 <meta name="shop-inbox-key" content="{{inboxKey}}">
 <link rel="icon" href="{{root}}favicon.ico" sizes="32x32">
 <link rel="icon" type="image/png" sizes="32x32" href="{{root}}assets/img/favicon-32.png">
 <link rel="apple-touch-icon" sizes="180x180" href="{{root}}assets/img/apple-touch-icon.png">
-<link rel="manifest" href="{{root}}site.webmanifest">
 <link rel="stylesheet" href="{{root}}assets/css/site.css">
 <script src="{{root}}assets/js/site.js" defer></script>
-<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"selector_matches":"[target=_blank]"}}]},"eagerness":"moderate"}]}</script>
+<script type="speculationrules">{"prerender":[{"source":"document","where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"*.pdf"}},{"not":{"href_matches":"{{basePath}}app/*"}},{"not":{"selector_matches":"[target=_blank], [data-no-prerender]"}}]},"eagerness":"moderate"}]}</script>

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
- * Writes every WPI Driveline brand file from the logo in src/brand/artwork.js.
+ * Writes every WPI Driveline Shop Management System brand file from the logo and name in
+ * src/brand/artwork.js (the SVG titles and aria-labels use its PRODUCT name).
  *
  * Staff app (public/):
  *   icons/apple-touch-icon.png   180×180, opaque full-bleed square (iOS applies its own mask)
@@ -15,11 +16,13 @@
  *
  * Public website (website/):
  *   assets/img/logo.svg          WPI, bars and DRIVELINE (the header and brand card)
- *   assets/img/logo-full.svg     the complete stacked logo with its tagline
+ *   assets/img/logo-full.svg     the complete stacked logo with its tagline (used by og-image.png)
  *   assets/img/logo-mark.svg     WPI over its bars
  *   assets/img/apple-touch-icon.png, favicon-32.png, icon-192.png, icon-512.png, icon-maskable-512.png
  *   favicon.ico                  16 and 32 px
- *   assets/img/og-image.png      1200×630 link preview
+ *   assets/img/og-image.png      1200×630 link preview: the full logo, tagline included, and one line
+ *                                under it, "Shop management software for independent auto repair shops"
+ *                                (set in the website's Inter when website/assets/fonts has it)
  *
  * The icon is the logo's mark — navy WPI over its blue and green bars — on a pale blue tile. At favicon
  * sizes the bars are drawn at least 2 px tall with a 1 px gap so they stay visible. The tile's gradient
@@ -266,13 +269,27 @@ function ico(images) {
   return Buffer.concat([head, ...images.map((im) => im.data)]);
 }
 
-/** The link preview: the logo on the pale tile color, with the bars' blue and green as a soft wash. */
+/** The website's Inter, inlined so the preview's line renders the same on any machine (system sans otherwise). */
+function interFace() {
+  try {
+    const woff2 = readFileSync(join(WEBSITE, 'assets/fonts/inter-latin-var.woff2')).toString('base64');
+    return `@font-face{font-family:Inter;src:url(data:font/woff2;base64,${woff2}) format("woff2");font-weight:100 900}`;
+  } catch {
+    return '';
+  }
+}
+
+/**
+ * The link preview: the full logo (its "Shop Management System" tagline is readable at this size) and
+ * one line saying what it is, on the pale tile color with the bars' blue and green as a soft wash.
+ */
 function ogPage() {
-  const logo = logoSvg('lockup').replace(/ width="[\d.]+" height="[\d.]+"/, ' width="560"');
-  return `<!doctype html><html><body style="margin:0">
-<div style="width:1200px;height:630px;display:flex;align-items:center;justify-content:center;
+  const logo = logoSvg('full').replace(/ width="[\d.]+" height="[\d.]+"/, ' width="520"');
+  return `<!doctype html><html><head><style>${interFace()}</style></head><body style="margin:0">
+<div style="width:1200px;height:630px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:42px;
   background:radial-gradient(60% 80% at 100% 0%, rgb(31 122 224 / .10), transparent 70%),
-  radial-gradient(55% 75% at 0% 100%, rgb(45 179 106 / .10), transparent 70%), ${hex(STOPS[0][1])}">${logo}</div>
+  radial-gradient(55% 75% at 0% 100%, rgb(45 179 106 / .10), transparent 70%), ${hex(STOPS[0][1])}">${logo}
+  <p style="margin:0;font:500 32px/1.2 Inter,'Helvetica Neue',Arial,sans-serif;letter-spacing:-0.01em;color:#52637B">Shop management software for independent auto repair shops</p></div>
 </body></html>`;
 }
 
@@ -294,6 +311,7 @@ async function renderPNGs() {
     }
     await page.setViewportSize({ width: 1200, height: 630 });
     await page.setContent(ogPage());
+    await page.evaluate(() => document.fonts.ready);
     write('website/assets/img/og-image.png', encodePNG(decodePNG(await page.screenshot())).data);
   } finally {
     await browser.close();

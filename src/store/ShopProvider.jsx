@@ -15,10 +15,11 @@ import { uid, fullName, vehicleName, money } from '../lib/format';
 import { callMeta, callText } from '../lib/phone';
 import { onlineRef } from '../lib/payments';
 import { loadSaved, createSaver } from '../lib/persist';
-import { diffStates, applyToDraft } from '../lib/sync/records';
+import { diffStates, applyToDraft, withoutLocal } from '../lib/sync/records';
 import { useShopSync } from '../lib/sync/useShopSync';
 import { useUI } from './hooks';
 import { Spinner } from '../components/ui';
+import { PRODUCT } from '../brand/artwork';
 
 // State is replaced, never mutated in place, and unchanged records keep their identity between
 // versions — that is what lets saving and syncing touch only what changed.
@@ -612,15 +613,16 @@ function ShopStore({ boot, children }) {
           return o.id;
         }),
 
-      // Contact and fleet forms on the shop's website: match the customer or add them, then log the message.
-      addWebsiteMessage: ({ remoteId, name, phone, email, company, body, at: when }) =>
+      // A website form (the product site's demo form, or a shop's own contact and fleet forms): match the
+      // customer or add them, then log the message. extraTags and notes apply to a new contact only.
+      addWebsiteMessage: ({ remoteId, name, phone, email, company, body, at: when, extraTags = [], notes = 'Contacted through the website' }) =>
         update((s) => {
           if (remoteId && s.messages.some((m) => m.meta?.remoteId === remoteId)) return;
           const digits = (p = '') => p.replace(/\D/g, '').slice(-10);
           let c = s.customers.find((x) => (phone && digits(phone).length === 10 && digits(x.phone) === digits(phone)) || (email && x.email && x.email.toLowerCase() === email.toLowerCase()));
           if (!c) {
             const [firstName, ...rest] = (name || 'Website visitor').trim().split(/\s+/);
-            c = { id: uid('cus'), firstName, lastName: rest.join(' '), phone: phone || '', email: email || '', address: '', city: '', state: '', zip: '', company: company || '', notes: 'Contacted through the website', tags: ['Website'], textOptIn: false, createdAt: now() };
+            c = { id: uid('cus'), firstName, lastName: rest.join(' '), phone: phone || '', email: email || '', address: '', city: '', state: '', zip: '', company: company || '', notes, tags: [...new Set(['Website', ...extraTags])], textOptIn: false, createdAt: now() };
             s.customers.unshift(c);
             log(s, `New contact from the website: ${fullName(c)}`);
           }
@@ -920,7 +922,7 @@ function ShopStore({ boot, children }) {
         const { createSeed, CANNED_JOBS } = await loadSeed();
         const prev = stateRef.current;
         commit({
-          ...createSeed(),
+          ...withoutLocal(createSeed()),
           shop: prev.shop,
           customers: [],
           vehicles: [],
@@ -941,8 +943,8 @@ function ShopStore({ boot, children }) {
         });
       },
       importData: (data) => {
-        if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error('Not a WPI Driveline backup file');
-        commit(migrate(data));
+        if (data?.version !== 2 || !Array.isArray(data.orders)) throw new Error(`Not a ${PRODUCT} backup file`);
+        commit(migrate(withoutLocal(data)));
       },
     };
   }, [update, commit]);
