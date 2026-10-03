@@ -4,8 +4,9 @@
 // URLs in a public bucket and read the customer inbox.
 import { getFile } from './media';
 import { PRODUCT, SHORT } from '../brand/artwork';
+import { storageKey } from './edition';
 
-const SESSION_KEY = 'autoshop-pro:cloud-session';
+const SESSION_KEY = storageKey('cloud-session');
 const trim = (u = '') => u.trim().replace(/\/+$/, '');
 
 export function cloudConfig(shop) {

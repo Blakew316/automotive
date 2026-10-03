@@ -14,6 +14,7 @@ import { nhtsaVinRecallUrl } from '../../lib/nhtsa';
 import CallButton from '../../components/CallButton';
 import { openPayLink } from '../../lib/payments';
 import { copyText } from '../../lib/share';
+import { storageKey } from '../../lib/edition';
 
 const toLocalInput = (iso) => {
   if (!iso) return '';
@@ -397,7 +398,7 @@ export function PaymentModal({ order, onClose, onReceipt }) {
   // The counter's reader: the one picked last on this device, else the first; 'none' = another terminal.
   const [readerPick, setReaderPick] = useState(() => {
     try {
-      return localStorage.getItem('autoshop-pro:reader');
+      return localStorage.getItem(storageKey('reader'));
     } catch {
       return null;
     }
@@ -588,7 +589,7 @@ export function PaymentModal({ order, onClose, onReceipt }) {
                 onChange={(e) => {
                   setReaderPick(e.target.value);
                   try {
-                    localStorage.setItem('autoshop-pro:reader', e.target.value);
+                    localStorage.setItem(storageKey('reader'), e.target.value);
                   } catch {
                     // Only remembers the counter's choice.
                   }

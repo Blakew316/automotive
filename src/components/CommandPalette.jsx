@@ -4,14 +4,18 @@ import { useNavigate } from 'react-router-dom';
 import {
   Search, ClipboardList, UserPlus, ScanLine, CalendarPlus, Users, Car, LayoutGrid, SquareKanban,
   CalendarDays, Package, BookOpen, ChartColumn, Settings, CircleAlert, CornerDownLeft, FileText, Database,
-  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Upload, Receipt, Truck, Globe, Stethoscope } from 'lucide-react';
+  MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Upload, Receipt, Truck, Globe, Stethoscope, Wrench, Tags, Tractor } from 'lucide-react';
 import { useShop, useUI, useLookup, useAccess } from '../store/hooks';
 import { fullName, vehicleName } from '../lib/format';
 import { cleanVin } from '../lib/vin';
 import { loadIndex, searchIndex } from '../lib/catalog';
 import { StatusLabel } from './ui';
+import { SMALL_ENGINE, TERMS, routeInEdition } from '../lib/edition';
 
-const PAGES = [
+const VehicleIcon = SMALL_ENGINE ? Tractor : Car;
+const inEdition = (item) => routeInEdition(item.to.split('?')[0]) && !(SMALL_ENGINE && item.autoOnly);
+
+const PAGES = ([
   { label: 'Today', to: '/', icon: LayoutGrid },
   { label: 'Workflow board', to: '/workflow', icon: SquareKanban },
   { label: 'Repair orders', to: '/orders', icon: ClipboardList },
@@ -26,32 +30,36 @@ const PAGES = [
   { label: 'Integrations', to: '/integrations', icon: Blocks },
   { label: 'Import data from another system', to: '/import', icon: Upload },
   { label: 'Customers', to: '/customers', icon: Users },
-  { label: 'Vehicles', to: '/vehicles', icon: Car },
+  { label: TERMS.vehicles, to: '/vehicles', icon: VehicleIcon },
   { label: 'Vehicle database — makes, models, diagrams, parts', to: '/catalog', icon: Database },
+  { label: 'Troubleshooting — symptoms, causes, first checks', to: '/troubleshoot', icon: Wrench },
+  { label: 'Brands & parts lookup', to: '/brands', icon: Tags },
   { label: 'VIN decoder', to: '/vin', icon: ScanLine },
   { label: 'Parts & inventory', to: '/parts', icon: Package },
   { label: 'Service library — OEM service info', to: '/library', icon: BookOpen },
-  { label: 'Wiring references & pinouts', to: '/library?tab=wiring', icon: BookOpen },
-  { label: 'Trouble code lookup', to: '/library?tab=dtc', icon: CircleAlert },
+  { label: 'Wiring references & pinouts', to: '/library?tab=wiring', icon: BookOpen, autoOnly: true },
+  { label: 'Trouble code lookup', to: '/library?tab=dtc', icon: CircleAlert, autoOnly: true },
   { label: 'Reports', to: '/reports', icon: ChartColumn },
   { label: 'Settings', to: '/settings', icon: Settings },
-];
+]).filter(inEdition);
 
-const ACTIONS = [
+const ACTIONS = ([
   { label: 'New repair order', to: '/orders/new', icon: ClipboardList, keywords: 'estimate ro work order create' },
   { label: 'New customer', to: '/customers?new=1', icon: UserPlus, keywords: 'add client' },
   { label: 'Book appointment', to: '/calendar?new=1', icon: CalendarPlus, keywords: 'schedule' },
   { label: 'Auto diagnosis', to: '/diagnose', icon: Stethoscope, keywords: 'diagnose diagnosis known problems issues symptoms codes dtc misfire noise recall complaints tsb' },
   { label: 'Decode a VIN', to: '/vin', icon: ScanLine, keywords: 'vin lookup decode' },
+  { label: 'Troubleshoot a unit', to: '/troubleshoot', icon: Wrench, keywords: 'diagnose wont start wont run surging smoking no spark carburetor carb symptoms mower saw generator' },
+  { label: 'Find a part by brand', to: '/brands', icon: Tags, keywords: 'parts lookup oem diagram manual brand briggs kohler honda kawasaki stihl echo husqvarna toro deere' },
   { label: 'New message', to: '/messages', icon: MessageSquare, keywords: 'text sms email customer' },
   { label: 'Add expense', to: '/accounting?tab=expenses', icon: Receipt, keywords: 'bill cost accounting' },
   { label: 'Clock in / start a job', to: '/tech', icon: Timer, keywords: 'time clock punch' },
   { label: 'Online booking settings', to: '/settings?tab=booking', icon: Globe, keywords: 'schedule book online' },
   { label: 'Website & booking button', to: '/settings?tab=website', icon: Globe, keywords: 'website site book online button link embed google' },
-  { label: 'Tire registration log', to: '/parts?tab=tires', icon: Package, keywords: 'tires dot tin registration recall' },
+  { label: 'Tire registration log', to: '/parts?tab=tires', icon: Package, keywords: 'tires dot tin registration recall', autoOnly: true },
   { label: 'Goals & growth planner', to: '/reports?tab=goals', icon: ChartColumn, keywords: 'targets scorecard roi calculator' },
   { label: 'Marketing automations', to: '/marketing', icon: Megaphone, keywords: 'reminders follow up review request automation' },
-];
+]).filter(inEdition);
 
 export default function CommandPalette() {
   const { paletteOpen: open, setPaletteOpen } = useUI();
@@ -72,6 +80,7 @@ function Palette({ onClose }) {
   const listRef = useRef(null);
 
   useEffect(() => {
+    if (SMALL_ENGINE) return; // no OBD codes or car catalog on power equipment
     import('../data/dtcCodes').then((m) => setDtc(m.dtcCodes));
     loadIndex().then(setCatalog, () => {});
   }, []);
@@ -87,7 +96,7 @@ function Palette({ onClose }) {
     const words = query.split(/\s+/);
     const match = (text) => words.every((w) => text.toLowerCase().includes(w));
 
-    const vin = cleanVin(q);
+    const vin = SMALL_ENGINE ? '' : cleanVin(q);
     if (vin.length === 17) out.push({ title: 'VIN', items: [{ key: 'vin', label: `Decode ${vin}`, icon: ScanLine, to: `/vin?vin=${vin}` }] });
 
     const code = q.trim().toUpperCase();
@@ -124,8 +133,8 @@ function Palette({ onClose }) {
     const vehicles = state.vehicles
       .filter((v) => match(`${vehicleName(v, { trim: true })} ${v.vin} ${v.plate || ''} ${v.unit ? `unit ${v.unit}` : ''}`))
       .slice(0, 5)
-      .map((v) => ({ key: v.id, label: `${v.unit ? `Unit ${v.unit} · ` : ''}${vehicleName(v, { trim: true })}`, sub: `${v.plate || ''} · ${v.vin}`, icon: Car, to: `/vehicles/${v.id}` }));
-    if (vehicles.length) out.push({ title: 'Vehicles', items: vehicles });
+      .map((v) => ({ key: v.id, label: `${v.unit ? `Unit ${v.unit} · ` : ''}${vehicleName(v, { trim: true })}`, sub: [v.plate, v.vin].filter(Boolean).join(' · '), icon: VehicleIcon, to: `/vehicles/${v.id}` }));
+    if (vehicles.length) out.push({ title: TERMS.vehicles, items: vehicles });
 
     if (catalog && query.length >= 2) {
       const hits = searchIndex(catalog, q, 5).map((r) => ({
@@ -191,7 +200,7 @@ function Palette({ onClose }) {
               setActive(0);
             }}
             onKeyDown={onKeyDown}
-            placeholder="Search customers, vehicles, VINs, RO #, trouble codes…"
+            placeholder={SMALL_ENGINE ? 'Search customers, equipment, serial #, RO #…' : 'Search customers, vehicles, VINs, RO #, trouble codes…'}
             enterKeyHint="go"
             autoComplete="off"
             autoCorrect="off"

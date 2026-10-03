@@ -1,3 +1,6 @@
+import { SMALL_ENGINE } from './edition';
+import { equipmentTypeLabel } from '../data/smallEngine';
+
 const usd = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
 const usd0 = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 const int = new Intl.NumberFormat('en-US');
@@ -70,8 +73,21 @@ export const initials = (c) => {
   const n = fullName(c).replace(/[^\p{L}\p{N}\s]/gu, '').split(' ').filter((w) => /\p{L}/u.test(w));
   return ((n[0]?.[0] || '') + (n[1]?.[0] || '')).toUpperCase() || (/\d/.test(fullName(c)) ? '#' : '?');
 };
+// The Small Engine Edition names a unit by brand and model number ("Toro TimeCutter 42"), falling
+// back to its type ("Stihl chainsaw") when the model isn't known; `trim` adds the type after a dot.
+const typeWord = (label) => (/^[A-Z][a-z]/.test(label) ? label[0].toLowerCase() + label.slice(1) : label);
+const equipmentName = (v, trim) => {
+  const type = equipmentTypeLabel(v.type);
+  if (!v.model) return [v.make, v.make ? type && typeWord(type) : type].filter(Boolean).join(' ') || 'Equipment';
+  const name = [v.make, v.model].filter(Boolean).join(' ');
+  return trim && type ? `${name} · ${type}` : name;
+};
 export const vehicleName = (v, { trim = false } = {}) =>
-  v ? [v.year, v.make, v.model, trim ? v.trim : null].filter(Boolean).join(' ') : 'No vehicle';
+  SMALL_ENGINE
+    ? v ? equipmentName(v, trim) : 'No equipment'
+    : v ? [v.year, v.make, v.model, trim ? v.trim : null].filter(Boolean).join(' ') : 'No vehicle';
+/** The line under a unit's name: its trim, or in the Small Engine Edition its equipment type. */
+export const vehicleTrim = (v) => (SMALL_ENGINE && equipmentTypeLabel(v?.type)) || v?.trim || '';
 
 export const titleCase = (s = '') => s.toLowerCase().replace(/\b([a-z])/g, (m) => m.toUpperCase());
 

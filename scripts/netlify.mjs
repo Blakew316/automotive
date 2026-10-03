@@ -3,6 +3,7 @@
  * Lays out the Netlify site exactly like GitHub Pages, from the dist/ that scripts/pages.mjs built:
  *   /automotive/        the marketing website for WPI Driveline Shop Management System
  *   /automotive/app/    the WPI Driveline Shop Management System staff app
+ *   /automotive/small-engine/  the Small Engine Edition
  * The pages are built for that folder (website/business.json basePath), so they go inside it; the
  * bare domain forwards there (netlify.toml), and 404.html sits at the root, where Netlify looks for it.
  * netlify.toml also 301s the old shop website's pages (services, appointment, contact, fleet, ...) to
@@ -24,4 +25,4 @@ if (!existsSync(join(DIST, 'app', 'index.html'))) throw new Error('Run npm run b
 rmSync(OUT, { recursive: true, force: true });
 cpSync(DIST, folder ? join(OUT, folder) : OUT, { recursive: true });
 if (folder) cpSync(join(DIST, '404.html'), join(OUT, '404.html'));
-console.log(`netlify: marketing website at ${base}, app at ${base}app/`);
+console.log(`netlify: marketing website at ${base}, app at ${base}app/, Small Engine Edition at ${base}small-engine/`);

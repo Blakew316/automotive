@@ -2,7 +2,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { produce, setAutoFreeze, isDraft, current } from 'immer';
 import { ShopContext, SyncContext } from './context';
 // Demo data is only needed on a device with no saved shop, so it loads on demand.
-const loadSeed = () => import('../data/seed');
+// Each edition has its own sample shop (Small Engine Edition: data/seedSmallEngine.js).
+const loadSeed = () => (SMALL_ENGINE ? import('../data/seedSmallEngine') : import('../data/seed'));
 import { migrate } from './defaults';
 import { newTireQuote, tireLabel } from '../lib/tires';
 import { priceFromMatrix, orderTotals } from '../lib/pricing';
@@ -20,12 +21,13 @@ import { useShopSync } from '../lib/sync/useShopSync';
 import { useUI } from './hooks';
 import { Spinner } from '../components/ui';
 import { PRODUCT } from '../brand/artwork';
+import { SMALL_ENGINE, storageKey } from '../lib/edition';
 
 // State is replaced, never mutated in place, and unchanged records keep their identity between
 // versions — that is what lets saving and syncing touch only what changed.
 setAutoFreeze(false);
 
-const LEGACY_KEY = 'autoshop-pro:v2';
+const LEGACY_KEY = storageKey('v2');
 
 /** Shop data on this device: IndexedDB, or the older localStorage copy (moved over on first load). */
 async function loadStore() {

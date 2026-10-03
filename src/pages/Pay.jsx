@@ -9,10 +9,10 @@ import { PoweredBy, ShopBrand } from '../brand/Logo';
 import { titleName, usePageTitle } from '../brand/title';
 import { EmptyState, Spinner } from '../components/ui';
 import { payFunction } from '../lib/payments';
-import { SHOP_CLOUD } from '../lib/cloudDefaults';
+import { BUILT_IN_CLOUD, SHOP_CLOUD } from '../lib/cloudDefaults';
 import { money, phone as fmtPhone, telHref, dateShort } from '../lib/format';
 
-const defaultRef = () => /^https:\/\/([a-z0-9]{20})\.supabase\./i.exec(SHOP_CLOUD?.url || '')?.[1] || '';
+const defaultRef = () => BUILT_IN_CLOUD && /^https:\/\/([a-z0-9]{20})\.supabase\./i.exec(SHOP_CLOUD?.url || '')?.[1] || '';
 
 export default function Pay() {
   const { id } = useParams();

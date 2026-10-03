@@ -11,8 +11,9 @@ import { decodeOffline, cleanVin, autocorrectVin, extractVin, VIN_SECTIONS } fro
 import { decodeVinLocal } from '../lib/vindb';
 import { catalogPath, enrichValues } from '../lib/catalog';
 import { fullName, vehicleName } from '../lib/format';
+import { storageKey } from '../lib/edition';
 
-const RECENT_KEY = 'autoshop-pro:recent-vins';
+const RECENT_KEY = storageKey('recent-vins');
 const readRecent = () => {
   try {
     return JSON.parse(localStorage.getItem(RECENT_KEY)) || [];

@@ -2,8 +2,9 @@
 // too large for localStorage); the RO itself only stores metadata in `order.media`.
 import { useEffect, useState, useSyncExternalStore } from 'react';
 import { uid } from './format';
+import { dbName } from './edition';
 
-const DB_NAME = 'autoshop-media';
+const DB_NAME = dbName('media');
 const STORE = 'files';
 
 let dbPromise = null;

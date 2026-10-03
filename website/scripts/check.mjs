@@ -88,6 +88,8 @@ try {
 }
 const SLUGS = new Set((ia.features || []).map((f) => f.slug));
 const bySlug = Object.fromEntries((ia.features || []).map((f) => [f.slug, f]));
+// The apps' folders in the published site (scripts/pages.mjs): the staff app and the Small Engine Edition.
+const isAppPath = (rel) => ["app", "small-engine"].some((a) => rel === a || rel.startsWith(a + "/"));
 const appPathRe = (biz.appPath || "app/").replace(/^\//, "").replace(/\/?$/, "/").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 const PLANNED = new Set([
   ...["index", "features", "mobile", "security", "works-with", "about", "faq", "demo", "privacy", "404"].map((p) => `${p}.html`),
@@ -113,7 +115,8 @@ const PLANNED = new Set([
 }
 
 // No top-level page or folder may be named after an app route: hosts serve <name>.html for
-// /automotive/<name>, which would shadow the 404 forwarder that sends old app links to app/.
+// /automotive/<name>, which would shadow the 404 forwarder that sends old app links to app/. The Small
+// Engine Edition's folder (small-engine/) is reserved the same way.
 const APP_ROUTES = (() => {
   try {
     const src = readFileSync(join(REPO, "scripts/pages.mjs"), "utf8");
@@ -124,7 +127,7 @@ const APP_ROUTES = (() => {
   }
 })();
 if (!APP_ROUTES.length) siteWarns.push("couldn't read APP_ROUTES from scripts/pages.mjs");
-for (const r of APP_ROUTES) {
+for (const r of [...APP_ROUTES, "small-engine"]) {
   if (existsSync(join(ROOT, `${r}.html`))) siteErrors.push(`${r}.html is named after the app route "${r}"; rename it (see the APP_ROUTE naming rule in README.md)`);
   if (existsSync(join(ROOT, r)) && statSync(join(ROOT, r)).isDirectory()) siteErrors.push(`${r}/ is named after the app route "${r}"`);
 }
@@ -283,7 +286,7 @@ for (const page of pages) {
     if (!clean) continue;
     const target = clean.startsWith("/") ? join(ROOT, clean.startsWith(BASE) ? clean.slice(BASE.length) : clean) : join(base, clean);
     const rel = relative(ROOT, target).replace(/\\/g, "/");
-    if (rel === "app" || rel.startsWith("app/")) continue;
+    if (isAppPath(rel)) continue;
     if (existsSync(target)) continue;
     if (DRAFT && PLANNED.has(rel)) continue;
     if (!errors.includes("broken link/asset: " + ref)) errors.push("broken link/asset: " + ref);
@@ -300,7 +303,7 @@ for (const page of pages) {
       const target = clean.startsWith("/") ? join(ROOT, clean.startsWith(BASE) ? clean.slice(BASE.length) : clean) : join(base, clean);
       rel = relative(ROOT, target).replace(/\\/g, "/");
     }
-    if (rel != null && (rel === "app" || rel.startsWith("app/")) && !/\sdata-no-prerender\b/.test(m[0])) errors.push(`app link without data-no-prerender: ${href}`);
+    if (rel != null && isAppPath(rel) && !/\sdata-no-prerender\b/.test(m[0])) errors.push(`app link without data-no-prerender: ${href}`);
   }
   // mailto links never point at example addresses
   for (const m of html.matchAll(/href="mailto:([^"?]*)/g))

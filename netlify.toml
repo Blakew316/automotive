@@ -1,5 +1,6 @@
 # Netlify serves the same site as GitHub Pages (scripts/pages.mjs, scripts/netlify.mjs): the marketing
-# website for WPI Driveline Shop Management System at /automotive/ and the staff app at /automotive/app/.
+# website for WPI Driveline Shop Management System at /automotive/, the staff app at /automotive/app/
+# and the Small Engine Edition at /automotive/small-engine/.
 [build]
   command = "npm run build:pages && node scripts/netlify.mjs"
   publish = "netlify-dist"
@@ -127,8 +128,19 @@
   to = "/automotive/app/index.html"
   status = 200
 
+# The Small Engine Edition, the same way.
+[[redirects]]
+  from = "/automotive/small-engine/*"
+  to = "/automotive/small-engine/index.html"
+  status = 200
+
 # The app's built files have content hashes in their names, so they can be cached for good.
 [[headers]]
   for = "/automotive/app/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/automotive/small-engine/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"

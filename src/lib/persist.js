@@ -6,8 +6,9 @@
 // confirmed are also written synchronously to a small localStorage journal when the page is
 // hidden; the journal is replayed on the next load.
 import { readAll, writeMany } from './db';
+import { storageKey } from './edition';
 
-const JOURNAL = 'autoshop-pro:journal';
+const JOURNAL = storageKey('journal');
 const isList = (v) => Array.isArray(v) && v.every((x) => x && typeof x === 'object' && x.id != null);
 
 /** IndexedDB entries ({key: value | undefined to delete}) that turn `prev` into `next`. */

@@ -3,8 +3,10 @@
 import {
   LayoutGrid, SquareKanban, ClipboardList, CalendarDays, Users, Car, ScanLine, Package, BookOpen, ChartColumn, Settings,
   Database, MessageSquare, Megaphone, Timer, UsersRound, Landmark, Blocks, Building2, ConciergeBell, Stethoscope,
+  Wrench, Tags, Tractor,
 } from 'lucide-react';
 import { OPEN_STATUSES, WIP_STATUSES } from '../lib/workflow';
+import { SMALL_ENGINE, TERMS, routeInEdition } from '../lib/edition';
 import { useScopedShop } from '../store/hooks';
 
 export function useNavCounts() {
@@ -28,7 +30,8 @@ export const HUE = {
   teal: { icon: 'text-hue-teal/75 group-hover:text-hue-teal', active: 'bg-hue-teal/[0.1] text-ink', on: 'text-hue-teal', tone: 'teal' },
 };
 
-export const NAV = [
+// Both editions' destinations; each build keeps the ones that belong to it (see lib/edition.js).
+const ALL_NAV = [
   {
     title: 'Shop floor',
     hue: 'navy',
@@ -47,7 +50,7 @@ export const NAV = [
     items: [
       { to: '/customers', label: 'Customers', icon: Users },
       { to: '/accounts', label: 'Fleet & Accounts', icon: Building2 },
-      { to: '/vehicles', label: 'Vehicles', icon: Car },
+      { to: '/vehicles', label: TERMS.vehicles, icon: SMALL_ENGINE ? Tractor : Car },
       { to: '/marketing', label: 'Marketing', icon: Megaphone },
     ],
   },
@@ -56,7 +59,9 @@ export const NAV = [
     hue: 'azure',
     items: [
       { to: '/diagnose', label: 'Auto Diagnosis', icon: Stethoscope },
+      { to: '/troubleshoot', label: 'Troubleshooting', icon: Wrench },
       { to: '/tech', label: 'Tech Time Clock', icon: Timer },
+      { to: '/brands', label: 'Brands & Parts', icon: Tags },
       { to: '/catalog', label: 'Vehicle Database', icon: Database },
       { to: '/vin', label: 'VIN Decoder', icon: ScanLine },
       { to: '/parts', label: 'Parts & Inventory', icon: Package, count: 'lowStock' },
@@ -76,6 +81,8 @@ export const NAV = [
   },
 ];
 
+export const NAV = ALL_NAV.map((g) => ({ ...g, items: g.items.filter((i) => routeInEdition(i.to)) }));
+
 /** Tab bar destinations (plus More): the front counter's day, or a technician's. */
 export const TABS = {
   default: [
@@ -88,7 +95,7 @@ export const TABS = {
     { to: '/tech', label: 'Clock', icon: Timer },
     { to: '/workflow', label: 'Board', icon: SquareKanban },
     { to: '/orders', label: 'Orders', icon: ClipboardList },
-    { to: '/diagnose', label: 'Diagnose', icon: Stethoscope },
+    SMALL_ENGINE ? { to: '/troubleshoot', label: 'Troubleshoot', icon: Wrench } : { to: '/diagnose', label: 'Diagnose', icon: Stethoscope },
   ],
 };
 
